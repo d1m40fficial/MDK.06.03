@@ -1,0 +1,12 @@
+# build/check artifacts
+__pycache__/
+*.pyc
+courses/*/dist/shots*/
+courses/*/chapters/*/figures/*/shots/
+*.log
+
+# editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

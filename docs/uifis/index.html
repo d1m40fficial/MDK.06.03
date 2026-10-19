@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#2F6F5E;--course-tint:#DDEBE5;--course-accent-dark:#5CC4A4;--course-tint-dark:#18302A;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Устройство и функционирование информационной системы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.course-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
+.quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q:first-of-type { border-top: 0; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+
+</style>
+</head>
+<body>
+<main class="page">
+<header class="hero"><div class="badges"><span class="pill dark">Материалы доступны</span></div><div class="meta">2–3 курс СПО · 69 ч · 42 занятий</div>
+<h1>Устройство и функционирование информационной системы</h1><p class="dek">Как устроена ИС: от состава и архитектуры до эксплуатации, надёжности и защиты.</p><div class="glyph" aria-hidden="true">УФИС</div></header>
+    <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Объяснять состав, структуру и принципы функционирования информационной системы</li><li>Относить конкретную ИС к классам по признакам классификации и обосновывать выбор</li><li>Описывать архитектуру ИС и подбирать платформу под требования</li><li>Создавать и эксплуатировать базовые компоненты ИС: ОС, СУБД, сетевые службы, БД</li><li>Планировать жизненный цикл, внедрение и сопровождение ИС</li><li>Обеспечивать надёжность, резервное копирование и защиту данных ИС</li><li>Оформлять техническую документацию и отчёт о практической работе</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Базовый курс информатики и навыки работы с файлами и операционной системой</li><li>Первоначальное представление о базах данных и компьютерных сетях</li><li>Умение оформлять текстовые документы по требованиям нормоконтроля</li></ul></section>
+<article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
+<ol class="syllabus"><li><div class="n">01</div><h3><a href="01-lek-01.html">Лекция 1. Информация, данные и информационная система</a></h3><div class="mins">90 мин</div><p>Информационная система превращает входные данные в информацию, нужную пользователю, по циклу: сбор, обработка, хранение, выдача, обратная связь.</p><div class="tags"><span class="fig">Fig · настольная машина обработки бланков: лоток входа, узел обработки с шестернями, картотека-хранилище, лоток выдачи и маховик настройки</span><span>информация</span><span>данные</span><span>информационный процесс</span><span>управление</span></div></li><li><div class="n">02</div><h3><a href="02-prakt-01.html">Практика 1. Классификация информационных систем по признакам</a></h3><div class="mins">90 мин</div><p>Разбор учебных примеров и отнесение каждой ИС к классам по сфере применения, масштабу, способу обработки и архитектуре.</p><div class="tags"><span class="fig">Fig · сортировочный конвейер с тремя поворотными воротцами: по сфере, по масштабу и по способу обработки, и ячейками-накопителями</span><span>классификация</span><span>признак</span><span>сфера применения</span><span>масштаб</span></div></li><li><div class="n">03</div><h3>Лекция 2. Состав и структура информационной системы</h3><div class="mins">90 мин · план</div><p>ИС делится на функциональные подсистемы (что делает) и обеспечивающие (чем это делается): техническое, программное, информационное, организационное обеспечение.</p><div class="tags"><span class="fig">Fig · модульный корпус прибора: рама с отсеками функциональных подсистем и съёмными модулями обеспечения, вставляемыми в разъёмы</span><span>структура ИС</span><span>подсистема</span><span>обеспечивающие подсистемы</span><span>декомпозиция</span></div></li><li><div class="n">04</div><h3>Практика 2. Построение схемы состава информационной системы</h3><div class="mins">90 мин · план</div><p>Декомпозиция заданной ИС на подсистемы и построение схемы состава с описанием каждого элемента.</p><div class="tags"><span class="fig">Fig · разборочный стол с ящиками набора деталей, сгруппированными по видам обеспечения</span><span>декомпозиция</span><span>схема состава</span><span>подсистема</span></div></li><li><div class="n">05</div><h3>Лекция 3. Информационные процессы и потоки данных</h3><div class="mins">90 мин · план</div><p>Данные в ИС движутся: сбор, регистрация, передача, преобразование, хранение, выдача. Поток данных и поток управления описывают это движение.</p><div class="tags"><span class="fig">Fig · лабораторный стенд с трубами данных и сигнальной линией управления между кранами</span><span>поток данных</span><span>информационный процесс</span><span>регистрация</span></div></li><li><div class="n">06</div><h3>Практика 3. Моделирование информационных потоков</h3><div class="mins">90 мин · план</div><p>Построение модели потоков данных (DFD) для заданного процесса обработки информации.</p><div class="tags"><span class="fig">Fig · распределительный коллектор: поток входит, делится у узлов-заслонок и собирается в накопительный бак</span><span>DFD</span><span>поток данных</span><span>хранилище</span><span>внешняя сущность</span></div></li><li><div class="n">07</div><h3>Лекция 4. Классификация информационных систем: подробный разбор</h3><div class="mins">90 мин · план</div><p>Сравнение классов ИС: по сфере применения, по степени автоматизации, по характеру обработки данных, по масштабу и архитектуре.</p><div class="tags"><span class="fig">Fig · многодорожечный сортировщик с переключаемыми рядами ячеек для каждого признака</span><span>классификация</span><span>автоматизация</span><span>масштаб</span><span>архитектура</span></div></li><li><div class="n">08</div><h3>Практика 4. Сравнительный анализ классов информационных систем</h3><div class="mins">90 мин · план</div><p>Составление сравнительной таблицы классов ИС и выбор класса под заданный сценарий с обоснованием.</p><div class="tags"><span class="fig">Fig · селекторный барабан со стрелкой выбора канала и шкалой критериев</span><span>сравнение</span><span>критерий выбора</span><span>обоснование</span></div></li><li><div class="n">09</div><h3>Лекция 5. Архитектура информационной системы</h3><div class="mins">90 мин · план</div><p>Файл-серверная, клиент-сервер, трёхзвенная и многоуровневая архитектуры: где выполняются данные, логика и представление.</p><div class="tags"><span class="fig">Fig · перестраиваемый стенд из трёх звеньев-кабин, соединяемых валами по-разному</span><span>файл-сервер</span><span>клиент-сервер</span><span>трёхзвенная</span><span>слои</span></div></li><li><div class="n">10</div><h3>Практика 5. Проектирование архитектуры информационной системы</h3><div class="mins">180 мин · план</div><p>Выбор и обоснование архитектуры ИС для заданного сценария; схема размещения слоёв и звеньев. Двойная пара.</p><div class="tags"><span class="fig">Fig · вертикальная этажерка слоёв с подписанными полками-слоями архитектуры</span><span>архитектура</span><span>слои</span><span>размещение</span></div></li><li><div class="n">11</div><h3>Лекция 6. Аппаратное обеспечение информационной системы</h3><div class="mins">90 мин · план</div><p>Серверы, системы хранения данных, клиентские устройства, сетевое оборудование и периферия: назначение и характеристики.</p><div class="tags"><span class="fig">Fig · серверная стойка с юнитами: серверы, полки дисков СХД, коммутатор и источник питания</span><span>сервер</span><span>СХД</span><span>клиент</span><span>периферия</span></div></li><li><div class="n">12</div><h3>Практика 6. Подбор аппаратной конфигурации ИС</h3><div class="mins">90 мин · план</div><p>Расчёт и подбор серверной конфигурации под требования учебной задачи с обоснованием выбора компонентов.</p><div class="tags"><span class="fig">Fig · измерительный стенд с ползунком нагрузки и двумя вариантами узла на весах</span><span>конфигурация</span><span>подбор</span><span>требования</span></div></li><li><div class="n">13</div><h3>Лекция 7. Системное программное обеспечение и операционные системы</h3><div class="mins">90 мин · план</div><p>Роль ОС в ИС: управление ресурсами, процессами, памятью и пользователями; серверные ОС и виртуализация.</p><div class="tags"><span class="fig">Fig · диспетчерский пульт с каруселью процессов и раздающими рычагами ресурсов</span><span>ОС</span><span>процесс</span><span>память</span><span>виртуализация</span></div></li><li><div class="n">14</div><h3>Практика 7. Установка и базовая настройка серверной операционной системы</h3><div class="mins">180 мин · план</div><p>Развёртывание серверной ОС в виртуальной машине, базовая настройка и проверка. Двойная пара.</p><div class="tags"><span class="fig">Fig · физический корпус-гипервизор с гнёздами под съёмные виртуальные модули</span><span>установка</span><span>настройка</span><span>виртуальная машина</span></div></li><li><div class="n">15</div><h3>Лекция 8. Системы управления базами данных в составе ИС</h3><div class="mins">90 мин · план</div><p>СУБД как ядро хранения: таблицы, связи, целостность, транзакции, пользователи и права.</p><div class="tags"><span class="fig">Fig · картотечный шкаф с ящиками-таблицами, связующими шинами и замком транзакции</span><span>СУБД</span><span>таблицы</span><span>транзакция</span><span>целостность</span></div></li><li><div class="n">16</div><h3>Практика 8. Создание базы данных информационной системы</h3><div class="mins">180 мин · план</div><p>Создание базы данных под заданную предметную область, создание таблиц и простых запросов. Двойная пара.</p><div class="tags"><span class="fig">Fig · картотека с ключевыми замками ящиков, не дающими положить дубликат</span><span>база данных</span><span>SQL</span><span>запрос</span><span>таблица</span></div></li><li><div class="n">17</div><h3>Лекция 9. Сетевые основы функционирования ИС</h3><div class="mins">90 мин · план</div><p>Модели OSI и TCP/IP, адресация, порты и маршрутизация: как части ИС находят друг друга в сети.</p><div class="tags"><span class="fig">Fig · почтово-конвейерная станция из семи уровней-столов, обёртывающих пакет</span><span>OSI</span><span>TCP/IP</span><span>IP-адрес</span><span>порт</span></div></li><li><div class="n">18</div><h3>Практика 9. Настройка сети и диагностика соединений</h3><div class="mins">90 мин · план</div><p>Настройка сетевых параметров и диагностика соединений служебными командами.</p><div class="tags"><span class="fig">Fig · кабельный измеритель с рефлектометром и шкалой времени отклика</span><span>настройка сети</span><span>ping</span><span>ipconfig</span><span>диагностика</span></div></li><li><div class="n">19</div><h3>Лекция 10. Сетевые службы информационной системы</h3><div class="mins">90 мин · план</div><p>DNS, DHCP, файловые и веб-службы: назначение, роль в работе ИС и типовые настройки.</p><div class="tags"><span class="fig">Fig · справочное табло DNS с ячейками имён и раздатчик адресов DHCP с номерами</span><span>DNS</span><span>DHCP</span><span>веб-сервер</span><span>служба</span></div></li><li><div class="n">20</div><h3>Практика 10. Развёртывание базовой сетевой службы</h3><div class="mins">180 мин · план</div><p>Установка и проверка базовой службы (веб-сервер) в учебной среде. Двойная пара.</p><div class="tags"><span class="fig">Fig · раздаточное окно-порт службы, за которым полка документов и отдающий лоток</span><span>веб-сервер</span><span>развёртывание</span><span>проверка</span></div></li><li><div class="n">21</div><h3>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</h3><div class="mins">90 мин · план</div><p>HTTP и запрос-ответ, API и форматы обмена: как клиент ИС разговаривает с сервером.</p><div class="tags"><span class="fig">Fig · окно приёма-выдачи с двумя желобами: входящих запросов и исходящих ответов</span><span>HTTP</span><span>запрос</span><span>ответ</span><span>API</span></div></li><li><div class="n">22</div><h3>Практика 11. Работа с веб-API информационной системы</h3><div class="mins">90 мин · план</div><p>Отправка учебных запросов к веб-API и разбор ответов (методы, коды состояния, формат JSON).</p><div class="tags"><span class="fig">Fig · пульт запросов с набором кнопок-методов и лампочками кодов состояния</span><span>API</span><span>JSON</span><span>GET</span><span>коды ответа</span></div></li><li><div class="n">23</div><h3>Лекция 12. Интеграция информационных систем</h3><div class="mins">90 мин · план</div><p>Обмен данными между ИС: форматы (XML, JSON, CSV), стандарты, шина данных, ETL и преобразование.</p><div class="tags"><span class="fig">Fig · переходная станция с двумя форматами лотков и адаптером посередине</span><span>интеграция</span><span>XML</span><span>JSON</span><span>ETL</span></div></li><li><div class="n">24</div><h3>Практика 12. Обмен данными между информационными системами</h3><div class="mins">90 мин · план</div><p>Импорт, экспорт и преобразование данных между форматами средствами таблиц или скрипта.</p><div class="tags"><span class="fig">Fig · трёхступенчатый конвейер Extract-Transform-Load с приёмным баком</span><span>импорт</span><span>экспорт</span><span>преобразование</span><span>CSV</span></div></li><li><div class="n">25</div><h3>Лекция 13. Жизненный цикл информационной системы</h3><div class="mins">90 мин · план</div><p>Этапы жизненного цикла ИС от анализа требований до вывода из эксплуатации и модели ЖЦ.</p><div class="tags"><span class="fig">Fig · кольцевой конвейер этапов с тележкой-изделием, проходящей все станции</span><span>жизненный цикл</span><span>этапы</span><span>модель ЖЦ</span></div></li><li><div class="n">26</div><h3>Практика 13. Составление плана жизненного цикла ИС</h3><div class="mins">90 мин · план</div><p>Построение календарного плана этапов жизненного цикла для заданной ИС.</p><div class="tags"><span class="fig">Fig · лента времени-рельс с вешками этапов и тележкой-изделием</span><span>план</span><span>этапы</span><span>календарь</span></div></li><li><div class="n">27</div><h3>Лекция 14. Методологии разработки информационных систем</h3><div class="mins">90 мин · план</div><p>Каскадная, итеративная и гибкие методологии: когда что применяют и как это влияет на работу ИС.</p><div class="tags"><span class="fig">Fig · переключаемый станок с режимом по шагам и режимом итераций с возвратной петлёй</span><span>каскад</span><span>итерация</span><span>Agile</span><span>методология</span></div></li><li><div class="n">28</div><h3>Практика 14. Формирование требований к информационной системе</h3><div class="mins">180 мин · план</div><p>Сбор и оформление требований: функциональные и нефункциональные, пользовательские истории. Двойная пара.</p><div class="tags"><span class="fig">Fig · сортировочный стол требований с двумя корзинами и ситом отсева</span><span>требования</span><span>ТЗ</span><span>user story</span><span>нефункциональные</span></div></li><li><div class="n">29</div><h3>Лекция 15. Проектирование ИС: функциональное моделирование</h3><div class="mins">90 мин · план</div><p>Функциональные модели и схемы: декомпозиция функций, контекстная диаграмма, описание процессов.</p><div class="tags"><span class="fig">Fig · разборный блок-процесс, раскрывающийся на вложенные блоки поменьше</span><span>функциональная модель</span><span>декомпозиция</span><span>процесс</span></div></li><li><div class="n">30</div><h3>Практика 15. Разработка функциональной модели ИС</h3><div class="mins">90 мин · план</div><p>Построение функциональной модели заданной ИС с декомпозицией на подпроцессы.</p><div class="tags"><span class="fig">Fig · монтажная панель с блоками процессов и соединительными разъёмами</span><span>функциональная модель</span><span>диаграмма</span><span>декомпозиция</span></div></li><li><div class="n">31</div><h3>Лекция 16. Моделирование данных и проектирование базы данных</h3><div class="mins">90 мин · план</div><p>Логическая и физическая модели данных, ER-модель, нормализация: как данные становятся структурой хранения.</p><div class="tags"><span class="fig">Fig · сборочный стол с ящиками-сущностями и штырьками-связями по ключам</span><span>ER-модель</span><span>нормализация</span><span>логическая модель</span><span>физическая модель</span></div></li><li><div class="n">32</div><h3>Практика 16. Проектирование моделей данных ИС</h3><div class="mins">180 мин · план</div><p>Разработка логической и физической модели данных для заданной предметной области. Двойная пара.</p><div class="tags"><span class="fig">Fig · механизм шестерённой связи один-ко-многим с широким колесом и гребёнкой</span><span>ER-модель</span><span>ключи</span><span>нормализация</span></div></li><li><div class="n">33</div><h3>Лекция 17. Пользовательский интерфейс информационной системы</h3><div class="mins">90 мин · план</div><p>Назначение интерфейса, принципы юзабилити, эргономика и доступность рабочего места пользователя ИС.</p><div class="tags"><span class="fig">Fig · пульт управления с ручками и кнопками в зоне досягаемости оператора</span><span>интерфейс</span><span>юзабилити</span><span>эргономика</span><span>доступность</span></div></li><li><div class="n">34</div><h3>Практика 17. Прототипирование интерфейса ИС</h3><div class="mins">90 мин · план</div><p>Разработка макета интерфейса и сценария работы пользователя для заданной ИС.</p><div class="tags"><span class="fig">Fig · сетка-планшет для раскладки модулей интерфейса по ячейкам</span><span>макет</span><span>прототип</span><span>сценарий</span><span>wireframe</span></div></li><li><div class="n">35</div><h3>Лекция 18. Внедрение и сопровождение информационной системы</h3><div class="mins">90 мин · план</div><p>Внедрение, обучение пользователей, эксплуатационная документация и виды сопровождения ИС.</p><div class="tags"><span class="fig">Fig · операционная тележка сопровождения с ящиками документации и запасных узлов</span><span>внедрение</span><span>сопровождение</span><span>документация</span><span>обучение</span></div></li><li><div class="n">36</div><h3>Практика 18. Разработка эксплуатационной документации</h3><div class="mins">90 мин · план</div><p>Составление комплекта документации: руководство пользователя и инструкция по сопровождению.</p><div class="tags"><span class="fig">Fig · переплётный станок с лотками страниц и прессом, собирающий документ</span><span>руководство пользователя</span><span>инструкция</span><span>документ</span></div></li><li><div class="n">37</div><h3>Лекция 19. Надёжность, отказоустойчивость и резервное копирование</h3><div class="mins">90 мин · план</div><p>Виды отказов, показатели надёжности, резервирование, резервное копирование и восстановление ИС.</p><div class="tags"><span class="fig">Fig · дублированный агрегат с двумя насосами и перекидным клапаном на резерв</span><span>надёжность</span><span>отказоустойчивость</span><span>резервирование</span><span>резервная копия</span></div></li><li><div class="n">38</div><h3>Практика 19. Резервное копирование и восстановление данных</h3><div class="mins">90 мин · план</div><p>Настройка резервного копирования и проверка восстановления данных учебной ИС.</p><div class="tags"><span class="fig">Fig · насос перекачки данных в резервуар-хранилище резервных копий и обратно</span><span>резервная копия</span><span>восстановление</span><span>бэкап</span></div></li><li><div class="n">39</div><h3>Лекция 20. Информационная безопасность информационной системы</h3><div class="mins">90 мин · план</div><p>Угрозы ИС, разграничение доступа, аутентификация, защита данных и аудит действий пользователей.</p><div class="tags"><span class="fig">Fig · замковая стойка с набором ключей по ролям и журнальным барабаном аудита</span><span>безопасность</span><span>доступ</span><span>аутентификация</span><span>аудит</span></div></li><li><div class="n">40</div><h3>Практика 20. Разграничение доступа и аудит в информационной системе</h3><div class="mins">90 мин · план</div><p>Настройка ролей и прав доступа, включение журналирования действий пользователей.</p><div class="tags"><span class="fig">Fig · замковый барабан с набором штифтов, задающих права роли</span><span>роли</span><span>права</span><span>журнал</span><span>аудит</span></div></li><li><div class="n">41</div><h3>Лекция 21. Эффективность ИС, мониторинг и тенденции развития</h3><div class="mins">90 мин · план</div><p>Показатели эффективности, мониторинг работы ИС и современные тенденции: облака, виртуализация, аналитика и ИИ.</p><div class="tags"><span class="fig">Fig · приборная панель мониторинга с рядом стрелочных индикаторов и отметкой порога</span><span>эффективность</span><span>мониторинг</span><span>облако</span><span>тенденции</span></div></li><li><div class="n">42</div><h3>Практика 21. Комплексное задание: паспорт информационной системы</h3><div class="mins">180 мин · план</div><p>Итоговая работа: составить паспорт учебной ИС и защитить проект. Двойная пара.</p><div class="tags"><span class="fig">Fig · паспортная машина, штампующая страницы паспорта изделия из узлов системы</span><span>паспорт ИС</span><span>проект</span><span>защита</span></div></li></ol></main>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+Copied from C:\Belousov\Projects\.opencode\skills\course-studio\anatomy
+Other examples: C:\Belousov\Projects\.opencode\skills\course-studio\anatomy\examples
+Re-run `workspace.py init` to update.

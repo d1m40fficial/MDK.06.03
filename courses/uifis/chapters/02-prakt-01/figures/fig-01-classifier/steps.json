@@ -1,0 +1,15 @@
+[
+  ["wait", 800],
+  ["eval", "(()=>{const p=document.querySelector('.iso-plate').getBoundingClientRect();const el=document.querySelector('[data-part=\"digits\"]');const r=el.getBoundingClientRect();return 'digits '+[Math.round(r.left-p.left),Math.round(r.top-p.top),Math.round(r.width),Math.round(r.height)].join(',');})()"],
+  ["eval", "document.querySelector('[data-readout]').textContent"],
+  ["key", "ArrowRight"],
+  ["wait", 700],
+  ["eval", "document.querySelector('[data-readout]').textContent"],
+  ["key", "ArrowRight"],
+  ["wait", 700],
+  ["eval", "document.querySelector('[data-readout]').textContent"],
+  ["key", "End"],
+  ["wait", 700],
+  ["eval", "document.querySelector('[data-readout]').textContent"],
+  ["eval", "document.querySelector('.iso-stage').getAttribute('aria-valuetext') + ' | aria-valuenow=' + document.querySelector('.iso-stage').getAttribute('aria-valuenow')"]
+]
