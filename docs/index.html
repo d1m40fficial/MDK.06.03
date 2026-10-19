@@ -72,6 +72,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
 .prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
 .prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 .prose strong { font-weight: 650; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
 .prose img { max-width: 100%; border-radius: 12px; }
@@ -182,11 +183,19 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .k-v { font: 12px var(--font-mono); color: var(--ink-2); }
 .prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
 
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
 .syllabus{list-style:none;padding:0;display:grid;gap:12px}.syllabus a{display:block;padding:16px 18px;border:1px solid var(--rule);border-radius:12px;background:var(--card);text-decoration:none}.syllabus h3{margin:0 0 4px;color:var(--ink)}.syllabus .spec{font:12px var(--font-mono);color:var(--ink-3)}
 </style>
 </head>
 <body>
-<main class="page"><header class="hero"><div class="glyph" aria-hidden="true">УФИС</div><h1>Устройство и функционирование информационной системы</h1><p class="dek">Материалы дисциплины: лекции, практические работы и отчёты.</p></header><article class="prose"><h2 class="nonum">Дисциплины</h2></article><ol class="syllabus"><li><a href="uifis/index.html"><h3>Устройство и функционирование информационной системы</h3><p>Как устроена ИС: от состава и архитектуры до эксплуатации, надёжности и защиты.</p><span class="spec">УФИС · 42 занятий</span></a></li></ol></main>
+<main class="page"><header class="hero"><div class="glyph" aria-hidden="true">УФИС</div><h1>Устройство и функционирование информационной системы</h1><p class="dek">Материалы дисциплины: лекции, практические работы и отчёты.</p></header><article class="prose"><h2 class="nonum">Дисциплины</h2></article><ol class="syllabus"><li><a href="uifis/index.html"><h3>Устройство и функционирование информационной системы</h3><p>Как устроена ИС: от состава и архитектуры до эксплуатации, надёжности и защиты.</p><span class="spec">УФИС · 35 занятий</span></a></li></ol></main>
 
 </body>
 </html>

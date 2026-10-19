@@ -1,8 +1,10 @@
 # build/check artifacts
 __pycache__/
 *.pyc
+shots/
 courses/*/dist/shots*/
 courses/*/chapters/*/figures/*/shots/
+courses/_anatomy/examples/
 *.log
 
 # editors / OS

@@ -1,16 +1,22 @@
-"""Generate the Printable report template for Practice 1 (УФИС).
+"""Generate the downloadable materials for Practice 1 (УФИС).
 
 Run:  python make_template.py
-Writes: УФИС_Практика-1_Шаблон-отчёта.docx  (next to this file)
+Writes next to this file:
+  UIFIS_practice-1_report-template.docx      шаблон отчёта
+  UIFIS_practice-1_classification-table.csv  таблица для классификации
+Filenames are ASCII so the download links stay safe in any browser.
 """
 
+import csv
 from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt, Cm
+from docx.shared import Pt
 
-OUT = Path(__file__).with_name("УФИС_Практика-1_Шаблон-отчёта.docx")
+HERE = Path(__file__).parent
+OUT_DOCX = HERE / "UIFIS_practice-1_report-template.docx"
+OUT_CSV = HERE / "UIFIS_practice-1_classification-table.csv"
 QUESTIONS = [
     "Почему признаки классификации должны быть независимыми?",
     "Может ли одна система быть пакетной и оперативной одновременно?",
@@ -25,7 +31,7 @@ ROWS = [
 ]
 
 
-def line(doc, text, bold=False, size=11, align=None):
+def line(doc, text, bold=False, size=12, align=None):
     p = doc.add_paragraph()
     r = p.add_run(text)
     r.bold = bold
@@ -43,7 +49,7 @@ def slot(doc, text):
     r.font.size = Pt(11)
 
 
-def main():
+def make_docx():
     doc = Document()
     st = doc.styles["Normal"]
     st.font.name = "Times New Roman"
@@ -109,9 +115,20 @@ def main():
             line(doc, "________________________________________________________________________")
         doc.add_paragraph()
 
-    doc.save(OUT)
-    print(f"wrote {OUT}")
+    doc.save(OUT_DOCX)
+    print(f"wrote {OUT_DOCX}")
+
+
+def make_csv():
+    with OUT_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["№", "Информационная система", "Сфера", "Масштаб", "Способ обработки",
+                    "Архитектура", "Обоснование"])
+        for n, name in ROWS:
+            w.writerow([n, name, "", "", "", "", ""])
+    print(f"wrote {OUT_CSV}")
 
 
 if __name__ == "__main__":
-    main()
+    make_docx()
+    make_csv()

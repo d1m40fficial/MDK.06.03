@@ -224,7 +224,19 @@ def preprocess(body: str, base: Path, figures: list):
         if line.strip() == "::quiz":
             block = []
             i += 1
-            while i < len(lines) and lines[i].strip() and not lines[i].strip().startswith("::"):
+            while i < len(lines):
+                t = lines[i].strip()
+                if t.startswith("::"):
+                    break
+                if not t:
+                    # a blank line belongs to the block only if a quiz line follows it
+                    j = i + 1
+                    while j < len(lines) and not lines[j].strip():
+                        j += 1
+                    nxt = lines[j].strip() if j < len(lines) else ""
+                    if nxt.startswith(("Q:", "+", "-")):
+                        block.append(""); i += 1; continue
+                    break
                 block.append(lines[i]); i += 1
             qhtml, found = render_quiz(block, i)
             has_quiz = has_quiz or found
@@ -265,6 +277,7 @@ def preprocess(body: str, base: Path, figures: list):
 
 def number_headings(html_body: str):
     toc, n = [], 0
+    seen = set()
 
     def rep(m):
         nonlocal n
@@ -272,13 +285,43 @@ def number_headings(html_body: str):
         if 'class="nonum"' in attrs:
             return m.group(0)
         n += 1
-        plain = html.unescape(re.sub(r"<[^>]+>", "", text))  # smarty turns ' into &rsquo;; esc() re-escapes later
+        without_num = re.sub(r'<span class="num">.*?</span>', "", text)
+        plain = html.unescape(re.sub(r"<[^>]+>", "", without_num))
         idm = re.search(r'id="([^"]+)"', attrs)
-        hid = idm.group(1) if idm else re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-")
+        if idm:
+            hid = idm.group(1)
+        else:
+            hid = re.sub(r"[^\w]+", "-", plain.lower(), flags=re.UNICODE).strip("-") or "section"
+            base, k = hid, 2
+            while hid in seen:
+                hid, k = f"{base}-{k}", k + 1
+        seen.add(hid)
         toc.append((hid, plain))
         return f'<h2 id="{hid}"><span class="num">{n:02d}</span>{text}</h2>'
 
     return re.sub(r"<h2([^>]*)>(.*?)</h2>", rep, html_body), toc
+
+
+def lesson_label(cj, dirname: str):
+    """Number(s) of the занятие this chapter occupies, e.g. "1" or "11-12".
+
+    A lesson of 180 minutes takes two pair-slots, so it spans two consecutive numbers.
+    """
+    if not cj:
+        return None
+    try:
+        chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
+    except Exception:
+        return None
+    start = 1
+    for ch in chapters:
+        d = ch.get("dir") or f'{int(ch["n"]):02d}-{ch.get("slug", "")}'
+        pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
+        lo, hi = start, start + pairs - 1
+        if d == dirname:
+            return f"{lo}" if lo == hi else f"{lo}-{hi}"
+        start += pairs
+    return None
 
 
 def main():
@@ -308,15 +351,18 @@ def main():
 
     kind = fm.get("kind", "chapter")  # chapter | notes | cheatsheet
     ch = fm.get("chapter")
+    label = lesson_label(cj, base.name)
     pills = []
-    if ch is not None:
-        pills.append(f'<span class="pill dark">{"Занятие " + str(ch).zfill(2) if str(ch).isdigit() else esc(ch)}</span>')
+    if label:
+        word = "Занятие" if "-" not in label else "Занятия"
+        pills.append(f'<span class="pill dark">{word} {label}</span>')
+    elif ch is not None:
+        pills.append(f'<span class="pill dark">{esc(ch)}</span>')
     elif kind != "chapter":
         pills.append(f'<span class="pill dark">{esc(kind)}</span>')
     if course.get("title"):
         pills.append(f'<span class="pill">{esc(course["title"])}</span>')
-    meta = " · ".join(x for x in [fm.get("level"), f'{fm["minutes"]} мин' if fm.get("minutes") else None,
-                                   f'{len(figures)} рис.' if figures else None] if x)
+    meta = fm.get("level") or course.get("level") or ""
     glyph = fm.get("glyph") or course.get("code", "")
     hero = f"""<header class="hero"><div class="badges">{''.join(pills)}</div><div class="meta">{esc(meta)}</div>
 <h1>{esc(fm.get('title', src_path.stem))}</h1><p class="dek">{esc(fm.get('dek', ''))}</p>

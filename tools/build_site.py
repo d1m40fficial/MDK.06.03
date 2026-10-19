@@ -46,10 +46,11 @@ def copy_course(course_dir: Path):
     shutil.copytree(src, dst, ignore=shutil.ignore_patterns("shots*"))
     reports = course_dir / "reports"
     if reports.exists():
-        out = dst / "reports"
-        out.mkdir(exist_ok=True)
-        for f in reports.glob("*.docx"):
-            shutil.copy2(f, out / f.name)
+        for target in (dst / "reports", src / "reports"):
+            target.mkdir(parents=True, exist_ok=True)
+            for f in reports.iterdir():
+                if f.is_file() and f.suffix.lower() in (".docx", ".csv", ".pdf", ".xlsx"):
+                    shutil.copy2(f, target / f.name)
     return c
 
 

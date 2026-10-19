@@ -43,7 +43,11 @@ def build_course(root: Path) -> Path:
     dist = root / "dist"
     dist.mkdir(exist_ok=True)
     items, written = [], 0
+    slot = 1
     for ch in c.get("chapters", []):
+        pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
+        lesson = f"{slot}" if pairs == 1 else f"{slot}<br>-<br>{slot + pairs - 1}"
+        slot += pairs
         d = root / "chapters" / chapter_dir(ch)
         md = d / "chapter.md"
         link = None
@@ -59,7 +63,7 @@ def build_course(root: Path) -> Path:
         ST = {"planned": "план", "drafted": "черновик", "figures-pending": "фигуры готовятся", "published": "готово"}
         status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
         title = f'<a href="{link}">{esc(ch["title"])}</a>' if link else esc(ch["title"])
-        items.append(f'<li><div class="n">{int(ch["n"]):02d}</div><h3>{title}</h3>'
+        items.append(f'<li><div class="n">{lesson}</div><h3>{title}</h3>'
                      f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
                      f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div></li>')
 
