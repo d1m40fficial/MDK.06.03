@@ -32,6 +32,27 @@ def esc(s) -> str:
     return html.escape("" if s is None else str(s))
 
 
+def lesson_slots(chapters) -> int:
+    """Total lesson slots: a 180-minute chapter counts as two slots of 90 minutes each."""
+    total = 0
+    for ch in chapters or []:
+        total += max(1, round(int(ch.get("minutes") or 90) / 90))
+    return total
+
+
+def plural_lessons(n: int) -> str:
+    """Correct Russian plural form of «занятие» for a count."""
+    n = abs(int(n)) % 100
+    if 11 <= n <= 14:
+        return "занятий"
+    n %= 10
+    if n == 1:
+        return "занятие"
+    if n in (2, 3, 4):
+        return "занятия"
+    return "занятий"
+
+
 def load_course(path: Path) -> dict:
     c = json.loads(path.read_text(encoding="utf-8"))
     base = dict(FALLBACK)

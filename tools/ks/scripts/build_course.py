@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, load_course, page  # noqa: E402
+from _pages import accent_vars, esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 
@@ -31,8 +31,9 @@ def price(c: dict) -> str:
     return f"{sym}{int(c['price']):,}"
 
 
-def spec_line(c: dict) -> str:
-    bits = [c.get("level"), f'{c["hours"]} ч' if c.get("hours") else None]
+def spec_line(c: dict, hours: int = None) -> str:
+    h = hours if hours is not None else c.get("hours")
+    bits = [c.get("level"), f'{h} ч' if h else None]
     if c.get("languages"):
         bits.append(" / ".join(c["languages"]))
     return " · ".join(b for b in bits if b)
@@ -68,7 +69,8 @@ def build_course(root: Path) -> Path:
                      f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div></li>')
 
     n_ch = len(c.get("chapters", []))
-    meta = " · ".join(x for x in [spec_line(c), f"{n_ch} занятий" if n_ch else None] if x)
+    slots = lesson_slots(c.get("chapters", []))
+    meta = " · ".join(x for x in [spec_line(c, slots * 2), f"{slots} {plural_lessons(slots)}" if slots else None] if x)
     outcomes = ""
     if c.get("outcomes"):
         outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(
@@ -96,12 +98,13 @@ def build_catalog(root: Path) -> Path:
     courses.sort(key=lambda c: (c.get("status") != "available", c.get("order", 99)))
     cards = []
     for c in courses:
-        n_ch = len(c.get("chapters", [])) or c.get("chapterCount", "")
+        slots = lesson_slots(c.get("chapters", []))
+        ch_label = f"{slots} {plural_lessons(slots)}" if slots else ""
         avail = c.get("status") == "available"
         style = (f"--cl-accent:{c['accent']};--cl-tint:{c['tint']};"
                  f"--cd-accent:{c.get('accentDark', c['accent'])};--cd-tint:{c.get('tintDark', c['tint'])}")
         cards.append(f"""<a class="course-card" data-status="{'available' if avail else 'soon'}" href="{esc(c['slug'])}/index.html" style="{style}">
-<div class="art"><span class="pill{' dark' if avail else ''}">{'Доступно' if avail else 'Готовится'}</span><span class="ch">{n_ch} занятий</span>
+<div class="art"><span class="pill{' dark' if avail else ''}">{'Доступно' if avail else 'Готовится'}</span><span class="ch">{ch_label}</span>
 <div class="glyph" aria-hidden="true">{esc(c['code'])}</div></div>
 <div class="body"><h3>{esc(c['title'])}</h3><p>{esc(c.get('tagline', ''))}</p><div class="spec">{esc(spec_line(c))}</div>
 <div class="foot"><span class="price">{esc(price(c))}</span><span class="btn{' primary' if avail else ''}">{'Открыть' if avail else 'Готовится'}</span></div></div></a>""")

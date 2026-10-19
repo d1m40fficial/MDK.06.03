@@ -19,7 +19,7 @@ ROOT = HERE.parent
 KS = HERE / "ks" / "scripts"
 sys.path.insert(0, str(KS))
 
-from _pages import esc, load_course, page  # noqa: E402
+from _pages import esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
 
 SITE = ROOT / "docs"
 COURSES = ROOT / "courses"
@@ -72,11 +72,11 @@ def landing(courses):
     if len(courses) > 1:
         cards = []
         for c in courses:
-            n = c.get("chapterCount") or len(c.get("chapters", []))
+            n = lesson_slots(c.get("chapters", []))
             cards.append(
                 f'<li><a href="{esc(c["slug"])}/index.html"><h3>{esc(c["title"])}</h3>'
                 f'<p>{esc(c.get("tagline", ""))}</p>'
-                f'<span class="spec">{esc(c.get("code", ""))} · {n} занятий</span></a></li>')
+                f'<span class="spec">{esc(c.get("code", ""))} · {n} {plural_lessons(n)}</span></a></li>')
         body += (f'<article class="prose"><h2 class="nonum">Дисциплины</h2></article>'
                  f'<ol class="syllabus">{"".join(cards)}</ol>')
     body += '</main>'

@@ -159,7 +159,8 @@ QUIZ_SCRIPT = r"""
     var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
     function clear(){ qs.forEach(function(q){ q.classList.remove('ok','bad');
       q.querySelectorAll('input').forEach(function(i){ i.checked=false; });
-      q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); }); });
+      q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+      var w=q.querySelector('.quiz-why'); if(w) w.hidden=true; });
       var s=quiz.querySelector('[data-score]'); if(s) s.textContent=''; }
     quiz.querySelector('[data-reset]').addEventListener('click', clear);
     quiz.querySelector('[data-check]').addEventListener('click', function(){
@@ -170,6 +171,7 @@ QUIZ_SCRIPT = r"""
         q.classList.remove('ok','bad'); q.classList.add(ok?'ok':'bad');
         if(ok) right++;
         q.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('correct', o.querySelector('input').hasAttribute('data-ok')); });
+        var w=q.querySelector('.quiz-why'); if(w) w.hidden=ok;
       });
       var s=quiz.querySelector('[data-score]'); if(s) s.textContent='Верно '+right+' из '+qs.length;
     });
@@ -186,8 +188,10 @@ def render_quiz(block: list, n: int) -> tuple:
         if not t:
             continue
         if t.startswith("Q:"):
-            cur = {"q": t[2:].strip(), "opts": [], "answer": -1}
+            cur = {"q": t[2:].strip(), "opts": [], "answer": -1, "why": ""}
             questions.append(cur)
+        elif t.startswith("!") and cur is not None:
+            cur["why"] = t[1:].strip()
         elif t.startswith("+") and cur is not None:
             cur["answer"] = len(cur["opts"])
             cur["opts"].append(t[1:].strip())
@@ -201,8 +205,9 @@ def render_quiz(block: list, n: int) -> tuple:
             f'<label class="opt"><input type="radio" name="q{n}_{qi}" value="{oi}"'
             f'{" data-ok" if oi == q["answer"] else ""}><span>{md(opt)[3:-4]}</span></label>'
             for oi, opt in enumerate(q["opts"]))
+        why = (f'<p class="quiz-why" hidden>{md(q["why"])[3:-4]}</p>' if q.get("why") else "")
         items.append(f'<div class="quiz-q" data-answer="{q["answer"]}"><p class="quiz-p">{md(q["q"])[3:-4]}</p>'
-                     f'<div class="opts">{opts}</div></div>')
+                     f'<div class="opts">{opts}</div>{why}</div>')
     html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
                   f'{"".join(items)}<div class="quiz-foot"><button type="button" data-check>Проверить ответы</button>'
                   f'<button type="button" data-reset>Сбросить</button>'
@@ -234,7 +239,7 @@ def preprocess(body: str, base: Path, figures: list):
                     while j < len(lines) and not lines[j].strip():
                         j += 1
                     nxt = lines[j].strip() if j < len(lines) else ""
-                    if nxt.startswith(("Q:", "+", "-")):
+                    if nxt.startswith(("Q:", "+", "-", "!")):
                         block.append(""); i += 1; continue
                     break
                 block.append(lines[i]); i += 1
