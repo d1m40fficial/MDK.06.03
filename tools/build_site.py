@@ -55,24 +55,43 @@ def copy_course(course_dir: Path):
 
 
 def landing(courses):
-    cards = []
-    for c in courses:
-        n = c.get("chapterCount") or len(c.get("chapters", []))
-        cards.append(
-            f'<li><a href="{esc(c["slug"])}/index.html"><h3>{esc(c["title"])}</h3>'
-            f'<p>{esc(c.get("tagline", ""))}</p>'
-            f'<span class="spec">{esc(c.get("code", ""))} · {n} занятий</span></a></li>')
-    body = (f'<main class="page"><header class="hero"><div class="glyph" aria-hidden="true">УФИС</div>'
-            f'<h1>Устройство и функционирование информационной системы</h1>'
-            f'<p class="dek">Материалы дисциплины: лекции, практические работы и отчёты.</p></header>'
-            f'<article class="prose"><h2 class="nonum">Дисциплины</h2></article>'
-            f'<ol class="syllabus">{"".join(cards)}</ol></main>')
-    css = ('.syllabus{list-style:none;padding:0;display:grid;gap:12px}'
+    if courses:
+        first = courses[0]
+        slug = esc(first["slug"])
+        glyph = esc(first.get("code", ""))
+        title = esc(first["title"])
+        dek = esc(first.get("tagline") or "Материалы дисциплины: лекции, практические работы и отчёты.")
+        hero = (f'<a class="hero-link" href="{slug}/index.html">'
+                f'<header class="hero"><div class="glyph" aria-hidden="true">{glyph}</div>'
+                f'<h1>{title}</h1><p class="dek">{dek}</p>'
+                f'<span class="cta">Открыть курс</span></header></a>')
+    else:
+        hero = ('<header class="hero"><h1>Курсы</h1>'
+                '<p class="dek">Материалы дисциплины: лекции, практические работы и отчёты.</p></header>')
+    body = f'<main class="page">{hero}'
+    if len(courses) > 1:
+        cards = []
+        for c in courses:
+            n = c.get("chapterCount") or len(c.get("chapters", []))
+            cards.append(
+                f'<li><a href="{esc(c["slug"])}/index.html"><h3>{esc(c["title"])}</h3>'
+                f'<p>{esc(c.get("tagline", ""))}</p>'
+                f'<span class="spec">{esc(c.get("code", ""))} · {n} занятий</span></a></li>')
+        body += (f'<article class="prose"><h2 class="nonum">Дисциплины</h2></article>'
+                 f'<ol class="syllabus">{"".join(cards)}</ol>')
+    body += '</main>'
+    css = ('.hero-link{display:block;text-decoration:none;color:inherit}'
+           '.hero-link .hero{transition:transform .15s ease, box-shadow .15s ease}'
+           '.hero-link:hover .hero{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.10)}'
+           '.hero .cta{display:inline-block;margin:0 0 26px;font:600 12px var(--font-mono);'
+           'letter-spacing:.08em;text-transform:uppercase;color:var(--accent);position:relative;z-index:1}'
+           '.hero-link:hover .cta{text-decoration:underline}'
+           '.syllabus{list-style:none;padding:0;display:grid;gap:12px}'
            '.syllabus a{display:block;padding:16px 18px;border:1px solid var(--rule);'
            'border-radius:12px;background:var(--card);text-decoration:none}'
            '.syllabus h3{margin:0 0 4px;color:var(--ink)}'
            '.syllabus .spec{font:12px var(--font-mono);color:var(--ink-3)}')
-    (SITE / "index.html").write_text(page("Курсы", body, extra_css=css), encoding="utf-8")
+    (SITE / "index.html").write_text(page(first.get("title", "Курсы") if courses else "Курсы", body, extra_css=css), encoding="utf-8")
 
 
 def main():
