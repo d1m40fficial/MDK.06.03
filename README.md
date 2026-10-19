@@ -1,30 +1,59 @@
-# Устройство и функционирование информационной системы (МДК.06.03)
+# Материалы дисциплин техникума
 
-Учебные материалы дисциплины для специальности 09.02.07: 21 лекция и 21 практическая
-работа. Каждое занятие это отдельная страница; 3D-схемы собраны движком Anatomy,
-двухмерные схемы встроены как SVG, тесты и вопросы для самопроверки работают прямо
-на странице.
-
-## Что уже готово
-
-- Учебный план на 42 занятия (21 лекция + 21 практика), дисциплина `uifis`.
-- Лекция 1: «Информация, данные и информационная система» с тестом.
-- Практика 1: «Классификация информационных систем» с методическими указаниями,
-  схемами, местами под скриншоты и шаблоном отчёта.
-- Готовый к публикации статический сайт в `docs/`.
-
-## Структура
+Сайт со всеми дисциплинами, которые я вёл или веду. Структура трёхуровневая:
 
 ```
-courses/uifis/
-  course.json                 план: список всех 42 занятий
-  chapters/01-lek-01/         лекция 1 (chapter.md + figures/)
-  chapters/02-prakt-01/       практика 1 (chapter.md + figures/)
-  reports/                    шаблоны отчётов (.docx)
-  dist/                       собранные страницы курса
-docs/                         итоговый сайт для GitHub Pages
-tools/ks/                     движок сборки страниц (с русской локализацией)
-tools/build_site.py           сборка сайта в docs/
+landing (3 карточки курсов) -> год (список дисциплин) -> дисциплина (план) -> занятие
+```
+
+Текущая дисциплина: **УФИС** (МДК.06.03), 4 курс. План на 42 занятия (21 лекция и
+21 практика), лекция 1, практики 1 и 2 и лекция 2 с фигурами; 3D-схемы собраны
+движком Anatomy, двухмерные схемы встроены как SVG, тесты работают на странице.
+
+## Структура репозитория
+
+```
+courses/
+  2/<slug>/                 дисциплины 2 курса
+  3/<slug>/                 дисциплины 3 курса
+  4/uifis/                  УФИС (МДК.06.03), 4 курс
+    course.json             план: карточка, результаты, список занятий
+    chapters/01-lek-01/     лекция (chapter.md + figures/)
+    reports/                шаблоны отчётов (.docx, .csv)
+    dist/                   собранные страницы дисциплины
+  _anatomy/                 общий движок фигур Anatomy (не редактировать вручную)
+site.json                   карточки курсов для landing
+docs/                       итоговый сайт для GitHub Pages
+.opencode/skills/course-studio/   объединённый скилл (Course Studio + Anatomy + Visualise)
+AGENTS.md                   памятка для любого агента, работающего с репозиторием
+tools/
+  build_site.py             сборка сайта в docs/
+  new_discipline.py         создать дисциплину и её worktree
+  worktree.py               отдельный git worktree на дисциплину
+  ks/                       движок сборки страниц (с русской локализацией)
+_reference/miapo/           старые личные заметки, в git не входят, только для сверки
+```
+
+## Как добавить дисциплину
+
+Каждая дисциплина разрабатывается в своём worktree и ветке, чтобы несколько агентов
+могли писать разные дисциплины одновременно.
+
+```powershell
+$env:PYTHONUTF8=1
+python tools/new_discipline.py 3 otp --title "Основы теории прочности" --code "ОТП"
+```
+
+Скрипт создаёт worktree `../mdk-worktrees/3-otp`, ветку `discipline/3/otp` и
+`courses/3/otp/course.json`. Заполните план, пишите занятия по одному, коммитьте в
+ветке и влейте её в `main`, когда дисциплина готова к публикации.
+
+Отдельно только worktree:
+
+```powershell
+python tools/worktree.py add 3 otp
+python tools/worktree.py list
+python tools/worktree.py remove 3 otp
 ```
 
 ## Локальная сборка
@@ -40,36 +69,37 @@ python tools/build_site.py
 Проверка страниц в headless-браузере (нужен `playwright install chromium`):
 
 ```powershell
-python tools/ks/scripts/check_pages.py courses/uifis/dist
-python tools/ks/scripts/check_pages.py courses/uifis/dist --mobile
-python tools/ks/scripts/check_pages.py courses/uifis/dist --dark
+python tools/ks/scripts/check_pages.py courses/4/uifis/dist
+python tools/ks/scripts/check_pages.py courses/4/uifis/dist --mobile
+python tools/ks/scripts/check_pages.py courses/4/uifis/dist --dark
 ```
 
 Отдельная страница занятия собирается так:
 
 ```powershell
-python tools/ks/scripts/build_chapter.py courses/uifis/chapters/01-lek-01/chapter.md
+python tools/ks/scripts/build_chapter.py courses/4/uifis/chapters/01-lek-01/chapter.md
 ```
+
+## Скиллы
+
+Три скилла установлены глобально (`~/.config/opencode/skills/`): `course-studio`,
+`anatomy`, `visualise`. В репозитории они объединены в один скилл
+`.opencode/skills/course-studio/`, который агент находит автоматически и читает по
+`AGENTS.md`. Он описывает план дисциплин, написание занятий, построение фигур Anatomy,
+лёгкие схемы Visualise, структуру сайта и работу с worktree.
+
+Старые диаграммы Excalidraw из `_reference/miapo/` были нужны только чтобы получить
+скриншоты для лекций. В публикуемых занятиях их заменяют фигуры Anatomy или SVG
+(Visualise), при необходимости с 3D-режимом Anatomy.
 
 ## Публикация на GitHub Pages
 
-1. Создайте репозиторий и запушьте ветку `main`:
-
-   ```powershell
-   git init
-   git add .
-   git commit -m "Курс УФИС: план, лекция 1 и практика 1"
-   git branch -M main
-   git remote add origin https://github.com/d1m40fficial/<repo>.git
-   git push -u origin main
-   ```
-
-2. В настройках репозитория: **Settings → Pages → Source: GitHub Actions**.
-   Workflow `.github/workflows/pages.yml` соберёт сайт и опубликует `docs/`.
-
-3. Итоговый адрес: `https://d1m40fficial.github.io/<repo>/`.
+1. В ветке `main` включите **Settings → Pages → Source: GitHub Actions**.
+2. Workflow `.github/workflows/pages.yml` сам вызовет `python tools/build_site.py` и
+   опубликует `docs/`.
+3. Итоговый адрес: `https://d1m40fficial.github.io/MDK.06.03/`.
 
 ## Правило оформления
 
 В текстах занятий не используются длинное тире и одиночный дефис как тире. Проверка
-страниц (`check_pages.py`) сообщает о таких случаях.
+страниц (`check_pages.py`) и сборка главы сообщают о таких случаях.

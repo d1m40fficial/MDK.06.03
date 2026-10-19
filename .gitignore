@@ -2,10 +2,14 @@
 __pycache__/
 *.pyc
 shots/
-courses/*/dist/shots*/
-courses/*/chapters/*/figures/*/shots/
+courses/*/*/dist/shots*/
+courses/*/*/chapters/*/figures/*/shots/
 courses/_anatomy/examples/
 *.log
+
+# local-only reference notes (old personal materials, never published)
+_reference/
+courses/miapo/
 
 # editors / OS
 .vscode/
