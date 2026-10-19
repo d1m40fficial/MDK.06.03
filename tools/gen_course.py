@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Build courses/uifis/course.json: the 42-lesson syllabus of MДК.06.03."""
+"""Build courses/4/uifis/course.json: the 42-lesson syllabus of MДК.06.03."""
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "courses" / "uifis" / "course.json"
+OUT = ROOT / "courses" / "4" / "uifis" / "course.json"
 
 # (kind, n, title, summary, topics, outcomes, minutes, fig_id, fig_concept, fig_object)
 L = [

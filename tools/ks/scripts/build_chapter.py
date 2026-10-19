@@ -114,7 +114,7 @@ def figure_html(fid: str, caption: str, n: int, base: Path, figures: list) -> st
     # gzip+base64: small, and keeps the figure's markup and scripts away from the chapter's parser.
     # Anatomy's two theme pages usually differ only in data-theme, so one copy serves both.
     d_txt, l_txt = dark.read_text(encoding="utf-8"), light.read_text(encoding="utf-8")
-    pack = lambda t: base64.b64encode(gzip.compress(t.encode(), 9)).decode()
+    pack = lambda t: base64.b64encode(gzip.compress(t.encode(), 9, mtime=0)).decode()
     if l_txt.replace('data-theme="light"', 'data-theme="dark"') == d_txt:
         attrs = f'data-one="{pack(d_txt)}"'
     else:

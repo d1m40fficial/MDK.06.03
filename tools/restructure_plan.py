@@ -3,14 +3,15 @@
 Result: 21 lectures + 14 practical works (7 single-lesson, 7 two-lesson).
 A 180-minute practical occupies two lesson slots, so the плане shows two numbers.
 
-Run from the project root:  python tools/restructure_plan.py
+Run: python tools/restructure_plan.py
 """
 
 import json
 import re
 from pathlib import Path
 
-P = Path("courses/uifis/course.json")
+ROOT = Path(__file__).resolve().parent.parent
+P = ROOT / "courses" / "4" / "uifis" / "course.json"
 
 # (kind, index, title) in teaching order. Doubles are marked below.
 PLAN = [
