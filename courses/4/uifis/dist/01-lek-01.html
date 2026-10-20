@@ -47,6 +47,18 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
 .crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
 
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
 .hero {
   position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
   border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
@@ -192,6 +204,23 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .files a:hover { border-color: var(--accent); color: var(--accent); }
 .files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
 .files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
 
 pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -446,7 +475,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информация, данные и информационная система</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информация, данные и информационная система</span></nav><div class="lesson-tools"><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Информация, данные и информационная система</h1><p class="dek">Информационная система превращает входные данные в информацию, нужную пользователю, по замкнутому циклу.</p>
 <div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Давать определение информационной системы и отличать её от отдельной программы или базы данных</li><li>Показывать на примере цикл обработки информации в ИС и называть все шесть его процессов</li><li>Различать данные и информацию и объяснять, что делает средняя часть цикла</li><li>Объяснять роль человека в контуре ИС и различать автоматические, автоматизированные и ручные системы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#что-такое-информация">Что такое информация</a></li><li><a href="#как-это-выглядит-в-движении">Как это выглядит в движении</a></li><li><a href="#данные-и-информация-чем-они-различаются">Данные и информация: чем они различаются</a></li><li><a href="#преобразование-данных-в-информацию">Преобразование данных в информацию</a></li><li><a href="#цикл-из-шести-процессов">Цикл из шести процессов</a></li><li><a href="#каждый-процесс-крупным-планом">Каждый процесс крупным планом</a></li><li><a href="#разбор-цикла-на-сквозном-примере">Разбор цикла на сквозном примере</a></li><li><a href="#какие-задачи-решает-ис">Какие задачи решает ИС</a></li><li><a href="#как-устроена-ис-внутри">Как устроена ИС внутри</a></li><li><a href="#человек-в-контуре-ис">Человек в контуре ИС</a></li><li><a href="#роли-людей-в-ис">Роли людей в ИС</a></li><li><a href="#как-данные-живут-в-ис-жизненный-путь-записи">Как данные живут в ИС: жизненный путь записи</a></li><li><a href="#свойства-информационной-системы">Свойства информационной системы</a></li><li><a href="#классификация-первые-признаки">Классификация: первые признаки</a></li><li><a href="#ис-и-процессы-организации">ИС и процессы организации</a></li><li><a href="#откуда-взялись-информационные-системы">Откуда взялись информационные системы</a></li><li><a href="#определение-как-формулирует-закон-и-стандарты">Определение: как формулирует закон и стандарты</a></li><li><a href="#границы-ис-что-входит-а-что-нет">Границы ИС: что входит, а что нет</a></li><li><a href="#типичные-ошибки-в-представлении-об-ис">Типичные ошибки в представлении об ИС</a></li><li><a href="#мини-практикум">Мини-практикум</a></li><li><a href="#вопросы-для-размышления">Вопросы для размышления</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>Информационная система это не «программа» и не «база данных». Это <strong>замкнутый цикл</strong>: на входе сырые данные, в середине их обработка и хранение, на выходе информация, за которой стоит человек, принимающий решение. Уберите любую часть цикла, и система перестанет работать как система: данные без обработки бесполезны, информация без хранилища исчезает, а решение без обратной связи не улучшает процесс.</p>
@@ -762,6 +791,28 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </ul></div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-prakt-01.html"><span>Следующее занятие →</span>Практика 1. Классификация информационных систем по признакам</a></nav></main>
 <script>
 (function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
     return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
@@ -786,7 +837,6 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
-
 (function(){
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
     var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));

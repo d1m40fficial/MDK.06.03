@@ -153,8 +153,38 @@ FIG_SCRIPT = r"""
 """
 
 
-QUIZ_SCRIPT = r"""
+READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
+                      'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
+LESSON_TOOLS_HTML = ('<div class="lesson-tools"><button type="button" class="pdf-btn" data-pdf '
+                     'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div>')
+
+READ_SCRIPT = r"""
 (function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+"""
+
+PDF_SCRIPT = r"""
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+"""
+
+QUIZ_SCRIPT = r"""(function(){
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
     var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
     function clear(){ qs.forEach(function(q){ q.classList.remove('ok','bad');
@@ -409,8 +439,11 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = (fig_script if any(f["status"] == "built" for f in figures) else "") + (QUIZ_SCRIPT if has_quiz else "")
-    body_html = f'<main class="page">{crumbs}{hero}{outcomes}{toc_html}<article class="prose">{html_body}</article>{pager}</main>'
+    script = (READ_SCRIPT + PDF_SCRIPT
+              + (fig_script if any(f["status"] == "built" for f in figures) else "")
+              + (QUIZ_SCRIPT if has_quiz else ""))
+    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{LESSON_TOOLS_HTML}{hero}{outcomes}{toc_html}'
+                 f'<article class="prose">{html_body}</article>{pager}</main>')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")
     if bad:

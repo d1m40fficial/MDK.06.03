@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _pages import accent_vars, esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
+from availability import is_open, load_availability, summary  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 
@@ -43,34 +44,48 @@ def build_course(root: Path) -> Path:
     c = load_course(root / "course.json")
     dist = root / "dist"
     dist.mkdir(exist_ok=True)
+    availability = load_availability(root)
     items, written = [], 0
     slot = 1
     for ch in c.get("chapters", []):
         pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
         lesson = f"{slot}" if pairs == 1 else f"{slot}<br>-<br>{slot + pairs - 1}"
         slot += pairs
-        d = root / "chapters" / chapter_dir(ch)
+        dirname = chapter_dir(ch)
+        d = root / "chapters" / dirname
         md = d / "chapter.md"
+        open_ = is_open(c, dirname, availability)
+        locked = md.exists() and not open_
         link = None
-        if md.exists():
+        if md.exists() and open_:
             r = subprocess.run([sys.executable, str(HERE / "build_chapter.py"), str(md)], capture_output=True, text=True)
             print(r.stdout.strip() or r.stderr.strip())
             if r.returncode == 0:
-                link = f"{chapter_dir(ch)}.html"
+                link = f"{dirname}.html"
                 written += 1
+        elif locked:
+            stale = dist / f"{dirname}.html"
+            if stale.exists():
+                stale.unlink()
         figs = ch.get("figures", [])
         tags = [f'<span class="fig">Fig · {esc(f.get("object") or f.get("concept") or f.get("id"))}</span>' for f in figs]
         tags += [f"<span>{esc(t)}</span>" for t in ch.get("topics", [])[:6]]
         ST = {"planned": "план", "drafted": "черновик", "figures-pending": "фигуры готовятся", "published": "готово"}
-        status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
+        if locked:
+            status = " · закрыто"
+        else:
+            status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
         title = f'<a href="{link}">{esc(ch["title"])}</a>' if link else esc(ch["title"])
-        items.append(f'<li><div class="n">{lesson}</div><h3>{title}</h3>'
+        cls = ' class="locked"' if locked else ""
+        items.append(f'<li{cls}><div class="n">{lesson}</div><h3>{title}</h3>'
                      f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
                      f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div></li>')
 
     n_ch = len(c.get("chapters", []))
     slots = lesson_slots(c.get("chapters", []))
-    meta = " · ".join(x for x in [spec_line(c, slots * 2), f"{slots} {plural_lessons(slots)}" if slots else None] if x)
+    meta = " · ".join(x for x in [spec_line(c, slots * 2),
+                                  f"{slots} {plural_lessons(slots)}" if slots else None,
+                                  summary(c, availability)] if x)
     outcomes = ""
     if c.get("outcomes"):
         outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(

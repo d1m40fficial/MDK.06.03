@@ -47,6 +47,18 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
 .crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
 
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
 .hero {
   position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
   border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
@@ -192,6 +204,23 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .files a:hover { border-color: var(--accent); color: var(--accent); }
 .files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
 .files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
 
 pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -446,7 +475,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информационные процессы и потоки данных</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 5</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информационные процессы и потоки данных</span></nav><div class="lesson-tools"><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 5</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Информационные процессы и потоки данных</h1><p class="dek">Данные в ИС движутся: сбор, регистрация, передача, преобразование, хранение и выдача. Поток данных и поток управления описывают это движение.</p>
 <div class="glyph" aria-hidden="true">Л3</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Описывать движение данных в ИС как последовательность информационных процессов</li><li>Различать поток данных и поток управления</li><li>Читать и строить простую диаграмму потоков данных</li><li>Называть элементы диаграммы потоков данных и их обозначения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#что-такое-информационный-процесс">Что такое информационный процесс</a></li><li><a href="#как-это-выглядит-в-движении">Как это выглядит в движении</a></li><li><a href="#поток-данных">Поток данных</a></li><li><a href="#поток-управления">Поток управления</a></li><li><a href="#чем-поток-данных-отличается-от-потока-управления">Чем поток данных отличается от потока управления</a></li><li><a href="#диаграмма-потоков-данных">Диаграмма потоков данных</a></li><li><a href="#пример-dfd-для-записи-к-врачу">Пример: DFD для записи к врачу</a></li><li><a href="#как-читать-и-строить-dfd">Как читать и строить DFD</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#мини-практикум">Мини-практикум</a></li><li><a href="#вопросы-для-размышления">Вопросы для размышления</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>Информационная система не стоит на месте: данные в ней постоянно движутся. Факт собирают, регистрируют, передают, преобразуют, хранят и выдают. Это движение и называют <strong>информационным процессом</strong>. Чтобы описать его точно, используют два разных понятия. <strong>Поток данных</strong> это движение самих данных: что, откуда и куда передаётся. <strong>Поток управления</strong> это сигнал, который говорит процессу, как себя вести: включить обработку, изменить правило, остановить передачу.</p>
@@ -647,6 +676,28 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </ul></div></article><nav class="pager"><a class="" href="04-prakt-02.html"><span>← Предыдущее занятие</span>Практика 2. Построение схемы состава информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="06-prakt-03.html"><span>Следующее занятие →</span>Практика 3. Моделирование информационных потоков</a></nav></main>
 <script>
 (function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
     return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
@@ -671,7 +722,6 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
-
 (function(){
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
     var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
