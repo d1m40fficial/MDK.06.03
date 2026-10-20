@@ -175,6 +175,38 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
 .quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
 .quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .lesson-top, .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -446,9 +478,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<main class="page"><nav class="crumbs"><a href="index.html">Моделирование и анализ программного обеспечения</a><span>/</span><span>Моделирование ПО: зачем строить модель до кода</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Моделирование и анализ программного обеспечения</span></div><div class="meta">СПО</div>
+<main class="page"><div class="lesson-top"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button></div><nav class="crumbs"><a href="index.html">Моделирование и анализ программного обеспечения</a><span>/</span><span>Моделирование ПО: зачем строить модель до кода</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Моделирование и анализ программного обеспечения</span></div><div class="meta">СПО</div>
 <h1>Моделирование ПО: зачем строить модель до кода</h1><p class="dek">Модель отвечает на конкретный вопрос о системе, а не повторяет её целиком. Чем раньше найден разрыв в понимании, тем дешевле исправление.</p>
-<div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Объяснять, что такое модель и чем она отличается от системы</li><li>Выбирать вид модели под вопрос, на который нужно ответить</li><li>Показывать, где модели появляются в жизненном цикле ПО</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#две-команды-и-один-чертёж">Две команды и один чертёж</a></li><li><a href="#модель-это-ответ-на-вопрос">Модель это ответ на вопрос</a></li><li><a href="#три-проекции-одной-системы">Три проекции одной системы</a></li><li><a href="#почему-модель-работает">Почему модель работает</a></li><li><a href="#где-модели-живут-в-жизненном-цикле">Где модели живут в жизненном цикле</a></li><li><a href="#когда-модель-вредит">Когда модель вредит</a></li><li><a href="#варианты-моделей">Варианты моделей</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li></ol></nav><article class="prose"><h2 id="две-команды-и-один-чертёж"><span class="num">01</span>Две команды и один чертёж</h2>
+<div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Объяснять, что такое модель и чем она отличается от системы</li><li>Выбирать вид модели под вопрос, на который нужно ответить</li><li>Показывать, где модели появляются в жизненном цикле ПО</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#две-команды-и-один-чертёж">Две команды и один чертёж</a></li><li><a href="#модель-это-ответ-на-вопрос">Модель это ответ на вопрос</a></li><li><a href="#три-проекции-одной-системы">Три проекции одной системы</a></li><li><a href="#почему-модель-работает">Почему модель работает</a></li><li><a href="#где-модели-живут-в-жизненном-цикле">Где модели живут в жизненном цикле</a></li><li><a href="#когда-модель-вредит">Когда модель вредит</a></li><li><a href="#варианты-моделей">Варианты моделей</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#проверка-знаний">Проверка знаний</a></li></ol></nav><article class="prose"><h2 id="две-команды-и-один-чертёж"><span class="num">01</span>Две команды и один чертёж</h2>
 <p>Две команды делают сервис записи на консультации. Первая обсуждает, где считать свободные слоты: на сервере или в приложении. Вторая спорит, кто подтверждает запись: преподаватель или администратор. Обе команды уверены, что говорят об одном и том же. Через месяц выясняется, что первая строила календарь, а вторая журнал заявок. Пользователь видит две несовместимые картины, хотя каждая команда написала свой код правильно.</p>
 <p>Проблема не в коде. Проблема в том, что до кода никто не зафиксировал, <strong>что именно</strong> считается системой, <strong>кто</strong> с ней взаимодействует и <strong>какой вопрос</strong> должна решить каждая схема. Модель закрывает этот разрыв: она делает понимание видимым и проверяемым, пока переделка стоит часы, а не недели.</p>
 <h2 id="модель-это-ответ-на-вопрос"><span class="num">02</span>Модель это ответ на вопрос</h2>
@@ -573,7 +605,113 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Чем раньше найден разрыв в понимании, тем дешевле исправление.</li>
 <li>Слишком подробная, устаревшая или бесцельная модель вредит сильнее, чем её отсутствие.</li>
 <li>Форма и детализация модели зависят от аудитории, срока жизни решения и цены ошибки.</li>
-</ul></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-prakt-01.html"><span>Следующее занятие →</span>Практика 1. Требования и границы системы</a></nav></main>
+</ul>
+<h2 id="проверка-знаний"><span class="num">10</span>Проверка знаний</h2>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="mc" data-answer="0"><p class="quiz-p">Что означает слово «упрощённое» в определении модели?</p><div class="opts"><label class="opt"><input type="radio" name="q207_0" value="0" data-ok><span>Модель сохраняет важное для вопроса и отбрасывает остальное</span></label><label class="opt"><input type="radio" name="q207_0" value="1"><span>Модель повторяет все детали системы</span></label><label class="opt"><input type="radio" name="q207_0" value="2"><span>Модель всегда меньше системы по размеру</span></label></div><p class="quiz-why" hidden>Упрощение это выбор существенного, а не уменьшение количества элементов.</p></div><div class="quiz-q" data-type="mc" data-answer="0"><p class="quiz-p">Какой вопрос задаёт диаграмма классов?</p><div class="opts"><label class="opt"><input type="radio" name="q207_1" value="0" data-ok><span>Из чего состоит система и как связаны её сущности</span></label><label class="opt"><input type="radio" name="q207_1" value="1"><span>Что происходит во времени</span></label><label class="opt"><input type="radio" name="q207_1" value="2"><span>Какие данные хранятся в таблицах</span></label></div><p class="quiz-why" hidden>Классы отвечают на структурный вопрос, а не на вопрос о поведении или хранении.</p></div><div class="quiz-q" data-type="mc" data-answer="0"><p class="quiz-p">Когда модель начинает вредить?</p><div class="opts"><label class="opt"><input type="radio" name="q207_2" value="0" data-ok><span>Когда она устарела или не отвечает на вопрос команды</span></label><label class="opt"><input type="radio" name="q207_2" value="1"><span>Когда она нарисована в UML</span></label><label class="opt"><input type="radio" name="q207_2" value="2"><span>Когда её проверяют на сценариях</span></label><label class="opt"><input type="radio" name="q207_2" value="3"><span>Когда она упрощает систему</span></label></div><p class="quiz-why" hidden>Польза модели зависит от вопроса и актуальности, а не от нотации.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется процесс создания, проверки и уточнения моделей?</p><input type="text" class="short-answer" data-answers="[&quot;моделирование&quot;, &quot;процесс моделирования&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется процесс создания, проверки и уточнения моделей?"><p class="quiz-why" hidden>Модель это результат, а моделирование это процесс.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Напишите слово, которым называют упрощённое представление системы.</p><input type="text" class="short-answer" data-answers="[&quot;модель&quot;, &quot;модель системы&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Напишите слово, которым называют упрощённое представление системы."><p class="quiz-why" hidden>Модель сохраняет свойства, важные для конкретного вопроса.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какое слово пропущено: «Чем раньше найдена ошибка, тем она ___»?</p><input type="text" class="short-answer" data-answers="[&quot;дешевле&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какое слово пропущено: «Чем раньше найдена ошибка, тем она ___»?"><p class="quiz-why" hidden>Ранняя ошибка исправляется на модели, поздняя требует переделки кода и решений.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-prakt-01.html"><span>Следующее занятие →</span>Практика 1. Требования и границы системы</a></nav></main>
+<div class="modal" data-modal="submit" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="submit-title">Результат теста</h2>
+    <label class="modal-name" data-student-label><span>ФИО студента</span>
+      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
+    </label>
+    <p class="modal-student" data-student-view hidden></p>
+    <p class="modal-result" data-modal-result></p>
+    <dl class="modal-times">
+      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
+      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
+    </dl>
+    <button type="button" class="modal-ok" data-modal-close>Готово</button>
+  </div>
+</div>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
 
+<script>
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
+  var studentName = '';
+  var submitModal = document.querySelector('[data-modal="submit"]');
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function evaluate(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
+    qs.forEach(function(q){
+      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
+      if(ok) right++;
+      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+    });
+    return {right: right, total: qs.length};
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    quiz._firstAt = null; quiz._lastAt = null;
+    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
+    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.querySelector('[data-check]').addEventListener('click', function(){
+      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    });
+    quiz.querySelector('[data-reset]').addEventListener('click', function(){
+      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
+      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
+      quiz._firstAt = null; quiz._lastAt = null;
+    });
+    quiz.querySelector('[data-submit]').addEventListener('click', function(){
+      var r = evaluate(quiz);
+      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
+      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
+      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
+      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
+      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      var nameInput = submitModal.querySelector('[data-student-name]');
+      var nameLabel = submitModal.querySelector('[data-student-label]');
+      var nameView = submitModal.querySelector('[data-student-view]');
+      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
+      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
+      openModal(submitModal);
+    });
+  });
+
+  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
+  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
+})();
+</script>
 </body>
 </html>

@@ -153,45 +153,136 @@ FIG_SCRIPT = r"""
 """
 
 
+WARN_BUTTON_HTML = ('<div class="lesson-top"><button type="button" class="warn-btn" data-warn '
+                    'aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button></div>')
+
+QUIZ_MODALS_HTML = r"""
+<div class="modal" data-modal="submit" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="submit-title">Результат теста</h2>
+    <label class="modal-name" data-student-label><span>ФИО студента</span>
+      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
+    </label>
+    <p class="modal-student" data-student-view hidden></p>
+    <p class="modal-result" data-modal-result></p>
+    <dl class="modal-times">
+      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
+      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
+    </dl>
+    <button type="button" class="modal-ok" data-modal-close>Готово</button>
+  </div>
+</div>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+"""
+
 QUIZ_SCRIPT = r"""
 (function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
+  var studentName = '';
+  var submitModal = document.querySelector('[data-modal="submit"]');
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function evaluate(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
+    qs.forEach(function(q){
+      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
+      if(ok) right++;
+      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+    });
+    return {right: right, total: qs.length};
+  }
+
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
-    function clear(){ qs.forEach(function(q){ q.classList.remove('ok','bad');
-      q.querySelectorAll('input').forEach(function(i){ i.checked=false; });
-      q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-      var w=q.querySelector('.quiz-why'); if(w) w.hidden=true; });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent=''; }
-    quiz.querySelector('[data-reset]').addEventListener('click', clear);
+    quiz._firstAt = null; quiz._lastAt = null;
+    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
+    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
     quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var right=0;
-      qs.forEach(function(q){
-        var chosen=q.querySelector('input:checked');
-        var ok=!!(chosen && chosen.hasAttribute('data-ok'));
-        q.classList.remove('ok','bad'); q.classList.add(ok?'ok':'bad');
-        if(ok) right++;
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('correct', o.querySelector('input').hasAttribute('data-ok')); });
-        var w=q.querySelector('.quiz-why'); if(w) w.hidden=ok;
-      });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent='Верно '+right+' из '+qs.length;
+      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    });
+    quiz.querySelector('[data-reset]').addEventListener('click', function(){
+      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
+      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
+      quiz._firstAt = null; quiz._lastAt = null;
+    });
+    quiz.querySelector('[data-submit]').addEventListener('click', function(){
+      var r = evaluate(quiz);
+      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
+      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
+      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
+      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
+      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      var nameInput = submitModal.querySelector('[data-student-name]');
+      var nameLabel = submitModal.querySelector('[data-student-label]');
+      var nameView = submitModal.querySelector('[data-student-view]');
+      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
+      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
+      openModal(submitModal);
     });
   });
+
+  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
+  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 """
 
 
 def render_quiz(block: list, n: int) -> tuple:
-    """Parse Q: / + / - lines into an interactive, self-scoring test."""
+    """Parse Q: / + / - / = lines into an interactive, self-scoring test.
+
+    A question with `+` and `-` lines is multiple choice. A question with `=`
+    lines is a short answer: every `=` line is an accepted wording.
+    """
     questions, cur = [], None
     for raw in block:
         t = raw.strip()
         if not t:
             continue
         if t.startswith("Q:"):
-            cur = {"q": t[2:].strip(), "opts": [], "answer": -1, "why": ""}
+            cur = {"q": t[2:].strip(), "opts": [], "answer": -1, "why": "", "short": []}
             questions.append(cur)
         elif t.startswith("!") and cur is not None:
             cur["why"] = t[1:].strip()
+        elif t.startswith("=") and cur is not None:
+            cur["short"].append(t[1:].strip())
         elif t.startswith("+") and cur is not None:
             cur["answer"] = len(cur["opts"])
             cur["opts"].append(t[1:].strip())
@@ -201,17 +292,29 @@ def render_quiz(block: list, n: int) -> tuple:
         return "", False
     items = []
     for qi, q in enumerate(questions):
-        opts = "".join(
-            f'<label class="opt"><input type="radio" name="q{n}_{qi}" value="{oi}"'
-            f'{" data-ok" if oi == q["answer"] else ""}><span>{md(opt)[3:-4]}</span></label>'
-            for oi, opt in enumerate(q["opts"]))
+        is_short = bool(q["short"])
+        if is_short and q["opts"]:
+            print(f"WARNING: quiz question {qi + 1} mixes options and short answers; using short answer")
         why = (f'<p class="quiz-why" hidden>{md(q["why"])[3:-4]}</p>' if q.get("why") else "")
-        items.append(f'<div class="quiz-q" data-answer="{q["answer"]}"><p class="quiz-p">{md(q["q"])[3:-4]}</p>'
-                     f'<div class="opts">{opts}</div>{why}</div>')
+        if is_short:
+            answers = esc(json.dumps(q["short"], ensure_ascii=False))
+            body = (f'<input type="text" class="short-answer" data-answers="{answers}" '
+                    f'placeholder="Введите ответ" autocomplete="off" spellcheck="false" '
+                    f'aria-label="{esc(q["q"])}">')
+            items.append(f'<div class="quiz-q" data-type="short"><p class="quiz-p">{md(q["q"])[3:-4]}</p>'
+                         f'{body}{why}</div>')
+        else:
+            opts = "".join(
+                f'<label class="opt"><input type="radio" name="q{n}_{qi}" value="{oi}"'
+                f'{" data-ok" if oi == q["answer"] else ""}><span>{md(opt)[3:-4]}</span></label>'
+                for oi, opt in enumerate(q["opts"]))
+            items.append(f'<div class="quiz-q" data-type="mc" data-answer="{q["answer"]}">'
+                         f'<p class="quiz-p">{md(q["q"])[3:-4]}</p><div class="opts">{opts}</div>{why}</div>')
     html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
                   f'{"".join(items)}<div class="quiz-foot"><button type="button" data-check>Проверить ответы</button>'
                   f'<button type="button" data-reset>Сбросить</button>'
-                  f'<span class="quiz-score" data-score></span></div></div>\n')
+                  f'<span class="quiz-score" data-score></span>'
+                  f'<button type="button" class="submit" data-submit>Сдать работу</button></div></div>\n')
     return html_block, True
 
 
@@ -239,7 +342,7 @@ def preprocess(body: str, base: Path, figures: list):
                     while j < len(lines) and not lines[j].strip():
                         j += 1
                     nxt = lines[j].strip() if j < len(lines) else ""
-                    if nxt.startswith(("Q:", "+", "-", "!")):
+                    if nxt.startswith(("Q:", "+", "-", "!", "=")):
                         block.append(""); i += 1; continue
                     break
                 block.append(lines[i]); i += 1
@@ -410,7 +513,10 @@ def main():
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
     script = (fig_script if any(f["status"] == "built" for f in figures) else "") + (QUIZ_SCRIPT if has_quiz else "")
-    body_html = f'<main class="page">{crumbs}{hero}{outcomes}{toc_html}<article class="prose">{html_body}</article>{pager}</main>'
+    top = WARN_BUTTON_HTML if has_quiz else ""
+    modals = QUIZ_MODALS_HTML if has_quiz else ""
+    body_html = (f'<main class="page">{top}{crumbs}{hero}{outcomes}{toc_html}'
+                 f'<article class="prose">{html_body}</article>{pager}</main>{modals}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")
     if bad:
