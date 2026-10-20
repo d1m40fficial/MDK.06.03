@@ -47,18 +47,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
 .crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
 
-/* ---------- lesson reading aids ---------- */
-.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
-.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
-.lesson-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
-.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
-.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
-.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.syllabus > li.locked { opacity: .6; }
-.syllabus > li.locked h3 { color: var(--ink-3); }
-.syllabus > li.locked .mins { color: var(--bad); }
-
-
 .hero {
   position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
   border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
@@ -187,6 +175,38 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
 .quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
 .quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .lesson-top, .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -204,23 +224,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .files a:hover { border-color: var(--accent); color: var(--accent); }
 .files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
 .files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
-
-/* ---------- print / PDF export ---------- */
-@page { margin: 16mm; }
-@media print {
-  body { background: #fff; color: #000; font-size: 11.5pt; }
-  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
-  .page { max-width: none; padding: 0; }
-  .hero { padding: 0; border: 0; background: none; }
-  .hero h1, .hero .dek { max-width: 100%; }
-  .prose p, .prose li { text-align: left; hyphens: none; }
-  a { color: #000; text-decoration: none; }
-  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
-  .recap { background: #fff; color: #000; }
-  .recap li, .recap p { color: #000; }
-  .figure { break-inside: avoid; }
-  .figure iframe { min-height: 0; }
-}
 
 pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -475,7 +478,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информационные процессы и потоки данных</span></nav><div class="lesson-tools"><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 5</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<main class="page"><div class="lesson-top"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button></div><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информационные процессы и потоки данных</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 5</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Информационные процессы и потоки данных</h1><p class="dek">Данные в ИС движутся: сбор, регистрация, передача, преобразование, хранение и выдача. Поток данных и поток управления описывают это движение.</p>
 <div class="glyph" aria-hidden="true">Л3</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Описывать движение данных в ИС как последовательность информационных процессов</li><li>Различать поток данных и поток управления</li><li>Читать и строить простую диаграмму потоков данных</li><li>Называть элементы диаграммы потоков данных и их обозначения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#что-такое-информационный-процесс">Что такое информационный процесс</a></li><li><a href="#как-это-выглядит-в-движении">Как это выглядит в движении</a></li><li><a href="#поток-данных">Поток данных</a></li><li><a href="#поток-управления">Поток управления</a></li><li><a href="#чем-поток-данных-отличается-от-потока-управления">Чем поток данных отличается от потока управления</a></li><li><a href="#диаграмма-потоков-данных">Диаграмма потоков данных</a></li><li><a href="#пример-dfd-для-записи-к-врачу">Пример: DFD для записи к врачу</a></li><li><a href="#как-читать-и-строить-dfd">Как читать и строить DFD</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#мини-практикум">Мини-практикум</a></li><li><a href="#вопросы-для-размышления">Вопросы для размышления</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>Информационная система не стоит на месте: данные в ней постоянно движутся. Факт собирают, регистрируют, передают, преобразуют, хранят и выдают. Это движение и называют <strong>информационным процессом</strong>. Чтобы описать его точно, используют два разных понятия. <strong>Поток данных</strong> это движение самих данных: что, откуда и куда передаётся. <strong>Поток управления</strong> это сигнал, который говорит процессу, как себя вести: включить обработку, изменить правило, остановить передачу.</p>
@@ -665,7 +668,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
 <p>Ответьте на вопросы и нажмите «Проверить ответы». Верный вариант подсветится зелёным, а под неверными появится объяснение, почему ответ неверный.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-answer="0"><p class="quiz-p">Что такое информационный процесс?</p><div class="opts"><label class="opt"><input type="radio" name="q289_0" value="0" data-ok><span>Последовательность действий над данными, превращающая их в нужный результат</span></label><label class="opt"><input type="radio" name="q289_0" value="1"><span>Любая программа, установленная на сервере</span></label><label class="opt"><input type="radio" name="q289_0" value="2"><span>Набор данных, хранящихся в базе</span></label><label class="opt"><input type="radio" name="q289_0" value="3"><span>Схема соединения компьютеров в сети</span></label></div><p class="quiz-why" hidden>Информационный процесс это действия над данными: сбор, регистрация, передача, обработка, хранение, выдача. Программа, база и сеть это средства или условия, а не сам процесс.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что несёт поток данных?</p><div class="opts"><label class="opt"><input type="radio" name="q289_1" value="0" data-ok><span>Сами данные от источника к приёмнику</span></label><label class="opt"><input type="radio" name="q289_1" value="1"><span>Команду изменить поведение процесса</span></label><label class="opt"><input type="radio" name="q289_1" value="2"><span>Настройки прав доступа</span></label><label class="opt"><input type="radio" name="q289_1" value="3"><span>Расписание работы сервера</span></label></div><p class="quiz-why" hidden>Поток данных несёт содержимое: заявку, талон, отчёт. Команда, меняющая поведение процесса, это поток управления.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что несёт поток управления?</p><div class="opts"><label class="opt"><input type="radio" name="q289_2" value="0" data-ok><span>Сигнал, который меняет поведение процесса</span></label><label class="opt"><input type="radio" name="q289_2" value="1"><span>Записи, которые сохраняются в базе</span></label><label class="opt"><input type="radio" name="q289_2" value="2"><span>Документы для внешней сущности</span></label><label class="opt"><input type="radio" name="q289_2" value="3"><span>Справочные данные о студентах</span></label></div><p class="quiz-why" hidden>Поток управления это команда или событие: начать обработку, сменить режим, поднять приоритет. Записи и документы это данные.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Чем поток данных отличается от потока управления?</p><div class="opts"><label class="opt"><input type="radio" name="q289_3" value="0" data-ok><span>Данные отвечают на вопрос «что», управление на вопрос «как»</span></label><label class="opt"><input type="radio" name="q289_3" value="1"><span>Данные всегда быстрее управления</span></label><label class="opt"><input type="radio" name="q289_3" value="2"><span>Управление всегда хранится в базе</span></label><label class="opt"><input type="radio" name="q289_3" value="3"><span>Данные существуют только внутри системы</span></label></div><p class="quiz-why" hidden>Данные отвечают на вопрос «что передаётся», а управление на вопрос «как вести процесс». Скорость и место хранения к этому различию отношения не имеют.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Как на диаграмме потоков данных изображают процесс?</p><div class="opts"><label class="opt"><input type="radio" name="q289_4" value="0" data-ok><span>Прямоугольником со скруглёнными углами</span></label><label class="opt"><input type="radio" name="q289_4" value="1"><span>Прямоугольником с острыми углами</span></label><label class="opt"><input type="radio" name="q289_4" value="2"><span>Двумя параллельными линиями</span></label><label class="opt"><input type="radio" name="q289_4" value="3"><span>Пунктирной стрелкой</span></label></div><p class="quiz-why" hidden>Процесс рисуют прямоугольником со скруглёнными углами. Острые углы это внешняя сущность, две линии накопитель, а стрелка это поток.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Как на диаграмме потоков данных изображают внешнюю сущность?</p><div class="opts"><label class="opt"><input type="radio" name="q289_5" value="0" data-ok><span>Прямоугольником с острыми углами</span></label><label class="opt"><input type="radio" name="q289_5" value="1"><span>Скруглённым прямоугольником</span></label><label class="opt"><input type="radio" name="q289_5" value="2"><span>Двумя параллельными линиями</span></label><label class="opt"><input type="radio" name="q289_5" value="3"><span>Кругом с номером</span></label></div><p class="quiz-why" hidden>Внешняя сущность это человек или система за границей ИС, её рисуют прямоугольником с острыми углами. Скруглённый прямоугольник это процесс, две линии накопитель.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что такое накопитель данных на DFD?</p><div class="opts"><label class="opt"><input type="radio" name="q289_6" value="0" data-ok><span>Хранилище данных внутри системы</span></label><label class="opt"><input type="radio" name="q289_6" value="1"><span>Источник данных за пределами системы</span></label><label class="opt"><input type="radio" name="q289_6" value="2"><span>Команда для процесса</span></label><label class="opt"><input type="radio" name="q289_6" value="3"><span>Пользователь, который делает запрос</span></label></div><p class="quiz-why" hidden>Накопитель это хранилище внутри системы: база данных, справочник, картотека. Источник за пределами системы это внешняя сущность, а команда это поток управления.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Почему передача данных считается отдельным процессом?</p><div class="opts"><label class="opt"><input type="radio" name="q289_7" value="0" data-ok><span>У неё есть канал со своими свойствами: скоростью, надёжностью, форматом</span></label><label class="opt"><input type="radio" name="q289_7" value="1"><span>Потому что данные всегда передаются без потерь</span></label><label class="opt"><input type="radio" name="q289_7" value="2"><span>Потому что передача не относится к циклу ИС</span></label><label class="opt"><input type="radio" name="q289_7" value="3"><span>Потому что канал не влияет на данные</span></label></div><p class="quiz-why" hidden>Данные перемещаются по каналу, и у канала есть скорость, надёжность и формат. Поэтому передачу выделяют отдельно: в ней данные могут потеряться или исказиться.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что служит источником потока данных на DFD?</p><div class="opts"><label class="opt"><input type="radio" name="q289_8" value="0" data-ok><span>Элемент, из которого данные выходят: внешняя сущность, процесс или накопитель</span></label><label class="opt"><input type="radio" name="q289_8" value="1"><span>Только пользователь системы</span></label><label class="opt"><input type="radio" name="q289_8" value="2"><span>Только база данных</span></label><label class="opt"><input type="radio" name="q289_8" value="3"><span>Только программа обработки</span></label></div><p class="quiz-why" hidden>Источником может быть внешняя сущность, процесс или накопитель, из которого данные выходят. Ограничивать источник только пользователем или только базой неверно.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Почему поток на DFD нельзя оставлять без подписи?</p><div class="opts"><label class="opt"><input type="radio" name="q289_9" value="0" data-ok><span>Без подписи непонятно, какие именно данные передаются</span></label><label class="opt"><input type="radio" name="q289_9" value="1"><span>Подпись нужна только для красоты схемы</span></label><label class="opt"><input type="radio" name="q289_9" value="2"><span>Без подписи поток нельзя нарисовать</span></label><label class="opt"><input type="radio" name="q289_9" value="3"><span>Подпись заменяет процесс</span></label></div><p class="quiz-why" hidden>Подпись показывает состав данных: «заявка», «талон», «расписание». Без неё стрелка не объясняет содержание потока, и схема теряет смысл.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Какая ошибка допущена, если на DFD у процесса нет ни одного входящего потока?</p><div class="opts"><label class="opt"><input type="radio" name="q289_10" value="0" data-ok><span>Потерян источник данных, и процесс не может работать</span></label><label class="opt"><input type="radio" name="q289_10" value="1"><span>Процесс станет работать быстрее</span></label><label class="opt"><input type="radio" name="q289_10" value="2"><span>Процесс автоматически станет накопителем</span></label><label class="opt"><input type="radio" name="q289_10" value="3"><span>Ошибки нет, так и должно быть</span></label></div><p class="quiz-why" hidden>Процесс преобразует входные данные, поэтому без входящего потока он не работает. Значит, на схеме потерян источник, который должен быть показан.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">На стенде тонкая синяя линия от панели к кранам изображает&hellip;</p><div class="opts"><label class="opt"><input type="radio" name="q289_11" value="0" data-ok><span>поток управления, который переключает краны</span></label><label class="opt"><input type="radio" name="q289_11" value="1"><span>поток данных, который течёт в приёмники</span></label><label class="opt"><input type="radio" name="q289_11" value="2"><span>накопитель данных</span></label><label class="opt"><input type="radio" name="q289_11" value="3"><span>внешнюю сущность</span></label></div><p class="quiz-why" hidden>Тонкая линия несёт сигнал, который открывает и закрывает краны, то есть это поток управления. Толстые трубы с данными это поток данных.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Почему накопитель данных нельзя рисовать источником без процесса?</p><div class="opts"><label class="opt"><input type="radio" name="q289_12" value="0" data-ok><span>Данные не появляются в хранилище сами, их записывает процесс</span></label><label class="opt"><input type="radio" name="q289_12" value="1"><span>Накопитель не может хранить данные</span></label><label class="opt"><input type="radio" name="q289_12" value="2"><span>Накопитель всегда больше процесса</span></label><label class="opt"><input type="radio" name="q289_12" value="3"><span>Процесс не может читать из накопителя</span></label></div><p class="quiz-why" hidden>В хранилище данные попадают только через процесс, который в него пишет. Если накопитель показан источником без такого процесса, схема теряет причину появления данных.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span></div></div>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое информационный процесс?</p><div class="opts"><label class="opt"><input type="radio" name="q289_0" value="0" data-ok><span>Последовательность действий над данными, превращающая их в нужный результат</span></label><label class="opt"><input type="radio" name="q289_0" value="1"><span>Любая программа, установленная на сервере</span></label><label class="opt"><input type="radio" name="q289_0" value="2"><span>Набор данных, хранящихся в базе</span></label><label class="opt"><input type="radio" name="q289_0" value="3"><span>Схема соединения компьютеров в сети</span></label></div><p class="quiz-why" hidden>Информационный процесс это действия над данными: сбор, регистрация, передача, обработка, хранение, выдача. Программа, база и сеть это средства или условия, а не сам процесс.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что несёт поток данных?</p><div class="opts"><label class="opt"><input type="radio" name="q289_1" value="0" data-ok><span>Сами данные от источника к приёмнику</span></label><label class="opt"><input type="radio" name="q289_1" value="1"><span>Команду изменить поведение процесса</span></label><label class="opt"><input type="radio" name="q289_1" value="2"><span>Настройки прав доступа</span></label><label class="opt"><input type="radio" name="q289_1" value="3"><span>Расписание работы сервера</span></label></div><p class="quiz-why" hidden>Поток данных несёт содержимое: заявку, талон, отчёт. Команда, меняющая поведение процесса, это поток управления.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что несёт поток управления?</p><div class="opts"><label class="opt"><input type="radio" name="q289_2" value="0" data-ok><span>Сигнал, который меняет поведение процесса</span></label><label class="opt"><input type="radio" name="q289_2" value="1"><span>Записи, которые сохраняются в базе</span></label><label class="opt"><input type="radio" name="q289_2" value="2"><span>Документы для внешней сущности</span></label><label class="opt"><input type="radio" name="q289_2" value="3"><span>Справочные данные о студентах</span></label></div><p class="quiz-why" hidden>Поток управления это команда или событие: начать обработку, сменить режим, поднять приоритет. Записи и документы это данные.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Чем поток данных отличается от потока управления?</p><div class="opts"><label class="opt"><input type="radio" name="q289_3" value="0" data-ok><span>Данные отвечают на вопрос «что», управление на вопрос «как»</span></label><label class="opt"><input type="radio" name="q289_3" value="1"><span>Данные всегда быстрее управления</span></label><label class="opt"><input type="radio" name="q289_3" value="2"><span>Управление всегда хранится в базе</span></label><label class="opt"><input type="radio" name="q289_3" value="3"><span>Данные существуют только внутри системы</span></label></div><p class="quiz-why" hidden>Данные отвечают на вопрос «что передаётся», а управление на вопрос «как вести процесс». Скорость и место хранения к этому различию отношения не имеют.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Как на диаграмме потоков данных изображают процесс?</p><div class="opts"><label class="opt"><input type="radio" name="q289_4" value="0" data-ok><span>Прямоугольником со скруглёнными углами</span></label><label class="opt"><input type="radio" name="q289_4" value="1"><span>Прямоугольником с острыми углами</span></label><label class="opt"><input type="radio" name="q289_4" value="2"><span>Двумя параллельными линиями</span></label><label class="opt"><input type="radio" name="q289_4" value="3"><span>Пунктирной стрелкой</span></label></div><p class="quiz-why" hidden>Процесс рисуют прямоугольником со скруглёнными углами. Острые углы это внешняя сущность, две линии накопитель, а стрелка это поток.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Как на диаграмме потоков данных изображают внешнюю сущность?</p><div class="opts"><label class="opt"><input type="radio" name="q289_5" value="0" data-ok><span>Прямоугольником с острыми углами</span></label><label class="opt"><input type="radio" name="q289_5" value="1"><span>Скруглённым прямоугольником</span></label><label class="opt"><input type="radio" name="q289_5" value="2"><span>Двумя параллельными линиями</span></label><label class="opt"><input type="radio" name="q289_5" value="3"><span>Кругом с номером</span></label></div><p class="quiz-why" hidden>Внешняя сущность это человек или система за границей ИС, её рисуют прямоугольником с острыми углами. Скруглённый прямоугольник это процесс, две линии накопитель.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое накопитель данных на DFD?</p><div class="opts"><label class="opt"><input type="radio" name="q289_6" value="0" data-ok><span>Хранилище данных внутри системы</span></label><label class="opt"><input type="radio" name="q289_6" value="1"><span>Источник данных за пределами системы</span></label><label class="opt"><input type="radio" name="q289_6" value="2"><span>Команда для процесса</span></label><label class="opt"><input type="radio" name="q289_6" value="3"><span>Пользователь, который делает запрос</span></label></div><p class="quiz-why" hidden>Накопитель это хранилище внутри системы: база данных, справочник, картотека. Источник за пределами системы это внешняя сущность, а команда это поток управления.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Почему передача данных считается отдельным процессом?</p><div class="opts"><label class="opt"><input type="radio" name="q289_7" value="0" data-ok><span>У неё есть канал со своими свойствами: скоростью, надёжностью, форматом</span></label><label class="opt"><input type="radio" name="q289_7" value="1"><span>Потому что данные всегда передаются без потерь</span></label><label class="opt"><input type="radio" name="q289_7" value="2"><span>Потому что передача не относится к циклу ИС</span></label><label class="opt"><input type="radio" name="q289_7" value="3"><span>Потому что канал не влияет на данные</span></label></div><p class="quiz-why" hidden>Данные перемещаются по каналу, и у канала есть скорость, надёжность и формат. Поэтому передачу выделяют отдельно: в ней данные могут потеряться или исказиться.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что служит источником потока данных на DFD?</p><div class="opts"><label class="opt"><input type="radio" name="q289_8" value="0" data-ok><span>Элемент, из которого данные выходят: внешняя сущность, процесс или накопитель</span></label><label class="opt"><input type="radio" name="q289_8" value="1"><span>Только пользователь системы</span></label><label class="opt"><input type="radio" name="q289_8" value="2"><span>Только база данных</span></label><label class="opt"><input type="radio" name="q289_8" value="3"><span>Только программа обработки</span></label></div><p class="quiz-why" hidden>Источником может быть внешняя сущность, процесс или накопитель, из которого данные выходят. Ограничивать источник только пользователем или только базой неверно.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Почему поток на DFD нельзя оставлять без подписи?</p><div class="opts"><label class="opt"><input type="radio" name="q289_9" value="0" data-ok><span>Без подписи непонятно, какие именно данные передаются</span></label><label class="opt"><input type="radio" name="q289_9" value="1"><span>Подпись нужна только для красоты схемы</span></label><label class="opt"><input type="radio" name="q289_9" value="2"><span>Без подписи поток нельзя нарисовать</span></label><label class="opt"><input type="radio" name="q289_9" value="3"><span>Подпись заменяет процесс</span></label></div><p class="quiz-why" hidden>Подпись показывает состав данных: «заявка», «талон», «расписание». Без неё стрелка не объясняет содержание потока, и схема теряет смысл.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какая ошибка допущена, если на DFD у процесса нет ни одного входящего потока?</p><div class="opts"><label class="opt"><input type="radio" name="q289_10" value="0" data-ok><span>Потерян источник данных, и процесс не может работать</span></label><label class="opt"><input type="radio" name="q289_10" value="1"><span>Процесс станет работать быстрее</span></label><label class="opt"><input type="radio" name="q289_10" value="2"><span>Процесс автоматически станет накопителем</span></label><label class="opt"><input type="radio" name="q289_10" value="3"><span>Ошибки нет, так и должно быть</span></label></div><p class="quiz-why" hidden>Процесс преобразует входные данные, поэтому без входящего потока он не работает. Значит, на схеме потерян источник, который должен быть показан.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">На стенде тонкая синяя линия от панели к кранам изображает&hellip;</p><div class="opts"><label class="opt"><input type="radio" name="q289_11" value="0" data-ok><span>поток управления, который переключает краны</span></label><label class="opt"><input type="radio" name="q289_11" value="1"><span>поток данных, который течёт в приёмники</span></label><label class="opt"><input type="radio" name="q289_11" value="2"><span>накопитель данных</span></label><label class="opt"><input type="radio" name="q289_11" value="3"><span>внешнюю сущность</span></label></div><p class="quiz-why" hidden>Тонкая линия несёт сигнал, который открывает и закрывает краны, то есть это поток управления. Толстые трубы с данными это поток данных.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Почему накопитель данных нельзя рисовать источником без процесса?</p><div class="opts"><label class="opt"><input type="radio" name="q289_12" value="0" data-ok><span>Данные не появляются в хранилище сами, их записывает процесс</span></label><label class="opt"><input type="radio" name="q289_12" value="1"><span>Накопитель не может хранить данные</span></label><label class="opt"><input type="radio" name="q289_12" value="2"><span>Накопитель всегда больше процесса</span></label><label class="opt"><input type="radio" name="q289_12" value="3"><span>Процесс не может читать из накопителя</span></label></div><p class="quiz-why" hidden>В хранилище данные попадают только через процесс, который в него пишет. Если накопитель показан источником без такого процесса, схема теряет причину появления данных.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div>
 
 <div class="recap"><span class="label">Итоги занятия</span><ul>
 <li>Информационный процесс это последовательность действий над данными: сбор, регистрация, передача, обработка, хранение, выдача.</li>
@@ -674,29 +677,32 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>DFD состоит из внешних сущностей, процессов, накопителей и подписанных потоков данных.</li>
 <li>Каждый поток имеет источник и приёмник, процесс имеет вход, а накопитель связан с процессом записи.</li>
 </ul></div></article><nav class="pager"><a class="" href="04-prakt-02.html"><span>← Предыдущее занятие</span>Практика 2. Построение схемы состава информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="06-prakt-03.html"><span>Следующее занятие →</span>Практика 3. Моделирование информационных потоков</a></nav></main>
+<div class="modal" data-modal="submit" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="submit-title">Результат теста</h2>
+    <label class="modal-name" data-student-label><span>ФИО студента</span>
+      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
+    </label>
+    <p class="modal-student" data-student-view hidden></p>
+    <p class="modal-result" data-modal-result></p>
+    <dl class="modal-times">
+      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
+      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
+    </dl>
+    <button type="button" class="modal-ok" data-modal-close>Готово</button>
+  </div>
+</div>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+
 <script>
-(function(){
-  var bar=document.querySelector('.read-progress'); if(!bar) return;
-  var fill=bar.querySelector('span'), ticking=false;
-  function update(){
-    var max=document.documentElement.scrollHeight-window.innerHeight;
-    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
-    fill.style.width=pct.toFixed(2)+'%';
-    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
-  }
-  function onScroll(){ if(ticking) return; ticking=true;
-    requestAnimationFrame(function(){update();ticking=false;}); }
-  addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',onScroll);
-  update();
-})();
-
-(function(){
-  document.querySelectorAll('[data-pdf]').forEach(function(button){
-    button.addEventListener('click',function(){ window.print(); });
-  });
-})();
-
 (function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
@@ -722,28 +728,90 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
+
 (function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
+  var studentName = '';
+  var submitModal = document.querySelector('[data-modal="submit"]');
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function evaluate(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
+    qs.forEach(function(q){
+      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
+      if(ok) right++;
+      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+    });
+    return {right: right, total: qs.length};
+  }
+
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
-    function clear(){ qs.forEach(function(q){ q.classList.remove('ok','bad');
-      q.querySelectorAll('input').forEach(function(i){ i.checked=false; });
-      q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-      var w=q.querySelector('.quiz-why'); if(w) w.hidden=true; });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent=''; }
-    quiz.querySelector('[data-reset]').addEventListener('click', clear);
+    quiz._firstAt = null; quiz._lastAt = null;
+    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
+    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
     quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var right=0;
-      qs.forEach(function(q){
-        var chosen=q.querySelector('input:checked');
-        var ok=!!(chosen && chosen.hasAttribute('data-ok'));
-        q.classList.remove('ok','bad'); q.classList.add(ok?'ok':'bad');
-        if(ok) right++;
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('correct', o.querySelector('input').hasAttribute('data-ok')); });
-        var w=q.querySelector('.quiz-why'); if(w) w.hidden=ok;
-      });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent='Верно '+right+' из '+qs.length;
+      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    });
+    quiz.querySelector('[data-reset]').addEventListener('click', function(){
+      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
+      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
+      quiz._firstAt = null; quiz._lastAt = null;
+    });
+    quiz.querySelector('[data-submit]').addEventListener('click', function(){
+      var r = evaluate(quiz);
+      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
+      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
+      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
+      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
+      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      var nameInput = submitModal.querySelector('[data-student-name]');
+      var nameLabel = submitModal.querySelector('[data-student-label]');
+      var nameView = submitModal.querySelector('[data-student-view]');
+      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
+      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
+      openModal(submitModal);
     });
   });
+
+  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
+  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>
