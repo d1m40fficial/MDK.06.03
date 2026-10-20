@@ -27,6 +27,7 @@ Outline before writing. For every section write one sentence: *what the learner 
 7. **Pitfalls**: specific bugs, each with the line, the input that breaks it and the symptom. Outside software: the common misconception, or how the thing fails and why.
 8. **Check yourself**: 3–4 transfer questions with answers.
 9. **Recap**: 3–5 bullets a learner could revise from.
+10. **Test**: end every lecture with a 15-question `::quiz`: 6 single-choice, 6 multiple-choice and 3 short-answer. Cover the whole lecture, not only the last section. Practices do not get a test.
 
 The figure's idle tour, readout and caption must show exactly the moments the text refers to. Write the paragraph around `::figure` first, then the brief from it.
 
@@ -101,7 +102,7 @@ Prose…
 - `::figure <id> | lead-in` must be on its own line. The figure folder is `figures/<id>/` next to `chapter.md`; if it isn't there, the builder looks in the other chapters of the course (so notes can reuse a chapter's figure). The lead-in is optional: the Anatomy card already has a title and caption.
 - A figure that isn't built yet renders as a dashed "pending" box showing the first line of its `brief.md`, so the chapter can be reviewed before figures exist.
 - Fenced code gets syntax highlighting (light and dark). Tables, footnote-free Markdown, and inline HTML work.
-- `::quiz` starts a test. `Q:` starts a question, `+` and `-` lines make it multiple choice, and one or more `=` lines make it a short answer (each `=` line is an accepted wording). Do not mix the two forms in one question. The footer has `Проверить ответы`, `Сбросить` and `Сдать работу`; the last one opens the result dialog with the student name, score, test time and lecture viewing time.
+- `::quiz` starts a test. `Q:` starts a question. One `+` with `-` lines makes a single-choice question; two or more `+` lines make a multiple-choice question with checkboxes; one or more `=` lines make a short answer (each `=` line is an accepted wording). Do not mix options and `=` in one question. Each lecture gets 15 questions: 6 single-choice, 6 multiple-choice and 3 short-answer, all based on that lecture. The builder warns when the count or the set of types is wrong. The footer has `Проверить ответы`, `Сбросить` and `Сдать работу`; the last one opens the result dialog with the student name, score, test time and lecture viewing time.
 - Add `{.nonum}` after a heading (`## Appendix {.nonum}`) to leave it unnumbered.
 - The same `chapter.md` is valid MDX/GFM input for a Next.js platform: callouts follow GitHub's `> [!NOTE]` syntax and `::figure` is a single directive line that a remark plugin can map to a `<Figure id>` component.
 

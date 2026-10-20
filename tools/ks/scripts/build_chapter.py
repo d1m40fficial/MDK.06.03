@@ -212,6 +212,12 @@ QUIZ_SCRIPT = r"""
       var value = norm(input.value); if(!value) return false;
       return answers.some(function(a){ return norm(a) === value; });
     }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
     var chosen = q.querySelector('input[type=radio]:checked');
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
@@ -237,7 +243,7 @@ QUIZ_SCRIPT = r"""
     });
     quiz.querySelector('[data-reset]').addEventListener('click', function(){
       quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
         q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
         var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
       var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
@@ -265,11 +271,12 @@ QUIZ_SCRIPT = r"""
 """
 
 
-def render_quiz(block: list, n: int) -> tuple:
+def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
     """Parse Q: / + / - / = lines into an interactive, self-scoring test.
 
-    A question with `+` and `-` lines is multiple choice. A question with `=`
-    lines is a short answer: every `=` line is an accepted wording.
+    A question with one `+` is single-choice, several `+` lines make it
+    multiple-choice, and `=` lines make a short answer. Every lecture should
+    have 15 questions covering all three types.
     """
     questions, cur = [], None
     for raw in block:
@@ -277,14 +284,14 @@ def render_quiz(block: list, n: int) -> tuple:
         if not t:
             continue
         if t.startswith("Q:"):
-            cur = {"q": t[2:].strip(), "opts": [], "answer": -1, "why": "", "short": []}
+            cur = {"q": t[2:].strip(), "opts": [], "correct": [], "why": "", "short": []}
             questions.append(cur)
         elif t.startswith("!") and cur is not None:
             cur["why"] = t[1:].strip()
         elif t.startswith("=") and cur is not None:
             cur["short"].append(t[1:].strip())
         elif t.startswith("+") and cur is not None:
-            cur["answer"] = len(cur["opts"])
+            cur["correct"].append(len(cur["opts"]))
             cur["opts"].append(t[1:].strip())
         elif t.startswith("-") and cur is not None:
             cur["opts"].append(t[1:].strip())
@@ -293,8 +300,11 @@ def render_quiz(block: list, n: int) -> tuple:
     items = []
     for qi, q in enumerate(questions):
         is_short = bool(q["short"])
+        is_multi = not is_short and len(q["correct"]) > 1
         if is_short and q["opts"]:
             print(f"WARNING: quiz question {qi + 1} mixes options and short answers; using short answer")
+        if not is_short and not q["correct"]:
+            print(f"WARNING: quiz question {qi + 1} has no correct option")
         why = (f'<p class="quiz-why" hidden>{md(q["why"])[3:-4]}</p>' if q.get("why") else "")
         if is_short:
             answers = esc(json.dumps(q["short"], ensure_ascii=False))
@@ -304,12 +314,27 @@ def render_quiz(block: list, n: int) -> tuple:
             items.append(f'<div class="quiz-q" data-type="short"><p class="quiz-p">{md(q["q"])[3:-4]}</p>'
                          f'{body}{why}</div>')
         else:
+            input_type = "checkbox" if is_multi else "radio"
             opts = "".join(
-                f'<label class="opt"><input type="radio" name="q{n}_{qi}" value="{oi}"'
-                f'{" data-ok" if oi == q["answer"] else ""}><span>{md(opt)[3:-4]}</span></label>'
+                f'<label class="opt"><input type="{input_type}" name="q{n}_{qi}" value="{oi}"'
+                f'{" data-ok" if oi in q["correct"] else ""}><span>{md(opt)[3:-4]}</span></label>'
                 for oi, opt in enumerate(q["opts"]))
-            items.append(f'<div class="quiz-q" data-type="mc" data-answer="{q["answer"]}">'
+            qtype = "multi" if is_multi else "single"
+            items.append(f'<div class="quiz-q" data-type="{qtype}" data-correct="{len(q["correct"])}">'
                          f'<p class="quiz-p">{md(q["q"])[3:-4]}</p><div class="opts">{opts}</div>{why}</div>')
+    if kind == "chapter":
+        counts = {"single": 0, "multi": 0, "short": 0}
+        for q in questions:
+            if q["short"]:
+                counts["short"] += 1
+            elif len(q["correct"]) > 1:
+                counts["multi"] += 1
+            else:
+                counts["single"] += 1
+        if len(questions) != 15:
+            print(f"WARNING: lecture quiz has {len(questions)} questions, expected 15")
+        if not all(counts.values()):
+            print("WARNING: lecture quiz must contain single-choice, multiple-choice and short-answer questions")
     html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
                   f'{"".join(items)}<div class="quiz-foot"><button type="button" data-check>Проверить ответы</button>'
                   f'<button type="button" data-reset>Сбросить</button>'
@@ -318,7 +343,7 @@ def render_quiz(block: list, n: int) -> tuple:
     return html_block, True
 
 
-def preprocess(body: str, base: Path, figures: list):
+def preprocess(body: str, base: Path, figures: list, page_kind: str = "chapter"):
     """Turn callouts and ::figure lines into HTML blocks before Markdown runs."""
     out, lines, i, n_fig = [], body.split("\n"), 0, 0
     has_quiz = False
@@ -346,7 +371,7 @@ def preprocess(body: str, base: Path, figures: list):
                         block.append(""); i += 1; continue
                     break
                 block.append(lines[i]); i += 1
-            qhtml, found = render_quiz(block, i)
+            qhtml, found = render_quiz(block, i, page_kind)
             has_quiz = has_quiz or found
             out.append("")
             out.append(qhtml)
@@ -362,21 +387,21 @@ def preprocess(body: str, base: Path, figures: list):
             continue
         cm = re.match(r"^>\s*\[!(\w+)\]\s*(.*)$", line)
         if cm:
-            kind, title = cm.group(1).upper(), cm.group(2).strip()
+            callout_kind, title = cm.group(1).upper(), cm.group(2).strip()
             block = []
             i += 1
             while i < len(lines) and lines[i].startswith(">"):
                 block.append(re.sub(r"^>\s?", "", lines[i]))
                 i += 1
             inner = md("\n".join(block))
-            if kind == "CHECK":
+            if callout_kind == "CHECK":
                 q = md(title)[3:-4] if title else "Проверьте себя"
                 out.append(f'\n<details class="check"><summary><span>{q}</span></summary><div>{inner}</div></details>\n')
-            elif kind == "RECAP":
+            elif callout_kind == "RECAP":
                 out.append(f'\n<div class="recap"><span class="label">{esc(title or "Итоги занятия")}</span>{inner}</div>\n')
             else:
-                label = title or CALLOUT_LABELS.get(kind, kind.title())
-                out.append(f'\n<div class="callout {kind.lower()}"><span class="label">{esc(label)}</span>{inner}</div>\n')
+                label = title or CALLOUT_LABELS.get(callout_kind, callout_kind.title())
+                out.append(f'\n<div class="callout {callout_kind.lower()}"><span class="label">{esc(label)}</span>{inner}</div>\n')
             continue
         out.append(line)
         i += 1
@@ -454,10 +479,10 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
 
     figures = []
-    pre, has_quiz = preprocess(body, base, figures)
+    kind = fm.get("kind", "chapter")  # chapter | notes | cheatsheet
+    pre, has_quiz = preprocess(body, base, figures, kind)
     html_body, toc = number_headings(md(pre))
 
-    kind = fm.get("kind", "chapter")  # chapter | notes | cheatsheet
     ch = fm.get("chapter")
     label = lesson_label(cj, base.name)
     pills = []
