@@ -21,6 +21,8 @@ OUT_DOCX2 = HERE / "UIFIS_practice-2_report-template.docx"
 OUT_CSV2 = HERE / "UIFIS_practice-2_composition-table.csv"
 OUT_DOCX3 = HERE / "UIFIS_practice-3_report-template.docx"
 OUT_CSV3 = HERE / "UIFIS_practice-3_flow-registry.csv"
+OUT_DOCX4 = HERE / "UIFIS_practice-4_report-template.docx"
+OUT_CSV4 = HERE / "UIFIS_practice-4_decision-matrix.csv"
 QUESTIONS = [
     "Почему признаки классификации должны быть независимыми?",
     "Может ли одна система быть пакетной и оперативной одновременно?",
@@ -48,6 +50,21 @@ QUESTIONS3 = [
     "Какие четыре элемента используются на диаграмме потоков данных?",
     "Почему у каждого процесса должен быть входной поток?",
     "Почему накопитель нельзя рисовать источником без процесса?",
+]
+QUESTIONS4 = [
+    "Чем архитектура отличается от платформы?",
+    "Почему в матрице выбора веса критериев должны давать единицу?",
+    "Когда клиент-серверная архитектура лучше трёхзвенной?",
+    "Почему схема размещения должна показывать границу доступа?",
+    "Почему RAID не заменяет резервное копирование?",
+]
+CRITERIA4 = [
+    ("Пользователи и нагрузка", "0,25"),
+    ("Время ответа", "0,15"),
+    ("Безопасность и доступ из дома", "0,20"),
+    ("Частота обновления логики", "0,15"),
+    ("Бюджет (5 значит дешевле)", "0,15"),
+    ("Сопровождение", "0,10"),
 ]
 
 
@@ -339,6 +356,180 @@ def make_csv3():
     print(f"wrote {OUT_CSV3}")
 
 
+def make_docx4():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)", bold=True, size=14,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе №4", bold=True, size=13, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Проектирование архитектуры информационной системы",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "________________________________________________________________________")
+    line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Краткие теоретические сведения", bold=True)
+    line(doc, "Опишите три слоя и три базовых варианта размещения:")
+    line(doc, "1. Представление: _______________________________________________________")
+    line(doc, "2. Логика: ______________________________________________________________")
+    line(doc, "3. Данные: ______________________________________________________________")
+    line(doc, "4. Файл-сервер: _________________________________________________________")
+    line(doc, "5. Клиент-сервер: _______________________________________________________")
+    line(doc, "6. Трёхзвенная: _________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Выбранная система и профиль нагрузки", bold=True)
+    line(doc, "Название: _______________________________________________________________")
+    line(doc, "Пользователи: ___________________________________________________________")
+    line(doc, "Одновременные сессии: __________________________________________________")
+    line(doc, "Данные и доступ: ________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Требования", bold=True)
+    cols = ["Тип", "Номер", "Требование", "Значение или проверка"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for kind, prefix, count in (("Функциональное", "ФТ", 4), ("Нефункциональное", "НФТ", 5)):
+        for n in range(1, count + 1):
+            cells = t.add_row().cells
+            cells[0].text = kind
+            cells[1].text = f"{prefix}-{n}"
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Варианты архитектуры", bold=True)
+    cols = ["Вариант", "Представление", "Логика", "Данные", "Что идёт по сети"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Файл-сервер", "Клиент-сервер", "Трёхзвенная"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Матрица выбора", bold=True)
+    line(doc, "Оценки от 1 до 5. Для бюджета 5 значит дешевле. Сумма весов равна 1,00.")
+    cols = ["Критерий", "Вес", "Файл-сервер", "Клиент-сервер", "Трёхзвенная"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for criterion, weight in CRITERIA4:
+        cells = t.add_row().cells
+        cells[0].text = criterion
+        cells[1].text = weight
+    cells = t.add_row().cells
+    cells[0].text = "Взвешенная оценка"
+    cells[1].text = "1,00"
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Решение", bold=True)
+    line(doc, "Выбранный вариант: ______________________________________________________")
+    line(doc, "________________________________________________________________________")
+    line(doc, "Какие требования он закрывает: __________________________________________")
+    line(doc, "________________________________________________________________________")
+    line(doc, "Чем придётся заплатить: _________________________________________________")
+    line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Схема размещения", bold=True)
+    line(doc, "Покажите узлы, слои на них, сетевые связи, подписи и границу доступа.")
+    slot(doc, "[ Место для схемы: нарисуйте от руки, в графическом редакторе или вставьте снимок ]")
+    doc.add_paragraph()
+
+    line(doc, "Таблица узлов", bold=True)
+    cols = ["Узел", "Роль", "Программное обеспечение", "Сеть", "Резерв"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for _ in range(5):
+        t.add_row()
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Риски решения", bold=True)
+    cols = ["Риск", "Вероятность", "Влияние", "Мера снижения"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for _ in range(4):
+        t.add_row()
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    slot(doc, "[ Место для скриншота 1: шапка отчёта и профиль системы ]")
+    doc.add_paragraph()
+    slot(doc, "[ Место для скриншота 2: заполненная матрица выбора ]")
+    doc.add_paragraph()
+    slot(doc, "[ Место для скриншота 3: схема размещения с подписями ]")
+    doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Какое требование было самым трудным? Почему выбранный вариант его закрывает? "
+              "Что изменилось бы при другом бюджете?")
+    for _ in range(6):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate(QUESTIONS4, 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX4)
+    print(f"wrote {OUT_DOCX4}")
+
+
+def make_csv4():
+    with OUT_CSV4.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["Критерий", "Вес", "Файл-сервер", "Клиент-сервер", "Трёхзвенная",
+                    "Комментарий"])
+        for criterion, weight in CRITERIA4:
+            w.writerow([criterion, weight, "", "", "", ""])
+        w.writerow(["Взвешенная оценка", "1,00", "", "", "", ""])
+    print(f"wrote {OUT_CSV4}")
+
+
 if __name__ == "__main__":
     make_docx()
     make_csv()
@@ -346,3 +537,5 @@ if __name__ == "__main__":
     make_csv2()
     make_docx3()
     make_csv3()
+    make_docx4()
+    make_csv4()
