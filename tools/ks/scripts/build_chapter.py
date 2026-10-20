@@ -155,7 +155,9 @@ FIG_SCRIPT = r"""
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-LESSON_TOOLS_HTML = ('<div class="lesson-tools"><button type="button" class="pdf-btn" data-pdf '
+LESSON_TOOLS_HTML = ('<div class="lesson-tools">'
+                     '<a class="nav-btn" href="#course-list" data-course-list>Все курсы</a>'
+                     '<button type="button" class="pdf-btn" data-pdf '
                      'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div>')
 
 READ_SCRIPT = r"""

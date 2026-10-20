@@ -97,6 +97,7 @@ def build_course(root: Path) -> Path:
     status_pill = '<span class="pill dark">Материалы доступны</span>' if c.get("status") == "available" else '<span class="pill">Готовится</span>'
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
     body = f"""<main class="page">
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
 <header class="hero"><div class="badges">{status_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
 <h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="glyph" aria-hidden="true">{esc(c['code'])}</div></header>
     {outcomes}{prereq}

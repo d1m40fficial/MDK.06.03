@@ -50,7 +50,11 @@ a { color: var(--accent); text-underline-offset: 3px; }
 /* ---------- lesson reading aids ---------- */
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
-.lesson-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -259,7 +263,8 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<header class="hero"><div class="badges"><span class="pill dark">Материалы доступны</span></div><div class="meta">СПО · 84 ч · 42 занятия · Открыто: лекции 3, практики 3</div>
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
+<header class="hero"><div class="badges"><span class="pill dark">Материалы доступны</span></div><div class="meta">СПО · 84 ч · 42 занятия · Открыто: лекции 5, практики 3</div>
 <h1>Устройство и функционирование информационной системы</h1><p class="dek">Как устроена ИС: от состава и архитектуры до эксплуатации, надёжности и защиты.</p><div class="glyph" aria-hidden="true">УФИС</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Объяснять состав, структуру и принципы функционирования информационной системы</li><li>Относить конкретную ИС к классам по признакам классификации и обосновывать выбор</li><li>Описывать архитектуру ИС и подбирать платформу под требования</li><li>Создавать и эксплуатировать базовые компоненты ИС: ОС, СУБД, сетевые службы, БД</li><li>Планировать жизненный цикл, внедрение и сопровождение ИС</li><li>Обеспечивать надёжность, резервное копирование и защиту данных ИС</li><li>Оформлять техническую документацию и отчёт о практической работе</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Базовый курс информатики и навыки работы с файлами и операционной системой</li><li>Первоначальное представление о базах данных и компьютерных сетях</li><li>Умение оформлять текстовые документы по требованиям нормоконтроля</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
