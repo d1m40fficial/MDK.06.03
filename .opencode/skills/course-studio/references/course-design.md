@@ -27,6 +27,8 @@ Search before writing when the course depends on facts you might misremember or 
 5. **Plan one signature figure per chapter**: the concept it makes obvious and a starting object from `object-atlas.md`. Keep one visual family per course.
 6. **Topics**: 3–8 tags per chapter (they show on the syllabus).
 7. Check the total against the hours on the card; adjust chapter count, not chapter depth.
+   If the user fixes the number of lessons (for example 32 lessons, 64 hours), keep that
+   number and balance lectures against practices only inside it.
 
 ## 3. course.json
 

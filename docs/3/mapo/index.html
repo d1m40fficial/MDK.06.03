@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#3A5BBF;--course-tint:#DDE3F4;--course-accent-dark:#7C9BFF;--course-tint-dark:#1B2340;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Моделирование и анализ программного обеспечения</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.course-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
+.quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q:first-of-type { border-top: 0; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
+.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .lesson-top, .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+
+</style>
+</head>
+<body>
+<main class="page">
+<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a></div>
+<header class="hero"><div class="badges"><span class="pill dark">Материалы доступны</span></div><div class="meta">СПО · 64 ч · 32 занятия · Открыто: лекции 1, практики 1</div>
+<h1>Моделирование и анализ программного обеспечения</h1><p class="dek">От требований и UML до архитектуры, метрик и защиты моделей.</p><div class="glyph" aria-hidden="true">МАПО</div></header>
+    <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Формулировать проверяемые требования и определять границы системы</li><li>Читать и строить основные диаграммы UML 2.5.1</li><li>Моделировать данные и согласовывать ER-модель с классами и схемой БД</li><li>Описывать процессы в IDEF0, DFD и BPMN 2.0 и выбирать нотацию под задачу</li><li>Проектировать архитектуру в C4 и фиксировать решения в ADR</li><li>Оценивать качество моделей и кода по метрикам и ISO/IEC 25010</li><li>Собирать согласованный комплект моделей и защищать его</li><li>Работать с PlantUML, Mermaid, draw.io и Git при создании моделей</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы алгоритмизации и программирования</li><li>Объектно-ориентированное программирование</li><li>Основы проектирования баз данных</li><li>Git и командная работа</li></ul></section>
+<article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
+<ol class="syllabus"><li><div class="n">1</div><h3><a href="01-lek-01.html">Лекция 1. Моделирование ПО: зачем строить модель до кода</a></h3><div class="mins">90 мин</div><p>Модель отвечает на конкретный вопрос о системе, а не повторяет её целиком. Ошибка на модели дешевле ошибки в коде.</p><div class="tags"><span class="fig">Fig · доска с тремя проекциями одной системы</span><span>модель</span><span>абстракция</span><span>жизненный цикл</span><span>стоимость ошибки</span><span>виды моделей</span></div></li><li><div class="n">2</div><h3><a href="02-prakt-01.html">Практика 1. Требования и границы системы</a></h3><div class="mins">90 мин</div><p>Из короткого описания задачи выделяются акторы, цели, ограничения и первые user stories с критериями приёмки.</p><div class="tags"><span class="fig">Fig · карточки акторов вокруг рамки системы</span><span>требования</span><span>user story</span><span>критерии приёмки</span><span>акторы</span><span>границы системы</span></div></li><li><div class="n">3</div><h3>Лекция 2. Требования, которые можно проверить</h3><div class="mins">90 мин · план</div><p>Хорошее требование однозначно, атомарно и проверяемо. Функциональные и нефункциональные требования задают разные части модели.</p><div class="tags"><span class="fig">Fig · дерево карточек требований</span><span>функциональные требования</span><span>нефункциональные требования</span><span>INVEST</span><span>трассируемость</span><span>ISO/IEC/IEEE 29148</span></div></li><li><div class="n">4</div><h3>Практика 2. Use case: сценарии и границы</h3><div class="mins">90 мин · план</div><p>Акторы и прецеденты превращаются в диаграмму и спецификацию сценария с предусловиями, шагами и исключениями.</p><div class="tags"><span class="fig">Fig · схема прецедентов на доске</span><span>use case</span><span>актор</span><span>include</span><span>extend</span><span>сценарий</span></div></li><li><div class="n">5</div><h3>Лекция 3. UML 2.5.1: язык, а не набор картинок</h3><div class="mins">90 мин · план</div><p>UML задаёт нотацию, семантику и метамодель. Диаграмму выбирают по вопросу, а не по привычке.</p><div class="tags"><span class="fig">Fig · навигационная карта диаграмм</span><span>UML 2.5.1</span><span>нотация</span><span>семантика</span><span>метамодель</span><span>виды диаграмм</span></div></li><li><div class="n">6</div><h3>Практика 3. Диаграмма классов: сущности и связи</h3><div class="mins">90 мин · план</div><p>Из требований выделяются классы, атрибуты и операции; связи получают кратность и направление.</p><div class="tags"><span class="fig">Fig · рамки классов и линии связей</span><span>класс</span><span>атрибут</span><span>операция</span><span>ассоциация</span><span>кратность</span></div></li><li><div class="n">7</div><h3>Лекция 4. Классы и ответственности</h3><div class="mins">90 мин · план</div><p>Модель классов проверяется связностью и зацеплением. GRASP и SOLID помогают распределить ответственности до кода.</p><div class="tags"><span class="fig">Fig · классы с карточками обязанностей</span><span>GRASP</span><span>SOLID</span><span>связность</span><span>зацепление</span><span>ответственность</span></div></li><li><div class="n">8</div><h3>Практика 4. Последовательности: сценарий во времени</h3><div class="mins">90 мин · план</div><p>Сценарий прецедента раскладывается на сообщения между объектами, включая alt, opt и loop.</p><div class="tags"><span class="fig">Fig · линии жизни и стрелки сообщений</span><span>sequence</span><span>lifeline</span><span>сообщение</span><span>alt</span><span>loop</span></div></li><li><div class="n">9</div><h3>Лекция 5. Состояния и деятельности</h3><div class="mins">90 мин · план</div><p>Диаграмма состояний описывает жизненный цикл объекта, диаграмма деятельности показывает поток работ и ветвления.</p><div class="tags"><span class="fig">Fig · два соседних пульта: состояния и процесс</span><span>state machine</span><span>activity</span><span>событие</span><span>дорожки</span><span>fork/join</span></div></li><li><div class="n">10</div><h3>Практика 5. Поведение заказа: состояния и процесс</h3><div class="mins">90 мин · план</div><p>Жизненный цикл заказа моделируется состояниями, а процесс обработки заявки диаграммой деятельности.</p><div class="tags"><span class="fig">Fig · лента статусов и маршрут заявки</span><span>заказ</span><span>состояние</span><span>переход</span><span>деятельность</span><span>дорожки</span></div></li><li><div class="n">11</div><h3>Лекция 6. Данные: ER-модель и реляционная схема</h3><div class="mins">90 мин · план</div><p>Сущности, атрибуты и связи превращаются в таблицы, ключи и ограничения. Нормализация убирает дублирование.</p><div class="tags"><span class="fig">Fig · ER-схема и таблицы рядом</span><span>ER</span><span>сущность</span><span>связь</span><span>ключ</span><span>нормализация</span></div></li><li><div class="n">12</div><h3>Практика 6. ER-модель и схема БД</h3><div class="mins">90 мин · план</div><p>ER-модель учебной системы доводится до реляционной схемы с первичными и внешними ключами.</p><div class="tags"><span class="fig">Fig · таблицы с ключами на доске</span><span>ER</span><span>таблица</span><span>первичный ключ</span><span>внешний ключ</span><span>3НФ</span></div></li><li><div class="n">13</div><h3>Лекция 7. Функциональные модели: IDEF0, DFD и BPMN</h3><div class="mins">90 мин · план</div><p>IDEF0 показывает функции и ресурсы, DFD потоки данных, BPMN события и участников. Нотацию выбирают по вопросу, а не по привычке.</p><div class="tags"><span class="fig">Fig · три экрана с одной системой</span><span>IDEF0</span><span>DFD</span><span>BPMN</span><span>декомпозиция</span><span>поток данных</span><span>дорожки</span></div></li><li><div class="n">14</div><h3>Практика 7. Функциональные модели: IDEF0, DFD и BPMN</h3><div class="mins">90 мин · план</div><p>Один бизнес-процесс описывается в IDEF0, DFD и BPMN, затем сравниваются границы, данные и ответственность участников.</p><div class="tags"><span class="fig">Fig · три схемы рядом</span><span>IDEF0</span><span>DFD</span><span>BPMN</span><span>контекстная диаграмма</span><span>дорожки</span><span>сравнение</span></div></li><li><div class="n">15</div><h3>Лекция 8. Архитектура: C4, API и ADR</h3><div class="mins">90 мин · план</div><p>C4 показывает систему на четырёх уровнях, OpenAPI фиксирует контракт, ADR сохраняет причину архитектурного решения.</p><div class="tags"><span class="fig">Fig · четыре уровня C4 и карточка ADR</span><span>C4</span><span>компонент</span><span>развёртывание</span><span>OpenAPI</span><span>ADR</span></div></li><li><div class="n">16</div><h3>Практика 8. C4 и диаграмма развёртывания</h3><div class="mins">90 мин · план</div><p>Архитектура учебной системы описывается в C4, затем компоненты размещаются на узлах.</p><div class="tags"><span class="fig">Fig · схема узлов и связей</span><span>C4</span><span>контейнер</span><span>узел</span><span>артефакт</span><span>связь</span></div></li><li><div class="n">17</div><h3>Практика 9. OpenAPI и sequence для API</h3><div class="mins">90 мин · план</div><p>Для учебного API пишется контракт и диаграмма последовательности с обработкой ошибок.</p><div class="tags"><span class="fig">Fig · две ветки обмена сообщениями</span><span>OpenAPI</span><span>endpoint</span><span>sequence</span><span>ошибка</span><span>контракт</span></div></li><li><div class="n">18</div><h3>Лекция 9. Паттерны в моделях</h3><div class="mins">90 мин · план</div><p>Паттерн это имя проверенного решения. Он меняет модель классов, но не заменяет анализ задачи.</p><div class="tags"><span class="fig">Fig · до и после рефакторинга модели</span><span>паттерны</span><span>Factory</span><span>Strategy</span><span>Observer</span><span>Adapter</span></div></li><li><div class="n">19</div><h3>Практика 10. Паттерн под задачу</h3><div class="mins">90 мин · план</div><p>Учебная модель классов перестраивается под выбранный паттерн с обоснованием решения.</p><div class="tags"><span class="fig">Fig · модель до и после</span><span>Strategy</span><span>Factory</span><span>Observer</span><span>рефакторинг</span><span>компромисс</span></div></li><li><div class="n">20</div><h3>Лекция 10. Качество ПО и метрики</h3><div class="mins">90 мин · план</div><p>ISO/IEC 25010 задаёт характеристики качества, а метрики связности, зацепления и сложности делают модель измеримой.</p><div class="tags"><span class="fig">Fig · панель характеристик и метрик</span><span>ISO/IEC 25010</span><span>метрики</span><span>связность</span><span>зацепление</span><span>сложность</span></div></li><li><div class="n">21</div><h3>Практика 11. Метрики модели и кода</h3><div class="mins">90 мин · план</div><p>Для учебной модели считаются метрики и формулируются выводы о рисках сопровождения.</p><div class="tags"><span class="fig">Fig · табло метрик</span><span>метрики</span><span>связность</span><span>зацепление</span><span>сложность</span><span>рекомендации</span></div></li><li><div class="n">22</div><h3>Лекция 11. Анализ кода и ревью</h3><div class="mins">90 мин · план</div><p>Статический анализ и code review ищут ошибки до запуска. Инструменты дополняют чтение, но не заменяют его.</p><div class="tags"><span class="fig">Fig · конвейер проверок кода</span><span>code review</span><span>статический анализ</span><span>линтер</span><span>SAST</span><span>зависимости</span></div></li><li><div class="n">23</div><h3>Практика 12. Code review и статический анализ</h3><div class="mins">90 мин · план</div><p>Учебный код проходит ревью и статический анализ, результаты оформляются как задачи.</p><div class="tags"><span class="fig">Fig · доска задач после ревью</span><span>code review</span><span>линтер</span><span>SAST</span><span>чек-лист</span><span>приоритет</span></div></li><li><div class="n">24</div><h3>Лекция 12. Тестирование по моделям</h3><div class="mins">90 мин · план</div><p>Из прецедентов, состояний и последовательностей выводятся тестовые сценарии, покрывающие ветви и границы.</p><div class="tags"><span class="fig">Fig · дерево сценариев и тестов</span><span>тест-дизайн</span><span>граничные значения</span><span>покрытие</span><span>сценарий</span><span>модель</span></div></li><li><div class="n">25</div><h3>Практика 13. Тесты по моделям</h3><div class="mins">90 мин · план</div><p>По модели состояний и последовательности составляется набор тестов с ожидаемыми результатами.</p><div class="tags"><span class="fig">Fig · матрица трассируемости</span><span>тест-кейс</span><span>поток</span><span>граница</span><span>трассируемость</span><span>матрица</span></div></li><li><div class="n">26</div><h3>Лекция 13. Генерация из моделей и MDD</h3><div class="mins">90 мин · план</div><p>Model-driven development превращает модель в код и схемы, но требует точных правил и ограничений.</p><div class="tags"><span class="fig">Fig · конвейер модель-код</span><span>MDD</span><span>PIM</span><span>PSM</span><span>PlantUML</span><span>Mermaid</span></div></li><li><div class="n">27</div><h3>Практика 14. Генерация артефактов из моделей</h3><div class="mins">90 мин · план</div><p>Модель описывается текстом в PlantUML или Mermaid и превращается в диаграмму, схему и заготовку кода.</p><div class="tags"><span class="fig">Fig · три окна конвейера</span><span>PlantUML</span><span>Mermaid</span><span>генерация</span><span>шаблон</span><span>проверка</span></div></li><li><div class="n">28</div><h3>Лекция 14. Современный контекст: Agile, DevOps и ИИ</h3><div class="mins">90 мин · план</div><p>Модели живут в Agile и DevOps, а ИИ-ассистенты ускоряют черновики, но требуют проверки человеком.</p><div class="tags"><span class="fig">Fig · петля разработки с моделями</span><span>Agile</span><span>DevOps</span><span>C4</span><span>ADR</span><span>ИИ-ассистент</span></div></li><li><div class="n">29</div><h3>Лекция 15. Защита модели: как убедить команду</h3><div class="mins">90 мин · план</div><p>Модель защищают аргументами о границах, компромиссах и рисках, а не количеством диаграмм.</p><div class="tags"><span class="fig">Fig · три экрана защиты</span><span>защита</span><span>компромисс</span><span>риск</span><span>ревью</span><span>коммуникация</span></div></li><li><div class="n">30</div><h3>Практика 15. Комплексный проект: требования и модели</h3><div class="mins">90 мин · план</div><p>Команда выбирает систему, собирает требования и строит первый согласованный комплект моделей.</p><div class="tags"><span class="fig">Fig · доска проекта с комплектом моделей</span><span>проект</span><span>требования</span><span>use case</span><span>классы</span><span>ER</span></div></li><li><div class="n">31</div><h3>Практика 16. Комплексный проект: архитектура и анализ</h3><div class="mins">90 мин · план</div><p>Проект дополняется архитектурой C4, контрактом API и анализом качества.</p><div class="tags"><span class="fig">Fig · схема проекта и табло качества</span><span>C4</span><span>OpenAPI</span><span>метрики</span><span>риски</span><span>защита</span></div></li><li><div class="n">32</div><h3>Практика 17. Защита проекта и ретроспектива</h3><div class="mins">90 мин · план</div><p>Команды защищают комплект моделей, отвечают на вопросы и фиксируют уроки проекта.</p><div class="tags"><span class="fig">Fig · круг ретроспективы</span><span>защита</span><span>вопросы</span><span>ретроспектива</span><span>уроки</span><span>оценка</span></div></li></ol></main>
+
+</body>
+</html>

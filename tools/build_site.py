@@ -21,6 +21,7 @@ Usage:
 """
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -103,6 +104,11 @@ def copy_course(year: str, course_dir: Path) -> dict:
     shutil.copytree(src, dst, ignore=shutil.ignore_patterns("shots*"))
     for shots_dir in dst.glob("shots*"):
         shutil.rmtree(shots_dir, ignore_errors=True)
+    for page in dst.rglob("*.html"):
+        text = page.read_text(encoding="utf-8")
+        if 'href="#course-list"' in text:
+            rel = os.path.relpath(SITE / "index.html", page.parent).replace("\\", "/")
+            page.write_text(text.replace('href="#course-list"', f'href="{rel}"'), encoding="utf-8")
     reports = course_dir / "reports"
     if reports.exists():
         for target in (dst / "reports", src / "reports"):

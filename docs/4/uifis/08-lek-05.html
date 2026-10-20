@@ -47,6 +47,22 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
 .crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
 
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
 .hero {
   position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
   border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
@@ -175,6 +191,38 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
 .quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
 .quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .lesson-top, .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -192,6 +240,23 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .files a:hover { border-color: var(--accent); color: var(--accent); }
 .files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
 .files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
 
 pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -446,7 +511,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Архитектура информационной системы</span></nav><header class="hero"><div class="badges"><span class="pill dark">Занятие 8</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Архитектура информационной системы</span></nav><div class="lesson-top"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button></div><div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 8</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Архитектура информационной системы</h1><p class="dek">Архитектура это распределение трёх работ (представление, логика, данные) по узлам; функции те же, меняется только то, где они выполняются.</p>
 <div class="glyph" aria-hidden="true">Л5</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Различать представление, логику и данные в любой ИС</li><li>Сравнивать файл-серверную, клиент-серверную и трёхзвенную архитектуры</li><li>Объяснять, зачем нужно среднее звено и когда без него можно обойтись</li><li>Выбирать архитектуру под нагрузку, безопасность и бюджет</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#три-работы-которые-всегда-есть">Три работы, которые всегда есть</a></li><li><a href="#как-это-выглядит-в-движении">Как это выглядит в движении</a></li><li><a href="#файл-серверная-архитектура">Файл-серверная архитектура</a></li><li><a href="#двухзвенная-клиент-серверная-архитектура">Двухзвенная клиент-серверная архитектура</a></li><li><a href="#трёхзвенная-архитектура">Трёхзвенная архитектура</a></li><li><a href="#многоуровневая-и-распределённая-архитектура">Многоуровневая и распределённая архитектура</a></li><li><a href="#сравнение-архитектур">Сравнение архитектур</a></li><li><a href="#как-выбрать-архитектуру">Как выбрать архитектуру</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#мини-практикум">Мини-практикум</a></li><li><a href="#вопросы-для-размышления">Вопросы для размышления</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>В прошлой лекции архитектура была одним из признаков классификации. Теперь разберём её как самостоятельную тему. Главная мысль: в любой информационной системе есть три работы. <strong>Представление</strong> показывает данные человеку и принимает ввод. <strong>Логика</strong> применяет правила: считает, проверяет, принимает решения. <strong>Данные</strong> хранятся и находятся по запросу.</p>
@@ -600,18 +665,56 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <details class="check"><summary><span>Почему архитектура и масштаб это разные признаки?</span></summary><div><p>Масштаб говорит, на скольких рабочих местах и территориях работает система. Архитектура говорит, как распределены представление, логика и данные. Одна архитектура может обслуживать и локальную, и корпоративную систему.</p></div></details>
 
 <h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
-<p>Ответьте на вопросы и нажмите «Проверить ответы». Верный вариант подсветится зелёным, а под неверными появится объяснение, почему ответ неверный.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-answer="0"><p class="quiz-p">Какие три работы есть в любой информационной системе?</p><div class="opts"><label class="opt"><input type="radio" name="q261_0" value="0" data-ok><span>Представление, логика и данные</span></label><label class="opt"><input type="radio" name="q261_0" value="1"><span>Клиент, сервер и сеть</span></label><label class="opt"><input type="radio" name="q261_0" value="2"><span>Процессор, память и диск</span></label><label class="opt"><input type="radio" name="q261_0" value="3"><span>Ввод, вывод и печать</span></label></div><p class="quiz-why" hidden>В любой ИС есть представление, логика и данные. Клиент, сервер и сеть это узлы и связи, процессор и память это техника, а ввод и вывод это операции.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что делает слой представления?</p><div class="opts"><label class="opt"><input type="radio" name="q261_1" value="0" data-ok><span>Показывает данные человеку и принимает ввод</span></label><label class="opt"><input type="radio" name="q261_1" value="1"><span>Хранит таблицы и индексы</span></label><label class="opt"><input type="radio" name="q261_1" value="2"><span>Применяет правила расчёта зарплаты</span></label><label class="opt"><input type="radio" name="q261_1" value="3"><span>Проверяет права доступа к записям</span></label></div><p class="quiz-why" hidden>Представление отвечает за экран, формы и ввод. Хранение это данные, расчёт и проверка прав это логика.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Где выполняется логика в файл-серверной архитектуре?</p><div class="opts"><label class="opt"><input type="radio" name="q261_2" value="0" data-ok><span>На клиенте</span></label><label class="opt"><input type="radio" name="q261_2" value="1"><span>На файловом сервере</span></label><label class="opt"><input type="radio" name="q261_2" value="2"><span>На сервере приложений</span></label><label class="opt"><input type="radio" name="q261_2" value="3"><span>На сервере базы данных</span></label></div><p class="quiz-why" hidden>В файл-серверной архитектуре сервер только хранит файлы, а всю логику выполняет клиент. Сервера приложений в ней нет, а сервер базы данных не обрабатывает правила.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что передаётся по сети в файл-серверной архитектуре?</p><div class="opts"><label class="opt"><input type="radio" name="q261_3" value="0" data-ok><span>Целые файлы</span></label><label class="opt"><input type="radio" name="q261_3" value="1"><span>Только запросы и результаты</span></label><label class="opt"><input type="radio" name="q261_3" value="2"><span>Только команды управления</span></label><label class="opt"><input type="radio" name="q261_3" value="3"><span>Только резервные копии</span></label></div><p class="quiz-why" hidden>В файл-серверной архитектуре клиент загружает и сохраняет целые файлы, поэтому трафик растёт вместе с базой. Запросы и результаты характерны для клиент-серверной схемы.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Чем клиент-серверная архитектура отличается от файл-серверной?</p><div class="opts"><label class="opt"><input type="radio" name="q261_4" value="0" data-ok><span>По сети идут запросы и результаты, а не целые файлы</span></label><label class="opt"><input type="radio" name="q261_4" value="1"><span>В ней вообще нет сервера</span></label><label class="opt"><input type="radio" name="q261_4" value="2"><span>В ней вся логика переносится на клиент</span></label><label class="opt"><input type="radio" name="q261_4" value="3"><span>Она не использует базу данных</span></label></div><p class="quiz-why" hidden>В клиент-серверной архитектуре клиент отправляет запрос, а сервер базы данных возвращает нужные строки. Сервер есть, логика частично остаётся на клиенте, а база данных используется.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Сколько звеньев в трёхзвенной архитектуре?</p><div class="opts"><label class="opt"><input type="radio" name="q261_5" value="0" data-ok><span>Три: клиент, сервер приложений, сервер базы данных</span></label><label class="opt"><input type="radio" name="q261_5" value="1"><span>Два: клиент и сервер</span></label><label class="opt"><input type="radio" name="q261_5" value="2"><span>Одно: сервер</span></label><label class="opt"><input type="radio" name="q261_5" value="3"><span>Четыре: клиент, два сервера и сеть</span></label></div><p class="quiz-why" hidden>Трёхзвенная архитектура состоит из клиента, сервера приложений и сервера базы данных. Два звена это клиент-серверная схема, одно звено не даёт распределения.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Зачем нужен сервер приложений?</p><div class="opts"><label class="opt"><input type="radio" name="q261_6" value="0" data-ok><span>Чтобы выполнять бизнес-логику отдельно от клиента и базы</span></label><label class="opt"><input type="radio" name="q261_6" value="1"><span>Чтобы хранить файлы вместо базы данных</span></label><label class="opt"><input type="radio" name="q261_6" value="2"><span>Чтобы заменить клиентское представление</span></label><label class="opt"><input type="radio" name="q261_6" value="3"><span>Чтобы ускорить работу процессора</span></label></div><p class="quiz-why" hidden>Сервер приложений выносит логику в отдельное звено: её обновляют централизованно, клиент остаётся тонким, а масштабирование идёт отдельно от базы. Файлы и представление остаются за другими звеньями.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что такое тонкий клиент?</p><div class="opts"><label class="opt"><input type="radio" name="q261_7" value="0" data-ok><span>Клиент, который в основном показывает интерфейс, а логика находится на сервере</span></label><label class="opt"><input type="radio" name="q261_7" value="1"><span>Клиент без операционной системы</span></label><label class="opt"><input type="radio" name="q261_7" value="2"><span>Клиент, который хранит все данные у пользователя</span></label><label class="opt"><input type="radio" name="q261_7" value="3"><span>Клиент, который работает только без сети</span></label></div><p class="quiz-why" hidden>Тонкий клиент отвечает за представление, а логику выполняет сервер. Операционная система у него есть, данные он не хранит, а без сети он как раз зависит от сервера.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что характерно для многоуровневой архитектуры?</p><div class="opts"><label class="opt"><input type="radio" name="q261_8" value="0" data-ok><span>Между клиентом и базой появляются дополнительные уровни</span></label><label class="opt"><input type="radio" name="q261_8" value="1"><span>В системе всегда ровно два узла</span></label><label class="opt"><input type="radio" name="q261_8" value="2"><span>Все слои работают на одном компьютере</span></label><label class="opt"><input type="radio" name="q261_8" value="3"><span>Данные хранятся только в файлах</span></label></div><p class="quiz-why" hidden>Многоуровневая архитектура добавляет уровни: веб-сервер, шлюз, кэш, очередь. Два узла, один компьютер и файловое хранение не описывают её.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Чем распределённая архитектура отличается от многоуровневой?</p><div class="opts"><label class="opt"><input type="radio" name="q261_9" value="0" data-ok><span>Узлы находятся на разных площадках и связаны сетью</span></label><label class="opt"><input type="radio" name="q261_9" value="1"><span>В ней всегда больше трёх уровней</span></label><label class="opt"><input type="radio" name="q261_9" value="2"><span>В ней нет клиентов</span></label><label class="opt"><input type="radio" name="q261_9" value="3"><span>Она не использует базу данных</span></label></div><p class="quiz-why" hidden>Распределённая архитектура означает работу узлов на разных площадках. Число уровней и наличие клиентов к этому не относятся: многоуровневая система может стоять в одном центре.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Почему в файл-серверной архитектуре возникают конфликты при одновременной работе?</p><div class="opts"><label class="opt"><input type="radio" name="q261_10" value="0" data-ok><span>Два пользователя могут изменить один файл, и одно изменение теряется</span></label><label class="opt"><input type="radio" name="q261_10" value="1"><span>Сервер не умеет хранить файлы</span></label><label class="opt"><input type="radio" name="q261_10" value="2"><span>Клиент не умеет читать данные</span></label><label class="opt"><input type="radio" name="q261_10" value="3"><span>В архитектуре нет сети</span></label></div><p class="quiz-why" hidden>Сервер отдаёт целый файл, и при одновременной записи изменения могут перезаписать друг друга. Файлы он хранить умеет, клиент читает данные, а сеть в этой архитектуре как раз используется.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Когда трёхзвенная архитектура может быть избыточной?</p><div class="opts"><label class="opt"><input type="radio" name="q261_11" value="0" data-ok><span>Для маленькой системы на несколько пользователей с простыми правилами</span></label><label class="opt"><input type="radio" name="q261_11" value="1"><span>Для системы с веб-доступом и сотнями пользователей</span></label><label class="opt"><input type="radio" name="q261_11" value="2"><span>Для системы с частыми обновлениями логики</span></label><label class="opt"><input type="radio" name="q261_11" value="3"><span>Для системы с разграничением доступа к данным</span></label></div><p class="quiz-why" hidden>Трёхзвенная архитектура требует дополнительного сервера и сопровождения. Для маленькой системы это часто лишние затраты. Веб-доступ, частые обновления логики и разграничение доступа как раз относятся к её сильным сторонам.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Что означает надпись «валов 1 из 2» на стенде?</p><div class="opts"><label class="opt"><input type="radio" name="q261_12" value="0" data-ok><span>Включён один из двух каналов между звеньями</span></label><label class="opt"><input type="radio" name="q261_12" value="1"><span>В системе два клиента и один сервер</span></label><label class="opt"><input type="radio" name="q261_12" value="2"><span>В базе данных одна таблица из двух</span></label><label class="opt"><input type="radio" name="q261_12" value="3"><span>Работает один пользователь из двух</span></label></div><p class="quiz-why" hidden>Валы на стенде изображают каналы между звеньями. «1 из 2» значит, что средняя кабина отключена и используется только один канал, как в двухзвенных режимах.</p></div><div class="quiz-q" data-answer="0"><p class="quiz-p">Почему архитектуру нельзя выбирать только по числу пользователей?</p><div class="opts"><label class="opt"><input type="radio" name="q261_13" value="0" data-ok><span>Нужно учитывать нагрузку, безопасность, частоту обновления логики и бюджет</span></label><label class="opt"><input type="radio" name="q261_13" value="1"><span>Потому что число пользователей не влияет на систему</span></label><label class="opt"><input type="radio" name="q261_13" value="2"><span>Потому что все архитектуры одинаковы</span></label><label class="opt"><input type="radio" name="q261_13" value="3"><span>Потому что пользователи не работают с данными</span></label></div><p class="quiz-why" hidden>Число пользователей это лишь одно требование. На выбор влияют характер нагрузки, время ответа, безопасность, частота обновлений и стоимость сопровождения. Архитектуры не одинаковы, а пользователи работают с данными.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span></div></div>
+<p>В тесте 15 вопросов: 6 с одним правильным ответом, 6 с несколькими правильными ответами и 3 с кратким ответом.</p>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какие три работы есть в любой информационной системе?</p><div class="opts"><label class="opt"><input type="radio" name="q268_0" value="0" data-ok><span>Представление, логика и данные</span></label><label class="opt"><input type="radio" name="q268_0" value="1"><span>Клиент, сервер и сеть</span></label><label class="opt"><input type="radio" name="q268_0" value="2"><span>Процессор, память и диск</span></label><label class="opt"><input type="radio" name="q268_0" value="3"><span>Ввод, вывод и печать</span></label></div><p class="quiz-why" hidden>Любая ИС делит работу на представление, логику и данные.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие три работы есть в любой ИС?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_1" value="0" data-ok><span>Представление</span></label><label class="opt"><input type="checkbox" name="q268_1" value="1" data-ok><span>Логика</span></label><label class="opt"><input type="checkbox" name="q268_1" value="2" data-ok><span>Данные</span></label><label class="opt"><input type="checkbox" name="q268_1" value="3"><span>Сеть</span></label><label class="opt"><input type="checkbox" name="q268_1" value="4"><span>Печать</span></label></div><p class="quiz-why" hidden>Три работы это представление, логика и данные.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает слой представления?</p><div class="opts"><label class="opt"><input type="radio" name="q268_2" value="0" data-ok><span>Показывает данные человеку и принимает ввод</span></label><label class="opt"><input type="radio" name="q268_2" value="1"><span>Хранит таблицы и индексы</span></label><label class="opt"><input type="radio" name="q268_2" value="2"><span>Применяет правила расчёта зарплаты</span></label><label class="opt"><input type="radio" name="q268_2" value="3"><span>Проверяет права доступа к записям</span></label></div><p class="quiz-why" hidden>Представление отвечает за интерфейс и ввод.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие признаки файл-серверной архитектуры верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_3" value="0" data-ok><span>Логика на клиенте</span></label><label class="opt"><input type="checkbox" name="q268_3" value="1" data-ok><span>По сети передаются целые файлы</span></label><label class="opt"><input type="checkbox" name="q268_3" value="2" data-ok><span>Возможны конфликты при одновременной работе</span></label><label class="opt"><input type="checkbox" name="q268_3" value="3"><span>Логика на сервере приложений</span></label><label class="opt"><input type="checkbox" name="q268_3" value="4"><span>По сети идут только запросы и результаты</span></label></div><p class="quiz-why" hidden>В файл-серверной архитектуре клиент работает с целыми файлами.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Где выполняется логика в файл-серверной архитектуре?</p><div class="opts"><label class="opt"><input type="radio" name="q268_4" value="0" data-ok><span>На клиенте</span></label><label class="opt"><input type="radio" name="q268_4" value="1"><span>На файловом сервере</span></label><label class="opt"><input type="radio" name="q268_4" value="2"><span>На сервере приложений</span></label><label class="opt"><input type="radio" name="q268_4" value="3"><span>На сервере базы данных</span></label></div><p class="quiz-why" hidden>Файловый сервер хранит файлы, логика остаётся на клиенте.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие признаки клиент-серверной архитектуры верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_5" value="0" data-ok><span>По сети идут запросы и результаты</span></label><label class="opt"><input type="checkbox" name="q268_5" value="1" data-ok><span>Логика может выполняться на сервере</span></label><label class="opt"><input type="checkbox" name="q268_5" value="2" data-ok><span>База данных находится на сервере</span></label><label class="opt"><input type="checkbox" name="q268_5" value="3"><span>По сети передаются целые файлы</span></label><label class="opt"><input type="checkbox" name="q268_5" value="4"><span>Логика всегда на клиенте</span></label></div><p class="quiz-why" hidden>Клиент-серверная архитектура передаёт запросы и результаты, а не файлы.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Чем клиент-серверная архитектура отличается от файл-серверной?</p><div class="opts"><label class="opt"><input type="radio" name="q268_6" value="0" data-ok><span>По сети идут запросы и результаты, а не целые файлы</span></label><label class="opt"><input type="radio" name="q268_6" value="1"><span>В ней вообще нет сервера</span></label><label class="opt"><input type="radio" name="q268_6" value="2"><span>В ней вся логика переносится на клиент</span></label><label class="opt"><input type="radio" name="q268_6" value="3"><span>Она не использует базу данных</span></label></div><p class="quiz-why" hidden>Клиент-серверная архитектура обменивается запросами и результатами.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие компоненты входят в трёхзвенную архитектуру?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_7" value="0" data-ok><span>Клиент</span></label><label class="opt"><input type="checkbox" name="q268_7" value="1" data-ok><span>Сервер приложений</span></label><label class="opt"><input type="checkbox" name="q268_7" value="2" data-ok><span>Сервер базы данных</span></label><label class="opt"><input type="checkbox" name="q268_7" value="3"><span>Файловый сервер</span></label><label class="opt"><input type="checkbox" name="q268_7" value="4"><span>Принтер</span></label></div><p class="quiz-why" hidden>Трёхзвенная архитектура разделяет клиент, логику и данные.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Зачем нужен сервер приложений?</p><div class="opts"><label class="opt"><input type="radio" name="q268_8" value="0" data-ok><span>Чтобы выполнять бизнес-логику отдельно от клиента и базы</span></label><label class="opt"><input type="radio" name="q268_8" value="1"><span>Чтобы хранить файлы вместо базы данных</span></label><label class="opt"><input type="radio" name="q268_8" value="2"><span>Чтобы заменить клиентское представление</span></label><label class="opt"><input type="radio" name="q268_8" value="3"><span>Чтобы ускорить работу процессора</span></label></div><p class="quiz-why" hidden>Сервер приложений выполняет бизнес-логику.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Что характерно для многоуровневой архитектуры?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_9" value="0" data-ok><span>Между клиентом и базой появляются дополнительные уровни</span></label><label class="opt"><input type="checkbox" name="q268_9" value="1" data-ok><span>Уровни могут выполнять разные задачи</span></label><label class="opt"><input type="checkbox" name="q268_9" value="2" data-ok><span>Логика отделена от данных</span></label><label class="opt"><input type="checkbox" name="q268_9" value="3"><span>В системе всегда ровно два узла</span></label><label class="opt"><input type="checkbox" name="q268_9" value="4"><span>Все слои работают на одном компьютере</span></label></div><p class="quiz-why" hidden>Многоуровневая архитектура добавляет уровни между клиентом и базой.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое тонкий клиент?</p><div class="opts"><label class="opt"><input type="radio" name="q268_10" value="0" data-ok><span>Клиент, который в основном показывает интерфейс, а логика находится на сервере</span></label><label class="opt"><input type="radio" name="q268_10" value="1"><span>Клиент без операционной системы</span></label><label class="opt"><input type="radio" name="q268_10" value="2"><span>Клиент, который хранит все данные у пользователя</span></label><label class="opt"><input type="radio" name="q268_10" value="3"><span>Клиент, который работает только без сети</span></label></div><p class="quiz-why" hidden>Тонкий клиент оставляет логику на сервере.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что учитывают при выборе архитектуры?</p><div class="opts"><label class="opt"><input type="checkbox" name="q268_11" value="0" data-ok><span>Нагрузку</span></label><label class="opt"><input type="checkbox" name="q268_11" value="1" data-ok><span>Безопасность</span></label><label class="opt"><input type="checkbox" name="q268_11" value="2" data-ok><span>Частоту обновления логики</span></label><label class="opt"><input type="checkbox" name="q268_11" value="3" data-ok><span>Бюджет</span></label><label class="opt"><input type="checkbox" name="q268_11" value="4"><span>Только число пользователей</span></label><label class="opt"><input type="checkbox" name="q268_11" value="5"><span>Только цвет интерфейса</span></label></div><p class="quiz-why" hidden>Архитектуру выбирают по нагрузке, безопасности, обновлениям и бюджету.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какие три работы есть в любой ИС? Напишите через запятую.</p><input type="text" class="short-answer" data-answers="[&quot;представление, логика, данные&quot;, &quot;представление логика данные&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какие три работы есть в любой ИС? Напишите через запятую."><p class="quiz-why" hidden>Три работы это представление, логика и данные.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется клиент, который в основном показывает интерфейс, а логика находится на сервере?</p><input type="text" class="short-answer" data-answers="[&quot;тонкий клиент&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется клиент, который в основном показывает интерфейс, а логика находится на сервере?"><p class="quiz-why" hidden>Это тонкий клиент.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется архитектура с клиентом, сервером приложений и сервером базы данных?</p><input type="text" class="short-answer" data-answers="[&quot;трёхзвенная&quot;, &quot;трёхзвенная архитектура&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется архитектура с клиентом, сервером приложений и сервером базы данных?"><p class="quiz-why" hidden>Это трёхзвенная архитектура.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><a class="" href="07-lek-04.html"><span>← Предыдущее занятие</span>Лекция 4. Классификация информационных систем: подробный разбор</a><a class="next" style="text-align:right;margin-left:auto" href="09-prakt-04.html"><span>Следующее занятие →</span>Практика 4. Проектирование архитектуры информационной системы</a></nav></main>
+<div class="modal" data-modal="submit" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="submit-title">Результат теста</h2>
+    <label class="modal-name" data-student-label><span>ФИО студента</span>
+      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
+    </label>
+    <p class="modal-student" data-student-view hidden></p>
+    <p class="modal-result" data-modal-result></p>
+    <dl class="modal-times">
+      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
+      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
+    </dl>
+    <button type="button" class="modal-ok" data-modal-close>Готово</button>
+  </div>
+</div>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
 
-<div class="recap"><span class="label">Итоги занятия</span><ul>
-<li>В любой ИС есть три работы: представление, логика и данные.</li>
-<li>Архитектура определяет, на каких узлах эти работы выполняются.</li>
-<li>В файл-серверной всё считает клиент, а сервер отдаёт целые файлы.</li>
-<li>В клиент-серверной по сети идут запросы и результаты, часть логики может жить в базе.</li>
-<li>Трёхзвенная добавляет сервер приложений: логика централизуется, клиент становится тонким.</li>
-<li>Многоуровневая и распределённая архитектуры добавляют уровни и площадки, повышая гибкость и сложность.</li>
-</ul></div></article><nav class="pager"><a class="" href="07-lek-04.html"><span>← Предыдущее занятие</span>Лекция 4. Классификация информационных систем: подробный разбор</a><a class="next" style="text-align:right;margin-left:auto" href="09-prakt-04.html"><span>Следующее занятие →</span>Практика 4. Проектирование архитектуры информационной системы</a></nav></main>
 <script>
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
 (function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
@@ -639,27 +742,88 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 })();
 
 (function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
+  var studentName = '';
+  var submitModal = document.querySelector('[data-modal="submit"]');
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function evaluate(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
+    qs.forEach(function(q){
+      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
+      if(ok) right++;
+      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+    });
+    return {right: right, total: qs.length};
+  }
+
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    var qs=[].slice.call(quiz.querySelectorAll('.quiz-q'));
-    function clear(){ qs.forEach(function(q){ q.classList.remove('ok','bad');
-      q.querySelectorAll('input').forEach(function(i){ i.checked=false; });
-      q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-      var w=q.querySelector('.quiz-why'); if(w) w.hidden=true; });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent=''; }
-    quiz.querySelector('[data-reset]').addEventListener('click', clear);
+    quiz._firstAt = null; quiz._lastAt = null;
+    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
+    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
     quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var right=0;
-      qs.forEach(function(q){
-        var chosen=q.querySelector('input:checked');
-        var ok=!!(chosen && chosen.hasAttribute('data-ok'));
-        q.classList.remove('ok','bad'); q.classList.add(ok?'ok':'bad');
-        if(ok) right++;
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('correct', o.querySelector('input').hasAttribute('data-ok')); });
-        var w=q.querySelector('.quiz-why'); if(w) w.hidden=ok;
-      });
-      var s=quiz.querySelector('[data-score]'); if(s) s.textContent='Верно '+right+' из '+qs.length;
+      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    });
+    quiz.querySelector('[data-reset]').addEventListener('click', function(){
+      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
+      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
+      quiz._firstAt = null; quiz._lastAt = null;
+    });
+    quiz.querySelector('[data-submit]').addEventListener('click', function(){
+      var r = evaluate(quiz);
+      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
+      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
+      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
+      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
+      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      var nameInput = submitModal.querySelector('[data-student-name]');
+      var nameLabel = submitModal.querySelector('[data-student-label]');
+      var nameView = submitModal.querySelector('[data-student-view]');
+      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
+      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
+      openModal(submitModal);
     });
   });
+
+  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
+  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>

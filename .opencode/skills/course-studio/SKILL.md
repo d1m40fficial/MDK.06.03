@@ -44,6 +44,7 @@ tools/
   ks/                        page engine (Russian locale)
 docs/                        generated site for GitHub Pages (do not edit by hand)
 site.json                    year cards shown on the landing page
+availability.txt             open lectures and practicals per discipline (when present)
 .opencode/skills/course-studio/   this merged skill
 AGENTS.md                    entry point for any agent
 ```
@@ -125,7 +126,9 @@ written chapter by chapter unless the user asks for a batch.
    `<id>-light.html` next to it. When several figures are pending, brief them all and
    hand each to a subagent; write the chapter meanwhile (`figures.md` §5).
 5. **Write the chapter** in `chapter.md` following the arc and rules. Run every code
-   block; verify every number and real-world claim against sources.
+   block; verify every number and real-world claim against sources. End every lecture with
+   a `::quiz` of 15 questions: 6 single-choice (`+`/`-`), 6 multiple-choice (several `+`)
+   and 3 short-answer (`=`), each with an explanation `!`. Practices do not get a test.
 6. **Build and check.** `python tools/ks/scripts/build_chapter.py <chapter.md>`, then
    `python tools/build_site.py`. Use `tools/ks/scripts/check_pages.py <dist-dir>` where
    Playwright/Chromium is available, including `--mobile` and `--dark`.
@@ -174,6 +177,10 @@ current УФИС card) -> course page (the discipline plan) -> chapter/lesson pa
   planned figure per chapter, all consistent with `hours` and `minutes`.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
+- Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
+  short-answer, all with explanations. The test footer, PDF button, reading progress,
+  warning button and submission dialog come from the shared builder; do not rebuild them
+  inside a chapter.
 - The figure is an Anatomy figure that passes Anatomy's own verification, not a diagram
   of boxes, and it shows exactly the moments the text refers to with the same numbers.
 - Visualise diagrams follow the design system and stay readable at 390 px.
