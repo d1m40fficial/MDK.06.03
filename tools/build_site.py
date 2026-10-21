@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Assemble the whole course suite into a static site under `docs/` for GitHub Pages.
 
-The site is three levels deep:
+The site is four levels deep:
 
-    docs/index.html                 the landing: one card per year (2, 3, 4)
+    docs/index.html                 the landing: specialties with year cards inside
     docs/<year>/index.html          the year page: one card per discipline
     docs/<year>/<slug>/index.html   the discipline plan (syllabus)
     docs/<year>/<slug>/<chapter>.html  a lecture or a practical
 
 Sources:
-    site.json                       the year cards (id, title, tagline, accent)
+    site.json                       specialties, their year cards and accents
     courses/<year>/<slug>/course.json   the discipline card + syllabus
 
 Builds every discipline (course page + written chapters), copies each one to
@@ -46,6 +46,16 @@ CARD_CSS = (
     "{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}}"
     ":root[data-theme=dark] .course-card{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}"
     ".course-card.pending{opacity:.62}.course-card.pending:hover{opacity:1}"
+    ".specialty{border:1px solid var(--rule);border-radius:var(--radius);background:var(--card);margin:0 0 14px;overflow:hidden}"
+    ".specialty summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 20px;font:700 18px/1.3 var(--font-display)}"
+    ".specialty summary::-webkit-details-marker{display:none}"
+    ".specialty summary::after{content:'+';margin-left:8px;font:600 18px var(--font-mono);color:var(--accent)}"
+    ".specialty[open] summary::after{content:'−'}"
+    ".specialty .spec-count{font:12px var(--font-mono);color:var(--ink-2);margin-left:auto}"
+    ".specialty .years-grid{padding:0 16px 16px}"
+    ".years-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}"
+    "@media(max-width:900px){.years-grid{grid-template-columns:1fr}}"
+    ".specialty-empty{margin:0;padding:0 20px 18px;color:var(--ink-2)}"
 )
 
 
@@ -64,7 +74,28 @@ def plural_disciplines(n: int) -> str:
 def load_site() -> dict:
     if SITE_JSON.exists():
         return json.loads(SITE_JSON.read_text(encoding="utf-8"))
-    return {"title": "Материалы дисциплин", "tagline": "", "years": []}
+    return {"title": "Материалы", "tagline": "Все курсы", "specialties": []}
+
+
+def all_years(site: dict) -> list:
+    years = []
+    for specialty in site.get("specialties", []):
+        years.extend(specialty.get("years", []))
+    if not years:
+        years = site.get("years", [])
+    return sorted(years, key=lambda y: y.get("order", 99))
+
+
+def plural_courses(n: int) -> str:
+    n = abs(int(n)) % 100
+    if 11 <= n <= 14:
+        return "курсов"
+    n %= 10
+    if n == 1:
+        return "курс"
+    if n in (2, 3, 4):
+        return "курса"
+    return "курсов"
 
 
 def year_of(course_dir: Path) -> str:
@@ -180,28 +211,40 @@ def year_page(y: dict, courses: list):
     print(f"wrote {out}: {len(courses)} {plural_disciplines(len(courses))}")
 
 
+def year_card(y: dict, courses: list) -> str:
+    yid = str(y["id"])
+    total = sum(lesson_slots(c.get("chapters", [])) for c in courses)
+    spec = (f'{len(courses)} {plural_disciplines(len(courses))}'
+            + (f" · {total} {plural_lessons(total)}" if total else ""))
+    return (
+        f'<a class="course-card year-card" href="{esc(yid)}/index.html" style="{year_vars(y)}">'
+        f'<div class="art"><span class="ch">{len(courses)} дисц.</span>'
+        f'<div class="glyph" aria-hidden="true">{esc(y.get("code", yid))}</div></div>'
+        f'<div class="body"><h3>{esc(y.get("title", yid))}</h3>'
+        f'<p>{esc(y.get("tagline", ""))}</p><div class="spec">{esc(spec)}</div></div></a>')
+
+
 def landing(site: dict, by_year: dict):
-    years = sorted(site.get("years", []), key=lambda y: y.get("order", 99))
-    cards = []
-    for y in years:
-        yid = str(y["id"])
-        courses = by_year.get(yid, [])
-        total = sum(lesson_slots(c.get("chapters", [])) for c in courses)
-        spec = (f'{len(courses)} {plural_disciplines(len(courses))}'
-                + (f" · {total} {plural_lessons(total)}" if total else ""))
-        cards.append(
-            f'<a class="course-card" href="{esc(yid)}/index.html" style="{year_vars(y)}">'
-            f'<div class="art"><span class="ch">{len(courses)} дисц.</span>'
-            f'<div class="glyph" aria-hidden="true">{esc(y.get("code", yid))}</div></div>'
-            f'<div class="body"><h3>{esc(y.get("title", yid))}</h3>'
-            f'<p>{esc(y.get("tagline", ""))}</p><div class="spec">{esc(spec)}</div></div></a>')
+    blocks = []
+    specialties = site.get("specialties", [])
+    for specialty in specialties:
+        years = sorted(specialty.get("years", []), key=lambda y: y.get("order", 99))
+        cards = "".join(year_card(y, by_year.get(str(y["id"]), [])) for y in years)
+        body = (f'<div class="grid years-grid">{cards}</div>' if cards
+                else '<p class="specialty-empty">Дисциплины пока не добавлены.</p>')
+        open_attr = " open" if specialty.get("open") else ""
+        blocks.append(
+            f'<details class="specialty"{open_attr}><summary>'
+            f'<span>{esc(specialty.get("title", specialty.get("id", "")))}</span>'
+            f'<span class="spec-count">{len(years)} {plural_courses(len(years))}</span>'
+            f'</summary>{body}</details>')
     body = (f'<main class="catalog"><header class="hero">'
-            f'<h1 style="max-width:100%">{esc(site.get("title", "Материалы дисциплин"))}</h1>'
-            f'<p class="dek" style="max-width:100%">{esc(site.get("tagline", ""))}</p></header>'
-            f'<div class="grid">{"".join(cards)}</div></main>')
+            f'<h1 style="max-width:100%">{esc(site.get("title", "Материалы"))}</h1>'
+            f'<p class="dek" style="max-width:100%">{esc(site.get("tagline", "Все курсы"))}</p></header>'
+            f'<div class="specialties">{"".join(blocks)}</div></main>')
     (SITE / "index.html").write_text(
-        page(site.get("title", "Материалы дисциплин"), body, "", CARD_CSS), encoding="utf-8")
-    print(f"wrote {SITE / 'index.html'}: {len(years)} years")
+        page(site.get("title", "Материалы"), body, "", CARD_CSS), encoding="utf-8")
+    print(f"wrote {SITE / 'index.html'}: {len(specialties)} specialties, {len(all_years(site))} years")
 
 
 def main():
@@ -218,7 +261,7 @@ def main():
         c = copy_course(year, course_dir)
         by_year.setdefault(year, []).append(c)
 
-    for y in site.get("years", []):
+    for y in all_years(site):
         year_page(y, by_year.get(str(y["id"]), []))
     landing(site, by_year)
     print(f"site written to {SITE}: {len(built)} course(s)")

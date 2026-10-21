@@ -43,7 +43,7 @@ tools/
   worktree.py                one git worktree per discipline
   ks/                        page engine (Russian locale)
 docs/                        generated site for GitHub Pages (do not edit by hand)
-site.json                    year cards shown on the landing page
+site.json                    specialties and their year cards on the landing page
 availability.txt             open lectures and practicals per discipline (when present)
 .opencode/skills/course-studio/   this merged skill
 AGENTS.md                    entry point for any agent
@@ -206,8 +206,10 @@ scripts so the year and landing structure stays consistent.
 - `python tools/worktree.py` and `python tools/new_discipline.py`: the worktree and
   scaffold workflow above.
 
-The site flow is: landing (year cards) -> year page (discipline cards, same look as the
-current УФИС card) -> course page (the discipline plan) -> chapter/lesson pages.
+The site flow is: landing (specialty rows, each opening year cards) -> year page
+(discipline cards, same look as the current УФИС card) -> course page (the discipline
+plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12 and
+09.02.13 are empty placeholders.
 
 ## Quality bar
 
