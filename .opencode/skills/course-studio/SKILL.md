@@ -49,11 +49,49 @@ availability.txt             open lectures and practicals per discipline (when p
 AGENTS.md                    entry point for any agent
 ```
 
+## Specialty 09.02.07 and the 2027 demo exam
+
+This repository serves SPO specialty 09.02.07 «Информационные системы и
+программирование», qualification «Специалист по информационным системам». The current
+demo exam is KIM 09.02.07-5-2027 in BOM 6506:
+https://bom.firpo.ru/Public/6506. Read it before planning or rewriting a discipline.
+
+Exam structure:
+
+- PA, 1 h 10 min, 3 tasks: ER diagram in 3NF saved as PDF; database with tables,
+  constraints and JSON import; SQL query with JOIN and aggregation.
+- GIA basic level, 3 h 30 min, 6 tasks: the three PA tasks; IS modules (authorization,
+  user blocking, smart captcha, admin CRUD, uniqueness, GUI); a GET API that transforms
+  database data and is published at a URL; a Postman collection with tests for 200, 500
+  and valid JSON; API documentation from the supplied template.
+- The evaluated competencies include PK 2.2-2.4, 5.1-5.4, 7.1-7.4 and 11.1-11.5, plus
+  OK 01, 02, 04 and 09. MAPO contributes requirements, ER/3NF, SQL, API design, Postman
+  tests and documentation; UIFIS contributes IS composition, architecture, DBMS,
+  networks, security and operation.
+- Every practical task must end in an exam artefact: ER PDF, database script, SQL
+  script, running application, Postman collection, Word document or PowerPoint deck.
+
+Available software policy:
+
+- Use only Excel, Word, PowerPoint; VS Code with Python; Visual Studio 2026 Community;
+  Postman; VirtualBox with the learning Linux and Windows 10 images; a browser with
+  draw.io, sqliteonline.com, GitHub, Kaggle, Colab and Google Docs.
+- Do not require PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, a MySQL or
+  PostgreSQL server, or paid cloud services.
+- Diagrams: draw.io. Database: SQLite through Python or sqliteonline.com, or LocalDB if
+  it is present in Visual Studio. API: Python with Flask/FastAPI in VS Code, or ASP.NET
+  Core in Visual Studio. Tests: Postman. Documentation: Word and PowerPoint. Version
+  control: GitHub. Operating systems: VirtualBox with the learning Linux and Windows 10
+  images.
+
 Rules that always hold:
 
 - One discipline is one folder `courses/<year>/<slug>/` with one `course.json` and a
   `"year"` field. Keep the slug lowercase Latin; the code (`МДК.06.03`, `УФИС`) is the
-  human label.
+  human label. Every course also has `"assessment": "Зачёт"` or `"Экзамен"`; the card
+  shows it.
+- `"status": "available"` shows «Доступно». `"status": "planned"` shows «Не готово»
+  and a light transparency on the discipline card.
 - The site is generated: never edit `docs/` directly; edit sources and run
   `python tools/build_site.py` (set `$env:PYTHONUTF8=1` on Windows).
 - No em dashes and no single hyphen used as a dash in generated prose, `course.json`,

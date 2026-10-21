@@ -2,7 +2,7 @@
 """Create a new discipline: its own worktree, branch and starter course.json.
 
     python tools/new_discipline.py <year> <slug> [--title "..."] [--code "..."]
-                                   [--hours 84] [--base main] [--here]
+                                   [--hours 84] [--assessment "Экзамен"] [--base main] [--here]
 
 Default: creates the worktree ../<repo>-worktrees/<year>-<slug> on the branch
 discipline/<year>/<slug> from `main`, then writes
@@ -28,11 +28,12 @@ COURSES = ROOT / "courses"
 
 
 def parse(a):
-    args = {"title": "", "code": "", "hours": 0, "base": worktree.DEFAULT_BASE, "here": False}
+    args = {"title": "", "code": "", "hours": 0, "assessment": "Зачёт",
+            "base": worktree.DEFAULT_BASE, "here": False}
     positional = []
     i = 0
     while i < len(a):
-        if a[i] in ("--title", "--code", "--hours", "--base"):
+        if a[i] in ("--title", "--code", "--hours", "--assessment", "--base"):
             if i + 1 >= len(a):
                 sys.exit(f"{a[i]} needs a value")
             key = a[i].lstrip("-")
@@ -49,7 +50,7 @@ def parse(a):
     return positional[0], positional[1], args
 
 
-def course_json(year, slug, title, code, hours):
+def course_json(year, slug, title, code, hours, assessment):
     return {
         "slug": slug,
         "code": code or slug[:4].upper(),
@@ -59,6 +60,7 @@ def course_json(year, slug, title, code, hours):
         "hours": int(hours or 0),
         "languages": [],
         "status": "planned",
+        "assessment": assessment,
         "price": None,
         "currency": "RUB",
         "year": str(year),
@@ -92,7 +94,7 @@ def main():
     (d / "chapters").mkdir(exist_ok=True)
     (d / "reports").mkdir(exist_ok=True)
     cj = d / "course.json"
-    cj.write_text(json.dumps(course_json(year, slug, args["title"], args["code"], args["hours"]),
+    cj.write_text(json.dumps(course_json(year, slug, args["title"], args["code"], args["hours"], args["assessment"]),
                              indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"wrote {cj}")
     print(f"next: fill the plan in {cj}, then run `python tools/build_site.py`")

@@ -85,7 +85,8 @@ def build_course(root: Path) -> Path:
     slots = lesson_slots(c.get("chapters", []))
     meta = " · ".join(x for x in [spec_line(c, slots * 2),
                                   f"{slots} {plural_lessons(slots)}" if slots else None,
-                                  summary(c, availability)] if x)
+                                  summary(c, availability),
+                                  c.get("assessment")] if x)
     outcomes = ""
     if c.get("outcomes"):
         outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(
@@ -94,11 +95,12 @@ def build_course(root: Path) -> Path:
     if c.get("prerequisites"):
         prereq = '<section class="outcomes"><b>Требуется предварительно</b><ul>' + "".join(
             f"<li>{esc(o)}</li>" for o in c["prerequisites"]) + "</ul></section>"
-    status_pill = '<span class="pill dark">Материалы доступны</span>' if c.get("status") == "available" else '<span class="pill">Готовится</span>'
+    status_pill = '<span class="pill dark">Материалы доступны</span>' if c.get("status") == "available" else '<span class="pill">Не готово</span>'
+    assessment_pill = f'<span class="pill">{esc(c["assessment"])}</span>' if c.get("assessment") else ""
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
     body = f"""<main class="page">
 <div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
-<header class="hero"><div class="badges">{status_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
+<header class="hero"><div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
 <h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="glyph" aria-hidden="true">{esc(c['code'])}</div></header>
     {outcomes}{prereq}
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>

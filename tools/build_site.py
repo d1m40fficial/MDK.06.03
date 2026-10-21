@@ -45,6 +45,7 @@ CARD_CSS = (
     "@media (prefers-color-scheme: dark){:root:not([data-theme=light]) .course-card"
     "{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}}"
     ":root[data-theme=dark] .course-card{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}"
+    ".course-card.pending{opacity:.62}.course-card.pending:hover{opacity:1}"
 )
 
 
@@ -140,11 +141,13 @@ def discipline_card(c: dict) -> str:
     avail = c.get("status") == "available"
     spec = " · ".join(x for x in [esc(c.get("code", "")), esc(c.get("level", "")),
                                   f"{c['hours']} ч" if c.get("hours") else None,
-                                  f"{n} {plural_lessons(n)}" if n else None] if x)
+                                  f"{n} {plural_lessons(n)}" if n else None,
+                                  esc(c.get("assessment", ""))] if x)
+    card_class = "course-card" if avail else "course-card pending"
     return (
-        f'<a class="course-card" href="{esc(c["slug"])}/index.html" style="{card_vars(c)}">'
+        f'<a class="{card_class}" href="{esc(c["slug"])}/index.html" style="{card_vars(c)}">'
         f'<div class="art"><span class="pill{" dark" if avail else ""}">'
-        f'{"Доступно" if avail else "Скоро"}</span><span class="ch">{n} зан.</span>'
+        f'{"Доступно" if avail else "Не готово"}</span><span class="ch">{n} зан.</span>'
         f'<div class="glyph" aria-hidden="true">{esc(c.get("code", ""))}</div></div>'
         f'<div class="body"><h3>{esc(c["title"])}</h3>'
         f'<p>{esc(c.get("tagline", ""))}</p>'

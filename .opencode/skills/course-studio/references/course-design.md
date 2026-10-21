@@ -42,7 +42,8 @@ The single source of truth for the course card, the course page and the chapter 
   "title": "Data Structures & Algorithms",
   "tagline": "From arrays to DP. Learn it visually, then prove it with practice.",
   "level": "Beginner → Advanced", "hours": 40, "languages": ["C++", "Python", "JavaScript", "Go"],
-  "status": "available",             // available | coming_soon
+  "status": "available",             // available | planned
+  "assessment": "Экзамен",            // Зачёт | Экзамен
   "price": 3499, "currency": "INR", "order": 1,
   "accent": "#D04A28", "tint": "#F4E1D8", "accentDark": "#F06A45", "tintDark": "#3A2219",   // optional overrides
   "audience": "...", "prerequisites": ["..."], "outcomes": ["..."],
