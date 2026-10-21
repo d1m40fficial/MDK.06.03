@@ -232,6 +232,7 @@ html.modal-open { overflow: hidden; }
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
 .diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
 .diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
 .shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
 .shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
@@ -516,7 +517,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информация, данные и информационная система</span></nav><div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Информация, данные и информационная система</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Информация, данные и информационная система</h1><p class="dek">Информационная система превращает входные данные в информацию, нужную пользователю, по замкнутому циклу.</p>
 <div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Давать определение информационной системы и отличать её от отдельной программы или базы данных</li><li>Показывать на примере цикл обработки информации в ИС и называть все шесть его процессов</li><li>Различать данные и информацию и объяснять, что делает средняя часть цикла</li><li>Объяснять роль человека в контуре ИС и различать автоматические, автоматизированные и ручные системы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#что-такое-информация">Что такое информация</a></li><li><a href="#как-это-выглядит-в-движении">Как это выглядит в движении</a></li><li><a href="#данные-и-информация-чем-они-различаются">Данные и информация: чем они различаются</a></li><li><a href="#преобразование-данных-в-информацию">Преобразование данных в информацию</a></li><li><a href="#цикл-из-шести-процессов">Цикл из шести процессов</a></li><li><a href="#каждый-процесс-крупным-планом">Каждый процесс крупным планом</a></li><li><a href="#разбор-цикла-на-сквозном-примере">Разбор цикла на сквозном примере</a></li><li><a href="#какие-задачи-решает-ис">Какие задачи решает ИС</a></li><li><a href="#как-устроена-ис-внутри">Как устроена ИС внутри</a></li><li><a href="#человек-в-контуре-ис">Человек в контуре ИС</a></li><li><a href="#роли-людей-в-ис">Роли людей в ИС</a></li><li><a href="#как-данные-живут-в-ис-жизненный-путь-записи">Как данные живут в ИС: жизненный путь записи</a></li><li><a href="#свойства-информационной-системы">Свойства информационной системы</a></li><li><a href="#классификация-первые-признаки">Классификация: первые признаки</a></li><li><a href="#ис-и-процессы-организации">ИС и процессы организации</a></li><li><a href="#откуда-взялись-информационные-системы">Откуда взялись информационные системы</a></li><li><a href="#определение-как-формулирует-закон-и-стандарты">Определение: как формулирует закон и стандарты</a></li><li><a href="#границы-ис-что-входит-а-что-нет">Границы ИС: что входит, а что нет</a></li><li><a href="#типичные-ошибки-в-представлении-об-ис">Типичные ошибки в представлении об ИС</a></li><li><a href="#мини-практикум">Мини-практикум</a></li><li><a href="#вопросы-для-размышления">Вопросы для размышления</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>Информационная система это не «программа» и не «база данных». Это <strong>замкнутый цикл</strong>: на входе сырые данные, в середине их обработка и хранение, на выходе информация, за которой стоит человек, принимающий решение. Уберите любую часть цикла, и система перестанет работать как система: данные без обработки бесполезны, информация без хранилища исчезает, а решение без обратной связи не улучшает процесс.</p>
@@ -906,18 +907,16 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 (function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
-  function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
-    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
   function load(fig){
-    var t=theme(); if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
+    var t='light'; if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
     var f=fig.querySelector('iframe'), one=fig.getAttribute('data-one');
-    var b=atob(one || fig.getAttribute('data-'+t)), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
-    f.style.colorScheme = t;
+    var b=atob(one || fig.getAttribute('data-light')), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
+    f.style.colorScheme = 'light';
     new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text().then(function(html){
-      if (one && t==='light') html = html.split('data-theme="dark"').join('data-theme="light"');
-      html = html.replace('</head>', FIX.split('__T__').join(t) + '</head>');
+      if (one) html = html.split('data-theme="dark"').join('data-theme="light"');
+      html = html.replace('</head>', FIX.split('__T__').join('light') + '</head>');
       f.srcdoc = html;
     });
     f.onload=function(){ size(f); setTimeout(function(){size(f)},300); setTimeout(function(){size(f)},1200);
@@ -926,8 +925,6 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   var figs=[].slice.call(document.querySelectorAll('figure.figure'));
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
   figs.forEach(function(f){ io ? io.observe(f) : load(f); });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
-  addEventListener('themechange', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
 

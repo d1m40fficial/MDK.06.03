@@ -127,18 +127,16 @@ def figure_html(fid: str, caption: str, n: int, base: Path, figures: list) -> st
 FIG_SCRIPT = r"""
 (function(){
   var FIX = __FIX__;
-  function theme(){ var t=document.documentElement.dataset.theme; if(t) return t;
-    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
   function load(fig){
-    var t=theme(); if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
+    var t='light'; if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
     var f=fig.querySelector('iframe'), one=fig.getAttribute('data-one');
-    var b=atob(one || fig.getAttribute('data-'+t)), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
-    f.style.colorScheme = t;
+    var b=atob(one || fig.getAttribute('data-light')), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
+    f.style.colorScheme = 'light';
     new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text().then(function(html){
-      if (one && t==='light') html = html.split('data-theme="dark"').join('data-theme="light"');
-      html = html.replace('</head>', FIX.split('__T__').join(t) + '</head>');
+      if (one) html = html.split('data-theme="dark"').join('data-theme="light"');
+      html = html.replace('</head>', FIX.split('__T__').join('light') + '</head>');
       f.srcdoc = html;
     });
     f.onload=function(){ size(f); setTimeout(function(){size(f)},300); setTimeout(function(){size(f)},1200);
@@ -147,8 +145,6 @@ FIG_SCRIPT = r"""
   var figs=[].slice.call(document.querySelectorAll('figure.figure'));
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
   figs.forEach(function(f){ io ? io.observe(f) : load(f); });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
-  addEventListener('themechange', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
 """
@@ -156,7 +152,7 @@ FIG_SCRIPT = r"""
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-NAV_BUTTON_HTML = '<a class="nav-btn" href="#course-list" data-course-list>Все курсы</a>'
+NAV_BUTTON_HTML = '<a class="nav-btn" href="index.html">К учебному плану</a>'
 PDF_BUTTON_HTML = ('<button type="button" class="pdf-btn" data-pdf '
                    'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button>')
 

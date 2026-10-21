@@ -192,6 +192,9 @@ Choose the lighter tool that still teaches the idea.
 - **Old Excalidraw diagrams** in `_reference/miapo/` were only a means to make
   screenshots. Do not ship them. Rebuild the idea as an Anatomy figure, an inline SVG
   from Visualise, or a small 3D Anatomy figure if the subject truly needs depth.
+- **Diagrams stay light.** Anatomy iframes always load the light build, and `.diagram`
+  SVGs use fixed light tokens even when the page is in dark theme. Do not make diagrams
+  follow the page theme.
 
 ## Page building
 
