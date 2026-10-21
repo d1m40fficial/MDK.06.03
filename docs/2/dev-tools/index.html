@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Инструментальные средства разработки ПО</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Экзамен</span></div><div class="meta">СПО · 76 ч · Python / C# · 38 занятий · Экзамен</div>
 <h1>Инструментальные средства разработки ПО</h1><p class="dek">VS Code, Visual Studio 2026, Git, Postman и автоматизация проверок.</p><div class="glyph" aria-hidden="true">ИСРПО</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Настраивать VS Code и Visual Studio 2026</li><li>Работать с Git, сборкой и виртуальными окружениями</li><li>Использовать отладчик, линтер и статический анализ</li><li>Проверять API в Postman и работать с SQLiteOnline</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы алгоритмизации и программирования</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Инструментальные средства разработки</h3><div class="mins">90 мин · план</div><p>Разбор темы «Инструментальные средства разработки»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Инструментальные средства разработки</span></div></li><li><div class="n">2</div><h3>Практика 1. Настройка VS Code</h3><div class="mins">90 мин · план</div><p>Практическая работа «Настройка VS Code»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Настройка VS Code</span></div></li><li><div class="n">3</div><h3>Лекция 2. VS Code: возможности и настройка</h3><div class="mins">90 мин · план</div><p>Разбор темы «VS Code: возможности и настройка»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>VS Code: возможности и настройка</span></div></li><li><div class="n">4</div><h3>Практика 2. Настройка Visual Studio 2026</h3><div class="mins">90 мин · план</div><p>Практическая работа «Настройка Visual Studio 2026»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Настройка Visual Studio 2026</span></div></li><li><div class="n">5</div><h3>Лекция 3. Visual Studio 2026 Community</h3><div class="mins">90 мин · план</div><p>Разбор темы «Visual Studio 2026 Community»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Visual Studio 2026 Community</span></div></li><li><div class="n">6</div><h3>Практика 3. Git и GitHub</h3><div class="mins">90 мин · план</div><p>Практическая работа «Git и GitHub»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Git и GitHub</span></div></li><li><div class="n">7</div><h3>Лекция 4. Расширения и плагины</h3><div class="mins">90 мин · план</div><p>Разбор темы «Расширения и плагины»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Расширения и плагины</span></div></li><li><div class="n">8</div><h3>Практика 4. Виртуальное окружение Python</h3><div class="mins">90 мин · план</div><p>Практическая работа «Виртуальное окружение Python»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Виртуальное окружение Python</span></div></li><li><div class="n">9</div><h3>Лекция 5. Git и GitHub</h3><div class="mins">90 мин · план</div><p>Разбор темы «Git и GitHub»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Git и GitHub</span></div></li><li><div class="n">10</div><h3>Практика 5. Сборка проекта</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сборка проекта»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сборка проекта</span></div></li><li><div class="n">11</div><h3>Лекция 6. Системы сборки</h3><div class="mins">90 мин · план</div><p>Разбор темы «Системы сборки»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Системы сборки</span></div></li><li><div class="n">12</div><h3>Практика 6. Отладка в VS Code</h3><div class="mins">90 мин · план</div><p>Практическая работа «Отладка в VS Code»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Отладка в VS Code</span></div></li><li><div class="n">13</div><h3>Лекция 7. Виртуальные окружения Python</h3><div class="mins">90 мин · план</div><p>Разбор темы «Виртуальные окружения Python»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Виртуальные окружения Python</span></div></li><li><div class="n">14</div><h3>Практика 7. Отладка в Visual Studio</h3><div class="mins">90 мин · план</div><p>Практическая работа «Отладка в Visual Studio»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Отладка в Visual Studio</span></div></li><li><div class="n">15</div><h3>Лекция 8. Пакетные менеджеры</h3><div class="mins">90 мин · план</div><p>Разбор темы «Пакетные менеджеры»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Пакетные менеджеры</span></div></li><li><div class="n">16</div><h3>Практика 8. Линтер и форматтер</h3><div class="mins">90 мин · план</div><p>Практическая работа «Линтер и форматтер»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Линтер и форматтер</span></div></li><li><div class="n">17</div><h3>Лекция 9. Отладчик</h3><div class="mins">90 мин · план</div><p>Разбор темы «Отладчик»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Отладчик</span></div></li><li><div class="n">18</div><h3>Практика 9. Статический анализ</h3><div class="mins">90 мин · план</div><p>Практическая работа «Статический анализ»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Статический анализ</span></div></li><li><div class="n">19</div><h3>Лекция 10. Профилирование</h3><div class="mins">90 мин · план</div><p>Разбор темы «Профилирование»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Профилирование</span></div></li><li><div class="n">20</div><h3>Практика 10. Тестирование в IDE</h3><div class="mins">90 мин · план</div><p>Практическая работа «Тестирование в IDE»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Тестирование в IDE</span></div></li><li><div class="n">21</div><h3>Лекция 11. Линтеры и форматтеры</h3><div class="mins">90 мин · план</div><p>Разбор темы «Линтеры и форматтеры»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Линтеры и форматтеры</span></div></li><li><div class="n">22</div><h3>Практика 11. Postman</h3><div class="mins">90 мин · план</div><p>Практическая работа «Postman»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Postman</span></div></li><li><div class="n">23</div><h3>Лекция 12. Статический анализ</h3><div class="mins">90 мин · план</div><p>Разбор темы «Статический анализ»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Статический анализ</span></div></li><li><div class="n">24</div><h3>Практика 12. SQLiteOnline</h3><div class="mins">90 мин · план</div><p>Практическая работа «SQLiteOnline»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>SQLiteOnline</span></div></li><li><div class="n">25</div><h3>Лекция 13. Тестирование в IDE</h3><div class="mins">90 мин · план</div><p>Разбор темы «Тестирование в IDE»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Тестирование в IDE</span></div></li><li><div class="n">26</div><h3>Практика 13. VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>VirtualBox</span></div></li><li><div class="n">27</div><h3>Лекция 14. Postman</h3><div class="mins">90 мин · план</div><p>Разбор темы «Postman»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Postman</span></div></li><li><div class="n">28</div><h3>Практика 14. GitHub Actions</h3><div class="mins">90 мин · план</div><p>Практическая работа «GitHub Actions»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>GitHub Actions</span></div></li><li><div class="n">29</div><h3>Лекция 15. SQLite и sqliteonline.com</h3><div class="mins">90 мин · план</div><p>Разбор темы «SQLite и sqliteonline.com»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>SQLite и sqliteonline.com</span></div></li><li><div class="n">30</div><h3>Практика 15. Документирование</h3><div class="mins">90 мин · план</div><p>Практическая работа «Документирование»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Документирование</span></div></li><li><div class="n">31</div><h3>Лекция 16. Виртуальные машины в разработке</h3><div class="mins">90 мин · план</div><p>Разбор темы «Виртуальные машины в разработке»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Виртуальные машины в разработке</span></div></li><li><div class="n">32</div><h3>Практика 16. Профилирование</h3><div class="mins">90 мин · план</div><p>Практическая работа «Профилирование»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Профилирование</span></div></li><li><div class="n">33</div><h3>Лекция 17. CI/CD и GitHub Actions</h3><div class="mins">90 мин · план</div><p>Разбор темы «CI/CD и GitHub Actions»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>CI/CD и GitHub Actions</span></div></li><li><div class="n">34</div><h3>Практика 17. Мини-проект</h3><div class="mins">90 мин · план</div><p>Практическая работа «Мини-проект»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Мини-проект</span></div></li><li><div class="n">35</div><h3>Лекция 18. Документирование кода</h3><div class="mins">90 мин · план</div><p>Разбор темы «Документирование кода»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Документирование кода</span></div></li><li><div class="n">36</div><h3>Практика 18. Автоматизация проверок</h3><div class="mins">90 мин · план</div><p>Практическая работа «Автоматизация проверок»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Автоматизация проверок</span></div></li><li><div class="n">37</div><h3>Лекция 19. Выбор инструментов под задачу</h3><div class="mins">90 мин · план</div><p>Разбор темы «Выбор инструментов под задачу»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Выбор инструментов под задачу</span></div></li><li><div class="n">38</div><h3>Практика 19. Итоговый проект</h3><div class="mins">90 мин · план</div><p>Практическая работа «Итоговый проект»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Итоговый проект</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

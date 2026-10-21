@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
+from _pages import accent_vars, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE  # noqa: E402
 from availability import is_open, load_availability, summary  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -99,7 +99,7 @@ def build_course(root: Path) -> Path:
     assessment_pill = f'<span class="pill">{esc(c["assessment"])}</span>' if c.get("assessment") else ""
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
     body = f"""<main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right">{THEME_TOGGLE}</div></div>
 <header class="hero"><div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
 <h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="glyph" aria-hidden="true">{esc(c['code'])}</div></header>
     {outcomes}{prereq}

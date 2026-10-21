@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Технология разработки ПО</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Экзамен</span></div><div class="meta">СПО · 76 ч · Python / Git · 38 занятий · Экзамен</div>
 <h1>Технология разработки ПО</h1><p class="dek">Жизненный цикл, требования, Git, тестирование и сопровождение.</p><div class="glyph" aria-hidden="true">ТРПО</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Описывать жизненный цикл и выбирать модель разработки</li><li>Собирать требования и строить базовые модели</li><li>Работать с Git и проводить ревью</li><li>Готовить документацию и релиз</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы алгоритмизации и программирования</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Программная инженерия и жизненный цикл</h3><div class="mins">90 мин · план</div><p>Разбор темы «Программная инженерия и жизненный цикл»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Программная инженерия и жизненный цикл</span></div></li><li><div class="n">2</div><h3>Практика 1. Анализ требований</h3><div class="mins">90 мин · план</div><p>Практическая работа «Анализ требований»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Анализ требований</span></div></li><li><div class="n">3</div><h3>Лекция 2. Модели жизненного цикла</h3><div class="mins">90 мин · план</div><p>Разбор темы «Модели жизненного цикла»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Модели жизненного цикла</span></div></li><li><div class="n">4</div><h3>Практика 2. User stories и критерии приёмки</h3><div class="mins">90 мин · план</div><p>Практическая работа «User stories и критерии приёмки»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>User stories и критерии приёмки</span></div></li><li><div class="n">5</div><h3>Лекция 3. Agile и Scrum</h3><div class="mins">90 мин · план</div><p>Разбор темы «Agile и Scrum»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Agile и Scrum</span></div></li><li><div class="n">6</div><h3>Практика 3. Use case</h3><div class="mins">90 мин · план</div><p>Практическая работа «Use case»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Use case</span></div></li><li><div class="n">7</div><h3>Лекция 4. Требования и user stories</h3><div class="mins">90 мин · план</div><p>Разбор темы «Требования и user stories»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Требования и user stories</span></div></li><li><div class="n">8</div><h3>Практика 4. Диаграмма классов</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диаграмма классов»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диаграмма классов</span></div></li><li><div class="n">9</div><h3>Лекция 5. Анализ предметной области</h3><div class="mins">90 мин · план</div><p>Разбор темы «Анализ предметной области»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Анализ предметной области</span></div></li><li><div class="n">10</div><h3>Практика 5. ER-модель</h3><div class="mins">90 мин · план</div><p>Практическая работа «ER-модель»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>ER-модель</span></div></li><li><div class="n">11</div><h3>Лекция 6. Проектирование архитектуры</h3><div class="mins">90 мин · план</div><p>Разбор темы «Проектирование архитектуры»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Проектирование архитектуры</span></div></li><li><div class="n">12</div><h3>Практика 6. Макет интерфейса</h3><div class="mins">90 мин · план</div><p>Практическая работа «Макет интерфейса»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Макет интерфейса</span></div></li><li><div class="n">13</div><h3>Лекция 7. UML и моделирование</h3><div class="mins">90 мин · план</div><p>Разбор темы «UML и моделирование»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>UML и моделирование</span></div></li><li><div class="n">14</div><h3>Практика 7. Настройка Git</h3><div class="mins">90 мин · план</div><p>Практическая работа «Настройка Git»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Настройка Git</span></div></li><li><div class="n">15</div><h3>Лекция 8. Проектирование данных</h3><div class="mins">90 мин · план</div><p>Разбор темы «Проектирование данных»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Проектирование данных</span></div></li><li><div class="n">16</div><h3>Практика 8. Ветвление и merge</h3><div class="mins">90 мин · план</div><p>Практическая работа «Ветвление и merge»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Ветвление и merge</span></div></li><li><div class="n">17</div><h3>Лекция 9. Интерфейс и UX</h3><div class="mins">90 мин · план</div><p>Разбор темы «Интерфейс и UX»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Интерфейс и UX</span></div></li><li><div class="n">18</div><h3>Практика 9. Code review</h3><div class="mins">90 мин · план</div><p>Практическая работа «Code review»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Code review</span></div></li><li><div class="n">19</div><h3>Лекция 10. Стандарты кодирования</h3><div class="mins">90 мин · план</div><p>Разбор темы «Стандарты кодирования»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Стандарты кодирования</span></div></li><li><div class="n">20</div><h3>Практика 10. Тест-кейсы</h3><div class="mins">90 мин · план</div><p>Практическая работа «Тест-кейсы»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Тест-кейсы</span></div></li><li><div class="n">21</div><h3>Лекция 11. Git и ветвление</h3><div class="mins">90 мин · план</div><p>Разбор темы «Git и ветвление»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Git и ветвление</span></div></li><li><div class="n">22</div><h3>Практика 11. Автоматизация проверок</h3><div class="mins">90 мин · план</div><p>Практическая работа «Автоматизация проверок»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Автоматизация проверок</span></div></li><li><div class="n">23</div><h3>Лекция 12. Code review</h3><div class="mins">90 мин · план</div><p>Разбор темы «Code review»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Code review</span></div></li><li><div class="n">24</div><h3>Практика 12. Отладка</h3><div class="mins">90 мин · план</div><p>Практическая работа «Отладка»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Отладка</span></div></li><li><div class="n">25</div><h3>Лекция 13. Тестирование ПО</h3><div class="mins">90 мин · план</div><p>Разбор темы «Тестирование ПО»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Тестирование ПО</span></div></li><li><div class="n">26</div><h3>Практика 13. Документация</h3><div class="mins">90 мин · план</div><p>Практическая работа «Документация»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Документация</span></div></li><li><div class="n">27</div><h3>Лекция 14. Отладка</h3><div class="mins">90 мин · план</div><p>Разбор темы «Отладка»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Отладка</span></div></li><li><div class="n">28</div><h3>Практика 14. Сборка проекта</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сборка проекта»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сборка проекта</span></div></li><li><div class="n">29</div><h3>Лекция 15. Документирование</h3><div class="mins">90 мин · план</div><p>Разбор темы «Документирование»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Документирование</span></div></li><li><div class="n">30</div><h3>Практика 15. Релиз</h3><div class="mins">90 мин · план</div><p>Практическая работа «Релиз»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Релиз</span></div></li><li><div class="n">31</div><h3>Лекция 16. Сборка и релиз</h3><div class="mins">90 мин · план</div><p>Разбор темы «Сборка и релиз»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Сборка и релиз</span></div></li><li><div class="n">32</div><h3>Практика 16. Внедрение</h3><div class="mins">90 мин · план</div><p>Практическая работа «Внедрение»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Внедрение</span></div></li><li><div class="n">33</div><h3>Лекция 17. Внедрение</h3><div class="mins">90 мин · план</div><p>Разбор темы «Внедрение»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Внедрение</span></div></li><li><div class="n">34</div><h3>Практика 17. Сопровождение</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сопровождение»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сопровождение</span></div></li><li><div class="n">35</div><h3>Лекция 18. Сопровождение</h3><div class="mins">90 мин · план</div><p>Разбор темы «Сопровождение»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Сопровождение</span></div></li><li><div class="n">36</div><h3>Практика 18. Оценка качества</h3><div class="mins">90 мин · план</div><p>Практическая работа «Оценка качества»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Оценка качества</span></div></li><li><div class="n">37</div><h3>Лекция 19. Оценка качества и рисков</h3><div class="mins">90 мин · план</div><p>Разбор темы «Оценка качества и рисков»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Оценка качества и рисков</span></div></li><li><div class="n">38</div><h3>Практика 19. Итоговый проект</h3><div class="mins">90 мин · план</div><p>Практическая работа «Итоговый проект»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Итоговый проект</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

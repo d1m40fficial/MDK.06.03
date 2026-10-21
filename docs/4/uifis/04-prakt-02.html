@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Практика 2. Построение схемы состава информационной системы</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -511,7 +516,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Практика 2. Построение схемы состава информационной системы</span></nav><div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 4</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Практика 2. Построение схемы состава информационной системы</span></nav><div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 4</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
 <h1>Практика 2. Построение схемы состава информационной системы</h1><p class="dek">Разбираем выбранную ИС на функциональные и обеспечивающие подсистемы и рисуем схему состава со связями.</p>
 <div class="glyph" aria-hidden="true">П2</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выделять функциональные подсистемы выбранной ИС</li><li>Подбирать к каждой функции нужные виды обеспечения</li><li>Строить схему состава со связями и оформлять её в отчёте</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#пример-схемы-состава">Пример схемы состава</a></li><li><a href="#задание">Задание</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#требования-к-отчёту">Требования к отчёту</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Научиться описывать состав информационной системы: разделить её на функциональные подсистемы (что система делает) и обеспечивающие подсистемы (чем и как это делается), а затем показать на схеме, какая функция на какое обеспечение опирается.</p>
@@ -651,6 +656,40 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Результат работы оформляется схемой состава, таблицей и отчётом по шаблону со скриншотами.</li>
 </ul></div></article><nav class="pager"><a class="" href="03-lek-02.html"><span>← Предыдущее занятие</span>Лекция 2. Состав и структура информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="05-lek-03.html"><span>Следующее занятие →</span>Лекция 3. Информационные процессы и потоки данных</a></nav></main>
 <script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+
 (function(){
   var bar=document.querySelector('.read-progress'); if(!bar) return;
   var fill=bar.querySelector('span'), ticking=false;

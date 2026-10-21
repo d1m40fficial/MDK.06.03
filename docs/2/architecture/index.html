@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Архитектура аппаратных средств</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Зачёт</span></div><div class="meta">СПО · 64 ч · 32 занятия · Зачёт</div>
 <h1>Архитектура аппаратных средств</h1><p class="dek">Процессор, память, накопители и выбор конфигурации под информационную систему.</p><div class="glyph" aria-hidden="true">ААС</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Объяснять устройство процессора, памяти и накопителей</li><li>Сравнивать аппаратные платформы по характеристикам</li><li>Выбирать конфигурацию под нагрузку и бюджет</li><li>Диагностировать аппаратные проблемы</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы информатики</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Архитектура аппаратных средств: состав и уровни</h3><div class="mins">90 мин · план</div><p>Разбор темы «Архитектура аппаратных средств: состав и уровни»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Архитектура аппаратных средств: состав и уровни</span></div></li><li><div class="n">2</div><h3>Практика 1. Разбор конфигурации ПК</h3><div class="mins">90 мин · план</div><p>Практическая работа «Разбор конфигурации ПК»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Разбор конфигурации ПК</span></div></li><li><div class="n">3</div><h3>Лекция 2. Представление данных в компьютере</h3><div class="mins">90 мин · план</div><p>Разбор темы «Представление данных в компьютере»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Представление данных в компьютере</span></div></li><li><div class="n">4</div><h3>Практика 2. Расчёт объёма памяти и накопителя</h3><div class="mins">90 мин · план</div><p>Практическая работа «Расчёт объёма памяти и накопителя»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Расчёт объёма памяти и накопителя</span></div></li><li><div class="n">5</div><h3>Лекция 3. Логические элементы и схемы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Логические элементы и схемы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Логические элементы и схемы</span></div></li><li><div class="n">6</div><h3>Практика 3. Анализ процессора и кэша</h3><div class="mins">90 мин · план</div><p>Практическая работа «Анализ процессора и кэша»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Анализ процессора и кэша</span></div></li><li><div class="n">7</div><h3>Лекция 4. Процессор: состав и принцип работы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Процессор: состав и принцип работы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Процессор: состав и принцип работы</span></div></li><li><div class="n">8</div><h3>Практика 4. Сравнение HDD и SSD</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сравнение HDD и SSD»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сравнение HDD и SSD</span></div></li><li><div class="n">9</div><h3>Лекция 5. Система команд и регистры</h3><div class="mins">90 мин · план</div><p>Разбор темы «Система команд и регистры»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Система команд и регистры</span></div></li><li><div class="n">10</div><h3>Практика 5. RAID: расчёт и отказоустойчивость</h3><div class="mins">90 мин · план</div><p>Практическая работа «RAID: расчёт и отказоустойчивость»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>RAID: расчёт и отказоустойчивость</span></div></li><li><div class="n">11</div><h3>Лекция 6. Конвейер и производительность</h3><div class="mins">90 мин · план</div><p>Разбор темы «Конвейер и производительность»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Конвейер и производительность</span></div></li><li><div class="n">12</div><h3>Практика 6. Выбор серверной платформы</h3><div class="mins">90 мин · план</div><p>Практическая работа «Выбор серверной платформы»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Выбор серверной платформы</span></div></li><li><div class="n">13</div><h3>Лекция 7. Память: иерархия и кэш</h3><div class="mins">90 мин · план</div><p>Разбор темы «Память: иерархия и кэш»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Память: иерархия и кэш</span></div></li><li><div class="n">14</div><h3>Практика 7. Виртуализация в VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «Виртуализация в VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Виртуализация в VirtualBox</span></div></li><li><div class="n">15</div><h3>Лекция 8. Оперативная память</h3><div class="mins">90 мин · план</div><p>Разбор темы «Оперативная память»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Оперативная память</span></div></li><li><div class="n">16</div><h3>Практика 8. Диагностика аппаратных проблем</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диагностика аппаратных проблем»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диагностика аппаратных проблем</span></div></li><li><div class="n">17</div><h3>Лекция 9. Постоянная память и BIOS/UEFI</h3><div class="mins">90 мин · план</div><p>Разбор темы «Постоянная память и BIOS/UEFI»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Постоянная память и BIOS/UEFI</span></div></li><li><div class="n">18</div><h3>Практика 9. Модернизация учебного ПК</h3><div class="mins">90 мин · план</div><p>Практическая работа «Модернизация учебного ПК»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Модернизация учебного ПК</span></div></li><li><div class="n">19</div><h3>Лекция 10. Системная шина и интерфейсы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Системная шина и интерфейсы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Системная шина и интерфейсы</span></div></li><li><div class="n">20</div><h3>Практика 10. Энергопотребление и охлаждение</h3><div class="mins">90 мин · план</div><p>Практическая работа «Энергопотребление и охлаждение»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Энергопотребление и охлаждение</span></div></li><li><div class="n">21</div><h3>Лекция 11. Чипсет и материнская плата</h3><div class="mins">90 мин · план</div><p>Разбор темы «Чипсет и материнская плата»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Чипсет и материнская плата</span></div></li><li><div class="n">22</div><h3>Практика 11. Итоговая работа: конфигурация под ИС</h3><div class="mins">90 мин · план</div><p>Практическая работа «Итоговая работа: конфигурация под ИС»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Итоговая работа: конфигурация под ИС</span></div></li><li><div class="n">23</div><h3>Лекция 12. Накопители HDD и SSD</h3><div class="mins">90 мин · план</div><p>Разбор темы «Накопители HDD и SSD»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Накопители HDD и SSD</span></div></li><li><div class="n">24</div><h3>Лекция 13. RAID и хранение данных</h3><div class="mins">90 мин · план</div><p>Разбор темы «RAID и хранение данных»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>RAID и хранение данных</span></div></li><li><div class="n">25</div><h3>Лекция 14. Видеоподсистема</h3><div class="mins">90 мин · план</div><p>Разбор темы «Видеоподсистема»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Видеоподсистема</span></div></li><li><div class="n">26</div><h3>Лекция 15. Устройства ввода и вывода</h3><div class="mins">90 мин · план</div><p>Разбор темы «Устройства ввода и вывода»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Устройства ввода и вывода</span></div></li><li><div class="n">27</div><h3>Лекция 16. Питание и охлаждение</h3><div class="mins">90 мин · план</div><p>Разбор темы «Питание и охлаждение»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Питание и охлаждение</span></div></li><li><div class="n">28</div><h3>Лекция 17. Мобильные и встраиваемые платформы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Мобильные и встраиваемые платформы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Мобильные и встраиваемые платформы</span></div></li><li><div class="n">29</div><h3>Лекция 18. Серверные платформы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Серверные платформы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Серверные платформы</span></div></li><li><div class="n">30</div><h3>Лекция 19. Виртуализация аппаратных ресурсов</h3><div class="mins">90 мин · план</div><p>Разбор темы «Виртуализация аппаратных ресурсов»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Виртуализация аппаратных ресурсов</span></div></li><li><div class="n">31</div><h3>Лекция 20. Выбор конфигурации под задачу</h3><div class="mins">90 мин · план</div><p>Разбор темы «Выбор конфигурации под задачу»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Выбор конфигурации под задачу</span></div></li><li><div class="n">32</div><h3>Лекция 21. Диагностика и модернизация</h3><div class="mins">90 мин · план</div><p>Разбор темы «Диагностика и модернизация»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Диагностика и модернизация</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

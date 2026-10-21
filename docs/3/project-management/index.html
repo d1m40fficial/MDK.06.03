@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Управление проектами</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Экзамен</span></div><div class="meta">СПО · 40 ч · 20 занятий · Экзамен</div>
 <h1>Управление проектами</h1><p class="dek">Устав, WBS, бюджет, риски и Agile-практики для ИТ-проекта.</p><div class="glyph" aria-hidden="true">УП</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Составлять устав и план проекта</li><li>Строить WBS и расписание</li><li>Оценивать риски и бюджет</li><li>Работать в Agile-команде</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы алгоритмизации и программирования</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Проект и управление проектом</h3><div class="mins">90 мин · план</div><p>Разбор темы «Проект и управление проектом»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Проект и управление проектом</span></div></li><li><div class="n">2</div><h3>Практика 1. Устав проекта</h3><div class="mins">90 мин · план</div><p>Практическая работа «Устав проекта»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Устав проекта</span></div></li><li><div class="n">3</div><h3>Лекция 2. Жизненный цикл проекта</h3><div class="mins">90 мин · план</div><p>Разбор темы «Жизненный цикл проекта»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Жизненный цикл проекта</span></div></li><li><div class="n">4</div><h3>Практика 2. Стейкхолдеры</h3><div class="mins">90 мин · план</div><p>Практическая работа «Стейкхолдеры»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Стейкхолдеры</span></div></li><li><div class="n">5</div><h3>Лекция 3. Инициация и устав</h3><div class="mins">90 мин · план</div><p>Разбор темы «Инициация и устав»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Инициация и устав</span></div></li><li><div class="n">6</div><h3>Практика 3. WBS</h3><div class="mins">90 мин · план</div><p>Практическая работа «WBS»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>WBS</span></div></li><li><div class="n">7</div><h3>Лекция 4. Заинтересованные стороны</h3><div class="mins">90 мин · план</div><p>Разбор темы «Заинтересованные стороны»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Заинтересованные стороны</span></div></li><li><div class="n">8</div><h3>Практика 4. Диаграмма Ганта в Excel</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диаграмма Ганта в Excel»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диаграмма Ганта в Excel</span></div></li><li><div class="n">9</div><h3>Лекция 5. WBS и расписание</h3><div class="mins">90 мин · план</div><p>Разбор темы «WBS и расписание»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>WBS и расписание</span></div></li><li><div class="n">10</div><h3>Практика 5. Бюджет</h3><div class="mins">90 мин · план</div><p>Практическая работа «Бюджет»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Бюджет</span></div></li><li><div class="n">11</div><h3>Лекция 6. Ресурсы и бюджет</h3><div class="mins">90 мин · план</div><p>Разбор темы «Ресурсы и бюджет»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Ресурсы и бюджет</span></div></li><li><div class="n">12</div><h3>Практика 6. Риски</h3><div class="mins">90 мин · план</div><p>Практическая работа «Риски»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Риски</span></div></li><li><div class="n">13</div><h3>Лекция 7. Риски</h3><div class="mins">90 мин · план</div><p>Разбор темы «Риски»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Риски</span></div></li><li><div class="n">14</div><h3>Практика 7. План качества</h3><div class="mins">90 мин · план</div><p>Практическая работа «План качества»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>План качества</span></div></li><li><div class="n">15</div><h3>Лекция 8. Качество</h3><div class="mins">90 мин · план</div><p>Разбор темы «Качество»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Качество</span></div></li><li><div class="n">16</div><h3>Практика 8. План коммуникаций</h3><div class="mins">90 мин · план</div><p>Практическая работа «План коммуникаций»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>План коммуникаций</span></div></li><li><div class="n">17</div><h3>Лекция 9. Коммуникации и команда</h3><div class="mins">90 мин · план</div><p>Разбор темы «Коммуникации и команда»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Коммуникации и команда</span></div></li><li><div class="n">18</div><h3>Практика 9. Scrum-доска</h3><div class="mins">90 мин · план</div><p>Практическая работа «Scrum-доска»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Scrum-доска</span></div></li><li><div class="n">19</div><h3>Лекция 10. Agile, Scrum и завершение</h3><div class="mins">90 мин · план</div><p>Разбор темы «Agile, Scrum и завершение»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Agile, Scrum и завершение</span></div></li><li><div class="n">20</div><h3>Практика 10. Защита проекта</h3><div class="mins">90 мин · план</div><p>Практическая работа «Защита проекта»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Защита проекта</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

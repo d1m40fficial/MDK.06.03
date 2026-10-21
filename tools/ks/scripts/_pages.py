@@ -18,6 +18,50 @@ FONTS = (
     '&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
 )
 
+THEME_TOGGLE = ('<button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">'
+                'Тёмная тема</button>')
+
+THEME_BOOT = (
+    '<script>(function(){try{var t=localStorage.getItem("mdk-theme");'
+    'if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>'
+)
+
+THEME_SCRIPT = r"""
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+"""
+
 # Preset identities for the four built-in courses (matched by slug). course.json can override any of these.
 KNOWN = {
     "dsa": {"code": "DSA", "accent": "#D04A28", "tint": "#F4E1D8", "accentDark": "#F06A45", "tintDark": "#3A2219"},
@@ -83,6 +127,7 @@ def page(title: str, body: str, style_vars: str = "", extra_css: str = "", scrip
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
+{THEME_BOOT}
 {FONTS}
 <style>
 {css}
@@ -91,7 +136,7 @@ def page(title: str, body: str, style_vars: str = "", extra_css: str = "", scrip
 </head>
 <body>
 {body}
-{f"<script>{script}</script>" if script else ""}
+<script>{THEME_SCRIPT}{script}</script>
 </body>
 </html>
 """

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Операционные системы и среды</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="../../index.html" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Зачёт</span></div><div class="meta">СПО · 70 ч · 35 занятий · Зачёт</div>
 <h1>Операционные системы и среды</h1><p class="dek">От процессов и памяти до виртуальных машин Linux и Windows 10.</p><div class="glyph" aria-hidden="true">ОС</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Устанавливать и настраивать Linux и Windows 10 в VirtualBox</li><li>Работать с процессами, памятью, файлами и правами</li><li>Диагностировать ОС по журналам и командной строке</li><li>Обеспечивать базовую безопасность и резервное копирование</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Основы информатики</li><li>Архитектура аппаратных средств</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Операционная система: назначение и место в ИС</h3><div class="mins">90 мин · план</div><p>Разбор темы «Операционная система: назначение и место в ИС»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Операционная система: назначение и место в ИС</span></div></li><li><div class="n">2</div><h3>Практика 1. Установка VirtualBox и создание виртуальной машины</h3><div class="mins">90 мин · план</div><p>Практическая работа «Установка VirtualBox и создание виртуальной машины»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Установка VirtualBox и создание виртуальной машины</span></div></li><li><div class="n">3</div><h3>Лекция 2. Архитектура ОС: ядро, драйверы, пользовательское пространство</h3><div class="mins">90 мин · план</div><p>Разбор темы «Архитектура ОС: ядро, драйверы, пользовательское пространство»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Архитектура ОС: ядро, драйверы, пользовательское пространство</span></div></li><li><div class="n">4</div><h3>Практика 2. Установка Linux в VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «Установка Linux в VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Установка Linux в VirtualBox</span></div></li><li><div class="n">5</div><h3>Лекция 3. Процессы и потоки</h3><div class="mins">90 мин · план</div><p>Разбор темы «Процессы и потоки»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Процессы и потоки</span></div></li><li><div class="n">6</div><h3>Практика 3. Установка Windows 10 в VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «Установка Windows 10 в VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Установка Windows 10 в VirtualBox</span></div></li><li><div class="n">7</div><h3>Лекция 4. Планирование процессов</h3><div class="mins">90 мин · план</div><p>Разбор темы «Планирование процессов»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Планирование процессов</span></div></li><li><div class="n">8</div><h3>Практика 4. Работа с командной строкой Linux</h3><div class="mins">90 мин · план</div><p>Практическая работа «Работа с командной строкой Linux»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Работа с командной строкой Linux</span></div></li><li><div class="n">9</div><h3>Лекция 5. Синхронизация и взаимные блокировки</h3><div class="mins">90 мин · план</div><p>Разбор темы «Синхронизация и взаимные блокировки»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Синхронизация и взаимные блокировки</span></div></li><li><div class="n">10</div><h3>Практика 5. Файлы, каталоги и права в Linux</h3><div class="mins">90 мин · план</div><p>Практическая работа «Файлы, каталоги и права в Linux»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Файлы, каталоги и права в Linux</span></div></li><li><div class="n">11</div><h3>Лекция 6. Управление памятью и виртуальная память</h3><div class="mins">90 мин · план</div><p>Разбор темы «Управление памятью и виртуальная память»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Управление памятью и виртуальная память</span></div></li><li><div class="n">12</div><h3>Практика 6. Пользователи и группы в Linux</h3><div class="mins">90 мин · план</div><p>Практическая работа «Пользователи и группы в Linux»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Пользователи и группы в Linux</span></div></li><li><div class="n">13</div><h3>Лекция 7. Файловые системы</h3><div class="mins">90 мин · план</div><p>Разбор темы «Файловые системы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Файловые системы</span></div></li><li><div class="n">14</div><h3>Практика 7. Процессы и управление ими</h3><div class="mins">90 мин · план</div><p>Практическая работа «Процессы и управление ими»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Процессы и управление ими</span></div></li><li><div class="n">15</div><h3>Лекция 8. Ввод-вывод и драйверы устройств</h3><div class="mins">90 мин · план</div><p>Разбор темы «Ввод-вывод и драйверы устройств»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Ввод-вывод и драйверы устройств</span></div></li><li><div class="n">16</div><h3>Практика 8. Сценарии Bash</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сценарии Bash»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сценарии Bash</span></div></li><li><div class="n">17</div><h3>Лекция 9. Пользователи, права и безопасность ОС</h3><div class="mins">90 мин · план</div><p>Разбор темы «Пользователи, права и безопасность ОС»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Пользователи, права и безопасность ОС</span></div></li><li><div class="n">18</div><h3>Практика 9. Работа с командной строкой Windows</h3><div class="mins">90 мин · план</div><p>Практическая работа «Работа с командной строкой Windows»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Работа с командной строкой Windows</span></div></li><li><div class="n">19</div><h3>Лекция 10. Командная строка и сценарии администрирования</h3><div class="mins">90 мин · план</div><p>Разбор темы «Командная строка и сценарии администрирования»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Командная строка и сценарии администрирования</span></div></li><li><div class="n">20</div><h3>Практика 10. Права доступа и общие папки Windows</h3><div class="mins">90 мин · план</div><p>Практическая работа «Права доступа и общие папки Windows»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Права доступа и общие папки Windows</span></div></li><li><div class="n">21</div><h3>Лекция 11. Службы и автозагрузка</h3><div class="mins">90 мин · план</div><p>Разбор темы «Службы и автозагрузка»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Службы и автозагрузка</span></div></li><li><div class="n">22</div><h3>Практика 11. Службы и планировщик Windows</h3><div class="mins">90 мин · план</div><p>Практическая работа «Службы и планировщик Windows»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Службы и планировщик Windows</span></div></li><li><div class="n">23</div><h3>Лекция 12. Виртуализация: VirtualBox, Linux и Windows 10</h3><div class="mins">90 мин · план</div><p>Разбор темы «Виртуализация: VirtualBox, Linux и Windows 10»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Виртуализация: VirtualBox, Linux и Windows 10</span></div></li><li><div class="n">24</div><h3>Практика 12. Диагностика сети в ОС</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диагностика сети в ОС»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диагностика сети в ОС</span></div></li><li><div class="n">25</div><h3>Лекция 13. Диагностика, журналы и восстановление ОС</h3><div class="mins">90 мин · план</div><p>Разбор темы «Диагностика, журналы и восстановление ОС»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Диагностика, журналы и восстановление ОС</span></div></li><li><div class="n">26</div><h3>Практика 13. Журналы событий и поиск ошибок</h3><div class="mins">90 мин · план</div><p>Практическая работа «Журналы событий и поиск ошибок»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Журналы событий и поиск ошибок</span></div></li><li><div class="n">27</div><h3>Практика 14. Управление пакетами Linux</h3><div class="mins">90 мин · план</div><p>Практическая работа «Управление пакетами Linux»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Управление пакетами Linux</span></div></li><li><div class="n">28</div><h3>Практика 15. Диски, разделы и файловые системы</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диски, разделы и файловые системы»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диски, разделы и файловые системы</span></div></li><li><div class="n">29</div><h3>Практика 16. Монтирование и общие папки VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «Монтирование и общие папки VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Монтирование и общие папки VirtualBox</span></div></li><li><div class="n">30</div><h3>Практика 17. Снимки и клонирование виртуальных машин</h3><div class="mins">90 мин · план</div><p>Практическая работа «Снимки и клонирование виртуальных машин»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Снимки и клонирование виртуальных машин</span></div></li><li><div class="n">31</div><h3>Практика 18. Резервное копирование и восстановление</h3><div class="mins">90 мин · план</div><p>Практическая работа «Резервное копирование и восстановление»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Резервное копирование и восстановление</span></div></li><li><div class="n">32</div><h3>Практика 19. Политики безопасности ОС</h3><div class="mins">90 мин · план</div><p>Практическая работа «Политики безопасности ОС»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Политики безопасности ОС</span></div></li><li><div class="n">33</div><h3>Практика 20. Аудит и мониторинг ОС</h3><div class="mins">90 мин · план</div><p>Практическая работа «Аудит и мониторинг ОС»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Аудит и мониторинг ОС</span></div></li><li><div class="n">34</div><h3>Практика 21. Сравнение Linux и Windows по администрированию</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сравнение Linux и Windows по администрированию»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сравнение Linux и Windows по администрированию</span></div></li><li><div class="n">35</div><h3>Практика 22. Итоговая работа: настройка виртуального стенда</h3><div class="mins">90 мин · план</div><p>Практическая работа «Итоговая работа: настройка виртуального стенда»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Итоговая работа: настройка виртуального стенда</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

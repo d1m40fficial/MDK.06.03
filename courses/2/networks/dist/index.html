@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Компьютерные сети</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* course-studio: chapter, notes and course pages.
@@ -51,6 +52,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
 .read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
 .lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
 .nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
 .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -58,6 +60,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
 .pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
 .pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -199,7 +205,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .quiz-foot button.submit:hover { filter: brightness(.95); }
 
 /* ---------- test submission and warnings ---------- */
-.lesson-top { display: flex; justify-content: flex-start; margin: 0 0 10px; }
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
 .warn-btn:hover { filter: brightness(.92); }
 .warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -222,7 +227,7 @@ html.modal-open { overflow: hidden; }
 .modal-times dt { font-size: 13px; color: var(--ink-2); }
 .modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
 .modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-@media print { .lesson-top, .modal { display: none !important; } }
+@media print { .modal { display: none !important; } }
 
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
@@ -263,12 +268,46 @@ html.modal-open { overflow: hidden; }
 </head>
 <body>
 <main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a></div>
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button></div></div>
 <header class="hero"><div class="badges"><span class="pill">Не готово</span><span class="pill">Зачёт</span></div><div class="meta">СПО · 76 ч · 38 занятий · Зачёт</div>
 <h1>Компьютерные сети</h1><p class="dek">От OSI и IP-адресации до сетевых служб и безопасности.</p><div class="glyph" aria-hidden="true">КС</div></header>
     <section class="outcomes"><b>В результате обучения вы сможете</b><ul><li>Объяснять уровни OSI и TCP/IP</li><li>Настраивать IP-адресацию и базовые службы</li><li>Диагностировать соединения и сетевые службы</li><li>Обеспечивать базовую безопасность сети</li></ul></section><section class="outcomes"><b>Требуется предварительно</b><ul><li>Операционные системы и среды</li><li>Архитектура аппаратных средств</li></ul></section>
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus"><li><div class="n">1</div><h3>Лекция 1. Компьютерные сети: назначение</h3><div class="mins">90 мин · план</div><p>Разбор темы «Компьютерные сети: назначение»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Компьютерные сети: назначение</span></div></li><li><div class="n">2</div><h3>Практика 1. Настройка сети в VirtualBox</h3><div class="mins">90 мин · план</div><p>Практическая работа «Настройка сети в VirtualBox»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Настройка сети в VirtualBox</span></div></li><li><div class="n">3</div><h3>Лекция 2. Модель OSI</h3><div class="mins">90 мин · план</div><p>Разбор темы «Модель OSI»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Модель OSI</span></div></li><li><div class="n">4</div><h3>Практика 2. IP-адресация и маски</h3><div class="mins">90 мин · план</div><p>Практическая работа «IP-адресация и маски»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>IP-адресация и маски</span></div></li><li><div class="n">5</div><h3>Лекция 3. Стек TCP/IP</h3><div class="mins">90 мин · план</div><p>Разбор темы «Стек TCP/IP»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Стек TCP/IP</span></div></li><li><div class="n">6</div><h3>Практика 3. Диагностика соединений</h3><div class="mins">90 мин · план</div><p>Практическая работа «Диагностика соединений»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Диагностика соединений</span></div></li><li><div class="n">7</div><h3>Лекция 4. Физический уровень и среды</h3><div class="mins">90 мин · план</div><p>Разбор темы «Физический уровень и среды»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Физический уровень и среды</span></div></li><li><div class="n">8</div><h3>Практика 4. DNS и DHCP</h3><div class="mins">90 мин · план</div><p>Практическая работа «DNS и DHCP»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>DNS и DHCP</span></div></li><li><div class="n">9</div><h3>Лекция 5. Канальный уровень и Ethernet</h3><div class="mins">90 мин · план</div><p>Разбор темы «Канальный уровень и Ethernet»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Канальный уровень и Ethernet</span></div></li><li><div class="n">10</div><h3>Практика 5. HTTP и HTTPS</h3><div class="mins">90 мин · план</div><p>Практическая работа «HTTP и HTTPS»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>HTTP и HTTPS</span></div></li><li><div class="n">11</div><h3>Лекция 6. MAC-адреса и коммутация</h3><div class="mins">90 мин · план</div><p>Разбор темы «MAC-адреса и коммутация»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>MAC-адреса и коммутация</span></div></li><li><div class="n">12</div><h3>Практика 6. Сетевые службы</h3><div class="mins">90 мин · план</div><p>Практическая работа «Сетевые службы»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Сетевые службы</span></div></li><li><div class="n">13</div><h3>Лекция 7. Сетевой уровень и IP</h3><div class="mins">90 мин · план</div><p>Разбор темы «Сетевой уровень и IP»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Сетевой уровень и IP</span></div></li><li><div class="n">14</div><h3>Практика 7. Маршрутизация и VPN</h3><div class="mins">90 мин · план</div><p>Практическая работа «Маршрутизация и VPN»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Маршрутизация и VPN</span></div></li><li><div class="n">15</div><h3>Лекция 8. IPv4-адресация</h3><div class="mins">90 мин · план</div><p>Разбор темы «IPv4-адресация»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>IPv4-адресация</span></div></li><li><div class="n">16</div><h3>Практика 8. Мониторинг и безопасность</h3><div class="mins">90 мин · план</div><p>Практическая работа «Мониторинг и безопасность»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Мониторинг и безопасность</span></div></li><li><div class="n">17</div><h3>Лекция 9. Подсети и маски</h3><div class="mins">90 мин · план</div><p>Разбор темы «Подсети и маски»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Подсети и маски</span></div></li><li><div class="n">18</div><h3>Практика 9. Итоговая схема сети ИС</h3><div class="mins">90 мин · план</div><p>Практическая работа «Итоговая схема сети ИС»: выполнение задания, оформление и проверка результата.</p><div class="tags"><span>Итоговая схема сети ИС</span></div></li><li><div class="n">19</div><h3>Лекция 10. IPv6</h3><div class="mins">90 мин · план</div><p>Разбор темы «IPv6»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>IPv6</span></div></li><li><div class="n">20</div><h3>Лекция 11. Маршрутизация</h3><div class="mins">90 мин · план</div><p>Разбор темы «Маршрутизация»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Маршрутизация</span></div></li><li><div class="n">21</div><h3>Лекция 12. Транспортный уровень</h3><div class="mins">90 мин · план</div><p>Разбор темы «Транспортный уровень»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Транспортный уровень</span></div></li><li><div class="n">22</div><h3>Лекция 13. TCP</h3><div class="mins">90 мин · план</div><p>Разбор темы «TCP»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>TCP</span></div></li><li><div class="n">23</div><h3>Лекция 14. UDP</h3><div class="mins">90 мин · план</div><p>Разбор темы «UDP»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>UDP</span></div></li><li><div class="n">24</div><h3>Лекция 15. Порты и сокеты</h3><div class="mins">90 мин · план</div><p>Разбор темы «Порты и сокеты»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Порты и сокеты</span></div></li><li><div class="n">25</div><h3>Лекция 16. DNS</h3><div class="mins">90 мин · план</div><p>Разбор темы «DNS»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>DNS</span></div></li><li><div class="n">26</div><h3>Лекция 17. DHCP</h3><div class="mins">90 мин · план</div><p>Разбор темы «DHCP»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>DHCP</span></div></li><li><div class="n">27</div><h3>Лекция 18. HTTP и HTTPS</h3><div class="mins">90 мин · план</div><p>Разбор темы «HTTP и HTTPS»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>HTTP и HTTPS</span></div></li><li><div class="n">28</div><h3>Лекция 19. Электронная почта</h3><div class="mins">90 мин · план</div><p>Разбор темы «Электронная почта»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Электронная почта</span></div></li><li><div class="n">29</div><h3>Лекция 20. FTP и файловые службы</h3><div class="mins">90 мин · план</div><p>Разбор темы «FTP и файловые службы»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>FTP и файловые службы</span></div></li><li><div class="n">30</div><h3>Лекция 21. VPN</h3><div class="mins">90 мин · план</div><p>Разбор темы «VPN»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>VPN</span></div></li><li><div class="n">31</div><h3>Лекция 22. Беспроводные сети</h3><div class="mins">90 мин · план</div><p>Разбор темы «Беспроводные сети»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Беспроводные сети</span></div></li><li><div class="n">32</div><h3>Лекция 23. Сетевые ОС и домены</h3><div class="mins">90 мин · план</div><p>Разбор темы «Сетевые ОС и домены»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Сетевые ОС и домены</span></div></li><li><div class="n">33</div><h3>Лекция 24. Виртуализация сетей</h3><div class="mins">90 мин · план</div><p>Разбор темы «Виртуализация сетей»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Виртуализация сетей</span></div></li><li><div class="n">34</div><h3>Лекция 25. Сетевые службы в ИС</h3><div class="mins">90 мин · план</div><p>Разбор темы «Сетевые службы в ИС»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Сетевые службы в ИС</span></div></li><li><div class="n">35</div><h3>Лекция 26. Диагностика сети</h3><div class="mins">90 мин · план</div><p>Разбор темы «Диагностика сети»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Диагностика сети</span></div></li><li><div class="n">36</div><h3>Лекция 27. Мониторинг сети</h3><div class="mins">90 мин · план</div><p>Разбор темы «Мониторинг сети»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Мониторинг сети</span></div></li><li><div class="n">37</div><h3>Лекция 28. Безопасность сетей</h3><div class="mins">90 мин · план</div><p>Разбор темы «Безопасность сетей»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Безопасность сетей</span></div></li><li><div class="n">38</div><h3>Лекция 29. Проектирование сети ИС</h3><div class="mins">90 мин · план</div><p>Разбор темы «Проектирование сети ИС»: ключевые понятия, примеры и связь с заданиями ДЭ.</p><div class="tags"><span>Проектирование сети ИС</span></div></li></ol></main>
-
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+</script>
 </body>
 </html>

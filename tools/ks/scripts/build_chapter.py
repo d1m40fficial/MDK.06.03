@@ -29,7 +29,7 @@ import yaml
 from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK  # noqa: E402
+from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE  # noqa: E402
 
 CALLOUT_LABELS = {
     "INTUITION": "Главная мысль", "PITFALL": "Типичная ошибка", "INTERVIEW": "На практике",
@@ -148,6 +148,7 @@ FIG_SCRIPT = r"""
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
   figs.forEach(function(f){ io ? io.observe(f) : load(f); });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
+  addEventListener('themechange', function(){ figs.forEach(function(f){ if(f.dataset.loaded) load(f); }); });
   addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
 })();
 """
@@ -155,10 +156,9 @@ FIG_SCRIPT = r"""
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-LESSON_TOOLS_HTML = ('<div class="lesson-tools">'
-                     '<a class="nav-btn" href="#course-list" data-course-list>Все курсы</a>'
-                     '<button type="button" class="pdf-btn" data-pdf '
-                     'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div>')
+NAV_BUTTON_HTML = '<a class="nav-btn" href="#course-list" data-course-list>Все курсы</a>'
+PDF_BUTTON_HTML = ('<button type="button" class="pdf-btn" data-pdf '
+                   'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button>')
 
 READ_SCRIPT = r"""
 (function(){
@@ -186,8 +186,14 @@ PDF_SCRIPT = r"""
 })();
 """
 
-WARN_BUTTON_HTML = ('<div class="lesson-top"><button type="button" class="warn-btn" data-warn '
-                    'aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button></div>')
+WARN_BUTTON_HTML = ('<button type="button" class="warn-btn" data-warn '
+                    'aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button>')
+
+
+def lesson_tools(warn: bool) -> str:
+    warn_html = WARN_BUTTON_HTML if warn else ""
+    return (f'<div class="lesson-tools">{NAV_BUTTON_HTML}'
+            f'<div class="lesson-tools-right">{warn_html}{THEME_TOGGLE}{PDF_BUTTON_HTML}</div></div>')
 
 QUIZ_MODALS_HTML = r"""
 <div class="modal" data-modal="submit" hidden>
@@ -573,9 +579,8 @@ def main():
     script = (READ_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
-    top = WARN_BUTTON_HTML if has_quiz else ""
     modals = QUIZ_MODALS_HTML if has_quiz else ""
-    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{top}{LESSON_TOOLS_HTML}{hero}{outcomes}{toc_html}'
+    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz)}{hero}{outcomes}{toc_html}'
                  f'<article class="prose">{html_body}</article>{pager}</main>{modals}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")

@@ -219,7 +219,8 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   hard before.
 - Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
   short-answer, all with explanations. The test footer, PDF button, reading progress,
-  warning button and submission dialog come from the shared builder; do not rebuild them
+  warning button, dark-theme toggle and submission dialog come from the shared builder;
+  do not rebuild them
   inside a chapter.
 - The figure is an Anatomy figure that passes Anatomy's own verification, not a diagram
   of boxes, and it shows exactly the moments the text refers to with the same numbers.
