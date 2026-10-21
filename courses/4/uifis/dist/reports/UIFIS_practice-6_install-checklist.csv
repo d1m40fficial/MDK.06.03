@@ -1,0 +1,14 @@
+﻿Проверка;Команда;Ожидаемый результат;Фактический результат;Отметка
+Имя узла;hostnamectl;Static hostname: uifis-srv01;;
+Часовой пояс;timedatectl;Asia/Yekaterinburg, синхронизация включена;;
+Сеть;ip -br a;адрес из задания, интерфейс UP;;
+Маршрут;ip route;маршрут по умолчанию есть;;
+SSH;systemctl status ssh;active (running);;
+Вход по ключу;ssh student@адрес;вход без пароля;;
+Firewall;sudo ufw status verbose;активен, разрешён только SSH;;
+Службы;systemctl --failed;нет сбойных юнитов;;
+Диск;df -h, df -i;есть свободное место и inode;;
+Память;free -h;память видна, swap не перегружен;;
+Каталог;ls -ld /srv/uifis;владелец uifis, права 0750;;
+Снимок;интерфейс гипервизора;снимок after-base-setup существует;;
+Итог;принято или не принято;;;

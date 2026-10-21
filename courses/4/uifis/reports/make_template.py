@@ -1,10 +1,8 @@
-"""Generate the downloadable materials for Practice 1 (УФИС).
+"""Generate the downloadable materials for UIFIS practices.
 
 Run:  python make_template.py
-Writes next to this file:
-  UIFIS_practice-1_report-template.docx      шаблон отчёта
-  UIFIS_practice-1_classification-table.csv  таблица для классификации
-Filenames are ASCII so the download links stay safe in any browser.
+Writes DOCX report templates and CSV tables next to this file for practices 1-4
+and 6. Filenames are ASCII so the download links stay safe in any browser.
 """
 
 import csv
@@ -23,6 +21,10 @@ OUT_DOCX3 = HERE / "UIFIS_practice-3_report-template.docx"
 OUT_CSV3 = HERE / "UIFIS_practice-3_flow-registry.csv"
 OUT_DOCX4 = HERE / "UIFIS_practice-4_report-template.docx"
 OUT_CSV4 = HERE / "UIFIS_practice-4_decision-matrix.csv"
+OUT_DOCX5 = HERE / "UIFIS_practice-5_report-template.docx"
+OUT_CSV5 = HERE / "UIFIS_practice-5_configuration-matrix.csv"
+OUT_DOCX6 = HERE / "UIFIS_practice-6_report-template.docx"
+OUT_CSV6 = HERE / "UIFIS_practice-6_install-checklist.csv"
 QUESTIONS = [
     "Почему признаки классификации должны быть независимыми?",
     "Может ли одна система быть пакетной и оперативной одновременно?",
@@ -65,6 +67,60 @@ CRITERIA4 = [
     ("Частота обновления логики", "0,15"),
     ("Бюджет (5 значит дешевле)", "0,15"),
     ("Сопровождение", "0,10"),
+]
+QUESTIONS6 = [
+    "Почему обновления устанавливают до настройки служб, а не после?",
+    "Почему вход по SSH-ключу безопаснее пароля и что проверить до отключения пароля?",
+    "Зачем приложению отдельный пользователь uifis, если уже есть student с правами sudo?",
+    "Что проверить, если после смены статического адреса SSH перестал подключаться?",
+    "Почему снимок виртуальной машины не заменяет резервную копию данных?",
+]
+CHECKS6 = [
+    ("Имя узла", "hostnamectl", "Static hostname: uifis-srv01"),
+    ("Часовой пояс", "timedatectl", "Asia/Yekaterinburg, синхронизация включена"),
+    ("Сеть", "ip -br a", "адрес из задания, интерфейс UP"),
+    ("Маршрут", "ip route", "маршрут по умолчанию есть"),
+    ("SSH", "systemctl status ssh", "active (running)"),
+    ("Вход по ключу", "ssh student@адрес", "вход без пароля"),
+    ("Firewall", "sudo ufw status verbose", "активен, разрешён только SSH"),
+    ("Службы", "systemctl --failed", "нет сбойных юнитов"),
+    ("Диск", "df -h, df -i", "есть свободное место и inode"),
+    ("Память", "free -h", "память видна, swap не перегружен"),
+    ("Каталог", "ls -ld /srv/uifis", "владелец uifis, права 0750"),
+    ("Снимок", "интерфейс гипервизора", "снимок after-base-setup существует"),
+]
+QUESTIONS5 = [
+    "Почему для расчёта берут пиковую нагрузку, а не среднюю?",
+    "Зачем нужен запас 30 процентов по памяти и диску?",
+    "Почему кэш СУБД включают в расчёт памяти?",
+    "Почему RAID не заменяет резервную копию?",
+    "Когда отказоустойчивая конфигурация избыточна?",
+]
+CALC5 = [
+    ("Процессор", "запросы/с × время на запрос / целевая загрузка", "", "", ""),
+    ("Память", "(ОС + приложение + кэш) × 1,3", "", "", ""),
+    ("Диск", "(данные + журналы + временные) × 1,3", "", "", ""),
+    ("Сеть", "запросы/с × размер ответа × 8 × 2", "", "", ""),
+]
+CONFIG5 = [
+    ("Процессор", "", "", "", ""),
+    ("Память", "", "", "", ""),
+    ("Диск", "", "", "", ""),
+    ("RAID", "", "", "", ""),
+    ("Сеть", "", "", "", ""),
+    ("Питание", "", "", "", ""),
+    ("Резервная копия", "", "", "", ""),
+    ("Относительная стоимость", "", "", "", ""),
+]
+CHECKS5 = [
+    ("Загрузка процессора", "не выше 65-70 процентов в пике", "", ""),
+    ("Память", "запас не менее 30 процентов", "", ""),
+    ("Диск", "запас не менее 30 процентов", "", ""),
+    ("Сеть", "запас не менее 2 раз", "", ""),
+    ("Диски", "RAID 1 или RAID 10 для системы", "", ""),
+    ("Питание", "UPS для рабочего узла", "", ""),
+    ("Резервная копия", "хранится отдельно", "", ""),
+    ("Доступность", "соответствует RTO и RPO", "", ""),
 ]
 
 
@@ -530,6 +586,293 @@ def make_csv4():
     print(f"wrote {OUT_CSV4}")
 
 
+def make_docx6():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)", bold=True, size=14,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе №6", bold=True, size=13, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Установка и базовая настройка серверной операционной системы",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "________________________________________________________________________")
+    line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Параметры виртуальной машины", bold=True)
+    cols = ["Параметр", "Значение"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Имя узла", "Гипервизор", "Память", "Процессоры", "Диск", "Сеть", "Версия ОС"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(10)
+    doc.add_paragraph()
+
+    line(doc, "Журнал установки", bold=True)
+    cols = ["Этап", "Что сделано", "Команда или наблюдение", "Результат"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for n in range(1, 8):
+        cells = t.add_row().cells
+        cells[0].text = str(n)
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Базовая настройка", bold=True)
+    cols = ["Настройка", "Команда", "Фактический результат"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Имя узла", "Обновления", "Часовой пояс", "Статический адрес",
+                 "SSH и ключи", "Firewall", "Служебный пользователь", "Снимок"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Чек-лист приёмки", bold=True)
+    cols = ["Проверка", "Команда", "Ожидаемый результат", "Факт", "Отметка"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, command, expected in CHECKS6:
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = command
+        cells[2].text = expected
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(8)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    for caption in (
+        "первый экран установщика",
+        "вход после первой загрузки",
+        "вывод ip -br a",
+        "вывод systemctl --failed",
+        "вывод sudo ufw status verbose",
+        "успешный вход по SSH",
+    ):
+        slot(doc, f"[ Место для скриншота: {caption} ]")
+        doc.add_paragraph()
+
+    line(doc, "Трудности и их решение", bold=True)
+    line(doc, "Какая настройка вызвала трудности? Как вы определили причину и чем проверили решение?")
+    for _ in range(6):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Что доказало, что узел готов к работе? Какие проверки вы считаете обязательными "
+              "для любого сервера?")
+    for _ in range(5):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate(QUESTIONS6, 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX6)
+    print(f"wrote {OUT_DOCX6}")
+
+
+def make_csv6():
+    with OUT_CSV6.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["Проверка", "Команда", "Ожидаемый результат", "Фактический результат",
+                    "Отметка"])
+        for name, command, expected in CHECKS6:
+            w.writerow([name, command, expected, "", ""])
+        w.writerow(["Итог", "принято или не принято", "", "", ""])
+    print(f"wrote {OUT_CSV6}")
+
+
+def make_docx5():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)", bold=True, size=14,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе №5", bold=True, size=13, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Подбор аппаратной конфигурации информационной системы",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "________________________________________________________________________")
+    line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Профиль системы", bold=True)
+    cols = ["Параметр", "Значение"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Система", "Пользователи", "Пиковые сессии", "Запросы в секунду",
+                 "Средний размер ответа", "Объём данных и рост", "RTO", "RPO", "Бюджет"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Расчёт ресурсов", bold=True)
+    line(doc, "Покажите формулу, подстановку и итог. Округляйте вверх.")
+    cols = ["Ресурс", "Формула", "Расчёт", "Значение", "Запас"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, formula, _, _, _ in CALC5:
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = formula
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(8)
+    doc.add_paragraph()
+
+    line(doc, "Конфигурации", bold=True)
+    cols = ["Компонент", "Минимальная", "Рекомендуемая", "Отказоустойчивая", "Комментарий"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, _, _, _, _ in CONFIG5:
+        cells = t.add_row().cells
+        cells[0].text = name
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(8)
+    doc.add_paragraph()
+
+    line(doc, "Проверка расчёта", bold=True)
+    cols = ["Что проверить", "Норма", "Факт", "Вывод"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, norm, _, _ in CHECKS5:
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = norm
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(8)
+    doc.add_paragraph()
+
+    line(doc, "Выбор конфигурации", bold=True)
+    line(doc, "Выбранная конфигурация: ________________________________________________")
+    line(doc, "Какие требования она закрывает: ________________________________________")
+    line(doc, "________________________________________________________________________")
+    line(doc, "Чем придётся заплатить: _________________________________________________")
+    line(doc, "________________________________________________________________________")
+    line(doc, "Почему не выбраны два других варианта: __________________________________")
+    line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Риски выбранного решения", bold=True)
+    cols = ["Риск", "Вероятность", "Влияние", "Мера снижения"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for _ in range(4):
+        t.add_row()
+    for row in t.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    for caption in (
+        "профиль системы и требования",
+        "расчётная таблица с формулами",
+        "итоговая матрица конфигураций",
+    ):
+        slot(doc, f"[ Место для скриншота: {caption} ]")
+        doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Какое требование было самым трудным? Почему выбранная конфигурация достаточна "
+              "и что изменилось бы при другом бюджете?")
+    for _ in range(5):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate(QUESTIONS5, 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX5)
+    print(f"wrote {OUT_DOCX5}")
+
+
+def make_csv5():
+    with OUT_CSV5.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["Компонент", "Минимальная", "Рекомендуемая", "Отказоустойчивая",
+                    "Комментарий"])
+        for name, _, _, _, _ in CONFIG5:
+            w.writerow([name, "", "", "", ""])
+        w.writerow(["Итог", "выбрано или не выбрано", "", "", ""])
+    print(f"wrote {OUT_CSV5}")
+
+
 if __name__ == "__main__":
     make_docx()
     make_csv()
@@ -539,3 +882,7 @@ if __name__ == "__main__":
     make_csv3()
     make_docx4()
     make_csv4()
+    make_docx5()
+    make_csv5()
+    make_docx6()
+    make_csv6()
