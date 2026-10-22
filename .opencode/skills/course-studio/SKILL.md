@@ -90,9 +90,9 @@ Available software policy:
 Rules that always hold:
 
 - One discipline is one folder `courses/<year>/<slug>/` with one `course.json` and a
-  `"year"` field. Keep the slug lowercase Latin; the code (`МДК.06.03`, `УФИС`) is the
-  human label. Every course also has `"assessment": "Зачёт"` or `"Экзамен"`; the card
-  shows it.
+  `"year"` field. Keep the slug lowercase Latin. `"code"` is the official discipline code
+  (`ОП.01`, `МДК.03.01`), not a short label; the card and hero show it. Every course also
+  has `"assessment": "Зачёт"` or `"Экзамен"`.
 - `"status": "available"` shows «Доступно». `"status": "planned"` shows «Не готово»
   and a light transparency on the discipline card.
 - The site is generated: never edit `docs/` directly; edit sources and run

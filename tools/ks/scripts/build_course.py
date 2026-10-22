@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE  # noqa: E402
+from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE  # noqa: E402
 from availability import is_open, load_availability, summary  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -98,10 +98,12 @@ def build_course(root: Path) -> Path:
     status_pill = '<span class="pill dark">Материалы доступны</span>' if c.get("status") == "available" else '<span class="pill">Не готово</span>'
     assessment_pill = f'<span class="pill">{esc(c["assessment"])}</span>' if c.get("assessment") else ""
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
+    code = c.get("code", "")
+    glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
     body = f"""<main class="page">
 <div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right">{THEME_TOGGLE}</div></div>
 <header class="hero"><div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
-<h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="glyph" aria-hidden="true">{esc(c['code'])}</div></header>
+<h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></header>
     {outcomes}{prereq}
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus">{''.join(items)}</ol></main>"""
@@ -121,9 +123,11 @@ def build_catalog(root: Path) -> Path:
         avail = c.get("status") == "available"
         style = (f"--cl-accent:{c['accent']};--cl-tint:{c['tint']};"
                  f"--cd-accent:{c.get('accentDark', c['accent'])};--cd-tint:{c.get('tintDark', c['tint'])}")
+        code = c.get("code", "")
+        glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
         cards.append(f"""<a class="course-card" data-status="{'available' if avail else 'soon'}" href="{esc(c['slug'])}/index.html" style="{style}">
 <div class="art"><span class="pill{' dark' if avail else ''}">{'Доступно' if avail else 'Готовится'}</span><span class="ch">{ch_label}</span>
-<div class="glyph" aria-hidden="true">{esc(c['code'])}</div></div>
+<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></div>
 <div class="body"><h3>{esc(c['title'])}</h3><p>{esc(c.get('tagline', ''))}</p><div class="spec">{esc(spec_line(c))}</div>
 <div class="foot"><span class="price">{esc(price(c))}</span><span class="btn{' primary' if avail else ''}">{'Открыть' if avail else 'Готовится'}</span></div></div></a>""")
     body = f"""<main class="catalog"><div class="catalog-head"><div class="filters" role="group" aria-label="Фильтр курсов">

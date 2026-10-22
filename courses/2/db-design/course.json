@@ -1,6 +1,6 @@
 {
   "slug": "db-design",
-  "code": "ОПБД",
+  "code": "ОП.08",
   "title": "Основы проектирования баз данных",
   "tagline": "ER-модель, нормализация, SQL и работа в sqliteonline.com.",
   "level": "СПО",

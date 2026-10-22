@@ -76,6 +76,17 @@ def esc(s) -> str:
     return html.escape("" if s is None else str(s))
 
 
+def code_class(code) -> str:
+    n = len(str(code or ""))
+    if n <= 2:
+        return ""
+    if n <= 4:
+        return "code-md"
+    if n <= 7:
+        return "code-lg"
+    return "code-xl"
+
+
 def lesson_slots(chapters) -> int:
     """Total lesson slots: a 180-minute chapter counts as two slots of 90 minutes each."""
     total = 0

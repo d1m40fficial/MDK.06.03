@@ -41,7 +41,7 @@ The single source of truth for the course card, the course page and the chapter 
 {
   "slug": "dsa",                     // folder name; known slugs get the course colours automatically:
                                      // dsa, system-design, javascript-deeply, low-level-design
-  "code": "DSA",                     // 2–3 letters on the card and hero
+  "code": "ОП.01",                  // official code (ОП.01, МДК.03.01); shown on card and hero
   "title": "Data Structures & Algorithms",
   "tagline": "From arrays to DP. Learn it visually, then prove it with practice.",
   "level": "Beginner → Advanced", "hours": 40, "languages": ["C++", "Python", "JavaScript", "Go"],

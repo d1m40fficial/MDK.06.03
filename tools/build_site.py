@@ -32,7 +32,7 @@ ROOT = HERE.parent
 KS = HERE / "ks" / "scripts"
 sys.path.insert(0, str(KS))
 
-from _pages import esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
+from _pages import code_class, esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
 
 SITE = ROOT / "docs"
 COURSES = ROOT / "courses"
@@ -46,6 +46,9 @@ CARD_CSS = (
     "{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}}"
     ":root[data-theme=dark] .course-card{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}"
     ".course-card.pending{opacity:.62}.course-card.pending:hover{opacity:1}"
+    ".course-card .art .glyph.code-md{font-size:84px;right:-2px;bottom:-12px}"
+    ".course-card .art .glyph.code-lg{font-size:56px;right:10px;bottom:10px;letter-spacing:-.04em}"
+    ".course-card .art .glyph.code-xl{font-size:42px;right:12px;bottom:14px;letter-spacing:-.03em}"
     ".specialty{border:1px solid var(--rule);border-radius:var(--radius);background:var(--card);margin:0 0 14px;overflow:hidden}"
     ".specialty summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 20px;font:700 18px/1.3 var(--font-display)}"
     ".specialty summary::-webkit-details-marker{display:none}"
@@ -170,16 +173,18 @@ def card_vars(c: dict) -> str:
 def discipline_card(c: dict) -> str:
     n = lesson_slots(c.get("chapters", []))
     avail = c.get("status") == "available"
-    spec = " · ".join(x for x in [esc(c.get("code", "")), esc(c.get("level", "")),
+    code = c.get("code", "")
+    spec = " · ".join(x for x in [esc(code), esc(c.get("level", "")),
                                   f"{c['hours']} ч" if c.get("hours") else None,
                                   f"{n} {plural_lessons(n)}" if n else None,
                                   esc(c.get("assessment", ""))] if x)
     card_class = "course-card" if avail else "course-card pending"
+    glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
     return (
         f'<a class="{card_class}" href="{esc(c["slug"])}/index.html" style="{card_vars(c)}">'
         f'<div class="art"><span class="pill{" dark" if avail else ""}">'
         f'{"Доступно" if avail else "Не готово"}</span><span class="ch">{n} зан.</span>'
-        f'<div class="glyph" aria-hidden="true">{esc(c.get("code", ""))}</div></div>'
+        f'<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></div>'
         f'<div class="body"><h3>{esc(c["title"])}</h3>'
         f'<p>{esc(c.get("tagline", ""))}</p>'
         f'<div class="spec">{spec}</div></div></a>')
