@@ -1,0 +1,20 @@
+# УФИС, МДК.06.03. Практика 8.
+# Шаблон netplan для сервера uifis-srv01.
+# Для клиента uifis-cli01 замените адрес на 10.10.0.20/24.
+# Имя интерфейса проверьте командой ip -br a: это может быть enp0s8 или enp0s9.
+# Файл: /etc/netplan/60-uifis-net.yaml
+# Права: sudo chmod 600 /etc/netplan/60-uifis-net.yaml
+# Применение: sudo netplan try, затем sudo netplan apply.
+
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: true
+      optional: true
+    enp0s8:
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - 10.10.0.10/24
+      optional: true

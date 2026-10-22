@@ -1,0 +1,377 @@
+---
+title: Создание базы данных информационной системы
+dek: "Соберите учебный журнал в SQLite: спроектируйте четыре таблицы в третьей нормальной форме, задайте ограничения, наполните данными, импортируйте JSON и проверьте пять запросов."
+chapter: "Практика 7"
+minutes: 90
+level: СПО
+glyph: П7
+outcomes:
+  - Спроектировать реляционную схему в третьей нормальной форме
+  - Создать таблицы с первичными, внешними ключами и ограничениями
+  - Наполнить базу данными и импортировать JSON
+  - Проверить выборки с соединением и агрегацией
+  - Оформить отчёт с доказательствами работы
+---
+
+## Что делаем
+
+В лекции 8 мы разобрали таблицы, ключи, нормализацию, транзакции и ограничения. Теперь соберём рабочую базу учебного журнала в SQLite.
+
+Результат работы это файл базы `uifis.db`, SQL-скрипт создания схемы, файл импорта JSON и отчёт с ER-схемой, результатами запросов и проверками ограничений. В отчёт войдут ER-диаграмма, скрипт базы и SQL-запрос с соединением и агрегацией.
+
+> [!NOTE] Что считается готовым результатом
+> База создаётся с нуля одним скриптом, содержит четыре таблицы, проходит проверки ограничений, принимает JSON и возвращает осмысленные результаты пяти запросов. В отчёте есть ER-схема, скриншоты и выводы.
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-7_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-7_sql-template.sql" download>Шаблон SQL для SQLite</a>
+<a href="reports/UIFIS_practice-7_students.json" download>JSON для импорта</a>
+<p>Скачайте три файла в одну папку практики. Шаблон SQL можно менять, но структуру таблиц и ограничения сохраните.</p>
+</div>
+
+## Подготовка
+
+Для работы нужны:
+
+- VS Code с расширением Python;
+- Python 3.10 или новее;
+- встроенный модуль `sqlite3`, отдельная СУБД не требуется;
+- браузер с draw.io для ER-схемы;
+- Word или LibreOffice для отчёта.
+
+Создайте папку `uifis-practice-7` и положите в неё скачанные файлы. Все команды выполняйте из этой папки. Права администратора не нужны: SQLite работает с обычным файлом.
+
+Проверьте Python:
+
+```bash
+python --version
+python -c "import sqlite3; print(sqlite3.sqlite_version)"
+```
+
+Если команда `python` не найдена, используйте `py` в Windows. Дальше в примерах оставлен `python`, замените его при необходимости.
+
+## Шаг 1. Проектирование схемы
+
+Схема должна быть в **третьей нормальной форме**. Разложим журнал на четыре сущности:
+
+| Сущность | Атрибуты | Ключ | Ограничения |
+|---|---|---|---|
+| Студент | `id`, `full_name`, `email`, `group_code`, `status` | `id` | email уникален, status только `active` или `blocked` |
+| Курс | `id`, `code`, `title`, `hours` | `id` | code уникален, часы от 16 до 256 |
+| Запись | `id`, `student_id`, `course_id`, `enrolled_at` | `id` | пара студент и курс уникальна |
+| Оценка | `id`, `enrollment_id`, `score`, `graded_at` | `id` | одна оценка на запись, балл от 0 до 100 |
+
+Почему оценка вынесена в отдельную таблицу? Запись на курс и оценка появляются в разные моменты. У записи может не быть оценки, а оценка без записи невозможна. Отдельная таблица позволяет хранить `NULL` естественно, не смешивая два факта в одной строке.
+
+Нарисуйте ER-схему в draw.io:
+
+1. Четыре прямоугольника с именами таблиц.
+2. В каждом прямоугольнике перечислите столбцы и отметьте `PK` у первичного ключа.
+3. Соедините `students` и `enrollments` линией «один ко многим».
+4. Соедините `courses` и `enrollments` линией «один ко многим».
+5. Соедините `enrollments` и `grades` линией «один к одному».
+6. Подпишите внешние ключи `FK`.
+7. Экспортируйте схему в PDF или PNG и вставьте в отчёт.
+
+> [!SHOT] Скриншот 1
+> ER-схема с четырьмя таблицами, ключами и связями.
+
+## Шаг 2. Создание базы
+
+Откройте шаблон `UIFIS_practice-7_sql-template.sql`. В нём уже есть схема, индексы и учебные данные. Обратите внимание на начало файла:
+
+```sql
+PRAGMA foreign_keys = ON;
+
+DROP TABLE IF EXISTS grades;
+DROP TABLE IF EXISTS enrollments;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS students;
+```
+
+Порядок удаления обратный порядку создания: сначала дочерние таблицы, потом родительские. Если удалить `students` первой, внешний ключ может запретить операцию.
+
+Скрипт выполняет схему и учебные данные в одной транзакции `BEGIN` и `COMMIT`. Если хотя бы одна команда завершится ошибкой, база не останется в полусобранном состоянии.
+
+Создайте базу скриптом:
+
+```python
+import sqlite3
+from pathlib import Path
+
+sql = Path("UIFIS_practice-7_sql-template.sql").read_text(encoding="utf-8")
+with sqlite3.connect("uifis.db") as conn:
+    conn.executescript(sql)
+
+print("База создана")
+```
+
+`executescript` выполняет несколько команд за один вызов. Не передавайте в него пользовательский ввод: для данных используйте параметры `?`.
+
+Проверьте список таблиц:
+
+```python
+import sqlite3
+
+with sqlite3.connect("uifis.db") as conn:
+    rows = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name"
+    ).fetchall()
+    print(rows)
+    for table in ("students", "courses", "enrollments", "grades"):
+        count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+        print(table, count)
+```
+
+Ожидаемые числа: 6 студентов, 4 курса, 8 записей, 7 оценок. Если числа другие, проверьте, что скрипт выполнен полностью и что вы не запускали его дважды без удаления старых таблиц.
+
+> [!SHOT] Скриншот 2
+> Список таблиц и количество строк после создания базы.
+
+## Шаг 3. Проверка ограничений
+
+Ограничения нужно не только объявить, но и доказать. Проверьте пять ситуаций.
+
+### Оценка вне диапазона
+
+```python
+import sqlite3
+
+with sqlite3.connect("uifis.db") as conn:
+    conn.execute("PRAGMA foreign_keys = ON")
+    try:
+        conn.execute(
+            "INSERT INTO grades (enrollment_id, score) VALUES (?, ?)",
+            (8, 101),
+        )
+        print("ОШИБКА: ограничение CHECK не сработало")
+    except sqlite3.IntegrityError as exc:
+        print("CHECK сработал:", exc)
+```
+
+Ожидается сообщение `CHECK constraint failed`. Строка не должна появиться.
+
+### Повтор email
+
+```python
+try:
+    conn.execute(
+        "INSERT INTO students (full_name, email, group_code) VALUES (?, ?, ?)",
+        ("Тестовый Студент", "anna@example.ru", "ИС-41"),
+    )
+except sqlite3.IntegrityError as exc:
+    print("UNIQUE сработал:", exc)
+```
+
+### Повтор записи на курс
+
+Попробуйте вставить пару `student_id = 1`, `course_id = 1` ещё раз. Ожидается ошибка уникальности пары.
+
+### Удаление курса с записями
+
+```python
+try:
+    conn.execute("DELETE FROM courses WHERE id = 1")
+except sqlite3.IntegrityError as exc:
+    print("RESTRICT сработал:", exc)
+```
+
+Курс 1 используется в записях, поэтому удаление запрещено. Это защита от потери связи.
+
+### Каскадное удаление
+
+Каскад проверяйте на копии базы, потому что он действительно удаляет данные:
+
+```python
+import shutil
+import sqlite3
+
+shutil.copyfile("uifis.db", "uifis-test.db")
+with sqlite3.connect("uifis-test.db") as conn:
+    conn.execute("PRAGMA foreign_keys = ON")
+    before = conn.execute("SELECT COUNT(*) FROM enrollments").fetchone()[0]
+    conn.execute("DELETE FROM students WHERE id = 1")
+    after = conn.execute("SELECT COUNT(*) FROM enrollments").fetchone()[0]
+    grades = conn.execute("SELECT COUNT(*) FROM grades").fetchone()[0]
+    print("записей было", before, "стало", after, "оценок осталось", grades)
+```
+
+У студента 1 две записи и две оценки. После удаления записей должно стать на две меньше, а оценки этих записей тоже должны исчезнуть.
+
+> [!SHOT] Скриншот 3
+> Ошибка CHECK при попытке вставить оценку 101.
+
+## Шаг 4. Пять запросов
+
+Все запросы уже есть в конце SQL-шаблона. Выполните их по одному и сохраните результаты.
+
+### Запрос 1. Число курсов у каждого студента
+
+```sql
+SELECT s.id, s.full_name, COUNT(e.id) AS course_count
+FROM students AS s
+LEFT JOIN enrollments AS e ON e.student_id = s.id
+GROUP BY s.id, s.full_name
+ORDER BY course_count DESC, s.full_name;
+```
+
+`LEFT JOIN` сохраняет студентов без записей. У Егора Волкова будет `0`, а не пропущенная строка.
+
+### Запрос 2. Средний балл по курсам
+
+```sql
+SELECT c.code, c.title, ROUND(AVG(g.score), 1) AS average_score, COUNT(g.id) AS grades_count
+FROM courses AS c
+LEFT JOIN enrollments AS e ON e.course_id = c.id
+LEFT JOIN grades AS g ON g.enrollment_id = e.id
+GROUP BY c.id, c.code, c.title
+ORDER BY c.code;
+```
+
+Курс без оценок останется в результате со значением `NULL` и `grades_count = 0`. Это правильнее, чем терять курс из отчёта.
+
+### Запрос 3. Студенты без записей
+
+```sql
+SELECT s.id, s.full_name, s.group_code
+FROM students AS s
+LEFT JOIN enrollments AS e ON e.student_id = s.id
+WHERE e.id IS NULL
+ORDER BY s.full_name;
+```
+
+### Запрос 4. Три лучших студента
+
+```sql
+SELECT s.full_name, ROUND(AVG(g.score), 1) AS average_score, COUNT(g.id) AS grades_count
+FROM students AS s
+JOIN enrollments AS e ON e.student_id = s.id
+JOIN grades AS g ON g.enrollment_id = e.id
+GROUP BY s.id, s.full_name
+HAVING COUNT(g.id) >= 1
+ORDER BY average_score DESC
+LIMIT 3;
+```
+
+`HAVING` фильтрует уже сгруппированные строки. `WHERE` здесь не подошёл бы, потому что условие использует результат агрегата.
+
+### Запрос 5. Курсы без оценок
+
+```sql
+SELECT c.code, c.title
+FROM courses AS c
+JOIN enrollments AS e ON e.course_id = c.id
+LEFT JOIN grades AS g ON g.enrollment_id = e.id
+WHERE g.id IS NULL
+GROUP BY c.id, c.code, c.title
+ORDER BY c.code;
+```
+
+В учебных данных должен появиться курс `ИС-104`: на него есть запись, но оценка ещё не выставлена.
+
+> [!SHOT] Скриншот 4
+> Результат запроса 2 со средним баллом и числом оценок.
+
+## Шаг 5. Импорт JSON
+
+Файл `UIFIS_practice-7_students.json` содержит три новых студента. Формат простой: массив объектов с полями `full_name`, `email`, `group_code`.
+
+```json
+[
+  {
+    "full_name": "Иванова Мария Сергеевна",
+    "email": "ivanova@example.ru",
+    "group_code": "ИС-41"
+  }
+]
+```
+
+Импорт выполняйте одной транзакцией:
+
+```python
+import json
+import sqlite3
+from pathlib import Path
+
+rows = json.loads(
+    Path("UIFIS_practice-7_students.json").read_text(encoding="utf-8")
+)
+
+with sqlite3.connect("uifis.db") as conn:
+    conn.execute("PRAGMA foreign_keys = ON")
+    try:
+        for row in rows:
+            conn.execute(
+                "INSERT INTO students (full_name, email, group_code) VALUES (?, ?, ?)",
+                (row["full_name"], row["email"], row["group_code"]),
+            )
+        conn.commit()
+        print("Импортировано:", len(rows))
+    except (sqlite3.IntegrityError, KeyError) as exc:
+        conn.rollback()
+        print("Импорт отменён:", exc)
+```
+
+Проверьте результат:
+
+```python
+with sqlite3.connect("uifis.db") as conn:
+    total = conn.execute("SELECT COUNT(*) FROM students").fetchone()[0]
+    print("Всего студентов:", total)
+```
+
+Было 6, стало 9. Если запустить импорт второй раз, сработает ограничение `UNIQUE` по email, и вся транзакция откатится. Это правильное поведение: база не должна получить частично импортированный файл.
+
+Проверьте, что новые студенты видны в запросе 1 и что у них пока нет записей на курсы. Это нормально: импорт добавляет только студентов, а записи создаются отдельно.
+
+## Шаг 6. Отчёт
+
+Заполните шаблон `UIFIS_practice-7_report-template.docx`.
+
+В отчёте должны быть:
+
+1. Цель работы и исходные файлы.
+2. ER-схема в третьей нормальной форме.
+3. Таблица сущностей с ключами и ограничениями.
+4. Скриншот списка таблиц и числом строк.
+5. Проверки `CHECK`, `UNIQUE`, `RESTRICT`, `CASCADE`.
+6. Результаты пяти запросов.
+7. Таблица импорта JSON.
+8. Вывод и ответы на контрольные вопросы.
+
+В выводах ответьте не только «что сделано», но и «почему так». Например: почему оценка не хранится в `enrollments`, почему внешний ключ включён отдельной командой и что произойдёт, если его выключить.
+
+## Чек-лист
+
+| Проверка | Как проверить | Ожидаемый результат |
+|---|---|---|
+| Таблицы созданы | запрос к `sqlite_master` | 4 таблицы |
+| Студенты | `SELECT COUNT(*) FROM students` | 6 до импорта, 9 после |
+| Курсы | `SELECT COUNT(*) FROM courses` | 4 |
+| Записи | `SELECT COUNT(*) FROM enrollments` | 8 |
+| Оценки | `SELECT COUNT(*) FROM grades` | 7 |
+| CHECK | вставка score 101 | ошибка |
+| UNIQUE email | повтор anna@example.ru | ошибка |
+| RESTRICT | удаление курса 1 | ошибка |
+| CASCADE | удаление студента 1 в копии | записи и оценки удалены |
+| JSON | повторный импорт | откат всей транзакции |
+| Запрос 2 | средний балл | 4 курса, у ИС-104 NULL |
+| Запрос 5 | курсы без оценок | ИС-104 |
+
+## Контрольные вопросы
+
+1. Почему таблица `grades` отделена от `enrollments`?
+2. Что произойдёт при удалении студента, у которого есть оценки?
+3. Зачем нужен `PRAGMA foreign_keys = ON`?
+4. Чем `UNIQUE` отличается от `PRIMARY KEY`?
+5. Почему импорт JSON выполняют в одной транзакции?
+
+## Что сдать
+
+- файл базы `uifis.db`;
+- SQL-скрипт создания схемы и данных;
+- файл `UIFIS_practice-7_students.json`;
+- ER-схему в PDF или PNG;
+- заполненный отчёт в DOCX.
+
+Перед сдачей откройте базу заново и выполните запрос 2. Если он работает на новой копии, значит схема и данные сохранены правильно.

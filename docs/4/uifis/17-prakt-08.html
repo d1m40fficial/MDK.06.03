@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#2F6F5E;--course-tint:#DDEBE5;--course-accent-dark:#5CC4A4;--course-tint-dark:#18302A;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Настройка сети и диагностика соединений</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.course-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
+.quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q:first-of-type { border-top: 0; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
+.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Настройка сети и диагностика соединений</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 17</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<h1>Настройка сети и диагностика соединений</h1><p class="dek">Свяжите две учебные виртуальные машины внутренней сетью, поднимите службу, проверьте её с другой машины и найдите пять типовых неисправностей.</p>
+<div class="glyph" aria-hidden="true">П8</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настроить два сетевых адаптера в VirtualBox</li><li>Задать статические адреса во внутренней сети через netplan</li><li>Проверить связность, порт и прикладной ответ</li><li>Найти и исправить ошибки адресации, службы и firewall</li><li>Оформить отчёт с диагностикой</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#шаг-1-имена-интерфейсов">Шаг 1. Имена интерфейсов</a></li><li><a href="#шаг-2-настройка-сервера">Шаг 2. Настройка сервера</a></li><li><a href="#шаг-3-настройка-клиента">Шаг 3. Настройка клиента</a></li><li><a href="#шаг-4-проверка-связности">Шаг 4. Проверка связности</a></li><li><a href="#шаг-5-http-служба">Шаг 5. HTTP-служба</a></li><li><a href="#шаг-6-пять-неисправностей">Шаг 6. Пять неисправностей</a></li><li><a href="#шаг-7-заполнение-диагностики">Шаг 7. Заполнение диагностики</a></li><li><a href="#шаг-8-отчёт">Шаг 8. Отчёт</a></li><li><a href="#чек-лист">Чек-лист</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#что-сдать">Что сдать</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<p>В лекции 9 мы прошли путь пакета: адреса, маска, шлюз, порты, TCP и диагностика по слоям. Теперь соберём сеть из двух виртуальных машин и проверим её на практике.</p>
+<p>Схема простая. У каждой машины два адаптера. Первый работает в режиме <strong>NAT</strong> и даёт выход в интернет через хост. Второй подключён к <strong>внутренней сети</strong> VirtualBox с именем <code>uifis-net</code> и связывает машины напрямую. Внутренняя сеть не требует host-only адаптера и не меняет настройки Windows на учебном компьютере.</p>
+<p>Результат работы это работающая связь между двумя машинами, HTTP-служба на сервере, диагностическая таблица и отчёт с пятью найденными неисправностями.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Клиент пингует сервер по адресу <code>10.10.0.10</code>, получает HTTP-ответ с порта 8080 и входит по SSH. В отчёте есть схема сети, вывод проверок и разбор пяти неисправностей.</p></div>
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-8_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-8_diagnostics.csv" download>Таблица диагностики в CSV</a>
+<a href="reports/UIFIS_practice-8_netplan-template.yaml" download>Шаблон netplan</a>
+<p>Скачайте файлы в папку практики. Шаблон netplan содержит адрес сервера, для клиента измените последний октет.</p>
+</div>
+
+<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<p>Нужны две виртуальные машины с Ubuntu Server 24.04 LTS:</p>
+<table>
+<thead>
+<tr>
+<th>Машина</th>
+<th>Роль</th>
+<th>Память</th>
+<th>Диск</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uifis-srv01</code></td>
+<td>Сервер</td>
+<td>2048 МБ</td>
+<td>15 ГБ</td>
+</tr>
+<tr>
+<td><code>uifis-cli01</code></td>
+<td>Клиент</td>
+<td>2048 МБ</td>
+<td>15 ГБ</td>
+</tr>
+</tbody>
+</table>
+<p>Если машина <code>uifis-srv01</code> уже создана на практике 6, используйте её. Вторую машину можно создать с нуля или клонировать первую, затем сменить имя и MAC-адреса адаптеров.</p>
+<p>На каждой машине должно быть два адаптера:</p>
+<table>
+<thead>
+<tr>
+<th>Адаптер</th>
+<th>Режим</th>
+<th>Назначение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>NAT</td>
+<td>выход в интернет и обновления</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Internal Network, имя <code>uifis-net</code></td>
+<td>связь между машинами</td>
+</tr>
+</tbody>
+</table>
+<p>В VirtualBox откройте <code>Настройки -&gt; Сеть</code>. Для второго адаптера включите <code>Enable Network Adapter</code>, выберите <code>Internal Network</code> и введите имя <code>uifis-net</code>. Имя должно совпадать на обеих машинах до символа.</p>
+<p>Не включайте host-only сеть и не меняйте настройки Windows на хосте. Всё, что нужно, находится внутри виртуальных машин.</p>
+<div class="callout shot"><span class="label">Скриншот 1</span><p>Настройки двух адаптеров на сервере и клиенте.</p></div>
+
+<h2 id="шаг-1-имена-интерфейсов"><span class="num">03</span>Шаг 1. Имена интерфейсов</h2>
+<p>Запустите обе машины и войдите под пользователем <code>student</code>. Посмотрите интерфейсы:</p>
+<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
+</code></pre></div>
+
+<p>В типичной установке VirtualBox первый адаптер называется <code>enp0s3</code>, второй <code>enp0s8</code>. Имена могут отличаться. Найдите интерфейс, который появился после добавления второго адаптера и пока не имеет адреса.</p>
+<p>Посмотрите маршруты:</p>
+<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>route
+</code></pre></div>
+
+<p>Через NAT должен быть маршрут <code>default via 10.0.2.2</code>. Внутренний интерфейс пока без адреса, поэтому маршрута <code>10.10.0.0/24</code> ещё нет.</p>
+<h2 id="шаг-2-настройка-сервера"><span class="num">04</span>Шаг 2. Настройка сервера</h2>
+<p>Создайте файл netplan:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+</code></pre></div>
+
+<p>Вставьте конфигурацию:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enp0s3</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">enp0s8</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">dhcp6</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.10.0.10/24</span>
+<span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+
+<p>Замените <code>enp0s3</code> и <code>enp0s8</code> на свои имена. Сохраните файл: в nano это <code>Ctrl+O</code>, <code>Enter</code>, затем <code>Ctrl+X</code>.</p>
+<p>Закройте права на файл:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+</code></pre></div>
+
+<p>Проверьте конфигурацию:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>try
+</code></pre></div>
+
+<p>Netplan покажет параметры и подождёт подтверждения. Если ошибок нет, нажмите <code>Enter</code>. Если конфигурация неверна, подождите, и прежние настройки вернутся. После успешной проверки примените файл:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+</code></pre></div>
+
+<p>Проверьте результат:</p>
+<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
+ip<span class="w"> </span>route
+</code></pre></div>
+
+<p>На внутреннем интерфейсе должен появиться адрес <code>10.10.0.10/24</code>. Маршрут по умолчанию должен идти через NAT, а не через внутреннюю сеть.</p>
+<p>Почему на внутреннем интерфейсе нет шлюза? Потому что <code>10.10.0.0/24</code> это локальная сеть. Шлюз нужен только для выхода в другие сети, а выход уже обеспечивает NAT-интерфейс. Если указать шлюз на обоих интерфейсах, появится два default-маршрута и непредсказуемая маршрутизация.</p>
+<h2 id="шаг-3-настройка-клиента"><span class="num">05</span>Шаг 3. Настройка клиента</h2>
+<p>Повторите настройку на <code>uifis-cli01</code>, изменив адрес:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.10.0.20/24</span>
+</code></pre></div>
+
+<p>Имя внутренней сети и имена интерфейсов должны совпадать с сервером. Примените файл так же:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+sudo<span class="w"> </span>netplan<span class="w"> </span>try
+sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+</code></pre></div>
+
+<p>Проверьте адрес и маршрут. Теперь у сервера <code>10.10.0.10</code>, у клиента <code>10.10.0.20</code>, маска <code>/24</code>.</p>
+<h2 id="шаг-4-проверка-связности"><span class="num">06</span>Шаг 4. Проверка связности</h2>
+<p>С клиента выполните:</p>
+<div class="codehilite"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.10
+</code></pre></div>
+
+<p>Ожидается три успешных ответа и нулевые потери. Затем посмотрите таблицу соседей:</p>
+<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>neigh
+</code></pre></div>
+
+<p>Для адреса <code>10.10.0.10</code> должен появиться MAC-адрес сервера. Если ping не проходит, проверьте по порядку:</p>
+<ol>
+<li>Оба адаптера подключены и имеют режим <code>Internal Network</code>.</li>
+<li>Имя сети на обеих машинах одинаковое.</li>
+<li>Оба адреса в одной подсети <code>10.10.0.0/24</code>.</li>
+<li>На внутренних интерфейсах нет лишнего шлюза.</li>
+<li>Внутренний интерфейс поднят и имеет состояние <code>UP</code>.</li>
+</ol>
+<p>Проверьте обратное направление:</p>
+<div class="codehilite"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.20
+</code></pre></div>
+
+<p>Связь должна работать в обе стороны. Если ping идёт только в одну сторону, ищите асимметричную настройку или firewall.</p>
+<div class="callout shot"><span class="label">Скриншот 2</span><p>Вывод <code>ip -br a</code> на сервере и клиенте, где видны оба адреса.</p></div>
+
+<h2 id="шаг-5-http-служба"><span class="num">07</span>Шаг 5. HTTP-служба</h2>
+<p>На сервере создайте простую страницу и запустите HTTP-сервер:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/uifis-http
+<span class="nb">cd</span><span class="w"> </span>/srv/uifis-http
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;uifis network ok&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>index.html
+nohup<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8080</span><span class="w"> </span>--bind<span class="w"> </span><span class="m">10</span>.10.0.10<span class="w"> </span>&gt;/tmp/uifis-http.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+<p>Команда <code>--bind 10.10.0.10</code> важна. Она заставляет службу слушать внутренний адрес, а не только <code>127.0.0.1</code>. Без этого клиент не подключится.</p>
+<p>Проверьте, что порт слушается:</p>
+<div class="codehilite"><pre><span></span><code>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
+</code></pre></div>
+
+<p>В выводе должен быть адрес <code>10.10.0.10:8080</code>. Теперь с клиента:</p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-I<span class="w"> </span>http://10.10.0.10:8080/
+</code></pre></div>
+
+<p>Ожидается строка <code>HTTP/1.0 200 OK</code>. Если соединение отклонено, смотрите <code>ss</code> на сервере. Если запрос зависает, проверяйте firewall.</p>
+<p>Если на сервере включён <code>ufw</code>, разрешите порт только для учебной сети:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status
+sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
+sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">22</span><span class="w"> </span>proto<span class="w"> </span>tcp
+</code></pre></div>
+
+<p>Не открывайте порт всему интернету. NAT-интерфейс не должен принимать HTTP-запросы снаружи.</p>
+<p>Проверьте SSH с клиента:</p>
+<div class="codehilite"><pre><span></span><code>ssh<span class="w"> </span>student@10.10.0.10
+</code></pre></div>
+
+<p>Первый вход попросит подтвердить отпечаток ключа. После входа выполните <code>hostname</code> и убедитесь, что попали на сервер. Выход командой <code>exit</code>.</p>
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Успешный <code>curl -I</code> с клиента и вывод <code>ss -tlnp</code> на сервере.</p></div>
+
+<h2 id="шаг-6-пять-неисправностей"><span class="num">08</span>Шаг 6. Пять неисправностей</h2>
+<p>Неисправности выполняйте по одной. После каждой возвращайте рабочее состояние, иначе следующая проверка будет непонятной.</p>
+<h3>Неисправность 1. Неверная подсеть</h3>
+<p>На клиенте временно поставьте адрес <code>10.20.0.20/24</code> и примените netplan. Проверьте <code>ping -c 3 10.10.0.10</code>: связь пропадёт, потому что адреса в разных сетях, а маршрута между ними нет.</p>
+<p><strong>Проверка:</strong> <code>ip -br a</code>, <code>ip route</code>.
+<strong>Исправление:</strong> вернуть <code>10.10.0.20/24</code> и выполнить <code>sudo netplan apply</code>.</p>
+<h3>Неисправность 2. Служба на localhost</h3>
+<p>Остановите HTTP-сервер и запустите его с привязкой к <code>127.0.0.1</code>:</p>
+<div class="codehilite"><pre><span></span><code>pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;http.server 8080&quot;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8080</span><span class="w"> </span>--bind<span class="w"> </span><span class="m">127</span>.0.0.1
+</code></pre></div>
+
+<p>С клиента <code>curl</code> получит <code>connection refused</code>, хотя ping до сервера работает.</p>
+<p><strong>Проверка:</strong> <code>ss -tlnp | grep 8080</code> покажет <code>127.0.0.1:8080</code>.
+<strong>Исправление:</strong> перезапустить службу с <code>--bind 10.10.0.10</code> или <code>0.0.0.0</code>.</p>
+<h3>Неисправность 3. Закрытый порт</h3>
+<p>Если <code>ufw</code> включён, поставьте запрет выше разрешающего правила:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>insert<span class="w"> </span><span class="m">1</span><span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
+</code></pre></div>
+
+<p>С клиента <code>curl</code> будет ждать и завершится по тайм-ауту. Это отличается от <code>connection refused</code>: служба работает, но пакеты не доходят. Если запрет добавить в конец, разрешающее правило может сработать раньше.</p>
+<p><strong>Проверка:</strong> <code>sudo ufw status verbose</code>.
+<strong>Исправление:</strong> удалить запрет и разрешить порт только из <code>10.10.0.0/24</code>:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
+sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
+</code></pre></div>
+
+<h3>Неисправность 4. Пропал default route</h3>
+<p>На клиенте удалите маршрут по умолчанию:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>del<span class="w"> </span>default
+</code></pre></div>
+
+<p>Локальный ping до <code>10.10.0.10</code> продолжит работать, а <code>curl -I https://example.com</code> перестанет находить путь наружу.</p>
+<p><strong>Проверка:</strong> <code>ip route</code>, <code>ping -c 3 10.10.0.10</code>, <code>curl -I https://example.com</code>.
+<strong>Исправление:</strong> <code>sudo netplan apply</code> вернёт маршрут через NAT.</p>
+<h3>Неисправность 5. Неверный DNS</h3>
+<p>На клиенте временно подмените DNS:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>resolvectl<span class="w"> </span>dns<span class="w"> </span>enp0s3<span class="w"> </span><span class="m">192</span>.0.2.1
+sudo<span class="w"> </span>resolvectl<span class="w"> </span>flush-caches
+</code></pre></div>
+
+<p>Проверьте <code>getent hosts example.com</code>. Имя не разрешится, хотя IP-связность и маршрут остаются рабочими.</p>
+<p><strong>Проверка:</strong> <code>resolvectl status</code>, <code>getent hosts example.com</code>.
+<strong>Исправление:</strong> вернуть DNS от NAT командой <code>sudo resolvectl revert enp0s3</code> или выполнить <code>sudo netplan apply</code>.</p>
+<div class="callout shot"><span class="label">Скриншот 4</span><p>Одна из неисправностей до исправления и та же проверка после.</p></div>
+
+<h2 id="шаг-7-заполнение-диагностики"><span class="num">09</span>Шаг 7. Заполнение диагностики</h2>
+<p>Заполняйте таблицу <code>UIFIS_practice-8_diagnostics.csv</code> по ходу работы. В колонку «Фактический результат» вписывайте короткий вывод команды, а в «Вывод» объясняйте, на каком слое была проблема.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Команда</th>
+<th>Что доказывает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Адреса</td>
+<td><code>ip -br a</code></td>
+<td>адрес и состояние интерфейса</td>
+</tr>
+<tr>
+<td>Маршруты</td>
+<td><code>ip route</code></td>
+<td>локальная сеть и default</td>
+</tr>
+<tr>
+<td>Связность</td>
+<td><code>ping</code></td>
+<td>доступность узла по ICMP</td>
+</tr>
+<tr>
+<td>Соседи</td>
+<td><code>ip neigh</code></td>
+<td>разрешение MAC через ARP</td>
+</tr>
+<tr>
+<td>Служба</td>
+<td><code>ss -tlnp</code></td>
+<td>процесс слушает нужный адрес</td>
+</tr>
+<tr>
+<td>HTTP</td>
+<td><code>curl -I</code></td>
+<td>приложение отвечает</td>
+</tr>
+<tr>
+<td>SSH</td>
+<td><code>ssh</code></td>
+<td>удалённый вход работает</td>
+</tr>
+<tr>
+<td>Firewall</td>
+<td><code>ufw status</code></td>
+<td>порт разрешён или закрыт</td>
+</tr>
+</tbody>
+</table>
+<h2 id="шаг-8-отчёт"><span class="num">10</span>Шаг 8. Отчёт</h2>
+<p>Заполните шаблон <code>UIFIS_practice-8_report-template.docx</code>.</p>
+<p>В отчёте должны быть:</p>
+<ol>
+<li>Цель и схема сети с двумя адаптерами.</li>
+<li>Параметры внутренней сети.</li>
+<li>Таблица проверок с фактическими результатами.</li>
+<li>Пять неисправностей: признак, проверка, исправление.</li>
+<li>Скриншоты настроек VirtualBox и команд.</li>
+<li>Вывод и ответы на контрольные вопросы.</li>
+</ol>
+<p>В выводах объясните, как вы отличили ошибку маршрута от ошибки firewall и почему внутренняя сеть не должна иметь свой шлюз.</p>
+<h2 id="чек-лист"><span class="num">11</span>Чек-лист</h2>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Ожидаемый результат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Два адаптера на каждой ВМ</td>
+<td>NAT и <code>uifis-net</code></td>
+</tr>
+<tr>
+<td>Адрес сервера</td>
+<td><code>10.10.0.10/24</code></td>
+</tr>
+<tr>
+<td>Адрес клиента</td>
+<td><code>10.10.0.20/24</code></td>
+</tr>
+<tr>
+<td>Ping с клиента</td>
+<td>3 ответа, потерь 0%</td>
+</tr>
+<tr>
+<td>Ping с сервера</td>
+<td>3 ответа, потерь 0%</td>
+</tr>
+<tr>
+<td>HTTP-порт</td>
+<td><code>10.10.0.10:8080</code></td>
+</tr>
+<tr>
+<td>HTTP-ответ</td>
+<td><code>HTTP/1.0 200 OK</code></td>
+</tr>
+<tr>
+<td>SSH</td>
+<td>вход <code>student@10.10.0.10</code></td>
+</tr>
+<tr>
+<td>Firewall</td>
+<td>разрешены 8080 и SSH из учебной сети</td>
+</tr>
+<tr>
+<td>Пять неисправностей</td>
+<td>найдены и исправлены</td>
+</tr>
+<tr>
+<td>Отчёт</td>
+<td>заполнен, есть скриншоты и выводы</td>
+</tr>
+</tbody>
+</table>
+<h2 id="контрольные-вопросы"><span class="num">12</span>Контрольные вопросы</h2>
+<ol>
+<li>Зачем нужны две сети: NAT и internal?</li>
+<li>Почему на внутреннем интерфейсе не задают default gateway?</li>
+<li>Что показывает команда <code>ss -tlnp</code>?</li>
+<li>Почему служба на <code>127.0.0.1</code> недоступна с другой виртуальной машины?</li>
+<li>Как отличить ошибку маршрута от ошибки firewall?</li>
+</ol>
+<h2 id="что-сдать"><span class="num">13</span>Что сдать</h2>
+<ul>
+<li>файл netplan для сервера и клиента;</li>
+<li>заполненную таблицу диагностики в CSV;</li>
+<li>заполненный отчёт в DOCX со скриншотами;</li>
+<li>краткое описание пяти неисправностей и способов их исправления.</li>
+</ul>
+<p>Перед сдачей верните обе машины в рабочее состояние: ping проходит, HTTP отвечает, SSH работает. Отчёт должен показывать не только успех, но и то, как вы нашли каждую ошибку.</p></article><nav class="pager"><a class="" href="16-lek-09.html"><span>← Предыдущее занятие</span>Лекция 9. Сетевые основы функционирования ИС</a><a class="next" style="text-align:right;margin-left:auto" href="18-lek-10.html"><span>Следующее занятие →</span>Лекция 10. Сетевые службы информационной системы</a></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+</script>
+</body>
+</html>
