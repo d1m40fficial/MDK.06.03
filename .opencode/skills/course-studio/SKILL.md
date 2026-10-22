@@ -228,6 +228,8 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   hard before.
 - Chapter prose does not state lesson duration or per-step minutes. Duration lives in
   `course.json` and the syllabus card.
+- Lesson cards and prose do not mention the demo exam. Disciplines and lessons stand on
+  their own; exam skills are the outcome of the course.
 - Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
   short-answer, all with explanations. The test footer, PDF button, reading progress,
   warning button, dark-theme toggle and submission dialog come from the shared builder;
