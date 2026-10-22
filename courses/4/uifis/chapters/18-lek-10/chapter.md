@@ -24,70 +24,7 @@ outcomes:
 
 Посмотрите на карту. Слева клиент, справа набор служб, которые нужны типовой ИС. Каждая служба подписана протоколом и портом. Порты это не украшение: по ним проверяют, слушает ли узел нужную службу и не блокирует ли её firewall.
 
-<figure class="diagram">
-<svg viewBox="0 0 680 380" role="img" aria-labelledby="fig10-title fig10-desc">
-  <title id="fig10-title">Сетевые службы информационной системы</title>
-  <desc id="fig10-desc">Клиент обращается к службам DNS, DHCP, HTTP, файловой, почтовой и NTP. У каждой службы указан протокол и порт.</desc>
-  <defs>
-    <marker id="ar10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-  </defs>
-  <style>
-    .s10-box { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
-    .s10-client { fill: var(--tint); stroke: var(--accent); stroke-width: 1.6; }
-    .s10-line { fill: none; stroke: var(--rule); stroke-width: 1.2; marker-end: url(#ar10); }
-    .s10-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; }
-    .s10-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
-    .s10-m { fill: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-    .s10-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-  </style>
-
-  <rect class="s10-client" x="24" y="150" width="140" height="76" rx="14"/>
-  <text class="s10-t" x="94" y="180" text-anchor="middle">Клиент</text>
-  <text class="s10-s" x="94" y="200" text-anchor="middle">браузер и ОС</text>
-
-  <path class="s10-line" d="M164 188 L220 188"/>
-  <text class="s10-m" x="192" y="178" text-anchor="middle">запрос</text>
-
-  <rect class="s10-box" x="220" y="74" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="236" y="100">DNS</text>
-  <text class="s10-s" x="236" y="118">имя превращается в адрес</text>
-  <text class="s10-a" x="236" y="134">53 UDP/TCP</text>
-
-  <rect class="s10-box" x="440" y="74" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="456" y="100">DHCP</text>
-  <text class="s10-s" x="456" y="118">адрес, шлюз и DNS</text>
-  <text class="s10-a" x="456" y="134">67/68 UDP</text>
-
-  <rect class="s10-box" x="220" y="164" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="236" y="190">HTTP и HTTPS</text>
-  <text class="s10-s" x="236" y="208">страницы и API</text>
-  <text class="s10-a" x="236" y="224">80 / 443 TCP</text>
-
-  <rect class="s10-box" x="440" y="164" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="456" y="190">Файлы</text>
-  <text class="s10-s" x="456" y="208">общие каталоги</text>
-  <text class="s10-a" x="456" y="224">445 / 2049 TCP</text>
-
-  <rect class="s10-box" x="220" y="254" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="236" y="280">Почта</text>
-  <text class="s10-s" x="236" y="298">отправка и ящики</text>
-  <text class="s10-a" x="236" y="314">25 / 143 / 993</text>
-
-  <rect class="s10-box" x="440" y="254" width="200" height="70" rx="12"/>
-  <text class="s10-t" x="456" y="280">NTP</text>
-  <text class="s10-s" x="456" y="298">единое время</text>
-  <text class="s10-a" x="456" y="314">123 UDP</text>
-
-  <path class="s10-line" d="M164 176 L220 110"/>
-  <path class="s10-line" d="M164 200 L220 199"/>
-  <path class="s10-line" d="M164 214 L440 199"/>
-  <path class="s10-line" d="M164 224 L440 289"/>
-  <text class="s10-s" x="340" y="356" text-anchor="middle">Одна сеть, разные службы: у каждой свой протокол, порт и журнал.</text>
-</svg>
-<figcaption><b>Рис. 1.</b> Службы ИС. DNS и DHCP делают сеть пригодной для работы, HTTP отдаёт приложение, файловые и почтовые службы хранят и передают данные, NTP держит единое время.</figcaption>
-</figure>
+::figure fig-10-services | Нажимайте стрелки или ведите курсор: каретка проходит по службам, а табло показывает порт.
 
 ## DNS: имена вместо адресов
 

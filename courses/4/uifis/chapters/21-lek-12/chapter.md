@@ -24,57 +24,7 @@ outcomes:
 
 Посмотрите на схему. Слева CRM, справа бухгалтерия, посередине интеграционный слой. CRM отдаёт JSON, бухгалтерия принимает XML, а журнал событий хранит CSV для сверки. Адаптер переводит имена полей, типы и коды, проверяет обязательные значения и только потом отправляет данные дальше.
 
-<figure class="diagram">
-<svg viewBox="0 0 680 360" role="img" aria-labelledby="fig12-title fig12-desc">
-  <title id="fig12-title">Интеграция двух систем</title>
-  <desc id="fig12-desc">CRM отправляет JSON в интеграционный слой, адаптер преобразует данные в XML для бухгалтерии и пишет журнал в CSV.</desc>
-  <defs>
-    <marker id="ar12" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-  </defs>
-  <style>
-    .i12-box { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
-    .i12-hub { fill: var(--tint); stroke: var(--accent); stroke-width: 1.6; }
-    .i12-line { fill: none; stroke: var(--rule); stroke-width: 1.2; marker-end: url(#ar12); }
-    .i12-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; }
-    .i12-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
-    .i12-m { fill: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-    .i12-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-  </style>
-
-  <rect class="i12-box" x="24" y="108" width="150" height="96" rx="14"/>
-  <text class="i12-t" x="99" y="138" text-anchor="middle">CRM</text>
-  <text class="i12-s" x="99" y="158" text-anchor="middle">клиенты и сделки</text>
-  <text class="i12-a" x="99" y="182" text-anchor="middle">JSON</text>
-
-  <path class="i12-line" d="M174 156 L246 156"/>
-  <text class="i12-m" x="210" y="146" text-anchor="middle">данные</text>
-
-  <rect class="i12-hub" x="246" y="84" width="190" height="150" rx="16"/>
-  <text class="i12-t" x="341" y="114" text-anchor="middle">Интеграционный слой</text>
-  <text class="i12-s" x="341" y="136" text-anchor="middle">контракт и проверка</text>
-  <text class="i12-s" x="341" y="156" text-anchor="middle">адаптер и преобразование</text>
-  <text class="i12-s" x="341" y="176" text-anchor="middle">очередь и повтор</text>
-  <text class="i12-a" x="341" y="204" text-anchor="middle">JSON → XML</text>
-
-  <path class="i12-line" d="M436 156 L504 156"/>
-  <text class="i12-m" x="470" y="146" text-anchor="middle">XML</text>
-
-  <rect class="i12-box" x="504" y="108" width="150" height="96" rx="14"/>
-  <text class="i12-t" x="579" y="138" text-anchor="middle">Бухгалтерия</text>
-  <text class="i12-s" x="579" y="158" text-anchor="middle">счета и платежи</text>
-  <text class="i12-a" x="579" y="182" text-anchor="middle">XML</text>
-
-  <path class="i12-line" d="M341 234 L341 282"/>
-  <rect class="i12-box" x="246" y="282" width="190" height="54" rx="12"/>
-  <text class="i12-t" x="341" y="306" text-anchor="middle">Журнал и сверка</text>
-  <text class="i12-a" x="341" y="324" text-anchor="middle">CSV для отчёта</text>
-
-  <text class="i12-s" x="340" y="356" text-anchor="middle">Один обмен, три представления данных и обязательная проверка результата.</text>
-</svg>
-<figcaption><b>Рис. 1.</b> Интеграционный слой принимает данные одной системы, проверяет и преобразует их и передаёт другой. Журнал хранит, что именно было отправлено и принято.</figcaption>
-</figure>
+::figure fig-12-integration | Проведите данные через адаптер: CRM, JSON, адаптер, XML, ERP, журнал.
 
 ## Способы интеграции
 

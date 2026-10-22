@@ -24,61 +24,7 @@ outcomes:
 
 Посмотрите на последовательность. Клиент открывает соединение, отправляет метод, путь, заголовки и иногда тело. Сервер выбирает обработчик, обращается к базе, формирует статус, заголовки и тело ответа. Соединение может закрыться или остаться для следующих запросов.
 
-<figure class="diagram">
-<svg viewBox="0 0 680 390" role="img" aria-labelledby="fig11-title fig11-desc">
-  <title id="fig11-title">HTTP запрос и ответ</title>
-  <desc id="fig11-desc">Клиент отправляет GET-запрос, сервер обращается к базе и возвращает ответ 200 с JSON или 500 при ошибке.</desc>
-  <defs>
-    <marker id="ar11" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-  </defs>
-  <style>
-    .h11-box { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
-    .h11-client { fill: var(--tint); stroke: var(--accent); stroke-width: 1.6; }
-    .h11-line { fill: none; stroke: var(--rule); stroke-width: 1.2; marker-end: url(#ar11); }
-    .h11-dash { fill: none; stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 5 4; }
-    .h11-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; }
-    .h11-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
-    .h11-m { fill: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-    .h11-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-  </style>
-
-  <rect class="h11-client" x="26" y="28" width="150" height="70" rx="14"/>
-  <text class="h11-t" x="101" y="56" text-anchor="middle">Клиент</text>
-  <text class="h11-s" x="101" y="76" text-anchor="middle">браузер или Postman</text>
-  <line class="h11-dash" x1="101" y1="98" x2="101" y2="350"/>
-
-  <rect class="h11-box" x="250" y="28" width="180" height="70" rx="14"/>
-  <text class="h11-t" x="340" y="56" text-anchor="middle">Сервер приложений</text>
-  <text class="h11-s" x="340" y="76" text-anchor="middle">проверка и логика</text>
-  <line class="h11-dash" x1="340" y1="98" x2="340" y2="350"/>
-
-  <rect class="h11-box" x="510" y="28" width="140" height="70" rx="14"/>
-  <text class="h11-t" x="580" y="56" text-anchor="middle">База данных</text>
-  <text class="h11-s" x="580" y="76" text-anchor="middle">строки и связи</text>
-  <line class="h11-dash" x1="580" y1="98" x2="580" y2="350"/>
-
-  <path class="h11-line" d="M176 126 L320 126"/>
-  <text class="h11-m" x="248" y="116" text-anchor="middle">GET /api/schedule</text>
-  <text class="h11-s" x="248" y="142" text-anchor="middle">заголовки, токен</text>
-
-  <path class="h11-line" d="M430 180 L560 180"/>
-  <text class="h11-m" x="495" y="170" text-anchor="middle">SELECT ...</text>
-
-  <path class="h11-line" d="M560 226 L430 226"/>
-  <text class="h11-s" x="495" y="216" text-anchor="middle">строки</text>
-
-  <path class="h11-line" d="M320 282 L176 282"/>
-  <text class="h11-a" x="248" y="272" text-anchor="middle">200 OK</text>
-  <text class="h11-m" x="248" y="298" text-anchor="middle">JSON: расписание</text>
-
-  <rect class="h11-box" x="190" y="320" width="300" height="48" rx="10"/>
-  <text class="h11-s" x="340" y="340" text-anchor="middle">Если база недоступна, сервер вернёт</text>
-  <text class="h11-a" x="340" y="358" text-anchor="middle">500 Internal Server Error</text>
-</svg>
-<figcaption><b>Рис. 1.</b> Один запрос и один ответ. Клиент не знает, как сервер получает данные; сервер не знает, как клиент рисует интерфейс. Их связывает HTTP-контракт.</figcaption>
-</figure>
+::figure fig-11-http | Проведите запрос по станциям: клиент, сервер, база, ответ, журнал.
 
 ## Анатомия HTTP
 
