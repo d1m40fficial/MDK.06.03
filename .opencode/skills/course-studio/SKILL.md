@@ -226,6 +226,8 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   written practical without moving its text.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
+- Chapter prose does not state lesson duration or per-step minutes. Duration lives in
+  `course.json` and the syllabus card.
 - Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
   short-answer, all with explanations. The test footer, PDF button, reading progress,
   warning button, dark-theme toggle and submission dialog come from the shared builder;
