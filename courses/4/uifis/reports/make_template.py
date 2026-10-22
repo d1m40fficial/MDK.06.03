@@ -1,11 +1,13 @@
 """Generate the downloadable materials for UIFIS practices.
 
 Run:  python make_template.py
-Writes DOCX report templates and CSV tables next to this file for practices 1-4
-and 6. Filenames are ASCII so the download links stay safe in any browser.
+Writes DOCX report templates, CSV tables and the practice 7 JSON fixture next
+to this file for practices 1-8. Filenames are ASCII so the download links stay
+safe in any browser.
 """
 
 import csv
+import json
 from pathlib import Path
 
 from docx import Document
@@ -163,7 +165,7 @@ def make_docx():
     doc.add_paragraph()
 
     line(doc, "Краткие теоретические сведения", bold=True)
-    line(doc, "Перечислите четыре признака классификации ИС и приведите по 2–3 значения каждого:")
+    line(doc, "Перечислите четыре признака классификации ИС и приведите по 2 или 3 значения каждого:")
     line(doc, "1. Сфера применения: ____________________________________________________")
     line(doc, "2. Масштаб: _____________________________________________________________")
     line(doc, "3. Способ обработки: ____________________________________________________")
@@ -873,6 +875,329 @@ def make_csv5():
     print(f"wrote {OUT_CSV5}")
 
 
+OUT_DOCX7 = HERE / "UIFIS_practice-7_report-template.docx"
+OUT_JSON7 = HERE / "UIFIS_practice-7_students.json"
+OUT_DOCX8 = HERE / "UIFIS_practice-8_report-template.docx"
+OUT_CSV8 = HERE / "UIFIS_practice-8_diagnostics.csv"
+
+
+def set_table_font(table, size=9):
+    for row in table.rows:
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(size)
+
+
+def make_json7():
+    students = [
+        {
+            "full_name": "Иванова Мария Сергеевна",
+            "email": "ivanova@example.ru",
+            "group_code": "ИС-41",
+        },
+        {
+            "full_name": "Крылов Артём Игоревич",
+            "email": "krylov@example.ru",
+            "group_code": "ИС-42",
+        },
+        {
+            "full_name": "Мельникова Ольга Павловна",
+            "email": "melnikova@example.ru",
+            "group_code": "ИС-41",
+        },
+    ]
+    with OUT_JSON7.open("w", encoding="utf-8", newline="\n") as f:
+        json.dump(students, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    print(f"wrote {OUT_JSON7}")
+
+
+def make_docx7():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)",
+         bold=True, size=14, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе 7", bold=True, size=13,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Создание базы данных информационной системы",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "Создать базу данных учебного журнала в SQLite, задать ограничения "
+              "целостности, наполнить таблицы данными, импортировать JSON и проверить "
+              "выборки с соединением и агрегацией.")
+    doc.add_paragraph()
+
+    line(doc, "Схема базы данных", bold=True)
+    cols = ["Таблица", "Назначение", "Ключи и ограничения", "Строк"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for row in (
+        ("students", "Студенты", "PK id, UNIQUE email, CHECK status", "6"),
+        ("courses", "Курсы", "PK id, UNIQUE code, CHECK hours", "4"),
+        ("enrollments", "Записи на курсы", "PK id, FK student, FK course, UNIQUE пара", "8"),
+        ("grades", "Оценки", "PK id, FK enrollment, UNIQUE enrollment, CHECK score", "7"),
+    ):
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 9)
+    doc.add_paragraph()
+
+    line(doc, "ER-модель в третьей нормальной форме", bold=True)
+    slot(doc, "[ Вставьте схему из draw.io: students, courses, enrollments, grades ]")
+    doc.add_paragraph()
+    line(doc, "Объясните, почему оценка хранится в отдельной таблице grades, а не в enrollments:")
+    for _ in range(4):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Проверка ограничений", bold=True)
+    cols = ["Проверка", "Действие", "Ожидаемый результат", "Факт", "Вывод"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, action, expected in (
+        ("Оценка 101", "INSERT grade score = 101", "CHECK отклоняет строку"),
+        ("Повтор email", "INSERT student с тем же email", "UNIQUE отклоняет строку"),
+        ("Удаление курса", "DELETE course с записями", "RESTRICT отклоняет удаление"),
+        ("Удаление студента", "DELETE student с оценками", "CASCADE удаляет записи и оценки"),
+        ("Повтор записи", "Повторная запись на тот же курс", "UNIQUE отклоняет строку"),
+    ):
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = action
+        cells[2].text = expected
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Результаты SQL-запросов", bold=True)
+    cols = ["Запрос", "Что проверяет", "Результат", "Скриншот"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, purpose in (
+        ("Запрос 1", "Число курсов у каждого студента"),
+        ("Запрос 2", "Средний балл по каждому курсу"),
+        ("Запрос 3", "Студенты без записей на курсы"),
+        ("Запрос 4", "Три лучших студента по среднему баллу"),
+        ("Запрос 5", "Курсы без выставленных оценок"),
+    ):
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = purpose
+    set_table_font(t, 9)
+    doc.add_paragraph()
+
+    line(doc, "Импорт JSON", bold=True)
+    cols = ["Показатель", "Значение"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Файл", "Строк в файле", "Импортировано", "Отклонено", "Итоговая проверка"):
+        t.add_row().cells[0].text = name
+    set_table_font(t, 9)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    for caption in (
+        "Схема SQLite и список таблиц",
+        "Ошибка CHECK при score = 101",
+        "Импорт JSON и сообщение об успехе",
+        "Результат запроса 2 со средним баллом",
+    ):
+        slot(doc, f"[ Место для скриншота: {caption} ]")
+        doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Какое ограничение оказалось самым важным? Что изменилось бы, если бы "
+              "внешние ключи были выключены? Где в экзаменационном задании пригодится "
+              "этот скрипт?")
+    for _ in range(6):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate((
+        "Почему таблица grades отделена от enrollments?",
+        "Что произойдёт при удалении студента, у которого есть оценки?",
+        "Зачем нужен PRAGMA foreign_keys = ON?",
+        "Чем UNIQUE отличается от PRIMARY KEY?",
+        "Почему импорт JSON выполняют в одной транзакции?",
+    ), 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX7)
+    print(f"wrote {OUT_DOCX7}")
+
+
+def make_docx8():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)",
+         bold=True, size=14, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе 8", bold=True, size=13,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Настройка сети и диагностика соединений",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "Связать две учебные виртуальные машины внутренней сетью, настроить "
+              "адреса и проверить доступность сервиса, а затем найти и исправить "
+              "пять типовых неисправностей.")
+    doc.add_paragraph()
+
+    line(doc, "Схема сети", bold=True)
+    cols = ["Узел", "Роль", "Адаптер 1", "Адаптер 2", "Внутренний адрес"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for row in (
+        ("uifis-srv01", "Сервер", "NAT, DHCP", "uifis-net", "10.10.0.10/24"),
+        ("uifis-cli01", "Клиент", "NAT, DHCP", "uifis-net", "10.10.0.20/24"),
+    ):
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 9)
+    doc.add_paragraph()
+    slot(doc, "[ Вставьте схему сети: две ВМ, NAT и внутренняя сеть uifis-net ]")
+    doc.add_paragraph()
+
+    line(doc, "Параметры внутренней сети", bold=True)
+    cols = ["Параметр", "Значение"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Имя сети VirtualBox", "Адрес сервера", "Адрес клиента", "Маска",
+                 "Шлюз по умолчанию", "DNS"):
+        t.add_row().cells[0].text = name
+    set_table_font(t, 10)
+    doc.add_paragraph()
+
+    line(doc, "Проверки", bold=True)
+    cols = ["Проверка", "Команда", "Ожидаемый результат", "Факт", "Вывод"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    checks = (
+        ("Адреса", "ip -br a", "10.10.0.10/24 и 10.10.0.20/24, state UP"),
+        ("Маршруты", "ip route", "Маршрут 10.10.0.0/24 и default через NAT"),
+        ("Связность", "ping -c 3 10.10.0.20", "3 пакета, потерь 0%"),
+        ("Служба", "ss -tlnp | grep 8080", "служба слушает 10.10.0.10:8080"),
+        ("HTTP", "curl -I http://10.10.0.10:8080/", "HTTP/1.0 200 OK"),
+        ("SSH", "ssh student@10.10.0.10", "вход по паролю"),
+        ("Firewall", "sudo ufw status", "разрешён TCP 8080 из 10.10.0.0/24"),
+        ("Внешний сайт", "curl -I https://example.com", "HTTP 200 через NAT"),
+    )
+    for row in checks:
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Неисправности и исправления", bold=True)
+    cols = ["Неисправность", "Признак", "Проверка", "Исправление"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    faults = (
+        ("Неверная подсеть", "ping не проходит", "ip -br a", "вернуть 10.10.0.20/24"),
+        ("Служба на 127.0.0.1", "connection refused", "ss -tlnp", "слушать 10.10.0.10"),
+        ("Закрыт порт", "curl зависает", "sudo ufw status", "разрешить 8080"),
+        ("Нет default route", "нет выхода в интернет", "ip route", "вернуть NAT-маршрут"),
+        ("Неверный DNS", "имя не разрешается", "getent hosts example.com", "вернуть DNS NAT"),
+    )
+    for row in faults:
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    for caption in (
+        "Настройки двух адаптеров в VirtualBox",
+        "Вывод ip -br a на сервере и клиенте",
+        "Успешный curl с клиента",
+        "Вывод ss -tlnp",
+        "Исправленная неисправность",
+    ):
+        slot(doc, f"[ Место для скриншота: {caption} ]")
+        doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Какая неисправность была самой трудной? Как вы отличили ошибку маршрута "
+              "от ошибки firewall? Почему внутренняя сеть не должна иметь свой шлюз?")
+    for _ in range(6):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate((
+        "Зачем нужны две сети: NAT и internal?",
+        "Почему на внутреннем интерфейсе не задают default gateway?",
+        "Что показывает команда ss -tlnp?",
+        "Почему сервис на 127.0.0.1 недоступен с другой виртуальной машины?",
+        "Как отличить ошибку маршрута от ошибки firewall?",
+    ), 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX8)
+    print(f"wrote {OUT_DOCX8}")
+
+
+def make_csv8():
+    checks = (
+        ("Адреса", "ip -br a", "10.10.0.10/24 и 10.10.0.20/24, state UP"),
+        ("Маршруты", "ip route", "10.10.0.0/24 и default через NAT"),
+        ("Связность", "ping -c 3 10.10.0.20", "3 пакета, потерь 0%"),
+        ("Служба", "ss -tlnp | grep 8080", "10.10.0.10:8080"),
+        ("HTTP", "curl -I http://10.10.0.10:8080/", "HTTP/1.0 200 OK"),
+        ("SSH", "ssh student@10.10.0.10", "вход по паролю"),
+        ("Firewall", "sudo ufw status", "TCP 8080 разрешён из 10.10.0.0/24"),
+        ("Внешний сайт", "curl -I https://example.com", "HTTP 200 через NAT"),
+    )
+    with OUT_CSV8.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["Проверка", "Команда", "Ожидаемый результат", "Фактический результат", "Вывод"])
+        for name, command, expected in checks:
+            w.writerow([name, command, expected, "", ""])
+        w.writerow(["Итог", "все проверки", "8 из 8", "", ""])
+    print(f"wrote {OUT_CSV8}")
+
+
 if __name__ == "__main__":
     make_docx()
     make_csv()
@@ -886,3 +1211,7 @@ if __name__ == "__main__":
     make_csv5()
     make_docx6()
     make_csv6()
+    make_json7()
+    make_docx7()
+    make_docx8()
+    make_csv8()

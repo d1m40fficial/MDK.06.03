@@ -1,0 +1,17 @@
+[
+  {
+    "full_name": "Иванова Мария Сергеевна",
+    "email": "ivanova@example.ru",
+    "group_code": "ИС-41"
+  },
+  {
+    "full_name": "Крылов Артём Игоревич",
+    "email": "krylov@example.ru",
+    "group_code": "ИС-42"
+  },
+  {
+    "full_name": "Мельникова Ольга Павловна",
+    "email": "melnikova@example.ru",
+    "group_code": "ИС-41"
+  }
+]
