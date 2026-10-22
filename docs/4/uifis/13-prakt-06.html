@@ -521,8 +521,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h1>Установка и базовая настройка серверной операционной системы</h1><p class="dek">Соберите учебный серверный узел: установите Ubuntu Server в виртуальной машине, настройте имя, сеть, время, обновления, SSH и защиту, затем докажите проверками, что узел готов к работе.</p>
 <div class="glyph" aria-hidden="true">П6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Установить серверную ОС в виртуальной машине</li><li>Настроить имя, сеть, время и обновления</li><li>Организовать удалённый доступ и базовую защиту</li><li>Проверить узел по чек-листу и оформить отчёт</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#установка">Установка</a></li><li><a href="#базовая-настройка">Базовая настройка</a></li><li><a href="#чек-лист-приёмки">Чек-лист приёмки</a></li><li><a href="#отчёт">Отчёт</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#что-сдать">Что сдать</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
 <p>В лекции 7 мы разобрали, как ОС управляет процессами, памятью, файлами и службами. Теперь соберём учебный серверный узел целиком. Результат работы это виртуальная машина с установленной серверной ОС, настроенная по чек-листу, и отчёт с доказательствами: скриншотами, командами и результатами проверок.</p>
-<p>Работа рассчитана на 90 минут. Основная часть это установка Ubuntu Server 24.04 LTS, имя узла, обновления, время и проверка SSH. Статический адрес, ключи, firewall и служебный пользователь входят в расширенную часть: её выполняют на занятии при запасе времени или дома, чтобы собрать полный отчёт.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Виртуальная машина загружается, принимает вход по SSH, имеет понятное имя, синхронизированное время и установленные обновления. Для полного результата добавьте статический адрес, вход по ключу, firewall и снимок состояния. Все проверки записаны в отчёт.</p></div>
+<p>Работа рассчитана на 90 минут. Основная часть это установка Ubuntu Server 24.04 LTS, имя узла, обновления, время и проверка SSH. Проброс порта SSH входит в базовую часть. Ключи, firewall и служебный пользователь входят в расширенную часть: её выполняют на занятии при запасе времени или дома в той же виртуальной машине, чтобы собрать полный отчёт.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Виртуальная машина загружается, принимает вход по SSH, имеет понятное имя, синхронизированное время и установленные обновления. Для полного результата добавьте проброс порта 2222, вход по ключу, firewall и снимок состояния. Все проверки записаны в отчёт.</p></div>
 
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-6_report-template.docx" download>Шаблон отчёта в DOCX</a>
@@ -533,12 +533,15 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
 <p>Для работы нужны:</p>
 <ul>
-<li>компьютер с гипервизором: VirtualBox, VMware Workstation, Hyper-V или KVM;</li>
-<li>образ <strong>Ubuntu Server 24.04 LTS</strong> с официального сайта;</li>
-<li>не менее 4 ГБ оперативной памяти для виртуальной машины, 2 процессорных ядра и 25 ГБ диска;</li>
-<li>доступ к интернету через NAT или мост;</li>
-<li>клиент SSH на рабочем компьютере: терминал Linux, PowerShell или PuTTY.</li>
+<li>VirtualBox 7.x на учебном компьютере; настройки хоста не меняем, все действия идут внутри виртуальной машины;</li>
+<li>ISO Ubuntu Server 24.04 LTS amd64: файл <code>ubuntu-24.04-live-server-amd64.iso</code>, страница загрузки https://releases.ubuntu.com/24.04/;</li>
+<li>4096 МБ оперативной памяти, 2 процессорных ядра и 25 ГБ диска для виртуальной машины;</li>
+<li>сеть VirtualBox: адаптер 1 в режиме NAT;</li>
+<li>PowerShell с командой <code>ssh</code> на рабочем компьютере.</li>
 </ul>
+<p>Если ISO уже лежит на учебном компьютере, скачивать его не нужно.</p>
+<div class="callout note"><span class="label">Ограничения учебного компьютера</span><p>Настройки Windows и системные параметры компьютера не меняем: их ограничивает администратор. Все действия выполняются внутри VirtualBox и виртуальной машины.</p></div>
+
 <p>Создайте виртуальную машину со следующими параметрами:</p>
 <table>
 <thead>
@@ -566,7 +569,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>Сеть</td>
-<td>NAT или мост, как выдал преподаватель</td>
+<td>Адаптер 1: NAT; проброс TCP 2222 с хоста на 22 в госте</td>
 </tr>
 <tr>
 <td>ISO</td>
@@ -581,10 +584,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="callout shot"><span class="label">Скриншот 1</span><p>Первый экран установщика с выбранным языком.</p></div>
 
 <h3>Шаг 2. Язык и раскладка</h3>
-<p>Выберите английский язык установки и русскую раскладку клавиатуры, если преподаватель не указал другой вариант. Английский интерфейс удобнее для команд и сообщений об ошибках, а русская раскладка нужна для ввода текста.</p>
+<p>Выберите английский язык установки и русскую раскладку клавиатуры. Английский интерфейс удобнее для команд и сообщений об ошибках, а русская раскладка нужна для ввода текста.</p>
 <h3>Шаг 3. Сеть</h3>
-<p>Установщик предложит настроить основной интерфейс. Для первого запуска достаточно DHCP. Запишите выданный адрес: он понадобится для SSH. Если DHCP не выдаёт адрес, проверьте, что виртуальный адаптер подключён и что в гипервизоре выбран правильный тип сети.</p>
-<p>Не настраивайте статический адрес на этом шаге, если не уверены в шлюзе и DNS. Сначала получите рабочую сеть, затем измените настройки осознанно.</p>
+<p>Установщик предложит настроить основной интерфейс. Оставьте DHCP: NAT выдаст адрес, а SSH с хоста будет подключаться через проброс порта 2222. Адрес внутри виртуальной машины записывать не нужно. Если DHCP не выдаёт адрес, проверьте, что виртуальный адаптер подключён и что в гипервизоре выбран режим NAT.</p>
+<p>Не меняйте режим NAT на этом шаге. Сначала получите рабочую сеть и доступ к обновлениям, затем настройте проброс порта.</p>
 <h3>Шаг 4. Диск</h3>
 <p>Выберите автоматическую разметку всего диска. Для учебного узла не нужны отдельные разделы под <code>/home</code> и <code>/var</code>, но запомните схему:</p>
 <ul>
@@ -593,7 +596,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><code>/boot/efi</code> раздел EFI, если используется UEFI;</li>
 <li>swap файл или раздел.</li>
 </ul>
-<p>Автоматическая разметка создаст нужные разделы. Не выбирайте шифрование диска, если преподаватель не выдал пароль и не требует этот режим: потеря ключа означает потерю данных.</p>
+<p>Автоматическая разметка создаст нужные разделы. Не включайте шифрование диска: для учебного стенда оно не требуется, а потеря ключа означает потерю данных.</p>
 <h3>Шаг 5. Пользователь и SSH</h3>
 <p>Создайте административного пользователя:</p>
 <table>
@@ -618,7 +621,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>Пароль</td>
-<td>по указанию преподавателя, не менее 12 символов</td>
+<td><code>UifisLab2026!</code> (только для этой учебной ВМ, не используйте его в других системах)</td>
 </tr>
 </tbody>
 </table>
@@ -685,45 +688,37 @@ timedatectl
 <div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>systemd-timesyncd
 </code></pre></div>
 
-<div class="callout note"><span class="label">Расширенная часть</span><p>Шаги 11-14 можно выполнить дома или на занятии, если основная часть заняла меньше времени. Они нужны для полного отчёта, но не блокируют сдачу установленного и обновлённого узла.</p></div>
+<div class="callout note"><span class="label">Расширенная часть</span><p>Шаг 11 обязателен для SSH. Шаги 12-14 можно выполнить дома или на занятии, если основная часть заняла меньше времени. Они нужны для полного отчёта, но не блокируют сдачу установленного и обновлённого узла.</p></div>
 
-<h3>Шаг 11. Статический адрес</h3>
-<p>Статический адрес нужен, чтобы к серверу было удобно подключаться. Сначала узнайте имя интерфейса:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>link
+<h3>Шаг 11. Проброс SSH-порта в VirtualBox</h3>
+<p>Выключите виртуальную машину. В VirtualBox откройте <strong>Настройки → Сеть → Адаптер 1 → Дополнительно → Проброс портов</strong> и добавьте правило:</p>
+<table>
+<thead>
+<tr>
+<th>Имя</th>
+<th>Протокол</th>
+<th>Адрес хоста</th>
+<th>Порт хоста</th>
+<th>Адрес гостя</th>
+<th>Порт гостя</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ssh</td>
+<td>TCP</td>
+<td>127.0.0.1</td>
+<td>2222</td>
+<td>(оставьте пустым)</td>
+<td>22</td>
+</tr>
+</tbody>
+</table>
+<p>Включите машину и проверьте подключение с рабочего компьютера в PowerShell:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
 </code></pre></div>
 
-<p>Пусть интерфейс называется <code>ens33</code>. Создайте отдельный файл netplan, чтобы не править файл, созданный установщиком:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/netplan/99-uifis.yaml
-</code></pre></div>
-
-<p>Пример для сети <code>192.168.56.0/24</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
-<span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">ens33</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">      </span><span class="nt">addresses</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.56.10/24</span>
-<span class="w">      </span><span class="nt">routes</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
-<span class="w">          </span><span class="nt">via</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.56.1</span>
-<span class="w">      </span><span class="nt">nameservers</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">addresses</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">192.168.56.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.1.1.1</span><span class="p p-Indicator">]</span>
-</code></pre></div>
-
-<p>Замените имя интерфейса, адрес, шлюз и DNS на значения, которые выдал преподаватель. Закройте файл, затем проверьте синтаксис и примените настройку с автоматическим откатом:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/99-uifis.yaml
-sudo<span class="w"> </span>netplan<span class="w"> </span>try
-</code></pre></div>
-
-<p><code>netplan try</code> ждёт подтверждения. Если связь потеряна, настройка откатится сама. После успешной проверки нажмите Enter. Затем проверьте:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
-ip<span class="w"> </span>route
-ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">192</span>.168.56.1
-</code></pre></div>
-
-<p>Если вы работаете через SSH, предупредите преподавателя: смена адреса разорвёт текущее подключение. Подключайтесь заново по новому адресу.</p>
+<p>Первый вход спросит подтверждение ключа хоста и пароль <code>UifisLab2026!</code>. Если подключение не открывается, проверьте, что виртуальная машина запущена, служба SSH включена, а правило проброса сохранено.</p>
 <h3>Шаг 12. SSH и ключи</h3>
 <p>Проверьте, что служба SSH работает:</p>
 <div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>ssh
@@ -734,11 +729,15 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">en
 <div class="codehilite"><pre><span></span><code>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;uifis-student&quot;</span>
 </code></pre></div>
 
-<p>Скопируйте открытый ключ на сервер:</p>
-<div class="codehilite"><pre><span></span><code>ssh-copy-id<span class="w"> </span>student@192.168.56.10
+<p>Скопируйте открытый ключ на сервер. В PowerShell выполните одну команду; пароль <code>UifisLab2026!</code> она спросит один раз:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">type </span><span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">ssh</span><span class="p">\</span><span class="n">id_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="p">|</span> <span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="s2">&quot;mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;</span>
 </code></pre></div>
 
-<p>Проверьте вход по ключу в новом окне терминала. Только после успешного входа отключайте пароль. Создайте отдельный файл настроек:</p>
+<p>Проверьте вход по ключу в новом окне терминала:</p>
+<div class="codehilite"><pre><span></span><code>ssh<span class="w"> </span>-p<span class="w"> </span><span class="m">2222</span><span class="w"> </span>student@127.0.0.1
+</code></pre></div>
+
+<p>Только после успешного входа отключайте пароль. Создайте отдельный файл настроек:</p>
 <div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/ssh/sshd_config.d/99-uifis.conf
 </code></pre></div>
 
@@ -819,13 +818,19 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 <tr>
 <td>Сеть</td>
 <td><code>ip -br a</code></td>
-<td>адрес из задания, интерфейс <code>UP</code></td>
+<td>адрес получен по DHCP, интерфейс <code>UP</code></td>
 <td></td>
 </tr>
 <tr>
 <td>Маршрут</td>
 <td><code>ip route</code></td>
-<td>маршрут по умолчанию есть</td>
+<td>маршрут по умолчанию через NAT есть</td>
+<td></td>
+</tr>
+<tr>
+<td>Проброс порта</td>
+<td>VirtualBox → Проброс портов</td>
+<td>TCP <code>2222</code> с хоста на <code>22</code> в госте</td>
 <td></td>
 </tr>
 <tr>
@@ -836,7 +841,7 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 </tr>
 <tr>
 <td>Вход по ключу</td>
-<td><code>ssh student@адрес</code></td>
+<td><code>ssh -p 2222 student@127.0.0.1</code></td>
 <td>вход без пароля</td>
 <td></td>
 </tr>
@@ -894,15 +899,15 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 <li>Почему обновления устанавливают до настройки служб, а не после?</li>
 <li>Почему вход по SSH-ключу безопаснее пароля и что нужно проверить до отключения пароля?</li>
 <li>Зачем приложению отдельный пользователь <code>uifis</code>, если уже есть <code>student</code> с правами <code>sudo</code>?</li>
-<li>Что проверить, если после смены статического адреса SSH перестал подключаться?</li>
+<li>Что проверить, если SSH через порт 2222 перестал подключаться?</li>
 <li>Почему снимок виртуальной машины не заменяет резервную копию данных?</li>
 </ol>
 <h2 id="что-сдать"><span class="num">08</span>Что сдать</h2>
-<p>Сдайте преподавателю:</p>
+<p>Сдайте результат:</p>
 <ul>
 <li>файл отчёта в DOCX с заполненными таблицами и скриншотами;</li>
 <li>заполненный чек-лист в CSV или в таблице отчёта;</li>
-<li>имя виртуальной машины и адрес, по которому преподаватель может проверить стенд, если это предусмотрено заданием.</li>
+<li>имя виртуальной машины и порт <code>2222</code>, по которому можно проверить стенд.</li>
 </ul>
 <p>Перед сдачей закройте лишние окна, проверьте, что в отчёте нет паролей и что все скриншоты читаются без увеличения.</p></article><nav class="pager"><a class="" href="12-lek-07.html"><span>← Предыдущее занятие</span>Лекция 7. Системное программное обеспечение и операционные системы</a><span></span></nav></main>
 <script>

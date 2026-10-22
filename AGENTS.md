@@ -47,6 +47,9 @@ https://bom.firpo.ru/Public/6506.
   sqliteonline.com, GitHub, Kaggle, Colab и Google Docs. Не требовать PlantUML,
   StarUML, Enterprise Architect, Visio, PyCharm, MySQL или PostgreSQL и платные
   сервисы.
+- Настройки учебных ПК ограничены администратором. Лабы по ОС и системным настройкам
+  выполняются в VirtualBox; не требовать прав администратора, host-only сети или
+  изменений Windows на хосте. Для SSH использовать NAT и проброс порта.
 - Каждая практика должна давать артефакт для ДЭ: ER в PDF, скрипт БД, SQL-скрипт,
   работающее приложение, коллекцию Postman, документ Word или презентацию.
 

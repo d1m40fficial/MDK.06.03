@@ -78,6 +78,9 @@ Available software policy:
   draw.io, sqliteonline.com, GitHub, Kaggle, Colab and Google Docs.
 - Do not require PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, a MySQL or
   PostgreSQL server, or paid cloud services.
+- Host PC settings are locked by the administrator. Run OS and system labs inside
+  VirtualBox; use NAT and port forwarding, never host-only adapters, admin rights or
+  Windows changes on the host.
 - Diagrams: draw.io. Database: SQLite through Python or sqliteonline.com, or LocalDB if
   it is present in Visual Studio. API: Python with Flask/FastAPI in VS Code, or ASP.NET
   Core in Visual Studio. Tests: Postman. Documentation: Word and PowerPoint. Version
