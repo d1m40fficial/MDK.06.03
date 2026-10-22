@@ -35,68 +35,7 @@ outcomes:
 
 Посмотрите на сервис записи на консультации. У него есть структура, поведение и данные. Это не три разных системы, а три вопроса об одной системе.
 
-<figure class="diagram">
-<svg viewBox="0 0 680 330" role="img" aria-labelledby="fig1-title fig1-desc">
-  <title id="fig1-title">Одна система и три модели</title>
-  <desc id="fig1-desc">Сервис консультаций показан тремя карточками: структура, поведение и данные. Каждая карточка отвечает на свой вопрос.</desc>
-  <defs>
-    <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-  </defs>
-  <style>
-    .mv-box { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
-    .mv-sys { fill: var(--tint); stroke: var(--accent); stroke-width: 1.6; }
-    .mv-line { fill: none; stroke: var(--rule); stroke-width: 1.2; marker-end: url(#ar1); }
-    .mv-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; }
-    .mv-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
-    .mv-m { fill: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
-    .mv-a { fill: var(--accent); }
-    .mv-chip { fill: var(--paper); stroke: var(--rule); stroke-width: 1; }
-  </style>
-
-  <rect class="mv-sys" x="220" y="18" width="240" height="56" rx="14"/>
-  <text class="mv-t" x="340" y="41" text-anchor="middle">Сервис консультаций</text>
-  <text class="mv-s" x="340" y="60" text-anchor="middle">одна система, три вопроса</text>
-
-  <path class="mv-line" d="M300 74 L155 128"/>
-  <path class="mv-line" d="M340 74 L340 128"/>
-  <path class="mv-line" d="M380 74 L525 128"/>
-
-  <rect class="mv-box" x="30" y="132" width="200" height="150" rx="12"/>
-  <text class="mv-t" x="46" y="158">Структура</text>
-  <text class="mv-s" x="46" y="176">Из чего состоит?</text>
-  <rect class="mv-chip" x="46" y="190" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="56" y="206">Студент</text>
-  <rect class="mv-chip" x="46" y="220" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="56" y="236">Слот</text>
-  <rect class="mv-chip" x="46" y="250" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="56" y="266">Запись</text>
-
-  <rect class="mv-box" x="240" y="132" width="200" height="150" rx="12"/>
-  <text class="mv-t" x="256" y="158">Поведение</text>
-  <text class="mv-s" x="256" y="176">Что происходит?</text>
-  <rect class="mv-chip" x="256" y="190" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="266" y="206">Выбрать слот</text>
-  <rect class="mv-chip" x="256" y="220" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="266" y="236">Подтвердить</text>
-  <rect class="mv-chip" x="256" y="250" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="266" y="266">Напомнить</text>
-
-  <rect class="mv-box" x="450" y="132" width="200" height="150" rx="12"/>
-  <text class="mv-t" x="466" y="158">Данные</text>
-  <text class="mv-s" x="466" y="176">Что храним?</text>
-  <rect class="mv-chip" x="466" y="190" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="476" y="206">students</text>
-  <rect class="mv-chip" x="466" y="220" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="476" y="236">slots</text>
-  <rect class="mv-chip" x="466" y="250" width="168" height="24" rx="6"/>
-  <text class="mv-m" x="476" y="266">bookings</text>
-
-  <text class="mv-s" x="340" y="312" text-anchor="middle">Одна система. Три вопроса. Три модели.</text>
-</svg>
-<figcaption><b>Рис. 1.</b> Структура отвечает на вопрос «из чего состоит система», поведение на вопрос «что в ней происходит», данные на вопрос «что и как хранится». Все три модели описывают один сервис консультаций.</figcaption>
-</figure>
+::figure fig-01-model-views | Проведите каретку по станциям: система, структура, поведение, данные.
 
 Карточка структуры похожа на диаграмму классов: сущности и связи. Карточка поведения похожа на последовательность или состояния: шаги и события. Карточка данных похожа на ER-модель: таблицы, ключи и связи. Ни одна из них не «главнее». Если команда рисует только структуру, она не увидит, что запись можно отменить после подтверждения. Если рисует только поведение, она не увидит, что у слота должен быть владелец. Вопрос рождает модель, а не наоборот.
 
@@ -129,7 +68,96 @@ outcomes:
 
 На этапе **сопровождения** модель отвечает на вопрос «что затронет изменение». Без неё команда выясняет это чтением кода и разговорами, а с ней видит связи заранее.
 
+<figure class="diagram">
+<svg viewBox="0 0 680 250" role="img" aria-labelledby="lc-title lc-desc">
+  <title id="lc-title">Модели на жизненном цикле</title>
+  <desc id="lc-desc">Пять этапов жизненного цикла: анализ требований, проектирование, разработка, тестирование и сопровождение. На каждом этапе свои модели.</desc>
+  <defs>
+    <marker id="lc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    .lc-card { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
+    .lc-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 13px; font-weight: 600; }
+    .lc-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 11.5px; }
+    .lc-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+    .lc-line { fill: none; stroke: var(--accent); stroke-width: 1.4; marker-end: url(#lc-arrow); }
+  </style>
+  <path class="lc-line" d="M38 34 L642 34"/>
+  <text class="lc-a" x="340" y="22" text-anchor="middle">модели сопровождают систему</text>
+
+  <rect class="lc-card" x="30" y="54" width="118" height="112" rx="10"/>
+  <text class="lc-t" x="89" y="78" text-anchor="middle">Анализ</text>
+  <text class="lc-s" x="89" y="98" text-anchor="middle">границы</text>
+  <text class="lc-s" x="89" y="114" text-anchor="middle">прецеденты</text>
+  <text class="lc-s" x="89" y="130" text-anchor="middle">словарь</text>
+
+  <rect class="lc-card" x="156" y="54" width="118" height="112" rx="10"/>
+  <text class="lc-t" x="215" y="78" text-anchor="middle">Проект</text>
+  <text class="lc-s" x="215" y="98" text-anchor="middle">классы</text>
+  <text class="lc-s" x="215" y="114" text-anchor="middle">ER-модель</text>
+  <text class="lc-s" x="215" y="130" text-anchor="middle">C4</text>
+
+  <rect class="lc-card" x="282" y="54" width="118" height="112" rx="10"/>
+  <text class="lc-t" x="341" y="78" text-anchor="middle">Разработка</text>
+  <text class="lc-s" x="341" y="98" text-anchor="middle">контракты</text>
+  <text class="lc-s" x="341" y="114" text-anchor="middle">состояния</text>
+  <text class="lc-s" x="341" y="130" text-anchor="middle">API</text>
+
+  <rect class="lc-card" x="408" y="54" width="118" height="112" rx="10"/>
+  <text class="lc-t" x="467" y="78" text-anchor="middle">Тесты</text>
+  <text class="lc-s" x="467" y="98" text-anchor="middle">сценарии</text>
+  <text class="lc-s" x="467" y="114" text-anchor="middle">переходы</text>
+  <text class="lc-s" x="467" y="130" text-anchor="middle">контракт</text>
+
+  <rect class="lc-card" x="534" y="54" width="118" height="112" rx="10"/>
+  <text class="lc-t" x="593" y="78" text-anchor="middle">Сопровождение</text>
+  <text class="lc-s" x="593" y="98" text-anchor="middle">изменения</text>
+  <text class="lc-s" x="593" y="114" text-anchor="middle">связи</text>
+  <text class="lc-s" x="593" y="130" text-anchor="middle">риски</text>
+
+  <text class="lc-s" x="340" y="204" text-anchor="middle">На каждом этапе модель отвечает на свой вопрос.</text>
+</svg>
+<figcaption><b>Рис. 2.</b> Модели появляются на всех этапах: от границ и прецедентов до контрактов, тестов и анализа изменений.</figcaption>
+</figure>
+
 Чем позже найден разрыв в понимании, тем дороже исправление. Ошибка в требовании, найденная на схеме, стоит обсуждения и правки. Та же ошибка, найденная после релиза, стоит переделки модулей, миграций и доверия пользователей. Моделирование не гарантирует отсутствие ошибок, но переносит часть из них в дешёвую стадию.
+
+<figure class="diagram">
+<svg viewBox="0 0 680 300" role="img" aria-labelledby="cost-title cost-desc">
+  <title id="cost-title">Стоимость исправления ошибки</title>
+  <desc id="cost-desc">Чем позже обнаружен разрыв в понимании, тем дороже исправление. На схеме стоимость растёт от анализа к релизу.</desc>
+  <style>
+    .cost-axis { stroke: var(--rule); stroke-width: 1.2; }
+    .cost-line { fill: none; stroke: var(--accent); stroke-width: 2.4; }
+    .cost-dot { fill: var(--accent); }
+    .cost-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 13px; font-weight: 600; }
+    .cost-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
+    .cost-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+  </style>
+  <line class="cost-axis" x1="60" y1="250" x2="630" y2="250"/>
+  <line class="cost-axis" x1="60" y1="250" x2="60" y2="42"/>
+  <text class="cost-s" x="66" y="34">стоимость исправления</text>
+  <text class="cost-s" x="630" y="272" text-anchor="end">этап</text>
+
+  <text class="cost-s" x="120" y="272" text-anchor="middle">Анализ</text>
+  <text class="cost-s" x="260" y="272" text-anchor="middle">Проект</text>
+  <text class="cost-s" x="400" y="272" text-anchor="middle">Код</text>
+  <text class="cost-s" x="540" y="272" text-anchor="middle">Релиз</text>
+
+  <path class="cost-line" d="M120 214 C180 202 220 180 260 160 C320 130 360 108 400 92 C460 68 500 56 540 48"/>
+  <circle class="cost-dot" cx="120" cy="214" r="5"/>
+  <circle class="cost-dot" cx="260" cy="160" r="5"/>
+  <circle class="cost-dot" cx="400" cy="92" r="5"/>
+  <circle class="cost-dot" cx="540" cy="48" r="5"/>
+
+  <text class="cost-a" x="132" y="206">ошибка на модели</text>
+  <text class="cost-a" x="552" y="48" text-anchor="end">ошибка после релиза</text>
+  <text class="cost-s" x="340" y="292" text-anchor="middle">Ранняя проверка переносит ошибку в дешёвую стадию.</text>
+</svg>
+<figcaption><b>Рис. 3.</b> Стоимость исправления растёт по мере движения от анализа к релизу. Поэтому модель проверяют до того, как решение закреплено в коде.</figcaption>
+</figure>
 
 ## Когда модель вредит
 
