@@ -24,6 +24,9 @@ Search before writing when the course depends on facts you might misremember or 
 2. **Prerequisites**: what you assume; link to the course that teaches it if it's in the same catalog.
 3. **Chapters in dependency order**: nothing used before it's taught. Spiral where useful (a chapter can revisit an earlier idea at a deeper level; say so in its summary).
 4. **Size each chapter** to one sitting (25–45 min reading). A chapter with two "aha"s is two chapters.
+   Practicals may be 90 or 180 minutes. A 180-minute practical counts as two lesson slots
+   and keeps the total hours unchanged; use it for a large lab to reduce the number of
+   graded works. Do not merge a written practical without moving its text.
 5. **Plan one signature figure per chapter**: the concept it makes obvious and a starting object from `object-atlas.md`. Keep one visual family per course.
 6. **Topics**: 3–8 tags per chapter (they show on the syllabus).
 7. Check the total against the hours on the card; adjust chapter count, not chapter depth.

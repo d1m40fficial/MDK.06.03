@@ -218,6 +218,9 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 
 - One discipline plan is complete: outcomes, prerequisites, chapter sequence, one
   planned figure per chapter, all consistent with `hours` and `minutes`.
+- Practicals may be 90 or 180 minutes. A 180-minute practical counts as two lesson slots,
+  keeps the total hours unchanged and reduces the number of graded works. Do not merge a
+  written practical without moving its text.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
 - Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
