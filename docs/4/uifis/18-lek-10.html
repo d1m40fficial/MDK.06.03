@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#2F6F5E;--course-tint:#DDEBE5;--course-accent-dark:#5CC4A4;--course-tint-dark:#18302A;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сетевые службы информационной системы</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.course-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
+.quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q:first-of-type { border-top: 0; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
+.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-foot button.submit:hover { filter: brightness(.95); }
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Сетевые службы информационной системы</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятие 18</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<h1>Сетевые службы информационной системы</h1><p class="dek">Сеть становится пригодной для ИС, когда в ней работают службы: DNS находит узлы, DHCP выдаёт адреса, веб-сервер отдаёт страницы, а NTP синхронизирует время.</p>
+<div class="glyph" aria-hidden="true">Л10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Объяснять назначение основных сетевых служб ИС</li><li>Различать службы по протоколу, порту и решаемой задаче</li><li>Находить службу, которая сломала доступ к системе</li><li>Понимать, как службы разворачиваются в виртуальной машине</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#карта-служб">Карта служб</a></li><li><a href="#dns-имена-вместо-адресов">DNS: имена вместо адресов</a></li><li><a href="#dhcp-адреса-на-время">DHCP: адреса на время</a></li><li><a href="#веб-служба">Веб-служба</a></li><li><a href="#файловые-и-почтовые-службы">Файловые и почтовые службы</a></li><li><a href="#время-и-журналы">Время и журналы</a></li><li><a href="#зависимости-и-диагностика">Зависимости и диагностика</a></li><li><a href="#службы-в-учебной-виртуальной-машине">Службы в учебной виртуальной машине</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>Пользователь открывает портал колледжа и видит сообщение «не удалось найти узел». Администратор проверяет веб-сервер: тот запущен, страница отдаётся по IP-адресу. Значит, сломалась не веб-служба, а служба имён. Браузер не смог превратить имя <code>portal.college.local</code> в адрес.</p>
+<p><strong>Сетевая служба</strong> это роль, которую один или несколько узлов выполняют для всей сети. Служба отвечает на запросы по своему протоколу и порту. Она не обязана быть отдельным физическим сервером: DNS, DHCP и веб-сервер могут жить в одной виртуальной машине, но это разные службы с разными правилами, журналами и точками отказа.</p>
+<p>Главная мысль лекции: сеть сама по себе передаёт пакеты, а <strong>службы превращают эту передачу в работу информационной системы</strong>. Если служба не отвечает, пользователь видит не «проблему сети», а конкретный сбой: не находится имя, не выдаётся адрес, не открывается страница, не принимается пароль, расходятся часы в журналах.</p>
+<h2 id="карта-служб"><span class="num">02</span>Карта служб</h2>
+<p>Посмотрите на карту. Слева клиент, справа набор служб, которые нужны типовой ИС. Каждая служба подписана протоколом и портом. Порты это не украшение: по ним проверяют, слушает ли узел нужную службу и не блокирует ли её firewall.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 380" role="img" aria-labelledby="fig10-title fig10-desc">
+  <title id="fig10-title">Сетевые службы информационной системы</title>
+  <desc id="fig10-desc">Клиент обращается к службам DNS, DHCP, HTTP, файловой, почтовой и NTP. У каждой службы указан протокол и порт.</desc>
+  <defs>
+    <marker id="ar10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    .s10-box { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
+    .s10-client { fill: var(--tint); stroke: var(--accent); stroke-width: 1.6; }
+    .s10-line { fill: none; stroke: var(--rule); stroke-width: 1.2; marker-end: url(#ar10); }
+    .s10-t { fill: var(--ink); font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; }
+    .s10-s { fill: var(--ink-2); font-family: Inter, sans-serif; font-size: 12px; }
+    .s10-m { fill: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+    .s10-a { fill: var(--accent); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+  </style>
+
+  <rect class="s10-client" x="24" y="150" width="140" height="76" rx="14"/>
+  <text class="s10-t" x="94" y="180" text-anchor="middle">Клиент</text>
+  <text class="s10-s" x="94" y="200" text-anchor="middle">браузер и ОС</text>
+
+  <path class="s10-line" d="M164 188 L220 188"/>
+  <text class="s10-m" x="192" y="178" text-anchor="middle">запрос</text>
+
+  <rect class="s10-box" x="220" y="74" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="236" y="100">DNS</text>
+  <text class="s10-s" x="236" y="118">имя превращается в адрес</text>
+  <text class="s10-a" x="236" y="134">53 UDP/TCP</text>
+
+  <rect class="s10-box" x="440" y="74" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="456" y="100">DHCP</text>
+  <text class="s10-s" x="456" y="118">адрес, шлюз и DNS</text>
+  <text class="s10-a" x="456" y="134">67/68 UDP</text>
+
+  <rect class="s10-box" x="220" y="164" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="236" y="190">HTTP и HTTPS</text>
+  <text class="s10-s" x="236" y="208">страницы и API</text>
+  <text class="s10-a" x="236" y="224">80 / 443 TCP</text>
+
+  <rect class="s10-box" x="440" y="164" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="456" y="190">Файлы</text>
+  <text class="s10-s" x="456" y="208">общие каталоги</text>
+  <text class="s10-a" x="456" y="224">445 / 2049 TCP</text>
+
+  <rect class="s10-box" x="220" y="254" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="236" y="280">Почта</text>
+  <text class="s10-s" x="236" y="298">отправка и ящики</text>
+  <text class="s10-a" x="236" y="314">25 / 143 / 993</text>
+
+  <rect class="s10-box" x="440" y="254" width="200" height="70" rx="12"/>
+  <text class="s10-t" x="456" y="280">NTP</text>
+  <text class="s10-s" x="456" y="298">единое время</text>
+  <text class="s10-a" x="456" y="314">123 UDP</text>
+
+  <path class="s10-line" d="M164 176 L220 110"/>
+  <path class="s10-line" d="M164 200 L220 199"/>
+  <path class="s10-line" d="M164 214 L440 199"/>
+  <path class="s10-line" d="M164 224 L440 289"/>
+  <text class="s10-s" x="340" y="356" text-anchor="middle">Одна сеть, разные службы: у каждой свой протокол, порт и журнал.</text>
+</svg>
+<figcaption><b>Рис. 1.</b> Службы ИС. DNS и DHCP делают сеть пригодной для работы, HTTP отдаёт приложение, файловые и почтовые службы хранят и передают данные, NTP держит единое время.</figcaption>
+</figure>
+
+<h2 id="dns-имена-вместо-адресов"><span class="num">03</span>DNS: имена вместо адресов</h2>
+<p><strong>DNS</strong> (Domain Name System) переводит понятное имя в IP-адрес. Браузер не обязан знать, что <code>portal.college.local</code> находится на <code>10.0.2.15</code>. Он спрашивает DNS-сервер, получает ответ и открывает соединение уже по адресу.</p>
+<p>DNS это распределённая база. За зону <code>college.local</code> отвечает конкретный сервер, за зону <code>.local</code> может отвечать другой. Клиент обычно обращается к <strong>рекурсивному резолверу</strong>, который сам обходит цепочку и возвращает готовый ответ. Ответ кэшируется на время, указанное в записи <strong>TTL</strong>. Пока TTL не истёк, клиент не спрашивает сервер повторно.</p>
+<p>Основные записи:</p>
+<table>
+<thead>
+<tr>
+<th>Запись</th>
+<th>Что означает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A</code></td>
+<td>имя IPv4</td>
+<td><code>portal</code> → <code>10.0.2.15</code></td>
+</tr>
+<tr>
+<td><code>AAAA</code></td>
+<td>имя IPv6</td>
+<td><code>portal</code> → <code>fd00::15</code></td>
+</tr>
+<tr>
+<td><code>CNAME</code></td>
+<td>псевдоним</td>
+<td><code>www</code> → <code>portal</code></td>
+</tr>
+<tr>
+<td><code>MX</code></td>
+<td>почтовый сервер</td>
+<td><code>college.local</code> → <code>mail</code></td>
+</tr>
+<tr>
+<td><code>TXT</code></td>
+<td>текстовая запись</td>
+<td>проверка домена, SPF</td>
+</tr>
+<tr>
+<td><code>PTR</code></td>
+<td>обратное имя</td>
+<td>адрес → имя</td>
+</tr>
+</tbody>
+</table>
+<p>Для учебной ИС достаточно зоны <code>uifis.local</code> и записей <code>A</code> для <code>portal</code>, <code>api</code> и <code>db</code>. Важно не только создать запись, но и проверить её с клиента: <code>nslookup</code>, <code>dig</code>, <code>getent hosts</code>. Если имя не находится, проверяют адрес DNS-сервера, зону, кэш и firewall.</p>
+<div class="callout pitfall"><span class="label">«Сайт не открывается» не значит «упал сайт»</span><p>Если по IP страница открывается, а по имени нет, проблема в DNS или в настройках клиента. Если не открывается и по IP, ищите веб-службу, сеть или firewall.</p></div>
+
+<h2 id="dhcp-адреса-на-время"><span class="num">04</span>DHCP: адреса на время</h2>
+<p><strong>DHCP</strong> (Dynamic Host Configuration Protocol) выдаёт узлу сетевые настройки на время аренды: IP-адрес, маску, шлюз, DNS-серверы, иногда NTP и домен. Обмен идёт по схеме DORA: Discover, Offer, Request, Ack. Клиент объявляет, что ему нужен адрес, сервер предлагает, клиент просит, сервер подтверждает.</p>
+<p>У DHCP есть <strong>пул</strong> адресов и <strong>аренда</strong>. Адрес возвращается в пул, когда аренда истекает или клиент от неё отказывается. Для серверов и сетевого оборудования часто делают <strong>резервирование</strong> по MAC-адресу, чтобы узел получал один и тот же адрес. Это не статическая настройка на клиенте, а правило на DHCP-сервере.</p>
+<p>Если DHCP не отвечает, узел может получить адрес из диапазона <code>169.254.0.0/16</code>. Это признак того, что автоматическая настройка не удалась. Если два DHCP-сервера выдают пересекающиеся пулы, в сети появляются конфликты адресов: один узел считает адрес своим, другой уже занял его.</p>
+<h2 id="веб-служба"><span class="num">05</span>Веб-служба</h2>
+<p><strong>Веб-сервер</strong> принимает HTTP-запросы и возвращает ответы. Он может отдавать статические файлы, перенаправлять запросы приложению или сам выполнять код. В типовом контуре ИС между клиентом и приложением часто стоит <strong>обратный прокси</strong>: он принимает соединение, завершает TLS, выбирает backend и скрывает внутреннюю топологию.</p>
+<p>Порты по умолчанию: <code>80</code> для HTTP и <code>443</code> для HTTPS. HTTPS это HTTP внутри TLS: шифрование, проверка сертификата и защита от подмены. Сертификат должен быть действительным для имени, по которому пришёл клиент. Если сертификат выписан на другое имя, браузер покажет предупреждение, даже если сервер работает.</p>
+<p>Веб-служба зависит от DNS, сети, firewall и приложения. Если приложение упало, веб-сервер может вернуть <code>502 Bad Gateway</code> или <code>503 Service Unavailable</code>. Если неверно настроен прокси, пользователь получит <code>404</code> или бесконечный редирект.</p>
+<h2 id="файловые-и-почтовые-службы"><span class="num">06</span>Файловые и почтовые службы</h2>
+<p><strong>Файловая служба</strong> даёт общий доступ к каталогам. В Windows это обычно SMB, в Linux NFS. Пользователь видит сетевой диск, но за этим стоят права, блокировки и журнал доступа. Для ИС важно не только открыть папку, но и ограничить её по группам, иначе общий каталог превращается в точку утечки.</p>
+<p><strong>Почтовая служба</strong> принимает, хранит и отдаёт сообщения. SMTP отвечает за передачу между серверами, IMAP или POP3 за доступ к ящику. Современная почта почти всегда использует TLS. Для ИС почта нужна для уведомлений, восстановления пароля и подтверждения действий, поэтому её доступность влияет на бизнес-процессы.</p>
+<p><strong>Служба каталогов</strong> (LDAP, Active Directory) хранит пользователей, группы и политики. Она отвечает на вопрос «кто этот пользователь и к чему у него есть доступ». Если каталог недоступен, новые входы могут не работать, даже если приложение и база данных живы.</p>
+<h2 id="время-и-журналы"><span class="num">07</span>Время и журналы</h2>
+<p><strong>NTP</strong> синхронизирует часы. Это кажется второстепенной службой, пока не начинают сверять журналы, проверять срок действия токенов или доказывать, кто первым изменил запись. Разница в несколько минут ломает корреляцию событий и проверку сертификатов.</p>
+<p>В Linux состояние проверяют через <code>timedatectl</code>: часовой пояс, синхронизация, источник времени. Если <code>System clock synchronized</code> равно <code>no</code>, смотрят службу <code>systemd-timesyncd</code> и доступность UDP-порта 123. В виртуальной машине время может уплывать после паузы, поэтому синхронизацию проверяют после запуска и после снимка.</p>
+<h2 id="зависимости-и-диагностика"><span class="num">08</span>Зависимости и диагностика</h2>
+<p>Службы образуют граф зависимостей. Портал зависит от DNS, сети, обратного прокси, приложения, базы данных и, возможно, каталога пользователей. Если портал не открывается, проверять всё подряд неэффективно. Начинают с вопроса: <strong>какая служба должна ответить первой и что именно она вернула</strong>.</p>
+<p>Рабочий порядок диагностики:</p>
+<ol>
+<li>Проверить имя: разрешается ли оно и в какой адрес.</li>
+<li>Проверить адрес: доступен ли узел по <code>ping</code> или <code>Test-NetConnection</code>.</li>
+<li>Проверить порт: слушает ли служба и не блокирует ли firewall.</li>
+<li>Проверить процесс и службу: <code>systemctl status</code>, <code>ss -tulpn</code>.</li>
+<li>Проверить журнал: <code>journalctl -u &lt;служба&gt;</code>.</li>
+<li>Проверить зависимость: база, каталог, DNS, время.</li>
+</ol>
+<p>Такой порядок не даёт заменить одну гипотезу другой без проверки.</p>
+<h2 id="службы-в-учебной-виртуальной-машине"><span class="num">09</span>Службы в учебной виртуальной машине</h2>
+<p>На учебном компьютере настройки ограничены администратором, поэтому сетевые службы разворачивают в VirtualBox. Виртуальная машина получает NAT-адрес, а доступ с хоста организуют через проброс порта. Например, веб-служба на порту 8080 внутри гостя доступна на <code>127.0.0.1:8080</code> хоста, если в VirtualBox добавлено правило TCP <code>8080 → 8080</code>.</p>
+<p>Службу оформляют как <strong>systemd-юнит</strong>: файл в <code>/etc/systemd/system</code>, включение через <code>systemctl enable --now</code>, проверка через <code>systemctl status</code> и <code>journalctl</code>. Юнит фиксирует рабочую директорию, пользователя, команду запуска и политику перезапуска. Это уже не ручной запуск в терминале, а воспроизводимое развёртывание.</p>
+<div class="callout tradeoff"><span class="label">Ручной запуск и служба</span><p>Ручной <code>python3 -m http.server</code> удобен для проверки, но исчезнет после выхода из сеанса. Systemd-юнит переживает перезагрузку, пишет журнал и позволяет управлять службой одинаковыми командами. Для учебного стенда нужен именно юнит.</p></div>
+
+<h2 id="типичные-ошибки"><span class="num">10</span>Типичные ошибки</h2>
+<ul>
+<li><strong>Служба запущена, но слушает только localhost.</strong> Проверяйте <code>ss -tulpn</code>: адрес <code>127.0.0.1:8080</code> не виден снаружи, нужен <code>0.0.0.0:8080</code> или конкретный интерфейс.</li>
+<li><strong>Порт открыт в приложении, но закрыт firewall.</strong> <code>ufw status</code> показывает правила; не открывайте весь диапазон портов.</li>
+<li><strong>DNS-кэш хранит старый адрес.</strong> После изменения записи проверяйте TTL и сбрасывайте кэш на клиенте.</li>
+<li><strong>DHCP выдаёт адрес, но не тот шлюз или DNS.</strong> Смотрите аренду и параметры пула, а не только IP.</li>
+<li><strong>Сертификат не совпадает с именем.</strong> HTTPS проверяет имя, а не только срок действия.</li>
+<li><strong>Служба работает от root.</strong> Для учебного веб-сервера достаточно отдельного пользователя и каталога с минимальными правами.</li>
+</ul>
+<h2 id="проверьте-себя"><span class="num">11</span>Проверьте себя</h2>
+<details class="check"><summary><span>По IP страница открывается, по имени нет. Где искать причину?</span></summary><div><p>В DNS и настройках клиента. Веб-служба отвечает, значит, проблема в разрешении имени, кэше, зоне или адресе DNS-сервера.</p></div></details>
+
+<details class="check"><summary><span>Почему DHCP-адрес называют арендой, а не постоянной настройкой?</span></summary><div><p>Адрес выдаётся на срок. По истечении аренды он может вернуться в пул и достаться другому узлу. Постоянство обеспечивают резервированием или статической настройкой.</p></div></details>
+
+<details class="check"><summary><span>Зачем веб-серверу обратный прокси?</span></summary><div><p>Он принимает внешние соединения, завершает TLS, направляет запросы нужному приложению и скрывает внутреннюю сеть. Это упрощает безопасность и балансировку.</p></div></details>
+
+<details class="check"><summary><span>Почему NTP важен для ИС, если он не хранит данные?</span></summary><div><p>Без единого времени нельзя сопоставить события в журналах, проверить срок токенов и сертификатов, доказать порядок операций.</p></div></details>
+
+<h2 id="итоги"><span class="num">12</span>Итоги</h2>
+<ul>
+<li>Сетевая служба это роль с протоколом, портом, конфигурацией и журналом.</li>
+<li>DNS переводит имена в адреса, DHCP выдаёт сетевые параметры на время аренды.</li>
+<li>HTTP и HTTPS отдают приложение, файловые и почтовые службы передают данные, каталог хранит пользователей.</li>
+<li>NTP обеспечивает единое время, без которого журналы и токены теряют смысл.</li>
+<li>Диагностика идёт по цепочке: имя, адрес, порт, служба, журнал, зависимость.</li>
+<li>В учебной среде службы разворачивают в VirtualBox, а доступ с хоста настраивают пробросом порта.</li>
+</ul>
+<h2 id="тест-по-лекции"><span class="num">13</span>Тест по лекции</h2>
+<p>В тесте 15 вопросов: 6 с одним правильным ответом, 6 с несколькими правильными ответами и 3 с кратким ответом.</p>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает DNS?</p><div class="opts"><label class="opt"><input type="radio" name="q296_0" value="0" data-ok><span>Переводит имя узла в IP-адрес</span></label><label class="opt"><input type="radio" name="q296_0" value="1"><span>Выдаёт узлу IP-адрес на время</span></label><label class="opt"><input type="radio" name="q296_0" value="2"><span>Шифрует трафик между узлами</span></label><label class="opt"><input type="radio" name="q296_0" value="3"><span>Синхронизирует время в сети</span></label></div><p class="quiz-why" hidden>DNS отвечает за разрешение имён.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие службы нужны типовой ИС?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_1" value="0" data-ok><span>DNS</span></label><label class="opt"><input type="checkbox" name="q296_1" value="1" data-ok><span>DHCP</span></label><label class="opt"><input type="checkbox" name="q296_1" value="2" data-ok><span>HTTP</span></label><label class="opt"><input type="checkbox" name="q296_1" value="3" data-ok><span>NTP</span></label><label class="opt"><input type="checkbox" name="q296_1" value="4"><span>Планировщик процессов</span></label><label class="opt"><input type="checkbox" name="q296_1" value="5"><span>Драйвер видеокарты</span></label></div><p class="quiz-why" hidden>Сетевые службы решают разные задачи: имена, адреса, приложение, время.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой порт по умолчанию использует HTTPS?</p><div class="opts"><label class="opt"><input type="radio" name="q296_2" value="0" data-ok><span>443</span></label><label class="opt"><input type="radio" name="q296_2" value="1"><span>80</span></label><label class="opt"><input type="radio" name="q296_2" value="2"><span>53</span></label><label class="opt"><input type="radio" name="q296_2" value="3"><span>25</span></label></div><p class="quiz-why" hidden>HTTPS работает по TCP-порту 443.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие параметры может выдать DHCP?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_3" value="0" data-ok><span>IP-адрес</span></label><label class="opt"><input type="checkbox" name="q296_3" value="1" data-ok><span>Маску подсети</span></label><label class="opt"><input type="checkbox" name="q296_3" value="2" data-ok><span>Шлюз по умолчанию</span></label><label class="opt"><input type="checkbox" name="q296_3" value="3" data-ok><span>Адреса DNS</span></label><label class="opt"><input type="checkbox" name="q296_3" value="4"><span>Содержимое файлов</span></label><label class="opt"><input type="checkbox" name="q296_3" value="5"><span>Пароль пользователя</span></label></div><p class="quiz-why" hidden>DHCP выдаёт сетевые параметры, а не данные приложения.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какая служба синхронизирует время?</p><div class="opts"><label class="opt"><input type="radio" name="q296_4" value="0" data-ok><span>NTP</span></label><label class="opt"><input type="radio" name="q296_4" value="1"><span>DNS</span></label><label class="opt"><input type="radio" name="q296_4" value="2"><span>DHCP</span></label><label class="opt"><input type="radio" name="q296_4" value="3"><span>SMTP</span></label></div><p class="quiz-why" hidden>NTP поддерживает единое время на узлах.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие записи DNS существуют?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_5" value="0" data-ok><span>A</span></label><label class="opt"><input type="checkbox" name="q296_5" value="1" data-ok><span>AAAA</span></label><label class="opt"><input type="checkbox" name="q296_5" value="2" data-ok><span>CNAME</span></label><label class="opt"><input type="checkbox" name="q296_5" value="3" data-ok><span>MX</span></label><label class="opt"><input type="checkbox" name="q296_5" value="4"><span>TCP</span></label><label class="opt"><input type="checkbox" name="q296_5" value="5"><span>HTTP</span></label></div><p class="quiz-why" hidden>A, AAAA, CNAME и MX это типы записей DNS.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает обратный прокси?</p><div class="opts"><label class="opt"><input type="radio" name="q296_6" value="0" data-ok><span>Принимает запросы клиентов и передаёт их приложению</span></label><label class="opt"><input type="radio" name="q296_6" value="1"><span>Хранит таблицы базы данных</span></label><label class="opt"><input type="radio" name="q296_6" value="2"><span>Выдаёт адреса DHCP</span></label><label class="opt"><input type="radio" name="q296_6" value="3"><span>Синхронизирует время</span></label></div><p class="quiz-why" hidden>Обратный прокси стоит перед приложением и управляет входящими соединениями.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что входит в типовой веб-контур ИС?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_7" value="0" data-ok><span>Веб-сервер</span></label><label class="opt"><input type="checkbox" name="q296_7" value="1" data-ok><span>Сервер приложений</span></label><label class="opt"><input type="checkbox" name="q296_7" value="2" data-ok><span>База данных</span></label><label class="opt"><input type="checkbox" name="q296_7" value="3" data-ok><span>Обратный прокси</span></label><label class="opt"><input type="checkbox" name="q296_7" value="4"><span>DHCP-сервер</span></label><label class="opt"><input type="checkbox" name="q296_7" value="5"><span>NTP-сервер</span></label></div><p class="quiz-why" hidden>Веб-контур обслуживает запросы приложения; DHCP и NTP это отдельные службы.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что проверить, если служба не отвечает?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_8" value="0" data-ok><span>Статус службы</span></label><label class="opt"><input type="checkbox" name="q296_8" value="1" data-ok><span>Прослушиваемый порт</span></label><label class="opt"><input type="checkbox" name="q296_8" value="2" data-ok><span>Правила firewall</span></label><label class="opt"><input type="checkbox" name="q296_8" value="3" data-ok><span>Журнал службы</span></label><label class="opt"><input type="checkbox" name="q296_8" value="4"><span>Цвет интерфейса</span></label><label class="opt"><input type="checkbox" name="q296_8" value="5"><span>Размер монитора</span></label></div><p class="quiz-why" hidden>Диагностика идёт от службы и порта к firewall и журналу.</p></div><div class="quiz-q" data-type="multi" data-correct="2"><p class="quiz-p">Какие службы относятся к файловым?</p><div class="opts"><label class="opt"><input type="checkbox" name="q296_9" value="0" data-ok><span>SMB</span></label><label class="opt"><input type="checkbox" name="q296_9" value="1" data-ok><span>NFS</span></label><label class="opt"><input type="checkbox" name="q296_9" value="2"><span>DNS</span></label><label class="opt"><input type="checkbox" name="q296_9" value="3"><span>DHCP</span></label><label class="opt"><input type="checkbox" name="q296_9" value="4"><span>NTP</span></label></div><p class="quiz-why" hidden>SMB и NFS дают доступ к сетевым каталогам.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Почему имя может не разрешаться, хотя веб-сервер работает?</p><div class="opts"><label class="opt"><input type="radio" name="q296_10" value="0" data-ok><span>DNS-сервер недоступен или в зоне нет записи</span></label><label class="opt"><input type="radio" name="q296_10" value="1"><span>Веб-сервер выключен</span></label><label class="opt"><input type="radio" name="q296_10" value="2"><span>База данных переполнена</span></label><label class="opt"><input type="radio" name="q296_10" value="3"><span>Firewall блокирует порт 443</span></label></div><p class="quiz-why" hidden>Веб-сервер может быть жив, но клиент не знает его адрес.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой признак прямо указывает на проблему DHCP?</p><div class="opts"><label class="opt"><input type="radio" name="q296_11" value="0" data-ok><span>Узел получил адрес 169.254.x.x</span></label><label class="opt"><input type="radio" name="q296_11" value="1"><span>DNS вернул CNAME</span></label><label class="opt"><input type="radio" name="q296_11" value="2"><span>HTTPS использует 443</span></label><label class="opt"><input type="radio" name="q296_11" value="3"><span>Сервер вернул 200 OK</span></label></div><p class="quiz-why" hidden>Адрес 169.254.x.x означает, что автоматическая настройка не удалась.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется служба, которая переводит имя в адрес?</p><input type="text" class="short-answer" data-answers="[&quot;DNS&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется служба, которая переводит имя в адрес?"><p class="quiz-why" hidden>Это DNS.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой протокол автоматически выдаёт сетевые настройки?</p><input type="text" class="short-answer" data-answers="[&quot;DHCP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол автоматически выдаёт сетевые настройки?"><p class="quiz-why" hidden>Это DHCP.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой протокол синхронизирует время?</p><input type="text" class="short-answer" data-answers="[&quot;NTP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол синхронизирует время?"><p class="quiz-why" hidden>Это NTP.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><a class="" href="13-prakt-06.html"><span>← Предыдущее занятие</span>Практика 6. Установка и базовая настройка серверной операционной системы</a><a class="next" style="text-align:right;margin-left:auto" href="19-prakt-09.html"><span>Следующее занятие →</span>Практика 9. Развёртывание базовой сетевой службы</a></nav></main>
+<div class="modal" data-modal="submit" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="submit-title">Результат теста</h2>
+    <label class="modal-name" data-student-label><span>ФИО студента</span>
+      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
+    </label>
+    <p class="modal-student" data-student-view hidden></p>
+    <p class="modal-result" data-modal-result></p>
+    <dl class="modal-times">
+      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
+      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
+    </dl>
+    <button type="button" class="modal-ok" data-modal-close>Готово</button>
+  </div>
+</div>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function update(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  update();
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
+  var studentName = '';
+  var submitModal = document.querySelector('[data-modal="submit"]');
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function evaluate(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
+    qs.forEach(function(q){
+      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
+      if(ok) right++;
+      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+    });
+    return {right: right, total: qs.length};
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    quiz._firstAt = null; quiz._lastAt = null;
+    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
+    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
+    quiz.querySelector('[data-check]').addEventListener('click', function(){
+      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    });
+    quiz.querySelector('[data-reset]').addEventListener('click', function(){
+      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
+        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
+        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
+        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
+      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
+      quiz._firstAt = null; quiz._lastAt = null;
+    });
+    quiz.querySelector('[data-submit]').addEventListener('click', function(){
+      var r = evaluate(quiz);
+      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
+      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
+      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
+      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
+      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      var nameInput = submitModal.querySelector('[data-student-name]');
+      var nameLabel = submitModal.querySelector('[data-student-label]');
+      var nameView = submitModal.querySelector('[data-student-view]');
+      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
+      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
+      openModal(submitModal);
+    });
+  });
+
+  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
+  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
+})();
+</script>
+</body>
+</html>
