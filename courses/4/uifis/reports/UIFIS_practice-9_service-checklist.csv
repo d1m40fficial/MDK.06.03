@@ -1,0 +1,11 @@
+﻿Проверка,Команда,Ожидаемый результат,Фактический результат,Отметка
+Каталог,ls -ld /srv/uifis-web,владелец uifis и права 0750,,
+Служба,systemctl status uifis-web,active (running),,
+Автозапуск,systemctl is-enabled uifis-web,enabled,,
+Порт,ss -tulpn | grep 8080,слушает 0.0.0.0:8080,,
+Локальный JSON,curl -i http://127.0.0.1:8080/health.json,200 OK и status ok,,
+Firewall,sudo ufw status verbose,разрешён только 8080/tcp,,
+Проброс порта,VirtualBox → Проброс портов,TCP 8080 на 8080,,
+С хоста,Invoke-WebRequest http://127.0.0.1:8080/health.json,JSON получен,,
+Отказ,systemctl stop uifis-web,служба не отвечает,,
+Восстановление,systemctl start uifis-web,снова 200 OK,,
