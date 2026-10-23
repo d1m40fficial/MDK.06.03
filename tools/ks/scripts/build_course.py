@@ -14,10 +14,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE  # noqa: E402
+from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE, ASSETS  # noqa: E402
 from availability import is_open, load_availability, summary  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
+SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
 
 
 def chapter_dir(c: dict) -> str:
@@ -75,11 +76,14 @@ def build_course(root: Path) -> Path:
             status = " · закрыто"
         else:
             status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
-        title = f'<a href="{link}">{esc(ch["title"])}</a>' if link else esc(ch["title"])
+        title = esc(ch["title"])
         cls = ' class="locked"' if locked else ""
-        items.append(f'<li{cls}><div class="n">{lesson}</div><h3>{title}</h3>'
-                     f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
-                     f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div></li>')
+        inner = (f'<div class="n">{lesson}</div><h3>{title}</h3>'
+                 f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
+                 f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div>')
+        card = (f'<a class="lesson-card" href="{link}">{inner}</a>' if link
+                else f'<div class="lesson-card lesson-card-static">{inner}</div>')
+        items.append(f'<li{cls}>{card}</li>')
 
     n_ch = len(c.get("chapters", []))
     slots = lesson_slots(c.get("chapters", []))
@@ -100,15 +104,20 @@ def build_course(root: Path) -> Path:
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
     code = c.get("code", "")
     glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
+    accent = c.get("accent", "#D04A28")
+    seed = (sum(ord(ch) for ch in c.get("slug", "")) % 97) / 97.0
     body = f"""<main class="page">
 <div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right">{THEME_TOGGLE}</div></div>
-<header class="hero"><div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
-<h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></header>
+<header class="hero" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
+<div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
+<div class="hero-panel"><h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p></div>
+<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></header>
     {outcomes}{prereq}
 <article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus">{''.join(items)}</ol></main>"""
     out = dist / "index.html"
-    out.write_text(page(c["title"], body, accent_vars(c)), encoding="utf-8")
+    out.write_text(page(c["title"], body, accent_vars(c), "", SHADER_JS), encoding="utf-8")
     print(f"wrote {out}: {n_ch} chapters, {written} written")
     return out
 

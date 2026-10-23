@@ -14,9 +14,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, load_course, page  # noqa: E402
+from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE, ASSETS  # noqa: E402
+from availability import is_open, load_availability, summary  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
+SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
 
 
 def chapter_dir(c: dict) -> str:
@@ -31,8 +33,9 @@ def price(c: dict) -> str:
     return f"{sym}{int(c['price']):,}"
 
 
-def spec_line(c: dict) -> str:
-    bits = [c.get("level"), f'{c["hours"]} hrs' if c.get("hours") else None]
+def spec_line(c: dict, hours: int = None) -> str:
+    h = hours if hours is not None else c.get("hours")
+    bits = [c.get("level"), f'{h} ч' if h else None]
     if c.get("languages"):
         bits.append(" / ".join(c["languages"]))
     return " · ".join(b for b in bits if b)
@@ -42,46 +45,79 @@ def build_course(root: Path) -> Path:
     c = load_course(root / "course.json")
     dist = root / "dist"
     dist.mkdir(exist_ok=True)
+    availability = load_availability(root)
     items, written = [], 0
+    slot = 1
     for ch in c.get("chapters", []):
-        d = root / "chapters" / chapter_dir(ch)
+        pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
+        lesson = f"{slot}" if pairs == 1 else f"{slot}<br>-<br>{slot + pairs - 1}"
+        slot += pairs
+        dirname = chapter_dir(ch)
+        d = root / "chapters" / dirname
         md = d / "chapter.md"
+        open_ = is_open(c, dirname, availability)
+        locked = md.exists() and not open_
         link = None
-        if md.exists():
+        if md.exists() and open_:
             r = subprocess.run([sys.executable, str(HERE / "build_chapter.py"), str(md)], capture_output=True, text=True)
             print(r.stdout.strip() or r.stderr.strip())
             if r.returncode == 0:
-                link = f"{chapter_dir(ch)}.html"
+                link = f"{dirname}.html"
                 written += 1
+        elif locked:
+            stale = dist / f"{dirname}.html"
+            if stale.exists():
+                stale.unlink()
         figs = ch.get("figures", [])
         tags = [f'<span class="fig">Fig · {esc(f.get("object") or f.get("concept") or f.get("id"))}</span>' for f in figs]
         tags += [f"<span>{esc(t)}</span>" for t in ch.get("topics", [])[:6]]
-        status = "" if link else f' · {esc(ch.get("status", "planned"))}'
-        title = f'<a href="{link}">{esc(ch["title"])}</a>' if link else esc(ch["title"])
-        items.append(f'<li><div class="n">{int(ch["n"]):02d}</div><h3>{title}</h3>'
-                     f'<div class="mins">{esc(ch.get("minutes", ""))}{" min" if ch.get("minutes") else ""}{status}</div>'
-                     f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div></li>')
+        ST = {"planned": "план", "drafted": "черновик", "figures-pending": "фигуры готовятся", "published": "готово"}
+        if locked:
+            status = " · закрыто"
+        else:
+            status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
+        title = esc(ch["title"])
+        cls = ' class="locked"' if locked else ""
+        inner = (f'<div class="n">{lesson}</div><h3>{title}</h3>'
+                 f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
+                 f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div>')
+        card = (f'<a class="lesson-card" href="{link}">{inner}</a>' if link
+                else f'<div class="lesson-card lesson-card-static">{inner}</div>')
+        items.append(f'<li{cls}>{card}</li>')
 
     n_ch = len(c.get("chapters", []))
-    meta = " · ".join(x for x in [spec_line(c), f"{n_ch} chapters" if n_ch else None] if x)
+    slots = lesson_slots(c.get("chapters", []))
+    meta = " · ".join(x for x in [spec_line(c, slots * 2),
+                                  f"{slots} {plural_lessons(slots)}" if slots else None,
+                                  summary(c, availability),
+                                  c.get("assessment")] if x)
     outcomes = ""
     if c.get("outcomes"):
-        outcomes = '<section class="outcomes"><b>By the end you can</b><ul>' + "".join(
+        outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(
             f"<li>{esc(o)}</li>" for o in c["outcomes"]) + "</ul></section>"
     prereq = ""
     if c.get("prerequisites"):
-        prereq = '<section class="outcomes"><b>Before you start</b><ul>' + "".join(
+        prereq = '<section class="outcomes"><b>Требуется предварительно</b><ul>' + "".join(
             f"<li>{esc(o)}</li>" for o in c["prerequisites"]) + "</ul></section>"
-    status_pill = '<span class="pill dark">Available</span>' if c.get("status") == "available" else '<span class="pill">Coming soon</span>'
+    status_pill = '<span class="pill dark">Материалы доступны</span>' if c.get("status") == "available" else '<span class="pill">Не готово</span>'
+    assessment_pill = f'<span class="pill">{esc(c["assessment"])}</span>' if c.get("assessment") else ""
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
+    code = c.get("code", "")
+    glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
+    accent = c.get("accent", "#D04A28")
+    seed = (sum(ord(ch) for ch in c.get("slug", "")) % 97) / 97.0
     body = f"""<main class="page">
-<header class="hero"><div class="badges">{status_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
-<h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p><div class="glyph" aria-hidden="true">{esc(c['code'])}</div></header>
-{outcomes}{prereq}
-<article class="prose"><h2 class="nonum" style="margin-top:36px">Syllabus</h2></article>
+<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right">{THEME_TOGGLE}</div></div>
+<header class="hero" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
+<div class="badges">{status_pill}{assessment_pill}{price_pill}</div><div class="meta">{esc(meta)}</div>
+<div class="hero-panel"><h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p></div>
+<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></header>
+    {outcomes}{prereq}
+<article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
 <ol class="syllabus">{''.join(items)}</ol></main>"""
     out = dist / "index.html"
-    out.write_text(page(c["title"], body, accent_vars(c)), encoding="utf-8")
+    out.write_text(page(c["title"], body, accent_vars(c), "", SHADER_JS), encoding="utf-8")
     print(f"wrote {out}: {n_ch} chapters, {written} written")
     return out
 
@@ -91,25 +127,28 @@ def build_catalog(root: Path) -> Path:
     courses.sort(key=lambda c: (c.get("status") != "available", c.get("order", 99)))
     cards = []
     for c in courses:
-        n_ch = len(c.get("chapters", [])) or c.get("chapterCount", "")
+        slots = lesson_slots(c.get("chapters", []))
+        ch_label = f"{slots} {plural_lessons(slots)}" if slots else ""
         avail = c.get("status") == "available"
         style = (f"--cl-accent:{c['accent']};--cl-tint:{c['tint']};"
                  f"--cd-accent:{c.get('accentDark', c['accent'])};--cd-tint:{c.get('tintDark', c['tint'])}")
-        cards.append(f"""<a class="course-card" data-status="{'available' if avail else 'soon'}" href="{esc(c['slug'])}/dist/index.html" style="{style}">
-<div class="art"><span class="pill{' dark' if avail else ''}">{'Available' if avail else 'Coming soon'}</span><span class="ch">{n_ch} ch</span>
-<div class="glyph" aria-hidden="true">{esc(c['code'])}</div></div>
+        code = c.get("code", "")
+        glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
+        cards.append(f"""<a class="course-card" data-status="{'available' if avail else 'soon'}" href="{esc(c['slug'])}/index.html" style="{style}">
+<div class="art"><span class="pill{' dark' if avail else ''}">{'Доступно' if avail else 'Готовится'}</span><span class="ch">{ch_label}</span>
+<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></div>
 <div class="body"><h3>{esc(c['title'])}</h3><p>{esc(c.get('tagline', ''))}</p><div class="spec">{esc(spec_line(c))}</div>
-<div class="foot"><span class="price">{esc(price(c))}</span><span class="btn{' primary' if avail else ''}">{'Start' if avail else 'Join waitlist'}</span></div></div></a>""")
-    body = f"""<main class="catalog"><div class="catalog-head"><div class="filters" role="group" aria-label="Filter courses">
-<button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="available">Available now</button><button aria-pressed="false" data-f="soon">Coming soon</button></div>
-<span class="count">{len(courses)} courses</span></div><div class="grid">{''.join(cards)}</div></main>"""
+<div class="foot"><span class="price">{esc(price(c))}</span><span class="btn{' primary' if avail else ''}">{'Открыть' if avail else 'Готовится'}</span></div></div></a>""")
+    body = f"""<main class="catalog"><div class="catalog-head"><div class="filters" role="group" aria-label="Фильтр курсов">
+<button aria-pressed="true" data-f="all">Все</button><button aria-pressed="false" data-f="available">Доступные</button><button aria-pressed="false" data-f="soon">Готовятся</button></div>
+<span class="count">{len(courses)} курсов</span></div><div class="grid">{''.join(cards)}</div></main>"""
     css = """.course-card{--c-accent:var(--cl-accent);--c-tint:var(--cl-tint)}
 @media (prefers-color-scheme: dark){:root:not([data-theme=light]) .course-card{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}}
 :root[data-theme=dark] .course-card{--c-accent:var(--cd-accent);--c-tint:var(--cd-tint)}"""
     js = """document.querySelectorAll('.filters button').forEach(function(b){b.onclick=function(){
 document.querySelectorAll('.filters button').forEach(function(x){x.setAttribute('aria-pressed', x===b)});
 var f=b.dataset.f, n=0; document.querySelectorAll('.course-card').forEach(function(c){var on=f==='all'||c.dataset.status===f; c.style.display=on?'':'none'; n+=on});
-document.querySelector('.count').textContent=n+' courses';}});"""
+document.querySelector('.count').textContent=n+' курсов';}});"""
     out = root / "catalog.html"
     out.write_text(page("Courses", body, "", css, js), encoding="utf-8")
     print(f"wrote {out}: {len(courses)} courses")

@@ -30,8 +30,10 @@ import yaml
 from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE  # noqa: E402
+from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE, ASSETS  # noqa: E402
 from availability import is_open, load_availability  # noqa: E402
+
+SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
 
 CALLOUT_LABELS = {
     "INTUITION": "Главная мысль", "PITFALL": "Типичная ошибка", "INTERVIEW": "На практике",
@@ -691,8 +693,12 @@ def main():
         pills.append(f'<span class="pill">{esc(course["title"])}</span>')
     meta = fm.get("level") or course.get("level") or ""
     glyph = fm.get("glyph") or course.get("code", "")
-    hero = f"""<header class="hero"><div class="badges">{''.join(pills)}</div><div class="meta">{esc(meta)}</div>
-<h1>{esc(fm.get('title', src_path.stem))}</h1><p class="dek">{esc(fm.get('dek', ''))}</p>
+    accent = course.get("accent", FALLBACK["accent"])
+    seed = (sum(ord(ch) for ch in course.get("slug", base.name)) % 97) / 97.0
+    hero = f"""<header class="hero" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
+<div class="badges">{''.join(pills)}</div><div class="meta">{esc(meta)}</div>
+<div class="hero-panel"><h1>{esc(fm.get('title', src_path.stem))}</h1><p class="dek">{esc(fm.get('dek', ''))}</p></div>
 <div class="glyph" aria-hidden="true">{esc(glyph)}</div></header>"""
 
     crumbs = ""
@@ -738,7 +744,7 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = ((GATE_SCRIPT if has_gate else "") + READ_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
+    script = (SHADER_JS + (GATE_SCRIPT if has_gate else "") + READ_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""
