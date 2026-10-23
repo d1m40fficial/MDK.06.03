@@ -111,6 +111,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
 .hero[data-shader] .meta { position: absolute; top: 24px; right: 24px; color: #fff; background: rgba(8,9,13,.5); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 7px 12px; backdrop-filter: blur(12px); }
 .hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+@media (max-width: 760px) { .hero[data-shader] .meta { position: static; display: inline-block; margin-top: 10px; } }
 @media (max-width: 640px) { .hero[data-shader] .hero-panel { max-width: 100%; } .hero[data-shader] .meta { position: static; display: inline-block; margin-top: 10px; } }
 
 /* apple liquid glass hero on the landing */
