@@ -155,6 +155,10 @@ GATE_SCRIPT = r"""
 (function(){
   var steps = [].slice.call(document.querySelectorAll('.gate-step'));
   if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
   function open(step){
     var button = step.querySelector('.gate-btn');
     var body = step.querySelector('.gate-content');
@@ -163,6 +167,8 @@ GATE_SCRIPT = r"""
     step.classList.add('open');
     var next = steps[steps.indexOf(step) + 1];
     if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
     window.dispatchEvent(new Event('resize'));
     return next;
   }
@@ -174,6 +180,8 @@ GATE_SCRIPT = r"""
     var button = step.querySelector('.gate-btn');
     if(button) button.addEventListener('click', function(){ open(step); });
   });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
   document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
     a.addEventListener('click', openAll);
   });
@@ -198,9 +206,35 @@ READ_SCRIPT = r"""
 (function(){
   var bar=document.querySelector('.read-progress'); if(!bar) return;
   var fill=bar.querySelector('span'), ticking=false;
-  function update(){
+  function scrollPct(){
     var max=document.documentElement.scrollHeight-window.innerHeight;
-    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
     fill.style.width=pct.toFixed(2)+'%';
     bar.setAttribute('aria-valuenow', String(Math.round(pct)));
   }
@@ -208,6 +242,7 @@ READ_SCRIPT = r"""
     requestAnimationFrame(function(){update();ticking=false;}); }
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',onScroll);
+  window.__readProgress = update;
   update();
 })();
 """
@@ -295,14 +330,21 @@ QUIZ_SCRIPT = r"""
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
     var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
     if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
     var current = 0, right = 0, firstAt = null, lastAt = null;
     var progress = quiz.querySelector('[data-quiz-progress]');
     function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
     function setProgress(text){ if(progress) progress.textContent = text; }
-    function showQuestion(i){
+    function showQuestion(i, scroll){
       current = i;
-      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      qs[i].hidden = false;
+      if(i > 0){ var prevNext = qs[i - 1].querySelector('[data-next]'); if(prevNext) prevNext.hidden = true; }
       setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      if(window.__readProgress) window.__readProgress();
+      if(scroll){
+        try { qs[i].scrollIntoView({behavior:'smooth', block:'start'}); }
+        catch(e) { qs[i].scrollIntoView(); }
+      }
       var field = qs[i].querySelector('input');
       if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
     }
@@ -315,6 +357,9 @@ QUIZ_SCRIPT = r"""
       card.querySelector('[data-test-time]').textContent = fmt(testMs);
       card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
       card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
       setProgress('Тест завершён');
     }
     function answer(q, idx){
@@ -343,11 +388,11 @@ QUIZ_SCRIPT = r"""
       var answerBtn = q.querySelector('[data-answer]');
       if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
       var nextBtn = q.querySelector('[data-next]');
-      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1, true); });
       var short = q.querySelector('.short-answer');
       if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    showQuestion(0);
+    showQuestion(0, false);
   });
 })();
 """
@@ -432,7 +477,7 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
               '<div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>'
               '<div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>'
               '</dl></div>')
-    html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
+    html_block = (f'\n<div class="quiz" data-quiz>'
                   f'<div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из {len(questions)}</div>'
                   f'{"".join(items)}{result}</div>\n')
     return html_block, True
@@ -665,8 +710,7 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = (READ_SCRIPT + PDF_SCRIPT
-              + (GATE_SCRIPT if has_gate else "")
+    script = ((GATE_SCRIPT if has_gate else "") + READ_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""

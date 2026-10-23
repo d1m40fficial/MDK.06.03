@@ -136,6 +136,11 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
 .pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
 .pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
 
 /* ---------- course catalog + syllabus ---------- */
 .catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
@@ -187,12 +192,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
 @media (max-width: 560px) { .gate-btn { width: 100%; } }
 
 /* ---------- interactive test (::quiz) ---------- */
-.quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
-.quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 4px; }
-.quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz { margin: 24px 0; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 10px; }
+.quiz-q { padding: 18px 20px 14px; margin: 14px 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
 .quiz-q[hidden] { display: none; }
-.quiz-q:first-of-type { border-top: 0; }
 .quiz-p { font-weight: 600; margin: 0 0 8px; }
 .quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
 .quiz .opts { display: grid; gap: 6px; }
@@ -278,7 +281,7 @@ html.modal-open { overflow: hidden; }
   .hero h1, .hero .dek { max-width: 100%; }
   .prose p, .prose li { text-align: left; hyphens: none; }
   a { color: #000; text-decoration: none; }
-  .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
   .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
   .gate-action, .quiz-actions { display: none !important; }
   .recap { background: #fff; color: #000; }

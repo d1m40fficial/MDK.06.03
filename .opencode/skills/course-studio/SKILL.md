@@ -170,9 +170,10 @@ written chapter by chapter unless the user asks for a batch.
    block; verify every number and real-world claim against sources. Break a lecture into
    2-4 `::gate Вопрос?` ... `::/gate` blocks after complete thoughts; the button question
    previews the next block and the first block keeps the signature figure. End every
-   lecture with a `::quiz` of 15 questions: 6 single-choice (`+`/`-`), 6 multiple-choice
-   (several `+`) and 3 short-answer (`=`), each with an explanation `!`. The quiz belongs
-   inside the final gate. Practices do not get a test.
+   lecture with a `::quiz` of 15 questions: 6-10 single-choice (`+`/`-`), 2-4
+   multiple-choice (several `+`) and 1-3 short-answer (`=`), each with an explanation
+   `!`. Do not list the question breakdown in the lecture text; it is not needed by the
+   student. The quiz belongs inside the final gate. Practices do not get a test.
 6. **Build and check.** `python tools/ks/scripts/build_chapter.py <chapter.md>`, then
    `python tools/build_site.py`. Use `tools/ks/scripts/check_pages.py <dist-dir>` where
    Playwright/Chromium is available, including `--mobile` and `--dark`. The checker opens
@@ -232,12 +233,15 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 - The final gate contains the remaining sections, the self-check and the `::quiz`, so the
   test cannot be reached by scrolling past the lesson.
 - The builder owns the interaction: clicking reveals the block, hides the button and
-  shows the next gate. Opening a TOC link or a direct section link reveals the gates it
-  needs. Print and PDF show every gate open.
-- Quiz questions are rendered one at a time. After an answer the builder marks the
-  choices, shows the explanation for both a correct and a wrong answer, and only then
-  shows `Следующий вопрос`. After the last answer the former submission card appears
-  inline with the name field, score, test time and view time, without a submit button.
+  shows the next gate. While any gate is still closed, the lesson pager stays hidden.
+  Opening a TOC link or a direct section link reveals the gates it needs. Print and PDF
+  show every gate open.
+- Quiz questions are rendered one at a time, each as a new card below the previous one,
+  and the page scrolls to it. After an answer the builder marks the choices, shows the
+  explanation for both a correct and a wrong answer, and only then shows
+  `Следующий вопрос`. After the last answer the former submission card appears inline
+  with the name field, score, test time and view time, without a submit button. The
+  lesson pager appears only after that result card is shown.
 - Do not add `Проверить ответы`, `Сбросить`, `Сдать работу`, a custom submission form or
   a second result dialog to a chapter.
 
@@ -257,13 +261,15 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 - Every lecture is paced by 2-4 reveal gates. Each gate button asks a specific question
   about the next block, never says «Продолжить», and the first block stays visible with
   the signature figure. Gates never nest and each closes with `::/gate`.
-- Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
-  short-answer, all with explanations. The builder shows one question at a time, reveals
-  the correct answer and explanation after every answer (right or wrong), and shows the
-  next question only after the answer. After the last answer it shows an inline result
-  card with the student name, score, test time and lecture view time, with no action
-  button. PDF button, reading progress, warning button and dark-theme toggle also come
-  from the shared builder; do not rebuild these elements inside a chapter.
+- Every lecture ends with a 15-question test: 6-10 single-choice, 2-4 multiple-choice,
+  1-3 short-answer, all with explanations. Do not list this breakdown in the lecture
+  text. The builder shows one question per new card, reveals the correct answer and
+  explanation after every answer (right or wrong), and shows the next question only
+  after the answer. After the last answer it shows an inline result card with the
+  student name, score, test time and lecture view time, with no action button. The
+  lesson pager stays hidden until that result card appears. PDF button, reading
+  progress, warning button and dark-theme toggle also come from the shared builder; do
+  not rebuild these elements inside a chapter.
 - The figure is an Anatomy figure that passes Anatomy's own verification, not a diagram
   of boxes, and it shows exactly the moments the text refers to with the same numbers.
 - Visualise diagrams follow the design system and stay readable at 390 px.
