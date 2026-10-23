@@ -1,0 +1,185 @@
+{
+  "info": {
+    "name": "UIFIS Practice 17 - Users API",
+    "description": "Модуль пользователей и проверки безопасности.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8091"
+    },
+    {
+      "key": "token",
+      "value": "student-token"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health.json"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('healthy', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 List users without token",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 List users as admin",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('items', () => pm.expect(body.items).to.be.an('array'));",
+              "pm.test('no password', () => pm.expect(JSON.stringify(body)).to.not.include('password'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Create user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"new.user\",\n  \"email\": \"new.user@example.ru\",\n  \"role\": \"user\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('201 Created', () => pm.response.to.have.status(201));",
+              "pm.test('Location', () => pm.response.to.have.header('Location'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Duplicate email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"dup.user\",\n  \"email\": \"new.user@example.ru\",\n  \"role\": \"user\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+              "pm.test('field email', () => pm.expect(pm.response.json().field).to.eql('email'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Forbidden for user",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer user-token"
+          }
+        ],
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('403 Forbidden', () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Server error",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/error"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('500 Server Error', () => pm.response.to.have.status(500));",
+              "pm.test('error field', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

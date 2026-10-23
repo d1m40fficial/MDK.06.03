@@ -1,0 +1,62 @@
+[
+  {
+    "request_id": 1,
+    "client": "ООО Ромашка",
+    "email": "romashka@example.ru",
+    "equipment": "Принтер HP-01",
+    "serial_no": "HP-1001",
+    "created_at": "2026-09-01T09:15:00",
+    "status": "new",
+    "priority": "high"
+  },
+  {
+    "request_id": 2,
+    "client": "ИП Соколов",
+    "email": "sokolov@example.ru",
+    "equipment": "Сканер Epson-02",
+    "serial_no": "EP-2002",
+    "created_at": "2026-09-01T10:40:00",
+    "status": "in_progress",
+    "priority": "normal"
+  },
+  {
+    "request_id": 3,
+    "client": "ООО Вектор",
+    "email": "vector@example.ru",
+    "equipment": "МФУ Canon-03",
+    "serial_no": "CN-3003",
+    "created_at": "2026-09-02T08:05:00",
+    "status": "done",
+    "priority": "low"
+  },
+  {
+    "request_id": 4,
+    "client": "Колледж",
+    "email": "college@example.ru",
+    "equipment": "Проектор BenQ-04",
+    "serial_no": "BQ-4004",
+    "created_at": "2026-09-02T12:20:00",
+    "status": "new",
+    "priority": "normal"
+  },
+  {
+    "request_id": 5,
+    "client": "ООО Ромашка",
+    "email": "romashka@example.ru",
+    "equipment": "Принтер HP-01",
+    "serial_no": "HP-1001",
+    "created_at": "2026-09-03T14:10:00",
+    "status": "in_progress",
+    "priority": "high"
+  },
+  {
+    "request_id": 6,
+    "client": "ИП Соколов",
+    "email": "sokolov@example.ru",
+    "equipment": "Сканер Epson-02",
+    "serial_no": "EP-2002",
+    "created_at": "2026-09-03T16:45:00",
+    "status": "cancelled",
+    "priority": "low"
+  }
+]

@@ -294,7 +294,7 @@ def copy_course(year: str, course_dir: Path) -> dict:
             for f in reports.iterdir():
                 if f.is_file() and f.suffix.lower() in (
                     ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py"
-                ):
+                ) and not f.name.startswith("make_"):
                     shutil.copy2(f, target / f.name)
     return c
 

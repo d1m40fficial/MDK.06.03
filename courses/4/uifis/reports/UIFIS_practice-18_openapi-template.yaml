@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: UIFIS Users API
+  version: 1.0.0
+  description: Учебный API пользователей и ролей.
+servers:
+  - url: http://127.0.0.1:8091
+paths:
+  /health.json:
+    get:
+      summary: Состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /api/users:
+    get:
+      summary: Список пользователей
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [admin, manager, user]
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  count:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      summary: Создать пользователя
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: Пользователь создан
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/users/{id}:
+    get:
+      summary: Карточка пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Пользователь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    User:
+      type: object
+      required: [id, login, email, role, status]
+      properties:
+        id:
+          type: integer
+        login:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, manager, user]
+        status:
+          type: string
+          enum: [active, blocked]
+    UserInput:
+      type: object
+      required: [login, email, role]
+      properties:
+        login:
+          type: string
+          minLength: 3
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, manager, user]
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        field:
+          type: string
+  responses:
+    BadRequest:
+      description: Ошибка валидации
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Нет или неверный токен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Недостаточно прав
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Объект не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

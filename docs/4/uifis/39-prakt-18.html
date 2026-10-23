@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#2F6F5E;--course-tint:#DDEBE5;--course-accent-dark:#5CC4A4;--course-tint-dark:#18302A;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Документация API и комплексный практикум</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 10px; }
+.quiz-q { padding: 18px 20px 14px; margin: 14px 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer] { background: #5cb8a5; color: #10231f; border-color: #3f9d8a; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover { background: #6cc5b3; color: #10231f; border-color: #3f9d8a; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Документация API и комплексный практикум</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятия 41-42</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<h1>Документация API и комплексный практикум</h1><p class="dek">Опишите учебный API так, чтобы запросы повторил чужой разработчик: OpenAPI, примеры curl и Postman, коллекция с тестами и сквозная проверка модулей информационной системы.</p>
+<div class="glyph" aria-hidden="true">П18</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>{&lsquo;Описывать контракт API в OpenAPI 3.0&rsquo;: &lsquo;пути, операции, схемы, безопасность и коды ответов&rsquo;}</li><li>Проверять примеры запросов и ответов на работающем сервисе</li><li>Собирать коллекцию Postman с тестами статуса, формата, полей и заголовков</li><li>Проверять авторизацию, роли, CRUD, уникальность и аудит по таблице ожиданий</li><li>Оформлять документ с версией, журналом изменений и известными ограничениями</li><li>Защищать контракт перед группой и отвечать на вопросы по поведению API</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-контракт-в-openapi">Задание 1. Контракт в OpenAPI</a></li><li><a href="#задание-2-примеры-запросов-и-ошибок">Задание 2. Примеры запросов и ошибок</a></li><li><a href="#задание-3-коллекция-postman">Задание 3. Коллекция Postman</a></li><li><a href="#задание-4-комплексная-проверка-модулей">Задание 4. Комплексная проверка модулей</a></li><li><a href="#задание-5-документ-и-защита">Задание 5. Документ и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<p>Разработчик приходит на проект, получает ссылку на репозиторий и выясняет, почему создание пользователя отвечает <code>400</code>. Причина в трёх мелочах: поле называется <code>login</code>, а не <code>username</code>; токен идёт в заголовке <code>Authorization</code>, а не в адресе; создавать может только роль <code>admin</code>. Всё это лежало в коде. В документации не было ничего.</p>
+<p>Документация это обещание перед другим человеком. Оно звучит так: возьми этот файл, повтори запрос и получи тот же ответ, не открывая исходники. Обещание проверяемо: каждый пример либо выполняется, либо нет. Отсюда главное правило работы: <strong>пример, который никто не запускал, это не документация, а литература</strong>.</p>
+<p>OpenAPI переводит обещание в формат, который читают и человек, и инструменты. Из одного файла получается описание полей, список кодов ошибок, схема авторизации и заготовка клиента. Поэтому спецификация живёт рядом с кодом и меняется вместе с ним, а не через месяц после релиза.</p>
+<p>Работа идёт в четыре слоя. Спецификация отвечает на вопрос «что обещано». Примеры показывают, как это вызвать. Коллекция Postman доказывает, что обещание выполняется на живом сервисе. Таблица проверки фиксирует, где обещание и поведение разошлись. Документ объясняет, почему расхождение появилось и что с ним сделали.</p>
+<p>Границы работы простые. Берём сервис пользователей и ролей из практики 17, который слушает <code>http://127.0.0.1:8091</code>. Новый сервис не пишем, базу не проектируем, сайт документации не собираем, в интернет ничего не публикуем. Если пример не совпал с ответом, есть ровно два варианта: исправить документ или признать дефект сервиса и записать его в отчёт как известное ограничение.</p>
+<p>Результат работы: файл <code>openapi.yaml</code> с тремя путями и четырьмя операциями, восемь примеров запросов в документе, коллекция Postman из девяти запросов с тестами, заполненная таблица проверки модулей, чек-лист и защита документа перед группой.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Спецификация проходит проверку скриптом, описывает все коды <code>200</code>, <code>201</code>, <code>400</code>, <code>401</code>, <code>403</code>, <code>404</code> и <code>500</code>, содержит три схемы. Каждый пример из документа выполнен и совпадает с ответом сервиса. Коллекция проходит целиком без красных тестов на свежей базе. В таблице проверки у каждого модуля есть ожидание, факт и вывод. В отчёте указаны версия, журнал изменений и известные ограничения.</p></div>
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-18_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-18_openapi-template.yaml" download>Шаблон OpenAPI в YAML</a>
+<a href="reports/UIFIS_practice-18_api-checklist.csv" download>Чек-лист проверки API в CSV</a>
+<p>В шаблоне OpenAPI уже описаны три пути, три схемы и четыре общих ответа. Ответ `500` в нём отсутствует, его добавляете вы. Чек-лист содержит восемь строк проверок.</p>
+</div>
+
+<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<p>Нужны Python 3.9 или новее, Postman, VS Code и браузер. Платные сервисы, Docker, права администратора и сервер базы данных не требуются: сервис учебный и работает на вашем компьютере.</p>
+<p>Создайте папку практики и перейдите в неё:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">18</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">18</span>
+</code></pre></div>
+
+<p>Скачайте в неё три файла из блока выше и проверьте расширения. Браузер иногда сохраняет YAML как <code>openapi-template.yaml.txt</code>, и тогда ни редактор, ни скрипт проверки его не увидят.</p>
+<p>Запустите сервис практики 17 из папки, где лежит <code>users_api.py</code>, и проверьте, что он слушает порт:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
+</code></pre></div>
+
+<p>Во втором окне PowerShell:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8091</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
+</code></pre></div>
+
+<p>Первая команда печатает строку с состоянием <code>Listen</code>. Вторая возвращает JSON с полем <code>status</code> и счётчиком пользователей. Порт <code>8091</code> не пересекается с <code>8090</code> из практики 10, поэтому обе службы могут работать одновременно. Данные лежат в файле <code>users.db</code> рядом со скриптом и переживают перезапуск.</p>
+<p>Откройте шаблон спецификации в VS Code и переименуйте копию в <code>openapi.yaml</code>. Шаблон отчёта заполняйте по ходу работы. Чек-лист CSV сохранён с разделителем <code>;</code> и в кодировке UTF-8: в Excel открывайте его через <strong>Данные → Из текста</strong>, иначе все восемь проверок соберутся в один столбец.</p>
+<p>Дальше понадобятся три токена. Выпишите их в отчёт вместе с правами:</p>
+<table>
+<thead>
+<tr>
+<th>Токен</th>
+<th>Роль</th>
+<th>Что проверяем</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student-token</code></td>
+<td><code>admin</code></td>
+<td>Список, карточка и создание пользователя дают <code>200</code> и <code>201</code></td>
+</tr>
+<tr>
+<td><code>user-token</code></td>
+<td><code>user</code></td>
+<td>На списке пользователей даёт <code>403</code></td>
+</tr>
+<tr>
+<td>Любая неизвестная строка</td>
+<td>нет роли</td>
+<td>Даёт <code>401</code></td>
+</tr>
+</tbody>
+</table>
+<p>Имя <code>student-token</code> у администратора не должно сбивать: в практике 17 так вышло из коллекции Postman, и это хороший пример того, что имя токена ничего не значит. Сервер ищет строку в таблице <code>users</code> и берёт роль из строки, а не из названия. Есть ещё <code>manager-token</code>: менеджер читает пользователей и меняет статус, но создавать не может.</p>
+<div class="callout pitfall"><span class="label">Адрес стенда живёт в трёх местах</span><p><code>servers.url</code> в спецификации, переменная <code>baseUrl</code> в Postman и команды <code>curl</code> в документе указывают на один и тот же сервис. Поменяли порт, поменяйте все три места. Иначе половина примеров будет проверять чужой процесс, а расхождение вы спишете на ошибку API.</p></div>
+
+<h2 id="задание-1-контракт-в-openapi"><span class="num">03</span>Задание 1. Контракт в OpenAPI</h2>
+<p>Спецификация описывает четыре вещи: куда идти, что прислать, что получить и кто имеет право. Пока этих четырёх ответов нет, клиент угадывает, а тесты проверяют догадки.</p>
+<p>Опишите четыре операции на трёх путях:</p>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Коды</th>
+<th>Назначение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/health.json</code></td>
+<td><code>200</code></td>
+<td>Состояние сервиса, без токена</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/users</code></td>
+<td><code>200</code>, <code>401</code>, <code>403</code>, <code>500</code></td>
+<td>Список пользователей, фильтр <code>role</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/users</code></td>
+<td><code>201</code>, <code>400</code>, <code>401</code>, <code>403</code>, <code>500</code></td>
+<td>Создание пользователя</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/users/{id}</code></td>
+<td><code>200</code>, <code>401</code>, <code>403</code>, <code>404</code></td>
+<td>Карточка пользователя</td>
+</tr>
+</tbody>
+</table>
+<p>Схема безопасности в шаблоне уже объявлена: <code>bearerAuth</code> с <code>type: http</code> и <code>scheme: bearer</code>. Поле <code>bearerFormat</code> не заполняйте: ваш токен не JWT, а строка из таблицы сервиса, и лишнее обещание в документе только запутает клиента. Каждая закрытая операция ссылается на схему строкой <code>security: [{bearerAuth: []}]</code>.</p>
+<p>Схемы в шаблоне три. В <code>User</code> пять обязательных полей из шаблона: <code>id</code>, <code>login</code>, <code>email</code>, <code>role</code> и <code>status</code>, где <code>role</code> принимает <code>admin</code>, <code>manager</code> или <code>user</code>, а <code>status</code> принимает <code>active</code> или <code>blocked</code>. Сервис отдаёт ещё поле <code>created_at</code> с датой создания, в шаблоне его нет: добавьте, иначе схема будет беднее настоящего ответа. В <code>UserInput</code> обязательны <code>login</code>, <code>email</code> и <code>role</code>, поля <code>id</code> и <code>status</code> клиент не присылает. Сверьте эти списки с кодом сервиса: лишнее обязательное поле ломает клиента, пропущенное обязательное поле ломает проверку.</p>
+<p>Отдельного пути <code>roles</code> у сервиса нет: роль это поле <code>User.role</code> с тремя значениями, а права роли лежат в таблице <code>roles</code> базы. Опишите роль перечислением и таблицей токенов, а не выдуманным маршрутом <code>/api/roles</code>.</p>
+<p>Начните с шапки. Здесь фиксируются версия контракта и адрес стенда:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">openapi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0.3</span>
+<span class="nt">info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UIFIS Users API</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">Учебный API пользователей и ролей.</span>
+<span class="w">    </span><span class="no">Авторизация: заголовок Authorization: Bearer &lt;token&gt;.</span>
+<span class="nt">servers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://127.0.0.1:8091</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Учебный стенд</span>
+</code></pre></div>
+
+<p>Дальше опишите список пользователей. Этот блок задаёт образец для остальных операций: отличие будет только в <code>summary</code>, кодах и схеме ответа. Если ваш сервис не фильтрует по роли, параметр <code>role</code> из спецификации уберите: описанный параметр, который сервис молча игнорирует, хуже отсутствующего.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">/api/users</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">get</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Список пользователей</span>
+<span class="w">      </span><span class="nt">security</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bearerAuth</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">role</span>
+<span class="w">          </span><span class="nt">in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query</span>
+<span class="w">          </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">          </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">            </span><span class="nt">enum</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">admin</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">manager</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">user</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">responses</span><span class="p">:</span>
+<span class="w">        </span><span class="s">&#39;200&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Список пользователей</span>
+<span class="w">          </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">                </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">items</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">count</span><span class="p p-Indicator">]</span>
+<span class="w">                </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">                    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">                    </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">                      </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/User&#39;</span>
+<span class="w">                  </span><span class="nt">count</span><span class="p">:</span>
+<span class="w">                    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">              </span><span class="nt">example</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">                    </span><span class="nt">login</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">                    </span><span class="nt">email</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin@example.ru</span>
+<span class="w">                    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">                    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span>
+<span class="w">                    </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2026-10-23T09:00:00+00:00&#39;</span>
+<span class="w">                </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="s">&#39;401&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/responses/Unauthorized&#39;</span>
+<span class="w">        </span><span class="s">&#39;403&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/responses/Forbidden&#39;</span>
+<span class="w">        </span><span class="s">&#39;500&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/responses/ServerError&#39;</span>
+</code></pre></div>
+
+<p>Создание отличается телом и заголовком <code>Location</code>. Клиент читает этот заголовок, чтобы сразу открыть карточку новой записи, поэтому он входит в контракт, а не в украшения. Блок встаёт на тот же уровень, что и <code>get:</code>, внутри <code>/api/users:</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="nt">post</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Создать пользователя</span>
+<span class="w">      </span><span class="nt">security</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bearerAuth</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">requestBody</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/UserInput&#39;</span>
+<span class="w">      </span><span class="nt">responses</span><span class="p">:</span>
+<span class="w">        </span><span class="s">&#39;201&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Пользователь создан</span>
+<span class="w">          </span><span class="nt">headers</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">Location</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">          </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/User&#39;</span>
+<span class="w">        </span><span class="s">&#39;400&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/responses/BadRequest&#39;</span>
+<span class="w">        </span><span class="s">&#39;500&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">          </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/responses/ServerError&#39;</span>
+</code></pre></div>
+
+<p>Ответ <code>500</code> в шаблоне не описан. Добавьте его сами в раздел <code>components</code>, иначе спецификация будет утверждать, что сервис всегда отвечает корректно:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">components</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">responses</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ServerError</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Внутренняя ошибка обработчика</span>
+<span class="w">      </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/Error&#39;</span>
+<span class="w">          </span><span class="nt">example</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server_error</span>
+<span class="w">            </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Внутренняя ошибка сервера</span>
+</code></pre></div>
+
+<p>В схеме <code>Error</code> три поля: <code>error</code>, <code>message</code> и необязательное <code>field</code>. Поле <code>field</code> заполняется только у ошибки валидации, и именно по нему клиент понимает, какое поле исправлять. Добавьте пример в ответ <code>BadRequest</code> в том же разделе <code>components</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="w">  </span><span class="nt">responses</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">BadRequest</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ошибка валидации</span>
+<span class="w">      </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">application/json</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">schema</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">$ref</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;#/components/schemas/Error&#39;</span>
+<span class="w">          </span><span class="nt">example</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validation_error</span>
+<span class="w">            </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Пользователь с таким email уже есть</span>
+<span class="w">            </span><span class="nt">field</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">email</span>
+</code></pre></div>
+
+<p>Схема <code>UserInput</code> описывает только то, что клиент присылает. Сервис принимает необязательный <code>password</code> не короче 8 символов: без него он выдаёт временный пароль сам. Опишите поле как <code>writeOnly: true</code> и не добавляйте его в <code>User</code>: всё, что попало в схему ответа, рано или поздно попадёт в пример, в скриншот и в отчёт.</p>
+<p>Карточка пользователя в шаблоне описана с ответом <code>404</code>. Добавьте к ней <code>401</code> и <code>403</code> так же, как у списка: без токена клиент получит <code>401</code>, с токеном обычного пользователя <code>403</code>. Если оставить только <code>404</code>, документ будет утверждать, что карточку может открыть кто угодно.</p>
+<p>Проверьте файл скриптом. Он находит битые ссылки <code>$ref</code>, операции без ответов, неизвестные схемы безопасности и отсутствующие коды:</p>
+<div class="codehilite"><pre><span></span><code><span class="sd">&quot;&quot;&quot;Проверка контракта: ссылки, коды ответов, схема безопасности.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="n">spec</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;openapi.yaml&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+<span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span><span class="n">ref</span><span class="p">):</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">spec</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">ref</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">walk</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$ref&quot;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#/&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">resolve</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;битая ссылка </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">walk</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">walk</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="n">codes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="n">schemes</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;securitySchemes&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="k">for</span> <span class="n">route</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;paths&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">method</span><span class="p">,</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">responses</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;responses&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">responses</span><span class="p">:</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">route</span><span class="si">}</span><span class="s2">: нет responses&quot;</span><span class="p">)</span>
+        <span class="n">codes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;security&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">requirement</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">schemes</span><span class="p">:</span>
+                    <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">route</span><span class="si">}</span><span class="s2">: нет схемы </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">walk</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;200&quot;</span><span class="p">,</span> <span class="s2">&quot;201&quot;</span><span class="p">,</span> <span class="s2">&quot;400&quot;</span><span class="p">,</span> <span class="s2">&quot;401&quot;</span><span class="p">,</span> <span class="s2">&quot;403&quot;</span><span class="p">,</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;500&quot;</span><span class="p">}</span> <span class="o">-</span> <span class="n">codes</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;не описаны коды: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;путей </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;paths&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{}))</span><span class="si">}</span><span class="s2">, кодов </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ошибка:&quot;</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">problems</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Сохраните его рядом как <code>check_contract.py</code> и запустите:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">check_contract</span><span class="p">.</span><span class="n">py</span> <span class="n">openapi</span><span class="p">.</span><span class="n">yaml</span>
+</code></pre></div>
+
+<p>Ожидаемый вывод: <code>путей 3, кодов 7</code>. Если скрипт печатает <code>битая ссылка #/components/responses/ServerError</code>, значит вы сослались на ответ, который ещё не добавили. Если он печатает <code>не описаны коды: 500</code>, спецификация врёт о поведении сервиса.</p>
+<p>Проверка не заменяет редактор. Откройте файл в OpenAPI-редакторе в браузере или в расширении VS Code: он покажет структуру путей и подсветит места, где нарушена схема. Ошибки YAML почти всегда означают одно из двух: табуляция вместо пробелов или сдвиг на один пробел.</p>
+<div class="callout pitfall"><span class="label">Код ответа без кавычек</span><p>В YAML ключ <code>200:</code> превращается в число, а OpenAPI требует строковый ключ. Пишите <code>'200':</code>, <code>'400':</code> и так далее. Валидатор в редакторе ругается на такое место невнятно, а скрипт проверки пропустит: для него это просто другой код.</p></div>
+
+<div class="callout pitfall"><span class="label">Схема без `required`</span><p>Если в <code>User</code> не перечислены обязательные поля, спецификация разрешает ответ из одного <code>id</code>. Клиент начнёт проверять наличие <code>email</code> сам и напишет проверку, которой нет в контракте. Обязательные поля перечисляйте явно: <code>required: [id, login, email, role, status, created_at]</code>.</p></div>
+
+<h2 id="задание-2-примеры-запросов-и-ошибок"><span class="num">04</span>Задание 2. Примеры запросов и ошибок</h2>
+<p>Схема описывает форму, пример показывает значение. Читателю нужны оба: по схеме он пишет код, по примеру проверяет, что понял схему правильно.</p>
+<p>В документ войдут восемь примеров: здоровье службы, список с админским токеном, создание, карточка, ошибка <code>401</code> без токена, ошибка <code>403</code> с токеном обычного пользователя, ошибка <code>400</code> с полем и ошибка <code>404</code> на неизвестном <code>id</code>. Ниже команды для проверки. Подставьте свой токен и адрес:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">$base</span> <span class="p">=</span> <span class="s2">&quot;http://127.0.0.1:8091&quot;</span>
+<span class="nv">$token</span> <span class="p">=</span> <span class="s2">&quot;student-token&quot;</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users/1&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users&quot;</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer user-token&quot;</span>
+</code></pre></div>
+
+<p>Создание проверяется телом из файла. Файл <code>new_user.json</code> создайте в VS Code, а не через <code>Out-File -Encoding utf8</code>: PowerShell 5.1 добавляет в начало байты BOM, и строгий разбор JSON отвечает <code>400 invalid_json</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc.user&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc.user@example.ru&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_user.json&quot;</span>
+</code></pre></div>
+
+<p>Сверьте ответы с ожиданием. Таблица ниже это и есть содержание раздела «Примеры» в вашем документе:</p>
+<table>
+<thead>
+<tr>
+<th>Запрос</th>
+<th>Код</th>
+<th>Что должно быть в ответе</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /health.json</code></td>
+<td><code>200</code></td>
+<td><code>status</code> со значением <code>ok</code></td>
+</tr>
+<tr>
+<td><code>GET /api/users</code> с админским токеном</td>
+<td><code>200</code></td>
+<td><code>items</code> и <code>count</code>, ни одного <code>password</code></td>
+</tr>
+<tr>
+<td><code>GET /api/users/1</code></td>
+<td><code>200</code></td>
+<td>Поля <code>id</code>, <code>login</code>, <code>email</code>, <code>role</code>, <code>status</code>, <code>created_at</code></td>
+</tr>
+<tr>
+<td><code>GET /api/users</code> без заголовка</td>
+<td><code>401</code></td>
+<td><code>error</code> и <code>message</code>, значение токена не повторяется</td>
+</tr>
+<tr>
+<td><code>GET /api/users</code> с токеном обычного пользователя</td>
+<td><code>403</code></td>
+<td><code>error</code> и <code>message</code></td>
+</tr>
+<tr>
+<td><code>POST /api/users</code> с новым email</td>
+<td><code>201</code></td>
+<td><code>id</code>, <code>Location</code>, <code>status</code> равен <code>active</code></td>
+</tr>
+<tr>
+<td>Повтор того же <code>POST</code></td>
+<td><code>400</code></td>
+<td><code>field</code> равен <code>email</code></td>
+</tr>
+<tr>
+<td><code>GET /api/users/9999</code></td>
+<td><code>404</code></td>
+<td><code>error</code> и <code>message</code></td>
+</tr>
+</tbody>
+</table>
+<p>Повторное создание проверяйте сразу после первого, на том же запущенном сервисе. Запись останется в <code>users.db</code> и после перезапуска, поэтому дубликат сохранится. Чтобы вернуться к трём исходным записям, остановите сервис, удалите <code>users.db</code> и запустите его снова: база создастся заново с тремя учётными записями.</p>
+<p>Дальше самое важное: <strong>примеры в документе должны совпадать с фактическими ответами</strong>. Сравнивайте не только код, но и имя поля. Если сервис отвечает <code>{"error":"not_found"}</code>, а документ обещает <code>{"code":"NOT_FOUND"}</code>, клиент напишет обработку несуществующего поля. Если расхождение найдено, сначала посмотрите обработчик: где проверяется токен, где роль, где уникальность. Потом решите, что правите: документ или сервис. Третьего варианта нет, а запись «пример приблизительный» запрещена.</p>
+<p>В примерах заголовка пишите <code>Authorization: Bearer &lt;token&gt;</code>, а не настоящую строку. Документ уходит в репозиторий и в отчёт, а токен оттуда рано или поздно переедет в чужой запрос.</p>
+<p>Те же запросы повторите в Postman и укажите в документе, что каждый пример лежит в коллекции под своим номером. Тогда читатель выбирает удобный способ: скопировать команду или открыть готовый запрос с тестом. Ответ <code>201</code> показывайте целиком: в примере должны быть <code>id</code>, <code>login</code>, <code>email</code>, <code>role</code>, <code>status</code> со значением <code>active</code> и <code>created_at</code>.</p>
+<div class="callout pitfall"><span class="label">PowerShell съедает кавычки в JSON</span><p>Команда <code>curl.exe -d '{"login":"doc.user"}'</code> в PowerShell 5.1 передаёт программе строку без двойных кавычек, и сервер отвечает <code>400 invalid_json</code>, хотя JSON в команде выглядит правильным. Поэтому тело всегда передаётся файлом через <code>--data-binary "@new_user.json"</code>.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 1</span><p>Терминал с четырьмя ответами: список <code>200</code>, карточка <code>200</code>, запрос без токена <code>401</code>, запрос с токеном обычного пользователя <code>403</code>.</p></div>
+
+<h2 id="задание-3-коллекция-postman"><span class="num">05</span>Задание 3. Коллекция Postman</h2>
+<p>Документ утверждает, что API работает. Коллекция это доказывает: девять запросов выполняются одной кнопкой, и каждый несёт проверку. Разница принципиальна: пример в тексте стареет молча, а красный тест в Postman виден сразу.</p>
+<p>Создайте коллекцию <code>UIFIS practice 18</code> и добавьте три переменные коллекции:</p>
+<table>
+<thead>
+<tr>
+<th>Переменная</th>
+<th>Значение</th>
+<th>Зачем</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baseUrl</code></td>
+<td><code>http://127.0.0.1:8091</code></td>
+<td>Адрес стенда в одном месте</td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td><code>student-token</code></td>
+<td>Заголовок <code>Authorization</code></td>
+</tr>
+<tr>
+<td><code>userId</code></td>
+<td>пусто</td>
+<td>Заполняется тестом из списка</td>
+</tr>
+</tbody>
+</table>
+<p>Токен обычного пользователя оставьте прямо в запросе <code>08</code>: он нужен один раз и не должен подменять основной. Порядок запросов важен, потому что создание меняет данные:</p>
+<table>
+<thead>
+<tr>
+<th>№</th>
+<th>Запрос</th>
+<th>Ожидание</th>
+<th>Что проверяет тест</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><code>GET {{baseUrl}}/health.json</code></td>
+<td><code>200</code></td>
+<td><code>status</code> равен <code>ok</code>, ответ в JSON</td>
+</tr>
+<tr>
+<td>02</td>
+<td><code>GET {{baseUrl}}/api/users</code> без токена</td>
+<td><code>401</code></td>
+<td>Код и тело ошибки</td>
+</tr>
+<tr>
+<td>03</td>
+<td><code>GET {{baseUrl}}/api/users</code> с <code>Bearer {{token}}</code></td>
+<td><code>200</code></td>
+<td><code>items</code> не пуст, <code>count</code> число, обязательные поля, нет <code>password</code>, <code>userId</code> сохранён</td>
+</tr>
+<tr>
+<td>04</td>
+<td><code>GET {{baseUrl}}/api/users/{{userId}}</code></td>
+<td><code>200</code></td>
+<td><code>id</code> совпадает с сохранённым</td>
+</tr>
+<tr>
+<td>05</td>
+<td><code>GET {{baseUrl}}/api/users/9999</code></td>
+<td><code>404</code></td>
+<td><code>error</code> и <code>message</code></td>
+</tr>
+<tr>
+<td>06</td>
+<td><code>POST {{baseUrl}}/api/users</code></td>
+<td><code>201</code></td>
+<td><code>id</code> число, <code>status</code> равен <code>active</code>, заголовок <code>Location</code>, нет <code>password</code></td>
+</tr>
+<tr>
+<td>07</td>
+<td>Повтор тела из <code>06</code></td>
+<td><code>400</code></td>
+<td><code>field</code> равен <code>email</code></td>
+</tr>
+<tr>
+<td>08</td>
+<td><code>GET {{baseUrl}}/api/users</code> с токеном обычного пользователя</td>
+<td><code>403</code></td>
+<td>Код и тело ошибки</td>
+</tr>
+<tr>
+<td>09</td>
+<td><code>GET {{baseUrl}}/api/error</code></td>
+<td><code>500</code></td>
+<td><code>error</code> есть, стека в теле нет</td>
+</tr>
+</tbody>
+</table>
+<p>Запрос <code>09</code> стоит вне контракта: учебный маршрут для проверки обработчика. В OpenAPI его не описывают, а в отчёте указывают как известное ограничение стенда.</p>
+<p>Тесты пишутся на вкладке <strong>Tests</strong>. Для списка:</p>
+<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ в JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span><span class="w"> </span><span class="sr">/application\/json/</span><span class="p">));</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;items не пуст&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">above</span><span class="p">(</span><span class="mf">0</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;count это число&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">count</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">a</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;обязательные поля&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">body</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">user</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;login&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;role&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;status&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;created_at&#39;</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">field</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="nx">field</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;нет password&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">not</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">collectionVariables</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;userId&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="mf">0</span><span class="p">].</span><span class="nx">id</span><span class="p">));</span>
+</code></pre></div>
+
+<p>Для создания, карточки и ошибок:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 04 Карточка</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;id из списка&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">id</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">collectionVariables</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;userId&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+
+<span class="c1">// 06 Создание</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;201 Created&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">201</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;Location&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Location&#39;</span><span class="p">));</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">created</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;новый id&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">created</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">a</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;статус active&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">created</span><span class="p">.</span><span class="nx">status</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;нет password&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">not</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">));</span>
+
+<span class="c1">// 07 Дубль</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;400 Bad Request&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">400</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;поле email&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">field</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">));</span>
+
+<span class="c1">// 09 Ошибка сервера</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;500 Server Error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">500</span><span class="p">));</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;без стека&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">not</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;Traceback&#39;</span><span class="p">));</span>
+
+<span class="c1">// 02, 05, 08</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;тело ошибки&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">error</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">error</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p>Общий тест на коллекцию добавляет проверки, которые нужны везде. Выберите коллекцию в левой панели, откройте <strong>Tests</strong> и вставьте:</p>
+<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ в JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ быстрее 1000 мс&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseTime</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">below</span><span class="p">(</span><span class="mf">1000</span><span class="p">));</span>
+</code></pre></div>
+
+<p>Запустите коллекцию кнопкой <strong>Run</strong> на свежей базе. Сводка должна показать девять запросов и ни одного красного теста. Перед полным прогоном остановите сервис, удалите <code>users.db</code> и запустите снова: запрос <code>06</code> создаёт <code>doc.user@example.ru</code>, и на втором прогоне без сброса этот же запрос честно получит <code>400</code>, а вместе с ним красный тест. Это не дефект коллекции, а следствие того, что тест создания зависит от состояния данных.</p>
+<p>Если тест упал, читайте не только сообщение, но и тело ответа. <code>pm.response.json()</code> на HTML-странице ошибки выбрасывает исключение разбора, и в отчёте появляется <code>Unexpected token &lt;</code>. Это значит, что сервис вернул не JSON, а страницу: смотрите консоль сервиса, а не тест.</p>
+<div class="callout pitfall"><span class="label">Переменная не подставилась</span><p>Если в адресе видно <code>{{baseUrl}}</code> буквально, переменная не выбрана или не создана. Проверьте, что коллекция выделена в левой панели, а окружение выбрано в правом верхнем углу. Postman не подставляет переменные из чужой коллекции.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 2</span><p>Окно Run с девятью запросами и зелёной сводкой, а также вкладка Test Results запроса создания с заголовком <code>Location</code>.</p></div>
+
+<h2 id="задание-4-комплексная-проверка-модулей"><span class="num">06</span>Задание 4. Комплексная проверка модулей</h2>
+<p>Теперь проверяется не API, а система целиком: вход, права, данные, журнал и восстановление. Ожидание берётся из вашего документа. Если документ говорит <code>401</code>, а сервис отвечает <code>403</code>, это расхождение, и оно идёт в отчёт, а не в разряд мелочей.</p>
+<p>Заполните таблицу. В колонку «Факт» пишите код, имя поля и значение, а не слово «работает»: факт должен быть проверяемым.</p>
+<table>
+<thead>
+<tr>
+<th>Модуль</th>
+<th>Что проверяем</th>
+<th>Ожидание</th>
+<th>Факт</th>
+<th>Вывод</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Авторизация</td>
+<td>Список без заголовка <code>Authorization</code></td>
+<td><code>401</code>, тело с <code>error</code> и <code>message</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Авторизация</td>
+<td>Список с неизвестной строкой вместо токена</td>
+<td><code>401</code>, без подсказок о внутреннем устройстве</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Роли</td>
+<td>Список с токеном обычного пользователя</td>
+<td><code>403</code>, доступ закрыт, данные не отданы</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Пользователи</td>
+<td>Создание, затем карточка по <code>id</code> из <code>Location</code></td>
+<td><code>201</code>, затем <code>200</code> с теми же полями</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Уникальность</td>
+<td>Повтор того же email</td>
+<td><code>400</code>, <code>field</code> равен <code>email</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ошибки</td>
+<td>Обработчик на учебном маршруте</td>
+<td><code>500</code>, в теле нет стека, путей и SQL</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Аудит</td>
+<td>Журнал после входа, отказа и создания</td>
+<td>Есть запись о каждом событии</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Секреты</td>
+<td>Поиск по журналу и телам ответов</td>
+<td>Нет <code>password</code> и значения токена</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Копия</td>
+<td>Восстановление файла данных</td>
+<td>Список и <code>id</code> как до проверок</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Документация</td>
+<td>Пример из <code>openapi.yaml</code></td>
+<td>Код и тело совпадают с фактом</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Аудит сервис пишет в таблицу <code>audit</code> базы <code>users.db</code>, а администратору отдаёт её через <code>GET /api/audit</code>. Проверьте, что после входа, отказа и создания в журнале появились записи и что секретов в них нет. <code>$token</code> из задания 2 оставьте в этой же сессии PowerShell:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=50&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
+<span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=50&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="n">-Pattern</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="s2">&quot;student-token&quot;</span><span class="p">,</span> <span class="s2">&quot;user-token&quot;</span>
+</code></pre></div>
+
+<p>Первая команда печатает <code>items</code> с полями <code>at</code>, <code>actor</code>, <code>action</code>, <code>target</code>, <code>result</code> и <code>detail</code>. Вторая должна ничего не найти: пустой вывод это хороший результат. Непустой означает дефект, который надо описать: что именно попало, в какой записи и чем это опасно. Отдельно проверьте, что отказ без токена и отказ по роли тоже попали в журнал, а не только удачные запросы.</p>
+<p>Восстановление проверяется копией файла базы. Копию снимают на остановленном сервисе, иначе часть данных останется в журнале SQLite и копия будет неполной:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span>
+</code></pre></div>
+
+<p>Запустите сервис, создайте пользователя и убедитесь, что записей стало четыре. Остановите сервис, верните копию и запустите снова:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="n">-Force</span>
+<span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
+</code></pre></div>
+
+<p>Список снова содержит три записи, значит копия восстановлена. В отчёте объясните, что произойдёт с записями, созданными после копии, и почему копию нельзя снимать на работающем сервисе.</p>
+<p>Заполните чек-лист <code>UIFIS_practice-18_api-checklist.csv</code>: восемь строк, по одной на проверку. В колонке «Факт» указывайте наблюдение, в колонке «Вывод» решение: соответствует, дефект документа, дефект сервиса, ограничение стенда. В строке «Версия» запишите <code>1.0.0</code> и правило, по которому появится <code>/api/v2</code>: сокращение <code>v1</code> в чек-листе означает первую версию контракта, а не префикс в адресе.</p>
+<div class="callout pitfall"><span class="label">Документ и сервис правы одновременно</span><p>Бывает, что пример верен, но сервис отвечает иначе из-за режима запуска: включён другой набор токенов, данные не сброшены, порт занят прошлой копией. Прежде чем писать «дефект сервиса», перезапустите его и повторите запрос. Расхождение, которое исчезает после перезапуска, это дефект порядка проверки, а не API.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Заполненная таблица проверки модулей с фактическими кодами и полями, а также чек-лист CSV с восемью заполненными строками.</p></div>
+
+<h2 id="задание-5-документ-и-защита"><span class="num">07</span>Задание 5. Документ и защита</h2>
+<p>Документ собирает всё, что вы проверили. Читатель не должен ходить по папкам: откройте отчёт и <code>openapi.yaml</code>, и этого достаточно, чтобы повторить любой запрос.</p>
+<p>Заполните шаблон отчёта: шапку, цель, таблицу состава документации, таблицу комплексной проверки, шесть мест под скриншоты и вывод. Шесть вопросов в конце шаблона обязательны, ещё четыре задаются на защите. Спецификацию приложите файлом <code>openapi.yaml</code>, а не скриншотом: файл можно проверить, картинку нельзя.</p>
+<p>Структура документа:</p>
+<table>
+<thead>
+<tr>
+<th>Раздел</th>
+<th>Что включить</th>
+<th>Как проверить</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Назначение и границы</td>
+<td>Что описывает API, чего он не делает</td>
+<td>Читатель понимает, зачем сервис нужен</td>
+</tr>
+<tr>
+<td>Стенд</td>
+<td>Базовый адрес, версия, окружение</td>
+<td>Адрес совпадает с <code>servers.url</code></td>
+</tr>
+<tr>
+<td>Авторизация</td>
+<td>Схема <code>bearerAuth</code>, таблица токенов и ролей</td>
+<td><code>401</code> и <code>403</code> объяснены разными причинами</td>
+</tr>
+<tr>
+<td>Ресурсы</td>
+<td>Таблица методов, путей и кодов</td>
+<td>Каждый путь есть в спецификации</td>
+</tr>
+<tr>
+<td>Схемы</td>
+<td><code>User</code>, <code>UserInput</code>, <code>Error</code></td>
+<td>Обязательные поля перечислены</td>
+</tr>
+<tr>
+<td>Ошибки</td>
+<td>Код, поле, сообщение, пример тела</td>
+<td>В примерах нет стека</td>
+</tr>
+<tr>
+<td>Примеры</td>
+<td><code>curl</code> и Postman, запрос и ответ</td>
+<td>Каждый пример выполнен</td>
+</tr>
+<tr>
+<td>Версионирование</td>
+<td>Версия в <code>info.version</code>, правило изменений</td>
+<td>Понятно, когда появится <code>/api/v2</code></td>
+</tr>
+<tr>
+<td>Ограничения</td>
+<td>Что не описано и почему</td>
+<td>У каждого ограничения есть причина</td>
+</tr>
+<tr>
+<td>Приложение</td>
+<td>Чек-лист и журнал изменений</td>
+<td>Восемь проверок заполнены</td>
+</tr>
+</tbody>
+</table>
+<p>Версия указывается явно, потому что клиент должен знать, к какому контракту он написан. Зафиксируйте журнал изменений. Ниже образец, подставьте свои даты и изменения:</p>
+<table>
+<thead>
+<tr>
+<th>Версия</th>
+<th>Что изменилось</th>
+<th>Совместимость</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0.0</td>
+<td>Первая редакция: три пути, четыре операции</td>
+<td>Основная</td>
+</tr>
+<tr>
+<td>1.0.1</td>
+<td>Исправлен пример тела ошибки <code>400</code></td>
+<td>Обратная, контракт не менялся</td>
+</tr>
+<tr>
+<td>1.1.0</td>
+<td>Добавлено изменение статуса через <code>PATCH</code></td>
+<td>Обратная, старый клиент продолжает работать</td>
+</tr>
+<tr>
+<td>2.0.0</td>
+<td>Изменён смысл <code>role</code> или удалено поле</td>
+<td>Ломающая, нужен новый путь <code>/api/v2</code></td>
+</tr>
+</tbody>
+</table>
+<p>Правило короткое: <strong>изменение, которое ломает существующего клиента, получает новый путь</strong>. Старый путь работает, пока клиентов не перевели. Молча переименовать <code>login</code> в <code>username</code> нельзя: у половины клиентов отвалится разбор ответа.</p>
+<p>В раздел ограничений запишите то, что действительно не вошло в контракт: учебный маршрут <code>/api/error</code>, изменение статуса и роли через <code>PATCH /api/users/{id}</code>, журнал <code>/api/audit</code>, отсутствие пагинации и отсутствие удаления пользователя. У каждого ограничения должна быть причина: например, изменение статуса требует отдельной матрицы прав и отдельной проверки, поэтому оно уходит в следующую версию контракта. Ограничение с причиной это честный документ. Пустое место читатель заполнит своим предположением, обычно неверным.</p>
+<p>Контрольные вопросы для защиты:</p>
+<ol>
+<li>Зачем нужен OpenAPI, если код и так открыт?</li>
+<li>Чем <code>401</code> отличается от <code>403</code> и почему клиент обрабатывает их по-разному?</li>
+<li>Почему пример ошибки не должен содержать стек вызовов и путь к файлу?</li>
+<li>Как проверить, что документация не устарела, не читая её целиком?</li>
+<li>Что обязательно должно быть в коллекции Postman, кроме набора запросов?</li>
+<li>Почему версия API указывается явно и когда появляется новый путь?</li>
+<li>Чем пример ответа отличается от схемы ответа и зачем нужны оба?</li>
+<li>Что вы сделаете, если пример из документа перестал совпадать с ответом сервиса?</li>
+<li>Какие поля не должны появляться в ответах и в журнале?</li>
+<li>Как вы проверяли восстановление данных и что показала проверка?</li>
+</ol>
+<p>Критерии оценки:</p>
+<ul>
+<li><strong>5</strong>: спецификация проходит проверку, все семь кодов описаны, примеры совпадают с ответами, коллекция из девяти запросов проходит на свежей базе, таблица проверки заполнена фактами, расхождения объяснены, документ содержит версию, журнал изменений и ограничения, защита отвечает на вопросы по своему контракту.</li>
+<li><strong>4</strong>: спецификация и коллекция работают, но один код или одна схема описаны неполно, в таблице проверки не хватает двух фактов, на защите не объяснено одно расхождение.</li>
+<li><strong>3</strong>: спецификация собрана частично, примеры не проверены на сервисе, коллекция проходит не полностью, таблица заполнена словами «работает» без кодов и полей.</li>
+</ul></article><nav class="pager"><a class="" href="38-prakt-17.html"><span>← Предыдущее занятие</span>Практика 17. Модули ИС и безопасность; API и Postman</a><span></span></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+{
+  "info": {
+    "name": "UIFIS Practice 10 - Students API",
+    "description": "Учебная коллекция запросов к mock API на порту 8090.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8090"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health.json"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('JSON content type', () => pm.response.to.have.header('Content-Type', /application\\/json/));",
+              "const body = pm.response.json();",
+              "pm.test('service is healthy', () => pm.expect(body.status).to.eql('ok'));",
+              "pm.test('fast enough', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Students list",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('items is array', () => pm.expect(body.items).to.be.an('array'));",
+              "pm.test('count is number', () => pm.expect(body.count).to.be.a('number'));",
+              "pm.test('required fields', () => body.items.forEach(s => { pm.expect(s).to.have.property('id'); pm.expect(s).to.have.property('full_name'); pm.expect(s).to.have.property('email'); pm.expect(s).to.have.property('group'); }));",
+              "pm.test('no password', () => pm.expect(JSON.stringify(body)).to.not.include('password'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Filter by group",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students?group=ИС-41"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('only IS-41', () => body.items.forEach(s => pm.expect(s.group).to.eql('ИС-41')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Page",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students?limit=3&offset=3"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('three items', () => pm.expect(body.items.length).to.eql(3));",
+              "pm.test('next present', () => pm.expect(body.next).to.be.a('string'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Student card",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('id 1', () => pm.expect(body.id).to.eql(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Missing student",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students/999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
+              "pm.test('error field', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Create student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"Соколов Пётр Ильич\",\n  \"email\": \"sokolov@example.ru\",\n  \"group\": \"ИС-42\"\n}"
+        },
+        "url": "{{baseUrl}}/api/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('201 Created', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('id returned', () => pm.expect(body.id).to.be.a('number'));",
+              "pm.test('Location header', () => pm.response.to.have.header('Location'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Invalid email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"Ошибка\",\n  \"email\": \"not-an-email\",\n  \"group\": \"ИС-42\"\n}"
+        },
+        "url": "{{baseUrl}}/api/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+              "pm.test('field email', () => pm.expect(pm.response.json().field).to.eql('email'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Server error",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/error"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('500 Server Error', () => pm.response.to.have.status(500));",
+              "pm.test('error field', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

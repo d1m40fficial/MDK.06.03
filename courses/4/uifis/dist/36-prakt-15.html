@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#2F6F5E;--course-tint:#DDEBE5;--course-accent-dark:#5CC4A4;--course-tint-dark:#18302A;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ER-модель и 3НФ; база данных и импорт JSON</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
+  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 10px; }
+.quiz-q { padding: 18px 20px 14px; margin: 14px 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
+.quiz .opts { display: grid; gap: 6px; }
+.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
+.quiz .opt:hover { border-color: var(--accent); }
+.quiz .opt input { margin-top: 4px; }
+.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
+.quiz-q.bad .quiz-p { color: var(--bad); }
+.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--ok); }
+.quiz-q.bad .short-answer { border-color: var(--bad); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer] { background: #5cb8a5; color: #10231f; border-color: #3f9d8a; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover { background: #6cc5b3; color: #10231f; border-color: #3f9d8a; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>ER-модель и 3НФ; база данных и импорт JSON</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero"><div class="badges"><span class="pill dark">Занятия 36-37</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<h1>ER-модель и 3НФ; база данных и импорт JSON</h1><p class="dek">Спроектируйте модель заявок на обслуживание, докажите, что она в третьей нормальной форме, соберите базу SQLite с ограничениями и загрузите шесть заявок из JSON так, чтобы повторный импорт не оставил дублей.</p>
+<div class="glyph" aria-hidden="true">П15</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Отличать логическую модель от физической и выбирать ключи для каждой сущности</li><li>Доказывать соответствие схемы первой, второй и третьей нормальной форме</li><li>Писать DDL для SQLite с первичными, внешними ключами, UNIQUE, CHECK, ON DELETE и индексами</li><li>Импортировать JSON в транзакции с проверкой полей и повторяемым результатом по request_id</li><li>Проверять целостность базы запросами COUNT, JOIN и намеренными нарушениями ограничений</li><li>Оформлять отчёт с ER-диаграммой, схемой, итогами импорта и выводами</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-er-модель-и-третья-нормальная-форма">Задание 1. ER-модель и третья нормальная форма</a></li><li><a href="#задание-2-схема-sqlite">Задание 2. Схема SQLite</a></li><li><a href="#задание-3-импорт-json">Задание 3. Импорт JSON</a></li><li><a href="#задание-4-проверки">Задание 4. Проверки</a></li><li><a href="#задание-5-отчёт-и-защита">Задание 5. Отчёт и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<p>В сервисной компании заявки живут в трёх местах. Диспетчер пишет их в CSV, инженер отмечает выполненные работы в блокноте, кладовщик списывает запчасти в тетрадь. Пока заявок двадцать, это работает. На сотне выясняется, что «ООО Ромашка» записана четырьмя способами, у одного принтера два серийных номера, а половина работ не привязана ни к какой заявке. Программа здесь ни при чём: причина в таблице, где в одной строке лежат и клиент, и оборудование, и список запчастей.</p>
+<p>Хорошая модель делает одну вещь: <strong>одна строка хранит один факт</strong>. Клиент живёт в одном месте, оборудование в другом, заявка ссылается на оборудование по номеру. Тогда переименование компании это один <code>UPDATE</code> на одну строку, а не поиск по сотне заявок.</p>
+<p>Дальше работа идёт по шагам. Сначала рисуем ER-модель из шести сущностей и доказываем, что она в третьей нормальной форме. Потом переносим модель в SQLite: таблицы, ключи, ограничения, индексы. Затем пишем импортёр, который читает JSON с шестью заявками, проверяет поля и загружает данные в транзакции. В конце ломаем базу специально: неверный статус, чужое оборудование, повторный импорт. Если ограничения работают, база их не пропустит.</p>
+<p>Результат работы: ER-диаграмма в 3НФ, файл <code>schema.sql</code>, скрипт <code>import.py</code>, база <code>service.db</code> с шестью заявками, протокол проверок и заполненный отчёт.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>На диаграмме шесть сущностей с ключами и подписанной кардинальностью. Схема создаётся без ошибок и включает <code>PRAGMA foreign_keys = ON</code>, первичные и внешние ключи, <code>UNIQUE</code>, <code>CHECK</code>, правила <code>ON DELETE</code> и индексы по внешним ключам. Импорт из JSON даёт 6 заявок, 4 клиентов и 4 единицы оборудования. Повторный запуск даёт 0 новых заявок. Нарушения <code>CHECK</code>, <code>FOREIGN KEY</code> и <code>UNIQUE</code> отклоняются с понятным сообщением. В отчёте пять скриншотов и заполненные разделы шаблона.</p></div>
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-15_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-15_schema-template.sql" download>Шаблон схемы SQLite</a>
+<a href="reports/UIFIS_practice-15_import.json" download>Файл заявок в JSON</a>
+<a href="reports/UIFIS_practice-15_er-checklist.csv" download>Чек-лист ER-модели в CSV</a>
+<p>Схема в шаблоне уже рабочая: её нужно прочитать, объяснить каждое ограничение и применить к базе. В JSON шесть заявок, четыре клиента и четыре единицы оборудования, часть клиентов повторяется. Чек-лист заполняйте по ходу работы: десять строк, в каждой ожидание, факт и вывод.</p>
+</div>
+
+<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<p>Создайте папку практики и положите в неё все четыре файла:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">15</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">15</span>
+<span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
+</code></pre></div>
+
+<p>Нужен Python 3.10 или новее и модуль <code>sqlite3</code>, который входит в стандартную поставку. Отдельный сервер баз данных не нужен: SQLite это файл <code>service.db</code> в вашей папке. MySQL, PostgreSQL, Docker и платные сервисы не требуются. Права администратора не нужны: всё пишется в личный каталог <code>C:\UIFIS</code>.</p>
+<p>Проверьте имена скачанных файлов. Скрипт ищет ровно <code>UIFIS_practice-15_import.json</code> и <code>schema.sql</code> рядом с собой. Если браузер добавил <code>.txt</code> или задвоил расширение, переименуйте файл, а не правьте константы в коде: так меньше шансов запутаться при защите.</p>
+<p>Включите UTF-8 в консоли, иначе русские буквы в выводе превратятся в мусор:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">$env:PYTHONUTF8</span><span class="p">=</span><span class="n">1</span>
+</code></pre></div>
+
+<p>ER-диаграмму рисуйте в draw.io в браузере: хватит прямоугольников, линий и подписей <code>1</code> и <code>N</code>. Готовый файл сохраните как <code>.drawio</code> и выгрузите в PNG. Лист бумаги с аккуратной схемой тоже принимается, его достаточно сфотографировать. Отчёт заполняйте в Word, чек-лист открывайте в Excel через <strong>Данные → Из текста</strong> с разделителем «точка с запятой» и кодировкой UTF-8.</p>
+<h2 id="задание-1-er-модель-и-третья-нормальная-форма"><span class="num">03</span>Задание 1. ER-модель и третья нормальная форма</h2>
+<h3>Шесть сущностей</h3>
+<p>Сервисная компания ведёт клиентов, их оборудование, заявки, работы по заявкам, склад запчастей и расход запчастей на работу. Отсюда шесть сущностей. Ниже готовый каркас: сверьте его со своим пониманием процесса и меняйте только осознанно, потому что схема в задании 2 повторяет эту таблицу один в один.</p>
+<table>
+<thead>
+<tr>
+<th>Сущность</th>
+<th>Таблица</th>
+<th>Ключ</th>
+<th>Поля</th>
+<th>Связи</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Клиент</td>
+<td><code>clients</code></td>
+<td><code>client_id</code></td>
+<td><code>name</code>, <code>email</code>, <code>phone</code></td>
+<td>один ко многим с оборудованием</td>
+</tr>
+<tr>
+<td>Оборудование</td>
+<td><code>equipment</code></td>
+<td><code>equipment_id</code></td>
+<td><code>client_id</code>, <code>model</code>, <code>serial_no</code></td>
+<td>многие к клиенту, один ко многим с заявками</td>
+</tr>
+<tr>
+<td>Заявка</td>
+<td><code>requests</code></td>
+<td><code>request_id</code></td>
+<td><code>equipment_id</code>, <code>created_at</code>, <code>status</code>, <code>priority</code></td>
+<td>многие к оборудованию, один ко многим с работами</td>
+</tr>
+<tr>
+<td>Работа</td>
+<td><code>works</code></td>
+<td><code>work_id</code></td>
+<td><code>request_id</code>, <code>description</code>, <code>hours</code>, <code>cost</code></td>
+<td>многие к заявке, один ко многим с расходом</td>
+</tr>
+<tr>
+<td>Запчасть</td>
+<td><code>parts</code></td>
+<td><code>part_id</code></td>
+<td><code>name</code>, <code>price</code>, <code>stock</code></td>
+<td>один ко многим с расходом</td>
+</tr>
+<tr>
+<td>Расход</td>
+<td><code>usage</code></td>
+<td><code>usage_id</code></td>
+<td><code>work_id</code>, <code>part_id</code>, <code>qty</code></td>
+<td>многие к работе, многие к запчасти</td>
+</tr>
+</tbody>
+</table>
+<p>Ключи здесь суррогатные: короткие целые числа, которых в предметной области не существует. У клиента есть естественный ключ, email, и он тоже объявлен уникальным. Суррогатный ключ удобнее тем, что не меняется, когда клиент сменил адрес почты, и занимает в ссылках четыре байта вместо строки.</p>
+<p>Типы полей выбираются по смыслу. Названия, адреса и даты это <code>TEXT</code>, счётчики и ключи это <code>INTEGER</code>, часы и деньги это <code>REAL</code>. Дата хранится строкой в формате ISO 8601, например <code>2026-09-01T09:15:00</code>, потому что такие строки сравниваются и сортируются как обычный текст: <code>2026-09</code> всегда раньше <code>2026-10</code>.</p>
+<div class="callout pitfall"><span class="label">Деньги в REAL</span><p><code>REAL</code> это число с плавающей точкой, и <code>0.1 + 0.2</code> в нём не равно <code>0.3</code>. Для учебной базы это допустимо, в расчётах с клиентами суммы хранят в копейках целым числом или в типе <code>DECIMAL</code>. Запишите этот компромисс в отчёт, чтобы на защите он не выглядел недосмотром.</p></div>
+
+<h3>Связи и кардинальность</h3>
+<p>Кардинальность читается от вопроса «сколько строк с одной стороны и сколько с другой». Один клиент владеет многим оборудованием, но каждая единица оборудования принадлежит одному клиенту: <code>1:N</code>. Одна заявка описывает одно оборудование, у оборудования за время обслуживания бывает много заявок: тоже <code>1:N</code>. Дальше так же: заявка и работы, работа и строки расхода.</p>
+<p>Отдельно стоит пара «работа и запчасть». Одна запчасть встречается в разных работах, а в одной работе может понадобиться несколько разных запчастей. Это <code>M:N</code>, и в реляционной базе такая связь не рисуется напрямую: её разбивают на две связи <code>1:N</code> через промежуточную таблицу <code>usage</code>, где каждая строка означает «в этой работе израсходовано столько-то этой запчасти». Поле <code>qty</code> принадлежит самой связи, а не работе и не запчасти, поэтому его место именно в промежуточной таблице.</p>
+<p>Есть решение, которое стоит проговорить заранее: в <code>requests</code> нет <code>client_id</code>. Клиент заявки восстанавливается цепочкой <code>requests → equipment → clients</code>. Это правильно, пока оборудование не переходит к другому владельцу. Если клиент продаёт принтер вместе с историей обслуживания, заявка должна помнить владельца на момент обращения, и тогда в <code>requests</code> добавляют <code>client_id</code> как снимок. Решите, как у вас, и напишите одним предложением в отчёте.</p>
+<h3>Черновик, который не проходит проверку</h3>
+<p>Прежде чем рисовать, посмотрите, как выглядит таблица, собранная «как удобно диспетчеру»:</p>
+<table>
+<thead>
+<tr>
+<th>request_id</th>
+<th>client</th>
+<th>email</th>
+<th>equipment</th>
+<th>serial_no</th>
+<th>works</th>
+<th>parts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ООО Ромашка</td>
+<td>romashka@example.ru</td>
+<td>Принтер HP-01</td>
+<td>HP-1001</td>
+<td>Диагностика; замена ролика</td>
+<td>Ролик CF-01, 2 шт</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ООО Ромашка</td>
+<td>romashka@example.ru</td>
+<td>Принтер HP-01</td>
+<td>HP-1001</td>
+<td>Чистка</td>
+<td>Картридж, 1 шт</td>
+</tr>
+</tbody>
+</table>
+<p>Здесь четыре беды сразу. Название и адрес клиента повторяются в каждой его заявке, поэтому при переименовании компании придётся править все строки и надеяться, что ни одну не пропустили. Список работ и список запчастей лежат в одной ячейке, значит по ним нельзя ни посчитать, ни отфильтровать. Серийный номер и модель дублируются у каждой заявки на это оборудование. Цена запчасти, если её добавить, будет зависеть от запчасти, а не от заявки. Это и есть три аномалии: обновления, вставки и удаления.</p>
+<h3>1НФ, 2НФ, 3НФ</h3>
+<p>Нормальные формы проверяют по очереди, и каждая следующая имеет смысл только после выполнения предыдущей.</p>
+<table>
+<thead>
+<tr>
+<th>Форма</th>
+<th>Что проверяем</th>
+<th>Что не так в черновике</th>
+<th>Что сделали</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1НФ</td>
+<td>все значения атомарны, нет списков и повторяющихся групп</td>
+<td>в ячейках <code>works</code> и <code>parts</code> лежат списки</td>
+<td>вынесли работы в <code>works</code>, запчасти в <code>parts</code>, расход в <code>usage</code></td>
+</tr>
+<tr>
+<td>2НФ</td>
+<td>неключевое поле зависит от всего ключа, а не от его части</td>
+<td>цена запчасти зависела только от запчасти, количество только от пары «работа + запчасть»</td>
+<td>разделили работу, запчасть и расход на три таблицы</td>
+</tr>
+<tr>
+<td>3НФ</td>
+<td>неключевое поле не зависит от другого неключевого</td>
+<td>имя и email клиента зависели от клиента, а не от заявки; модель зависела от оборудования</td>
+<td>вынесли клиента и оборудование в отдельные таблицы</td>
+</tr>
+</tbody>
+</table>
+<p>Вторая форма требует пояснения, потому что все ключи в итоговой схеме суррогатные и частичных зависимостей в них как будто нет. Смотрите на естественный ключ. У расхода он составной: <code>(work_id, part_id)</code>. Количество зависит от обоих полей: два ролика в работе 12 и пять роликов в работе 13 это разные факты. А вот цена запчасти от работы не зависит вообще, ей место в <code>parts</code>. Если бы цена лежала в <code>usage</code>, мы получили бы частичную зависимость от части ключа, то есть нарушение 2НФ.</p>
+<p>Третья форма запрещает цепочку «неключевое поле определяет другое неключевое». В заявке было бы соблазнительно хранить имя клиента: заявка определяет оборудование, оборудование определяет клиента, клиент определяет имя. Цепочка из двух шагов и есть транзитивная зависимость. Мы её разорвали: в <code>requests</code> остался только <code>equipment_id</code>.</p>
+<p>Исключение из правил тоже нужно уметь объяснить. В <code>works</code> хранится <code>cost</code>, хотя стоимость работы как будто вычисляется из часов и ставки. Это не транзитивная зависимость: согласованная с клиентом стоимость это самостоятельный факт заказа, а не пересчёт чужого поля. Ставка в модели не хранится, значит и вычислять не из чего.</p>
+<p>Проверьте себя по чек-листу из CSV: шесть сущностей с ключами, отсутствие списков, отсутствие зависимости от части ключа, отсутствие транзитивных зависимостей. В колонке «Факт» пишите не «да», а конкретику: например, «<code>usage.qty</code> зависит от <code>work_id</code> и <code>part_id</code>».</p>
+<p>Теперь нарисуйте диаграмму. Прямоугольник на сущность, внутри имя таблицы и список полей, ключ подчёркнут, рядом с линией подписаны <code>1</code> и <code>N</code>. Линии идут от клиента к оборудованию, от оборудования к заявке, от заявки к работе, от работы к расходу, от запчасти к расходу. Подпишите связь <code>usage</code> словами «расход запчасти на работу»: через год вы забудете, зачем нужна шестая таблица, а подпись объяснит.</p>
+<div class="callout shot"><span class="label">Скриншот 1</span><p>ER-диаграмма: шесть сущностей, ключи, кардинальность на каждой линии.</p></div>
+
+<h2 id="задание-2-схема-sqlite"><span class="num">04</span>Задание 2. Схема SQLite</h2>
+<p>Откройте шаблон <code>UIFIS_practice-15_schema-template.sql</code>, сохраните его копию как <code>schema.sql</code> и прочитайте целиком. Это уже рабочая схема, ваша задача понять каждую строку и уметь её защитить.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">clients</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">client_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">UNIQUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">phone</span><span class="w"> </span><span class="nb">TEXT</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">equipment</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">equipment_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">client_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">clients</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">RESTRICT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">model</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">serial_no</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">UNIQUE</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">request_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">equipment_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">equipment</span><span class="p">(</span><span class="n">equipment_id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">RESTRICT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">status</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;in_progress&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;done&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;cancelled&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="n">priority</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;low&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;normal&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;high&#39;</span><span class="p">))</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">works</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">work_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">request_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">requests</span><span class="p">(</span><span class="n">request_id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">hours</span><span class="w"> </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">hours</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">  </span><span class="n">cost</span><span class="w"> </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">cost</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">parts</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">part_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">price</span><span class="w"> </span><span class="nb">REAL</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">price</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">  </span><span class="n">stock</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">stock</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">usage</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">usage_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">work_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">works</span><span class="p">(</span><span class="n">work_id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">part_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">parts</span><span class="p">(</span><span class="n">part_id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">RESTRICT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">qty</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">qty</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">  </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">work_id</span><span class="p">,</span><span class="w"> </span><span class="n">part_id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_requests_equipment</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">requests</span><span class="p">(</span><span class="n">equipment_id</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_works_request</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">works</span><span class="p">(</span><span class="n">request_id</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_usage_work</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">usage</span><span class="p">(</span><span class="n">work_id</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Разберём решения, которые здесь спрятаны.</p>
+<p><strong><code>PRAGMA foreign_keys = ON</code></strong> включает проверку внешних ключей. В SQLite она выключена по умолчанию и, что важнее, действует только в пределах текущего соединения. Поэтому команда стоит первой строкой схемы и повторяется в каждом скрипте, который открывает базу.</p>
+<p><strong><code>INTEGER PRIMARY KEY</code></strong> это не просто ключ, а псевдоним внутреннего номера строки <code>rowid</code>. Отдельный индекс для такого ключа база не создаёт, вставка идёт быстро. <code>AUTOINCREMENT</code> здесь не нужен: он запрещает повторное использование освободившихся номеров, а для учебной базы это лишняя работа.</p>
+<p><strong><code>UNIQUE</code> на <code>email</code> и <code>serial_no</code></strong> закрывает два источника дублей. Два клиента с одним адресом почты это один клиент, а две единицы оборудования с одним серийным номером это ошибка учёта. Ограничение превращает такую ошибку в отказ базы, а не в тихо испорченный отчёт.</p>
+<p><strong><code>ON DELETE RESTRICT</code> и <code>ON DELETE CASCADE</code></strong> отвечают на вопрос «что делать с зависимыми строками при удалении». Клиента с оборудованием удалить нельзя: <code>RESTRICT</code> вернёт ошибку, и это правильно, иначе оборудование останется без владельца. Заявка уходит вместе со своими работами и расходом: <code>CASCADE</code> чистит их сам, потому что работа без заявки смысла не имеет. Запчасть, израсходованную в работах, тоже нельзя удалить, пока есть ссылки.</p>
+<p><strong><code>CHECK</code></strong> держит справочник значений внутри схемы. Статус принимает четыре значения, приоритет три. Без этого ограничения в базу однажды попадёт <code>status = 'готово'</code>, и половина запросов перестанет его видеть.</p>
+<p><strong><code>UNIQUE (work_id, part_id)</code></strong> не даёт записать одну и ту же запчасть в работу двумя строками. Количество уже есть в <code>qty</code>, и две строки с одним и тем же смыслом пришлось бы складывать вручную.</p>
+<p><strong>Индексы по внешним ключам</strong> нужны потому, что SQLite не индексирует их автоматически. Без <code>idx_requests_equipment</code> поиск заявок по оборудованию читает всю таблицу. Индекс по <code>UNIQUE</code>-полю создаётся сам, поэтому <code>email</code> и <code>serial_no</code> в списке нет ни разу.</p>
+<p>Примените схему к базе:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3, pathlib; conn = sqlite3.connect(&#39;service.db&#39;); conn.executescript(pathlib.Path(&#39;schema.sql&#39;).read_text(encoding=&#39;utf-8&#39;)); conn.commit(); print(&#39;ok&#39;)&quot;</span>
+</code></pre></div>
+
+<p>Ответ <code>ok</code> означает, что файл <code>service.db</code> создан и все шесть таблиц на месте. Если база уже существует, команда вернёт <code>table clients already exists</code>. Это не поломка схемы: удалите <code>service.db</code> и примените файл заново. Посмотрите, что запомнила база:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; rows=sqlite3.connect(&#39;service.db&#39;).execute(&#39;SELECT sql FROM sqlite_master WHERE sql IS NOT NULL ORDER BY name&#39;); [print(r[0], chr(10)) for r in rows if r[0]]&quot;</span>
+</code></pre></div>
+
+<p>На экране будет ровно тот текст, который вы применили, плюс строки индексов. Если установлен клиент <code>sqlite3</code>, те же сведения даёт команда <code>.schema</code> внутри него.</p>
+<div class="callout shot"><span class="label">Скриншот 2</span><p>Список таблиц и вывод схемы из <code>sqlite_master</code>.</p></div>
+
+<h2 id="задание-3-импорт-json"><span class="num">05</span>Задание 3. Импорт JSON</h2>
+<h3>Что в файле</h3>
+<p>В <code>UIFIS_practice-15_import.json</code> лежит массив из шести объектов. Один объект выглядит так:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ООО Ромашка&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;romashka@example.ru&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;equipment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Принтер HP-01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;serial_no&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HP-1001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-09-01T09:15:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Файл плоский: в каждой строке и клиент, и оборудование, и заявка. Клиент повторяется, оборудование повторяется, и это нормально: JSON это выгрузка из старой программы, а не модель. Работа импортёра в том, чтобы разложить плоские строки по шести таблицам и не создать дублей.</p>
+<p>Заявок шесть, а клиентов четыре: «ООО Ромашка» встречается дважды, «ИП Соколов» тоже. Оборудования тоже четыре. Значит, после импорта ожидаем <code>clients = 4</code>, <code>equipment = 4</code>, <code>requests = 6</code>. Запомните эти числа, они понадобятся в проверках.</p>
+<h3>Скрипт</h3>
+<p>Сохраните код как <code>import.py</code> в папке практики.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">HERE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DB_PATH</span> <span class="o">=</span> <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;service.db&quot;</span>
+<span class="n">SCHEMA_PATH</span> <span class="o">=</span> <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;schema.sql&quot;</span>
+<span class="n">SOURCE_PATH</span> <span class="o">=</span> <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;UIFIS_practice-15_import.json&quot;</span>
+
+<span class="n">EMAIL</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$&quot;</span><span class="p">)</span>
+<span class="n">STATUSES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;new&quot;</span><span class="p">,</span> <span class="s2">&quot;in_progress&quot;</span><span class="p">,</span> <span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="s2">&quot;cancelled&quot;</span><span class="p">}</span>
+<span class="n">PRIORITIES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">}</span>
+<span class="n">FIELDS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;request_id&quot;</span><span class="p">,</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;equipment&quot;</span><span class="p">,</span> <span class="s2">&quot;serial_no&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;priority&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_row</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">FIELDS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;пустое поле </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">problems</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;request_id&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;request_id&quot;</span><span class="p">],</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;request_id должен быть целым числом&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">EMAIL</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">])):</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;email </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> не похож на адрес&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;created_at&quot;</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;created_at </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> не в формате ISO&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">STATUSES</span><span class="p">:</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;status </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> не из списка&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;priority&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PRIORITIES</span><span class="p">:</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;priority </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;priority&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> не из списка&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">problems</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_schema</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">&quot;SELECT name FROM sqlite_master WHERE type = &#39;table&#39; AND name = &#39;clients&#39;&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">SCHEMA_PATH</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Схема применена из schema.sql&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_client</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">&quot;SELECT client_id FROM clients WHERE email = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">email</span><span class="p">,)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">:</span>
+        <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;UPDATE clients SET name = ? WHERE client_id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">&quot;INSERT INTO clients (name, email) VALUES (?, ?)&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">cur</span><span class="o">.</span><span class="n">lastrowid</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_equipment</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">serial_no</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">&quot;SELECT equipment_id, client_id FROM equipment WHERE serial_no = ?&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">serial_no</span><span class="p">,),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">client_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;оборудование </span><span class="si">{</span><span class="n">serial_no</span><span class="si">}</span><span class="s2"> уже закреплено за другим клиентом&quot;</span>
+            <span class="p">)</span>
+        <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">&quot;UPDATE equipment SET model = ? WHERE equipment_id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">&quot;INSERT INTO equipment (client_id, model, serial_no) VALUES (?, ?, ?)&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">serial_no</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">cur</span><span class="o">.</span><span class="n">lastrowid</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">import_rows</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys = ON&quot;</span><span class="p">)</span>
+    <span class="n">inserted</span> <span class="o">=</span> <span class="n">updated</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">client_id</span> <span class="o">=</span> <span class="n">ensure_client</span><span class="p">(</span>
+                <span class="n">cur</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;client&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">equipment_id</span> <span class="o">=</span> <span class="n">ensure_equipment</span><span class="p">(</span>
+                <span class="n">cur</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;equipment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;serial_no&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">exists</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">&quot;SELECT 1 FROM requests WHERE request_id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;request_id&quot;</span><span class="p">],)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">&quot;UPDATE requests SET equipment_id = ?, created_at = ?, &quot;</span>
+                    <span class="s2">&quot;status = ?, priority = ? WHERE request_id = ?&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">equipment_id</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;created_at&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
+                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;priority&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;request_id&quot;</span><span class="p">]),</span>
+                <span class="p">)</span>
+                <span class="n">updated</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">&quot;INSERT INTO requests (request_id, equipment_id, created_at, &quot;</span>
+                    <span class="s2">&quot;status, priority) VALUES (?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;request_id&quot;</span><span class="p">],</span> <span class="n">equipment_id</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;created_at&quot;</span><span class="p">],</span>
+                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;priority&quot;</span><span class="p">]),</span>
+                <span class="p">)</span>
+                <span class="n">inserted</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Импорт отменён целиком: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">inserted</span><span class="p">,</span> <span class="n">updated</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">SOURCE_PATH</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">good</span><span class="p">,</span> <span class="n">bad</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">problems</span> <span class="o">=</span> <span class="n">check_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
+            <span class="n">bad</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">number</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request_id&quot;</span><span class="p">),</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">good</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">DB_PATH</span><span class="p">)</span>
+    <span class="n">ensure_schema</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="n">inserted</span><span class="p">,</span> <span class="n">updated</span> <span class="o">=</span> <span class="n">import_rows</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">good</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM requests&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Строк в файле: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Импортировано: </span><span class="si">{</span><span class="n">inserted</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Обновлено: </span><span class="si">{</span><span class="n">updated</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Отклонено: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Заявок в базе: </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">request_id</span><span class="p">,</span> <span class="n">reason</span> <span class="ow">in</span> <span class="n">bad</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  строка </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> (request_id </span><span class="si">{</span><span class="n">request_id</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<h3>Как он устроен</h3>
+<p>Проверка полей идёт <strong>до</strong> открытия транзакции. Это осознанное разделение: плохая строка в файле не должна мешать загрузить остальные пять. Скрипт собирает две пачки, <code>good</code> и <code>bad</code>, и печатает причины отказа. Ошибка базы, наоборот, означает, что данные противоречат схеме или друг другу, и тогда отменяется всё.</p>
+<p><code>ensure_client</code> ищет клиента по email и обновляет имя, если нашёл. Email приведён к нижнему регистру, поэтому <code>Sokolov@Example.ru</code> и <code>sokolov@example.ru</code> дадут одного клиента, а не двух. Ограничение <code>UNIQUE</code> на <code>email</code> это второй барьер: если логика когда-нибудь ошибётся, база не даст создать дубль.</p>
+<p><code>ensure_equipment</code> ищет оборудование по серийному номеру. Если номер уже есть, но закреплён за другим клиентом, скрипт поднимает <code>ValueError</code> и откатывает всю транзакцию. Молча переписать владельца было бы хуже: вы бы не узнали, что в выгрузке перепутаны клиенты.</p>
+<p>Заявка проверяется по <code>request_id</code>: есть такая строка, значит <code>UPDATE</code>, нет, значит <code>INSERT</code>. Отсюда идемпотентность: импорт можно запускать сколько угодно раз, число заявок не вырастет. Счётчики <code>inserted</code> и <code>updated</code> печатаются отдельно, чтобы это было видно.</p>
+<p><code>PRAGMA foreign_keys = ON</code> стоит и в <code>import_rows</code>, хотя такая же строка есть в начале схемы. Настройка внешних ключей действует только внутри соединения: схема могла быть применена раньше, другой командой и другим соединением, а импортёр должен проверять ключи в своём. Поэтому он включает проверку сам и не зависит от того, что было до него.</p>
+<p><code>ensure_schema</code> применяет <code>schema.sql</code>, если таблицы <code>clients</code> ещё нет. Так скрипт запускается на чистой папке одной командой, а на уже созданной базе ничего не меняет и не пытается создать таблицы второй раз.</p>
+<h3>Первый запуск</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">import</span><span class="p">.</span><span class="n">py</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>Схема применена из schema.sql
+Строк в файле: 6
+Импортировано: 6
+Обновлено: 0
+Отклонено: 0
+Заявок в базе: 6
+</code></pre></div>
+
+<p>Второй запуск той же команды должен показать <code>Импортировано: 0</code>, <code>Обновлено: 6</code>, <code>Заявок в базе: 6</code>. Это и есть проверка повторяемости: файл тот же, база та же, дублей нет.</p>
+<p>Если схему вы уже применили в задании 2, первой строки <code>Схема применена из schema.sql</code> не будет: импортёр увидит готовые таблицы и не станет создавать их заново. Остальные числа совпадут.</p>
+<div class="callout pitfall"><span class="label">Почему не INSERT OR REPLACE</span><p>Соблазн заменить всю логику одной строкой <code>INSERT OR REPLACE INTO requests</code> понятен, но опасен. <code>REPLACE</code> при конфликте ключа удаляет старую строку и вставляет новую, а значит срабатывает <code>ON DELETE CASCADE</code> и вместе с заявкой исчезают её работы и расход. Импорт «обновил» бы статус ценой потери истории ремонта.</p></div>
+
+<div class="callout note"><span class="label">Кто главнее: файл или база</span><p>Сейчас JSON считается источником правды, поэтому повторный импорт перезаписывает статус заявки, даже если его поменяли в базе вручную. Это удобно для регулярной выгрузки из внешней системы и плохо, если заявки живут в базе. Второй вариант: при совпадении <code>request_id</code> строку пропускать. Выберите правило, напишите его в отчёте и не меняйте по ходу.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Вывод <code>python import.py</code> с итогами импорта и сообщением о применении схемы.</p></div>
+
+<h2 id="задание-4-проверки"><span class="num">06</span>Задание 4. Проверки</h2>
+<p>Проверка это не «выполнилось без ошибок», а сравнение ожидаемого числа с фактическим. Сохраните код ниже как <code>checks.py</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;service.db&quot;</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys = ON&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">attempt</span><span class="p">(</span><span class="n">sql</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">&quot;выполнено&quot;</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;отклонено: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT COUNT(*) FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Заявок:&quot;</span><span class="p">,</span> <span class="n">count</span><span class="p">(</span><span class="s2">&quot;requests&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Клиентов:&quot;</span><span class="p">,</span> <span class="n">count</span><span class="p">(</span><span class="s2">&quot;clients&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Оборудования:&quot;</span><span class="p">,</span> <span class="n">count</span><span class="p">(</span><span class="s2">&quot;equipment&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Строк в файле JSON: 6&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Заявки с клиентом и оборудованием:&quot;</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    SELECT r.request_id, c.name, e.model, r.status, r.priority</span>
+<span class="s2">    FROM requests r</span>
+<span class="s2">    JOIN equipment e ON e.equipment_id = r.equipment_id</span>
+<span class="s2">    JOIN clients c ON c.client_id = e.client_id</span>
+<span class="s2">    ORDER BY r.request_id</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Проверка ограничений:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  status = closed:&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">(</span>
+    <span class="s2">&quot;UPDATE requests SET status = &#39;closed&#39; WHERE request_id = 1&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  оборудование 999:&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">(</span>
+    <span class="s2">&quot;INSERT INTO requests (request_id, equipment_id, created_at, status, priority) &quot;</span>
+    <span class="s2">&quot;VALUES (99, 999, &#39;2026-09-05T10:00:00&#39;, &#39;new&#39;, &#39;low&#39;)&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  удалить клиента 1:&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">(</span>
+    <span class="s2">&quot;DELETE FROM clients WHERE client_id = 1&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  часы 0:&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">(</span>
+    <span class="s2">&quot;INSERT INTO works (request_id, description, hours, cost) &quot;</span>
+    <span class="s2">&quot;VALUES (1, &#39;Диагностика&#39;, 0, 0)&quot;</span><span class="p">))</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Запустите его на загруженной базе:</p>
+<div class="codehilite"><pre><span></span><code>Заявок: 6
+Клиентов: 4
+Оборудования: 4
+Строк в файле JSON: 6
+
+Заявки с клиентом и оборудованием:
+  1 | ООО Ромашка | Принтер HP-01 | new | high
+  2 | ИП Соколов | Сканер Epson-02 | in_progress | normal
+  3 | ООО Вектор | МФУ Canon-03 | done | low
+  4 | Колледж | Проектор BenQ-04 | new | normal
+  5 | ООО Ромашка | Принтер HP-01 | in_progress | high
+  6 | ИП Соколов | Сканер Epson-02 | cancelled | low
+
+Проверка ограничений:
+  status = closed: отклонено: CHECK constraint failed: status IN (&#39;new&#39;, &#39;in_progress&#39;, &#39;done&#39;, &#39;cancelled&#39;)
+  оборудование 999: отклонено: FOREIGN KEY constraint failed
+  удалить клиента 1: отклонено: FOREIGN KEY constraint failed
+  часы 0: отклонено: CHECK constraint failed: hours &gt; 0
+</code></pre></div>
+
+<p>Совпадение чисел ещё не доказывает модель. Те же шесть строк получились бы, если два клиента ошибочно склеены в одного или у части заявок потерялось оборудование: <code>COUNT</code> этого не видит. Поэтому JOIN идёт отдельно: он показывает, что у каждой заявки нашлись и клиент, и оборудование. Если хотя бы одна строка в этом выводе потерялась, значит где-то остался <code>NULL</code> или битая ссылка.</p>
+<p>Полезно посчитать заявки по клиентам, чтобы убедиться, что группировка работает по правильной связи:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">request_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">requests</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">clients</span><span class="w"> </span><span class="k">c</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">equipment</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">client_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">client_id</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">equipment_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">equipment_id</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">client_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Получится: «ИП Соколов» 2, «ООО Ромашка» 2, «Колледж» 1, «ООО Вектор» 1. Сумма 6 совпадает с числом заявок, значит ни одна не потерялась и ни одна не посчитана дважды.</p>
+<p>Отдельно проверьте импорт на испорченных данных. Скопируйте файл:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span>
+</code></pre></div>
+
+<p>Откройте <code>import_bad.json</code> в VS Code, замените в нём <code>sokolov@example.ru</code> на <code>sokolov@example</code> и сохраните. Теперь подмените рабочий файл испорченной копией, запустите скрипт и верните всё как было:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Move-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_good</span><span class="p">.</span><span class="n">json</span>
+<span class="nb">Move-Item</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">import</span><span class="p">.</span><span class="n">py</span>
+<span class="nb">Move-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span>
+<span class="nb">Move-Item</span> <span class="n">import_good</span><span class="p">.</span><span class="n">json</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span>
+</code></pre></div>
+
+<p>Ожидаемый вывод: <code>Обновлено: 5</code>, <code>Отклонено: 1</code>, <code>Заявок в базе: 6</code> и строка с причиной <code>email sokolov@example не похож на адрес</code>. Заявка 2 осталась в базе с прежними данными, остальные пять обновились. Ни одна строка не пропала.</p>
+<p>Таблица для отчёта: ожидание пишите до запуска, факт после.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Ожидание</th>
+<th>Факт</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Строк в JSON</td>
+<td>6 заявок</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>COUNT(requests)</code></td>
+<td>6</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>COUNT(clients)</code></td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>COUNT(equipment)</code></td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Повторный импорт</td>
+<td>0 новых, 6 обновлено</td>
+<td>0 и 6</td>
+</tr>
+<tr>
+<td>JOIN заявок с клиентом и оборудованием</td>
+<td>6 строк, потерь нет</td>
+<td>6 строк</td>
+</tr>
+<tr>
+<td>Неверный email</td>
+<td>1 строка отклонена, 5 обновлено</td>
+<td>1 и 5</td>
+</tr>
+<tr>
+<td>Заявка на несуществующее оборудование</td>
+<td><code>FOREIGN KEY constraint failed</code></td>
+<td>отклонено</td>
+</tr>
+<tr>
+<td><code>status = 'closed'</code></td>
+<td><code>CHECK constraint failed</code></td>
+<td>отклонено</td>
+</tr>
+<tr>
+<td>Удаление клиента с оборудованием</td>
+<td><code>FOREIGN KEY constraint failed</code></td>
+<td>отклонено</td>
+</tr>
+<tr>
+<td><code>hours = 0</code></td>
+<td><code>CHECK constraint failed</code></td>
+<td>отклонено</td>
+</tr>
+</tbody>
+</table>
+<div class="callout shot"><span class="label">Скриншот 4</span><p>Ошибка ограничения: например, <code>CHECK constraint failed</code> при попытке записать статус <code>closed</code>.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 5</span><p>Результат JOIN-запроса: заявки с клиентом, оборудованием и статусом.</p></div>
+
+<h2 id="задание-5-отчёт-и-защита"><span class="num">07</span>Задание 5. Отчёт и защита</h2>
+<p>В отчёт приложите:</p>
+<ol>
+<li>ER-диаграмму в PNG и исходный файл <code>.drawio</code>.</li>
+<li>Таблицу шести сущностей с ключами, полями и связями.</li>
+<li>Таблицу нормализации с тремя формами и тем, что именно исправлено.</li>
+<li>Схему <code>schema.sql</code> и объяснение каждого ограничения: почему <code>RESTRICT</code> здесь, а <code>CASCADE</code> там.</li>
+<li>Таблицу проверок с ожиданием и фактом.</li>
+<li>Пять скриншотов из заданий.</li>
+<li>Заполненный чек-лист из CSV: десять строк, в каждой факт и вывод.</li>
+<li>Вывод по трём вопросам из шаблона: почему заявка не хранит имя клиента, что будет при повторном импорте без ключа, как вы проверяли соответствие базы модели.</li>
+</ol>
+<p>Файлы называйте по шаблону <code>Фамилия_П15_schema.sql</code>, <code>Фамилия_П15_import.py</code>, <code>Фамилия_П15_отчёт.docx</code>. Папку <code>C:\UIFIS\practice-15</code> сохраните до защиты: на ней проще показать повторный запуск, чем на скриншоте.</p>
+<p>Контрольные вопросы:</p>
+<ol>
+<li>Чем логическая модель отличается от физической? Что в вашей работе относится к каждой из них?</li>
+<li>Почему заявка ссылается на оборудование, а не на клиента? В каком случае в <code>requests</code> всё-таки появится <code>client_id</code>?</li>
+<li>Что произойдёт при повторном импорте, если не проверять <code>request_id</code>? Покажите на числах.</li>
+<li>Зачем <code>PRAGMA foreign_keys = ON</code> повторяется в каждом скрипте, если она уже есть в схеме?</li>
+<li>Почему импорт выполняется одной транзакцией? Что случится с базой, если отключить её и упасть на пятой строке?</li>
+<li>Чем <code>ON DELETE RESTRICT</code> отличается от <code>ON DELETE CASCADE</code> и почему для работ выбран второй вариант?</li>
+<li>Почему <code>email</code> объявлен <code>UNIQUE</code>, а <code>phone</code> нет?</li>
+<li>Где в вашей схеме вторая нормальная форма, если все ключи суррогатные?</li>
+<li>Что будет с заявками и работами, если клиент продал оборудование другому клиенту? Какие данные исказятся?</li>
+<li>Когда денормализация оправдана и какую цену вы за неё заплатите?</li>
+</ol>
+<p>Критерии оценки:</p>
+<ul>
+<li><strong>5</strong>: шесть сущностей и связи описаны верно, все три формы доказаны на своём черновике, схема применяется без ошибок, импорт идемпотентен, все проверки выполнены с совпавшим ожиданием, отчёт полный, на вопросы отвечаете по своей базе.</li>
+<li><strong>4</strong>: модель верна, но одно ограничение не объяснено или одна проверка пропущена; повторный импорт даёт верные числа, однако причина идемпотентности объясняется путано.</li>
+<li><strong>3</strong>: таблицы созданы, импорт работает однократно, связи описаны частично, нормализация показана формально, проверки ограничений выполнены не все.</li>
+</ul></article><nav class="pager"><a class="" href="35-prakt-14.html"><span>← Предыдущее занятие</span>Практика 14. Комплексное задание: паспорт информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="37-prakt-16.html"><span>Следующее занятие →</span>Практика 16. SQL-запрос с JOIN и агрегацией</a></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+</script>
+</body>
+</html>

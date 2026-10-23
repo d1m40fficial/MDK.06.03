@@ -1,0 +1,14 @@
+﻿Проверка;Команда или запрос;Ожидаемый результат;Факт;Вывод
+Сервис;python mock_api.py;порт 8090, health 200;;
+Список;GET /api/students;200, items и count;;
+Фильтр;GET /api/students?group=ИС-41;только ИС-41;;
+Пагинация;GET /api/students?limit=3&offset=3;3 элемента;;
+Карточка;GET /api/students/1;200, поля студента;;
+Нет студента;GET /api/students/999;404;;
+Создание;POST /api/students;201;;
+Неверный email;POST /api/students;400;;
+Ошибка сервера;GET /api/error;500;;
+Postman tests;Tests;все проверки зелёные;;
+Python клиент;python api_client.py;students.json создан;;
+Сверка;сравнить id и count;числа совпали;;
+Итог;12 проверок;все выполнены;;
