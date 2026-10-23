@@ -1,11 +1,18 @@
-﻿Проверка,Команда,Ожидаемый результат,Фактический результат,Отметка
-Каталог,ls -ld /srv/uifis-web,владелец uifis и права 0750,,
-Служба,systemctl status uifis-web,active (running),,
-Автозапуск,systemctl is-enabled uifis-web,enabled,,
-Порт,ss -tulpn | grep 8080,слушает 0.0.0.0:8080,,
-Локальный JSON,curl -i http://127.0.0.1:8080/health.json,200 OK и status ok,,
-Firewall,sudo ufw status verbose,разрешён только 8080/tcp,,
-Проброс порта,VirtualBox → Проброс портов,TCP 8080 на 8080,,
-С хоста,Invoke-WebRequest http://127.0.0.1:8080/health.json,JSON получен,,
-Отказ,systemctl stop uifis-web,служба не отвечает,,
-Восстановление,systemctl start uifis-web,снова 200 OK,,
+﻿Проверка;Команда;Ожидаемый результат;Фактический результат;Вывод
+Каталог;ls -ld /srv/uifis-web;владелец uifis, права 0750;;
+Файл;ls -l /srv/uifis-web/app.py;владелец uifis, права 0640;;
+Синтаксис;sudo -u uifis python3 -m py_compile /srv/uifis-web/app.py;без ошибок;;
+Служба;systemctl status uifis-web;active (running);;
+Автозапуск;systemctl is-enabled uifis-web;enabled;;
+Порт;ss -tulpn | grep 8080;0.0.0.0:8080;;
+Главная;curl -i http://127.0.0.1:8080/;200 OK, HTML;;
+Здоровье;curl -i http://127.0.0.1:8080/health.json;200 OK, status ok;;
+Каталог API;curl -i http://127.0.0.1:8080/api/services;count равно 4;;
+Ошибка;curl -i http://127.0.0.1:8080/missing;404 Not Found;;
+Журнал;journalctl -u uifis-web -n 30 --no-pager;строки запуска и запросов;;
+Firewall;sudo ufw status verbose;8080/tcp из 10.0.2.0/24;;
+Проброс;VirtualBox → Проброс портов;TCP 8080 на 8080;;
+С хоста;curl.exe -i http://127.0.0.1:8080/health.json;JSON получен;;
+Отказ;systemctl stop uifis-web;служба не отвечает;;
+Восстановление;systemctl start uifis-web;снова 200 OK;;
+Итог;все проверки;16 из 16;;

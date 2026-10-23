@@ -2,7 +2,7 @@
 
 Run:  python make_template.py
 Writes DOCX report templates, CSV tables and the practice 7 JSON fixture next
-to this file for practices 1-8. Filenames are ASCII so the download links stay
+to this file for practices 1-9. Filenames are ASCII so the download links stay
 safe in any browser.
 """
 
@@ -27,6 +27,8 @@ OUT_DOCX5 = HERE / "UIFIS_practice-5_report-template.docx"
 OUT_CSV5 = HERE / "UIFIS_practice-5_configuration-matrix.csv"
 OUT_DOCX6 = HERE / "UIFIS_practice-6_report-template.docx"
 OUT_CSV6 = HERE / "UIFIS_practice-6_install-checklist.csv"
+OUT_DOCX9 = HERE / "UIFIS_practice-9_report-template.docx"
+OUT_CSV9 = HERE / "UIFIS_practice-9_service-checklist.csv"
 QUESTIONS = [
     "Почему признаки классификации должны быть независимыми?",
     "Может ли одна система быть пакетной и оперативной одновременно?",
@@ -1198,6 +1200,198 @@ def make_csv8():
     print(f"wrote {OUT_CSV8}")
 
 
+def make_docx9():
+    doc = Document()
+    st = doc.styles["Normal"]
+    st.font.name = "Times New Roman"
+    st.font.size = Pt(12)
+
+    line(doc, "Устройство и функционирование информационной системы (МДК.06.03)",
+         bold=True, size=14, align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Отчёт по практической работе 9", bold=True, size=13,
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    line(doc, "Тема: Развёртывание базовой сетевой службы",
+         align=WD_ALIGN_PARAGRAPH.CENTER)
+    doc.add_paragraph()
+    line(doc, "ФИО студента: ______________________________________")
+    line(doc, "Группа: ______________________  Дата: _______________")
+    doc.add_paragraph()
+
+    line(doc, "Цель работы", bold=True)
+    line(doc, "Развернуть учебную HTTP-службу uifis-web в Ubuntu Server, оформить "
+              "запуск через systemd, настроить отдельного пользователя, firewall и "
+              "проброс порта, а затем проверить отказ и восстановление службы.")
+    doc.add_paragraph()
+
+    line(doc, "Схема стенда", bold=True)
+    cols = ["Элемент", "Значение"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name, value in (
+        ("Рабочий компьютер", "Windows, PowerShell, curl.exe"),
+        ("Виртуальная машина", "uifis-srv01, Ubuntu Server"),
+        ("Сеть VirtualBox", "NAT, адрес гостя 10.0.2.15"),
+        ("SSH", "хост 127.0.0.1:2222 → гость 22/tcp"),
+        ("Служба", "uifis-web, HTTP, 0.0.0.0:8080"),
+        ("Проброс порта", "хост 127.0.0.1:8080 → гость 8080/tcp"),
+        ("Пользователь службы", "uifis, без интерактивного входа"),
+        ("Каталог службы", "/srv/uifis-web"),
+    ):
+        cells = t.add_row().cells
+        cells[0].text = name
+        cells[1].text = value
+    set_table_font(t, 9)
+    doc.add_paragraph()
+    slot(doc, "[ Вставьте схему стенда: хост, VirtualBox NAT, проброс порта, служба ]")
+    doc.add_paragraph()
+
+    line(doc, "Контракт службы", bold=True)
+    cols = ["Метод", "Путь", "Код", "Тип ответа", "Назначение", "Факт"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for row in (
+        ("GET", "/", "200", "text/html", "Главная страница службы", ""),
+        ("GET", "/health.json", "200", "application/json", "Состояние и время работы", ""),
+        ("GET", "/api/services", "200", "application/json", "Каталог сетевых служб", ""),
+        ("GET", "/missing", "404", "application/json", "Ошибка для неизвестного пути", ""),
+        ("HEAD", "/health.json", "200", "без тела", "Проверка заголовков", ""),
+    ):
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Параметры развёртывания", bold=True)
+    cols = ["Параметр", "Значение", "Факт"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Имя службы", "Пользователь", "Рабочая директория", "Файл приложения",
+                 "Адрес прослушивания", "Порт", "Файл unit", "Правило firewall",
+                 "Проброс порта"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    set_table_font(t, 9)
+    doc.add_paragraph()
+
+    line(doc, "Проверки", bold=True)
+    cols = ["Проверка", "Команда", "Ожидаемый результат", "Факт", "Вывод"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    checks = (
+        ("Каталог", "ls -ld /srv/uifis-web", "владелец uifis, права 0750"),
+        ("Файл", "ls -l /srv/uifis-web/app.py", "владелец uifis, права 0640"),
+        ("Синтаксис", "sudo -u uifis python3 -m py_compile /srv/uifis-web/app.py", "без ошибок"),
+        ("Служба", "systemctl status uifis-web", "active (running)"),
+        ("Автозапуск", "systemctl is-enabled uifis-web", "enabled"),
+        ("Порт", "ss -tulpn | grep 8080", "0.0.0.0:8080"),
+        ("Главная", "curl -i http://127.0.0.1:8080/", "200 OK, HTML"),
+        ("Здоровье", "curl -i http://127.0.0.1:8080/health.json", "200 OK, status ok"),
+        ("Каталог API", "curl -i http://127.0.0.1:8080/api/services", "count равно 4"),
+        ("Ошибка", "curl -i http://127.0.0.1:8080/missing", "404 Not Found"),
+        ("Журнал", "journalctl -u uifis-web -n 30 --no-pager", "строки запуска и запросов"),
+        ("Firewall", "sudo ufw status verbose", "8080/tcp из 10.0.2.0/24"),
+        ("Проброс", "VirtualBox → Проброс портов", "TCP 8080 на 8080"),
+        ("С хоста", "curl.exe -i http://127.0.0.1:8080/health.json", "JSON получен"),
+        ("Отказ", "systemctl stop uifis-web", "служба не отвечает"),
+        ("Восстановление", "systemctl start uifis-web", "снова 200 OK"),
+    )
+    for row in checks:
+        cells = t.add_row().cells
+        for i, value in enumerate(row):
+            cells[i].text = value
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Отказы и восстановление", bold=True)
+    cols = ["Отказ", "Симптом", "Проверка", "Причина", "Восстановление"]
+    t = doc.add_table(rows=1, cols=len(cols))
+    t.style = "Table Grid"
+    for i, c in enumerate(cols):
+        t.rows[0].cells[i].text = c
+    for name in ("Служба остановлена", "Служба слушает 127.0.0.1",
+                 "Порт закрыт firewall", "Проброс ведёт на 8081",
+                 "Файл app.py недоступен"):
+        cells = t.add_row().cells
+        cells[0].text = name
+    set_table_font(t, 8)
+    doc.add_paragraph()
+
+    line(doc, "Скриншоты", bold=True)
+    for caption in (
+        "Вывод systemctl status uifis-web",
+        "Вывод ss -tulpn с адресом 0.0.0.0:8080",
+        "Ответы /, /health.json и /api/services из гостевой системы",
+        "Ответ curl.exe с рабочего компьютера",
+        "Правило проброса портов в VirtualBox",
+        "Один отказ и его восстановление",
+    ):
+        slot(doc, f"[ Место для скриншота: {caption} ]")
+        doc.add_paragraph()
+
+    line(doc, "Вывод", bold=True)
+    line(doc, "Какая зависимость оказалась критичной для доступа к службе? Почему "
+              "локальная проверка не заменяет проверку с хоста? Чем systemd удобнее "
+              "ручного запуска?")
+    for _ in range(6):
+        line(doc, "________________________________________________________________________")
+    doc.add_paragraph()
+
+    line(doc, "Ответы на контрольные вопросы", bold=True)
+    for i, q in enumerate((
+        "Почему ручной запуск python3 app.py не считается полноценным развёртыванием?",
+        "Зачем службе отдельный пользователь uifis и права 0640 на файл?",
+        "Что проверять, если служба активна, но с хоста не открывается?",
+        "Почему недостаточно открыть порт в приложении, не проверив firewall?",
+        "Чем 0.0.0.0:8080 отличается от 127.0.0.1:8080?",
+        "Почему systemctl status не заменяет проверку /health.json?",
+        "Чем проброс порта в VirtualBox удобнее изменения настроек хоста?",
+    ), 1):
+        line(doc, f"{i}. {q}")
+        for _ in range(3):
+            line(doc, "________________________________________________________________________")
+        doc.add_paragraph()
+
+    doc.save(OUT_DOCX9)
+    print(f"wrote {OUT_DOCX9}")
+
+
+def make_csv9():
+    checks = (
+        ("Каталог", "ls -ld /srv/uifis-web", "владелец uifis, права 0750"),
+        ("Файл", "ls -l /srv/uifis-web/app.py", "владелец uifis, права 0640"),
+        ("Синтаксис", "sudo -u uifis python3 -m py_compile /srv/uifis-web/app.py", "без ошибок"),
+        ("Служба", "systemctl status uifis-web", "active (running)"),
+        ("Автозапуск", "systemctl is-enabled uifis-web", "enabled"),
+        ("Порт", "ss -tulpn | grep 8080", "0.0.0.0:8080"),
+        ("Главная", "curl -i http://127.0.0.1:8080/", "200 OK, HTML"),
+        ("Здоровье", "curl -i http://127.0.0.1:8080/health.json", "200 OK, status ok"),
+        ("Каталог API", "curl -i http://127.0.0.1:8080/api/services", "count равно 4"),
+        ("Ошибка", "curl -i http://127.0.0.1:8080/missing", "404 Not Found"),
+        ("Журнал", "journalctl -u uifis-web -n 30 --no-pager", "строки запуска и запросов"),
+        ("Firewall", "sudo ufw status verbose", "8080/tcp из 10.0.2.0/24"),
+        ("Проброс", "VirtualBox → Проброс портов", "TCP 8080 на 8080"),
+        ("С хоста", "curl.exe -i http://127.0.0.1:8080/health.json", "JSON получен"),
+        ("Отказ", "systemctl stop uifis-web", "служба не отвечает"),
+        ("Восстановление", "systemctl start uifis-web", "снова 200 OK"),
+    )
+    with OUT_CSV9.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["Проверка", "Команда", "Ожидаемый результат", "Фактический результат", "Вывод"])
+        for name, command, expected in checks:
+            w.writerow([name, command, expected, "", ""])
+        w.writerow(["Итог", "все проверки", "16 из 16", "", ""])
+    print(f"wrote {OUT_CSV9}")
+
+
 if __name__ == "__main__":
     make_docx()
     make_csv()
@@ -1215,3 +1409,5 @@ if __name__ == "__main__":
     make_docx7()
     make_docx8()
     make_csv8()
+    make_docx9()
+    make_csv9()
