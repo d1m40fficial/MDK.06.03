@@ -1,19 +1,21 @@
 export const ID = "fig-12-integration";
-export const TITLE = "Адаптер и ловушка дубля";
-export const HINT = "Проведите запись через адаптер: словарь, преобразование, повтор, сверка.";
-export const CAPTION = "Адаптер переписывает поля по словарю соответствий; повторная запись не попадает в приёмник второй раз, а счётчики сверяют, отправила и приняла ли система одинаковое число записей.";
+export const TITLE = "Переводник и ловушка дубля";
+export const HINT = "Проведите запись через переводник: три поля, повтор, сверка.";
+export const CAPTION =
+  "Три штампа переводят client_id, fio и sum в customer_code, name и total. Повторная карта уходит в брак, а счётчики показывают отправлено 101, принято 100 и отклонено 1.";
 export const KEYS = [
-  { mark: "lit", label: "Запись и пружинные стержни переводника" },
-  { mark: "raised", label: "Карта в лотке приёмника: поля уже на местах ERP" },
-  { mark: "dim", label: "Ловушка дубля: копия уходит в клапан и счётчик" },
+  { mark: "lit", label: "Карта записи: три поля едут по рельсу" },
+  { mark: "raised", label: "Три штампа переводника: client_id, fio и sum" },
+  { mark: "dim", label: "Ловушка повтора: копия уходит в брак, счётчики фиксируют три числа" },
 ];
 
 export const STEPS = [
   { key: "dictionary", label: "словарь", short: "словарь", readout: "CRM · JSON" },
-  { key: "fio", label: "преобразование fio", short: "fio", readout: "переводник · fio" },
-  { key: "sum", label: "преобразование sum", short: "sum", readout: "переводник · sum" },
-  { key: "duplicate", label: "повторная доставка", short: "повтор", readout: "кассета · повтор отклонён" },
-  { key: "check", label: "сверка", short: "сверка", readout: "сверка · 100 из 100" },
+  { key: "client", label: "client_id → customer_code", short: "client_id", readout: "переводник · client_id" },
+  { key: "fio", label: "fio → name", short: "fio", readout: "переводник · fio" },
+  { key: "sum", label: "sum → total", short: "sum", readout: "переводник · sum" },
+  { key: "duplicate", label: "повторная доставка", short: "повтор", readout: "ловушка · повтор отклонён" },
+  { key: "check", label: "сверка", short: "сверка", readout: "сверка · 101 / 100 / 1" },
 ];
 
 // Истинные числа главы: карта записи с тремя полями и счётчики журнала.
