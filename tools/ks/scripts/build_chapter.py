@@ -31,6 +31,7 @@ from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE  # noqa: E402
+from availability import is_open, load_availability  # noqa: E402
 
 CALLOUT_LABELS = {
     "INTUITION": "Главная мысль", "PITFALL": "Типичная ошибка", "INTERVIEW": "На практике",
@@ -255,6 +256,36 @@ PDF_SCRIPT = r"""
 })();
 """
 
+REVEAL_SCRIPT = r"""
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+"""
+
 WARN_BUTTON_HTML = ('<button type="button" class="warn-btn" data-warn '
                     'aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button>')
 
@@ -335,18 +366,11 @@ QUIZ_SCRIPT = r"""
     var progress = quiz.querySelector('[data-quiz-progress]');
     function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
     function setProgress(text){ if(progress) progress.textContent = text; }
-    function showQuestion(i, scroll){
+    function showQuestion(i){
       current = i;
       qs[i].hidden = false;
-      if(i > 0){ var prevNext = qs[i - 1].querySelector('[data-next]'); if(prevNext) prevNext.hidden = true; }
       setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
       if(window.__readProgress) window.__readProgress();
-      if(scroll){
-        try { qs[i].scrollIntoView({behavior:'smooth', block:'start'}); }
-        catch(e) { qs[i].scrollIntoView(); }
-      }
-      var field = qs[i].querySelector('input');
-      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
     }
     function finish(){
       var card = quiz.querySelector('[data-quiz-result]');
@@ -380,19 +404,17 @@ QUIZ_SCRIPT = r"""
       var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
       if(ok) right++;
       if(idx === qs.length - 1){ finish(); }
-      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+      else { showQuestion(idx + 1); }
     }
     qs.forEach(function(q, idx){
       q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
       q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
       var answerBtn = q.querySelector('[data-answer]');
       if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
-      var nextBtn = q.querySelector('[data-next]');
-      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1, true); });
       var short = q.querySelector('.short-answer');
       if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    showQuestion(0, false);
+    showQuestion(0);
   });
 })();
 """
@@ -435,7 +457,6 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
         hidden = "" if qi == 0 else " hidden"
         number = f'<span class="quiz-no" aria-hidden="true">{qi + 1:02d}</span>'
         actions = ('<div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button>'
-                   '<button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button>'
                    '<span class="quiz-note" data-note hidden></span></div>')
         if is_short:
             answers = esc(json.dumps(q["short"], ensure_ascii=False))
@@ -691,8 +712,15 @@ def main():
     pager = ""
     if cj:
         chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
-        # only chapters that exist on disk get links, so planned chapters never produce dead links
-        chapters = [c for c in chapters if (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()]
+        availability = load_availability(cj.parent)
+        # only open chapters that exist on disk get links, so planned and closed chapters never produce dead links
+        chapters = [
+            c
+            for c in chapters
+            if (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')
+            and (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()
+            and is_open(course, c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}', availability)
+        ]
         slugs = [c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}' for c in chapters]
         if base.name in slugs:
             k = slugs.index(base.name)
@@ -710,7 +738,7 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = ((GATE_SCRIPT if has_gate else "") + READ_SCRIPT + PDF_SCRIPT
+    script = ((GATE_SCRIPT if has_gate else "") + READ_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""

@@ -31,6 +31,7 @@ from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE  # noqa: E402
+from availability import is_open, load_availability  # noqa: E402
 
 CALLOUT_LABELS = {
     "INTUITION": "Главная мысль", "PITFALL": "Типичная ошибка", "INTERVIEW": "На практике",
@@ -155,6 +156,10 @@ GATE_SCRIPT = r"""
 (function(){
   var steps = [].slice.call(document.querySelectorAll('.gate-step'));
   if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
   function open(step){
     var button = step.querySelector('.gate-btn');
     var body = step.querySelector('.gate-content');
@@ -163,6 +168,8 @@ GATE_SCRIPT = r"""
     step.classList.add('open');
     var next = steps[steps.indexOf(step) + 1];
     if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
     window.dispatchEvent(new Event('resize'));
     return next;
   }
@@ -174,6 +181,8 @@ GATE_SCRIPT = r"""
     var button = step.querySelector('.gate-btn');
     if(button) button.addEventListener('click', function(){ open(step); });
   });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
   document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
     a.addEventListener('click', openAll);
   });
@@ -198,9 +207,35 @@ READ_SCRIPT = r"""
 (function(){
   var bar=document.querySelector('.read-progress'); if(!bar) return;
   var fill=bar.querySelector('span'), ticking=false;
-  function update(){
+  function scrollPct(){
     var max=document.documentElement.scrollHeight-window.innerHeight;
-    var pct=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
     fill.style.width=pct.toFixed(2)+'%';
     bar.setAttribute('aria-valuenow', String(Math.round(pct)));
   }
@@ -208,6 +243,7 @@ READ_SCRIPT = r"""
     requestAnimationFrame(function(){update();ticking=false;}); }
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',onScroll);
+  window.__readProgress = update;
   update();
 })();
 """
@@ -216,6 +252,36 @@ PDF_SCRIPT = r"""
 (function(){
   document.querySelectorAll('[data-pdf]').forEach(function(button){
     button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+"""
+
+REVEAL_SCRIPT = r"""
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
   });
 })();
 """
@@ -295,16 +361,16 @@ QUIZ_SCRIPT = r"""
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
     var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
     if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
     var current = 0, right = 0, firstAt = null, lastAt = null;
     var progress = quiz.querySelector('[data-quiz-progress]');
     function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
     function setProgress(text){ if(progress) progress.textContent = text; }
     function showQuestion(i){
       current = i;
-      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      qs[i].hidden = false;
       setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
-      var field = qs[i].querySelector('input');
-      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+      if(window.__readProgress) window.__readProgress();
     }
     function finish(){
       var card = quiz.querySelector('[data-quiz-result]');
@@ -315,6 +381,9 @@ QUIZ_SCRIPT = r"""
       card.querySelector('[data-test-time]').textContent = fmt(testMs);
       card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
       card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
       setProgress('Тест завершён');
     }
     function answer(q, idx){
@@ -335,15 +404,13 @@ QUIZ_SCRIPT = r"""
       var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
       if(ok) right++;
       if(idx === qs.length - 1){ finish(); }
-      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+      else { showQuestion(idx + 1); }
     }
     qs.forEach(function(q, idx){
       q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
       q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
       var answerBtn = q.querySelector('[data-answer]');
       if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
-      var nextBtn = q.querySelector('[data-next]');
-      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
       var short = q.querySelector('.short-answer');
       if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
@@ -390,7 +457,6 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
         hidden = "" if qi == 0 else " hidden"
         number = f'<span class="quiz-no" aria-hidden="true">{qi + 1:02d}</span>'
         actions = ('<div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button>'
-                   '<button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button>'
                    '<span class="quiz-note" data-note hidden></span></div>')
         if is_short:
             answers = esc(json.dumps(q["short"], ensure_ascii=False))
@@ -432,7 +498,7 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
               '<div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>'
               '<div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>'
               '</dl></div>')
-    html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
+    html_block = (f'\n<div class="quiz" data-quiz>'
                   f'<div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из {len(questions)}</div>'
                   f'{"".join(items)}{result}</div>\n')
     return html_block, True
@@ -646,8 +712,15 @@ def main():
     pager = ""
     if cj:
         chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
-        # only chapters that exist on disk get links, so planned chapters never produce dead links
-        chapters = [c for c in chapters if (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()]
+        availability = load_availability(cj.parent)
+        # only open chapters that exist on disk get links, so planned and closed chapters never produce dead links
+        chapters = [
+            c
+            for c in chapters
+            if (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')
+            and (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()
+            and is_open(course, c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}', availability)
+        ]
         slugs = [c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}' for c in chapters]
         if base.name in slugs:
             k = slugs.index(base.name)
@@ -665,8 +738,7 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = (READ_SCRIPT + PDF_SCRIPT
-              + (GATE_SCRIPT if has_gate else "")
+    script = ((GATE_SCRIPT if has_gate else "") + READ_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""

@@ -235,13 +235,15 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 - The builder owns the interaction: clicking reveals the block, hides the button and
   shows the next gate. While any gate is still closed, the lesson pager stays hidden.
   Opening a TOC link or a direct section link reveals the gates it needs. Print and PDF
-  show every gate open.
-- Quiz questions are rendered one at a time, each as a new card below the previous one,
-  and the page scrolls to it. After an answer the builder marks the choices, shows the
-  explanation for both a correct and a wrong answer, and only then shows
-  `Следующий вопрос`. After the last answer the former submission card appears inline
-  with the name field, score, test time and view time, without a submit button. The
-  lesson pager appears only after that result card is shown.
+  show every gate open. Lesson blocks below the first viewport fade in from
+  `translateY(26px)` as they enter the screen; the first visible block stays immediate
+  and `prefers-reduced-motion` disables the reveal.
+- Quiz questions are rendered one at a time, each as a new card below the previous one.
+  After an answer the builder marks the choices, shows the explanation for both a correct
+  and a wrong answer, and immediately reveals the next question, without a
+  `Следующий вопрос` button. After the last answer the former submission card appears
+  inline with the name field, score, test time and view time, without a submit button.
+  The lesson pager appears only after that result card is shown.
 - Do not add `Проверить ответы`, `Сбросить`, `Сдать работу`, a custom submission form or
   a second result dialog to a chapter.
 
@@ -264,9 +266,9 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 - Every lecture ends with a 15-question test: 6-10 single-choice, 2-4 multiple-choice,
   1-3 short-answer, all with explanations. Do not list this breakdown in the lecture
   text. The builder shows one question per new card, reveals the correct answer and
-  explanation after every answer (right or wrong), and shows the next question only
-  after the answer. After the last answer it shows an inline result card with the
-  student name, score, test time and lecture view time, with no action button. The
+  explanation after every answer (right or wrong), and immediately reveals the next
+  question without a button. After the last answer it shows an inline result card with
+  the student name, score, test time and lecture view time, with no action button. The
   lesson pager stays hidden until that result card appears. PDF button, reading
   progress, warning button and dark-theme toggle also come from the shared builder; do
   not rebuild these elements inside a chapter.
