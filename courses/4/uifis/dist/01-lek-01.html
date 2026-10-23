@@ -181,31 +181,58 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
 
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
 /* ---------- interactive test (::quiz) ---------- */
 .quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
 .quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 4px; }
 .quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q[hidden] { display: none; }
 .quiz-q:first-of-type { border-top: 0; }
 .quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
 .quiz .opts { display: grid; gap: 6px; }
 .quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
 .quiz .opt:hover { border-color: var(--accent); }
 .quiz .opt input { margin-top: 4px; }
 .quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
 .quiz-q.bad .quiz-p { color: var(--bad); }
 .quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
 .quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
-.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
-.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
 .quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
 .quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
 .quiz-q.ok .short-answer { border-color: var(--ok); }
 .quiz-q.bad .short-answer { border-color: var(--bad); }
-.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-foot button.submit:hover { filter: brightness(.95); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
 
 /* ---------- test submission and warnings ---------- */
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
@@ -261,6 +288,8 @@ html.modal-open { overflow: hidden; }
   .prose p, .prose li { text-align: left; hyphens: none; }
   a { color: #000; text-decoration: none; }
   .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
   .recap { background: #fff; color: #000; }
   .recap li, .recap p { color: #000; }
   .figure { break-inside: avoid; }
@@ -541,7 +570,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Проследите за кареткой: она везёт запись по рельсу от приёмного лотка в узел обработки, где стоят две шестерни и штамп. Заслонка после штампа решает, куда запись попадёт дальше: запись, которую нужно накопить, она отправляет в ящик картотеки, а запись-справку кладёт прямо в лоток выдачи. Слева внизу циферблат считает обработанное, а от лотка выдачи к маховику тянется тонкая тяга. Итог на циферблате в конце прохода: <strong>обработано 5, в хранилище 3, выдано 2</strong>, а маховик повернулся на шаг 2, потому что результат вернулся в начало и изменил режим обработки.</p>
 <p>Обратите внимание, чего у машины нет. У неё нет детали, которая просто «хранит всё на всякий случай»: картотека получает только то, что решено накопить. Нет и органа, который работает ради себя: каждая часть либо двигает запись по маршруту, либо создаёт условия для этого движения. Это и есть признак настоящей системы, где части подчинены общей цели.</p>
-<h2 id="данные-и-информация-чем-они-различаются"><span class="num">04</span>Данные и информация: чем они различаются</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Чем данные отличаются от информации?</span></button></p>
+<div class="gate-content" hidden><h2 id="данные-и-информация-чем-они-различаются"><span class="num">04</span>Данные и информация: чем они различаются</h2>
 <p><strong>Данные</strong> это зафиксированные факты: числа, строки, даты, которые сами по себе ничего не объясняют. Оценка «4» в таблице, время «14:30» в расписании, номер группы «ИС-21» это данные. <strong>Информация</strong> это данные, приведённые к виду, пригодному для решения задачи. Перечень экзаменов для группы ИС-21 на 14:30 это уже информация: она отвечает на вопрос, а данные сами по себе нет.</p>
 <p>Смысл обработки ровно в этом переходе. В машине на рисунке запись-плитка на входе это данные; после штампа обработки и маршрутизации та же запись становится элементом готовой информации в лотке выдачи. Одна и та же плитка, но её роль в цикле изменилась.</p>
 <div class="callout key"><span class="label">Ключевая идея</span><p>Данные не «плохие» и не «хорошие»: они просто сырые. Информация это те же данные, но обработанные под конкретную задачу и отданные в нужный момент нужному человеку.</p></div>
@@ -569,8 +600,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <figcaption>Короткая цепочка цикла: данные проходят обработку под конкретную задачу и становятся информацией.</figcaption>
 </figure>
 
-<p>Ещё точнее: информацию нельзя «получить» раз и навсегда, её получают относительно задачи. Одни и те же числа для бухгалтера информация, а для студента просто данные, если он не решает бухгалтерскую задачу. Значит, обработка не бывает «вообще», она всегда под цель.</p>
-<h2 id="цикл-из-шести-процессов"><span class="num">06</span>Цикл из шести процессов</h2>
+<p>Ещё точнее: информацию нельзя «получить» раз и навсегда, её получают относительно задачи. Одни и те же числа для бухгалтера информация, а для студента просто данные, если он не решает бухгалтерскую задачу. Значит, обработка не бывает «вообще», она всегда под цель.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Из каких процессов состоит работа с информацией?</span></button></p>
+<div class="gate-content" hidden><h2 id="цикл-из-шести-процессов"><span class="num">06</span>Цикл из шести процессов</h2>
 <p>Любую ИС можно разложить на последовательность информационных процессов. Вот они по порядку, с тем, что входит на вход и что получается на выходе:</p>
 <table>
 <thead>
@@ -670,8 +705,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><strong>Выдача.</strong> По запросу студента система формирует справку: список книг и сроки. Это и есть информация, готовая к решению задачи.</li>
 <li><strong>Обратная связь.</strong> Библиотека замечает, что много справок запрашивают в конце семестра, и меняет правило: отправлять напоминание за три дня до срока. Цикл вернулся в начало.</li>
 </ol>
-<p>Каждый шаг здесь обязателен. Уберите хранение, и справку по прошлому месяцу построить нельзя. Уберите обратную связь, и система будет вечно выдавать справки, не замечая, что напоминания могли бы снизить число просрочек.</p>
-<h2 id="какие-задачи-решает-ис"><span class="num">09</span>Какие задачи решает ИС</h2>
+<p>Каждый шаг здесь обязателен. Уберите хранение, и справку по прошлому месяцу построить нельзя. Уберите обратную связь, и система будет вечно выдавать справки, не замечая, что напоминания могли бы снизить число просрочек.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какие задачи берёт на себя информационная система?</span></button></p>
+<div class="gate-content" hidden><h2 id="какие-задачи-решает-ис"><span class="num">09</span>Какие задачи решает ИС</h2>
 <p>Информационные системы создают не ради программ, а ради задач, которые они снимают с людей:</p>
 <ul>
 <li><strong>Учёт и хранение.</strong> Держать большие объёмы однотипных данных и находить нужное за секунды: студенты, заявки, заказы, склад.</li>
@@ -789,8 +828,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="границы-ис-что-входит-а-что-нет"><span class="num">19</span>Границы ИС: что входит, а что нет</h2>
 <p>Понять систему проще, если провести границу: что мы считаем частью ИС, а что внешней средой.</p>
 <p>Внутри границы оказываются данные, программа обработки, хранилище и правила. Снаружи остаются источник данных и пользователь с его задачей. Важная тонкость: человек, который работает в контуре (вводит данные, реагирует на обратную связь), находится <strong>внутри</strong> границы, потому что без него цикл не замыкается. А человек, который просто получает готовую справку и уходит, находится снаружи.</p>
-<p>Отсюда простое правило для практики: рисуя схему ИС, сначала проведите границу, а потом раскладывайте процессы. Так сразу видно, какая часть цикла уже автоматизирована, а какая пока держится на людях.</p>
-<h2 id="типичные-ошибки-в-представлении-об-ис"><span class="num">20</span>Типичные ошибки в представлении об ИС</h2>
+<p>Отсюда простое правило для практики: рисуя схему ИС, сначала проведите границу, а потом раскладывайте процессы. Так сразу видно, какая часть цикла уже автоматизирована, а какая пока держится на людях.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Где чаще всего ошибаются в описании ИС?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки-в-представлении-об-ис"><span class="num">20</span>Типичные ошибки в представлении об ИС</h2>
 <ul>
 <li><strong>«ИС это программа».</strong> Программа это инструмент обработки, но без данных, хранилища и пользователей цикла не получается. Excel без ведомости и без того, кто её заполнит, это ещё не система.</li>
 <li><strong>«ИС это база данных».</strong> База данных это только шаг хранения. В машине на рисунке картотека стоит справа, но её работа бессмысленна без узла обработки слева.</li>
@@ -825,23 +868,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <h2 id="тест-по-лекции"><span class="num">24</span>Тест по лекции</h2>
 <p>В тесте 15 вопросов: 6 с одним правильным ответом, 6 с несколькими правильными ответами и 3 с кратким ответом.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что превращает данные в информацию в работе информационной системы?</p><div class="opts"><label class="opt"><input type="radio" name="q440_0" value="0" data-ok><span>Обработка данных под конкретную задачу пользователя</span></label><label class="opt"><input type="radio" name="q440_0" value="1"><span>Увеличение объёма хранимых данных</span></label><label class="opt"><input type="radio" name="q440_0" value="2"><span>Замена текстового формата на табличный</span></label><label class="opt"><input type="radio" name="q440_0" value="3"><span>Копирование данных в резервную базу</span></label></div><p class="quiz-why" hidden>Данные становятся информацией, когда их обрабатывают под конкретный вопрос.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие элементы относятся к циклу обработки информации в ИС?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_1" value="0" data-ok><span>Сбор данных</span></label><label class="opt"><input type="checkbox" name="q440_1" value="1" data-ok><span>Обработка данных</span></label><label class="opt"><input type="checkbox" name="q440_1" value="2" data-ok><span>Хранение данных</span></label><label class="opt"><input type="checkbox" name="q440_1" value="3" data-ok><span>Выдача информации</span></label><label class="opt"><input type="checkbox" name="q440_1" value="4"><span>Резервное копирование как обязательный шаг</span></label><label class="opt"><input type="checkbox" name="q440_1" value="5"><span>Удаление обратной связи</span></label></div><p class="quiz-why" hidden>Цикл включает сбор, регистрацию, обработку, хранение, выдачу и обратную связь.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой шаг цикла часто забывают в схемах, хотя без него система не исправляет свои ошибки?</p><div class="opts"><label class="opt"><input type="radio" name="q440_2" value="0" data-ok><span>Обратная связь</span></label><label class="opt"><input type="radio" name="q440_2" value="1"><span>Регистрация</span></label><label class="opt"><input type="radio" name="q440_2" value="2"><span>Хранение</span></label><label class="opt"><input type="radio" name="q440_2" value="3"><span>Сбор</span></label></div><p class="quiz-why" hidden>Обратная связь возвращает результат и меняет поведение системы.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие утверждения о данных и информации верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_3" value="0" data-ok><span>Данные это зафиксированные факты</span></label><label class="opt"><input type="checkbox" name="q440_3" value="1" data-ok><span>Информация уменьшает неопределённость</span></label><label class="opt"><input type="checkbox" name="q440_3" value="2" data-ok><span>Обработка превращает данные в информацию</span></label><label class="opt"><input type="checkbox" name="q440_3" value="3" data-ok><span>Информация нужна для решения задачи</span></label><label class="opt"><input type="checkbox" name="q440_3" value="4"><span>Данные всегда уже готовы к решению</span></label><label class="opt"><input type="checkbox" name="q440_3" value="5"><span>Информация не зависит от получателя</span></label></div><p class="quiz-why" hidden>Данные становятся информацией в контексте задачи.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Чем автоматизированная ИС отличается от автоматической?</p><div class="opts"><label class="opt"><input type="radio" name="q440_4" value="0" data-ok><span>В автоматизированной системе человек обязательно участвует в контуре управления</span></label><label class="opt"><input type="radio" name="q440_4" value="1"><span>Автоматизированная система не использует базы данных</span></label><label class="opt"><input type="radio" name="q440_4" value="2"><span>Автоматизированная система всегда работает без сети</span></label><label class="opt"><input type="radio" name="q440_4" value="3"><span>Автоматическая система не может хранить данные</span></label></div><p class="quiz-why" hidden>В автоматической системе все шаги выполняет техника, в автоматизированной человек остаётся в контуре.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие признаки автоматической системы верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_5" value="0" data-ok><span>Все шаги цикла выполняет техника</span></label><label class="opt"><input type="checkbox" name="q440_5" value="1" data-ok><span>Человек не участвует в контуре управления</span></label><label class="opt"><input type="checkbox" name="q440_5" value="2" data-ok><span>Решение принимается по заданному правилу</span></label><label class="opt"><input type="checkbox" name="q440_5" value="3"><span>Человек подтверждает каждое решение</span></label><label class="opt"><input type="checkbox" name="q440_5" value="4"><span>Система не использует данные</span></label></div><p class="quiz-why" hidden>Автоматическая система работает без участия человека в контуре.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое данные в отличие от информации?</p><div class="opts"><label class="opt"><input type="radio" name="q440_6" value="0" data-ok><span>Зафиксированные факты, которые сами по себе не объясняют ситуацию</span></label><label class="opt"><input type="radio" name="q440_6" value="1"><span>Сведения, уменьшающие неопределённость и готовые к решению</span></label><label class="opt"><input type="radio" name="q440_6" value="2"><span>Любой отчёт, подготовленный для руководителя</span></label><label class="opt"><input type="radio" name="q440_6" value="3"><span>Правила обработки, записанные в программе</span></label></div><p class="quiz-why" hidden>Данные это сырые факты, информация это результат их обработки.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие признаки автоматизированной системы верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_7" value="0" data-ok><span>Человек участвует в контуре управления</span></label><label class="opt"><input type="checkbox" name="q440_7" value="1" data-ok><span>Техника выполняет рутинные операции</span></label><label class="opt"><input type="checkbox" name="q440_7" value="2" data-ok><span>Решение может подтверждать человек</span></label><label class="opt"><input type="checkbox" name="q440_7" value="3"><span>Человек не участвует вообще</span></label><label class="opt"><input type="checkbox" name="q440_7" value="4"><span>Система работает без данных</span></label></div><p class="quiz-why" hidden>Автоматизированная система оставляет человеку принятие решений.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Почему базу данных нельзя отождествлять с информационной системой?</p><div class="opts"><label class="opt"><input type="radio" name="q440_8" value="0" data-ok><span>База данных отвечает только за хранение, а ИС охватывает весь цикл обработки</span></label><label class="opt"><input type="radio" name="q440_8" value="1"><span>База данных не умеет хранить текстовые значения</span></label><label class="opt"><input type="radio" name="q440_8" value="2"><span>База данных всегда меньше по объёму, чем программа</span></label><label class="opt"><input type="radio" name="q440_8" value="3"><span>Информационная система не может использовать базу данных</span></label></div><p class="quiz-why" hidden>База данных это одна часть ИС, а не вся система.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что входит в состав информационной системы?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_9" value="0" data-ok><span>Функциональные подсистемы</span></label><label class="opt"><input type="checkbox" name="q440_9" value="1" data-ok><span>Обеспечивающие подсистемы</span></label><label class="opt"><input type="checkbox" name="q440_9" value="2" data-ok><span>Базы данных</span></label><label class="opt"><input type="checkbox" name="q440_9" value="3" data-ok><span>Пользователи и организационные ресурсы</span></label><label class="opt"><input type="checkbox" name="q440_9" value="4"><span>Только прикладные программы</span></label><label class="opt"><input type="checkbox" name="q440_9" value="5"><span>Только технические средства</span></label></div><p class="quiz-why" hidden>ИС включает функциональные и обеспечивающие части, данные и людей.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какое свойство ИС означает, что система в целом даёт результат, недостижимый для отдельных частей?</p><div class="opts"><label class="opt"><input type="radio" name="q440_10" value="0" data-ok><span>Эмерджентность</span></label><label class="opt"><input type="radio" name="q440_10" value="1"><span>Делимость</span></label><label class="opt"><input type="radio" name="q440_10" value="2"><span>Ручной режим</span></label><label class="opt"><input type="radio" name="q440_10" value="3"><span>Резервное копирование</span></label></div><p class="quiz-why" hidden>Целое даёт новый результат, которого нет у отдельных частей.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие утверждения об обратной связи верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q440_11" value="0" data-ok><span>Она меняет поведение системы по результату</span></label><label class="opt"><input type="checkbox" name="q440_11" value="1" data-ok><span>Без неё система повторяет ошибки</span></label><label class="opt"><input type="checkbox" name="q440_11" value="2" data-ok><span>Она замыкает цикл управления</span></label><label class="opt"><input type="checkbox" name="q440_11" value="3"><span>Она нужна только для красоты схемы</span></label><label class="opt"><input type="checkbox" name="q440_11" value="4"><span>Она заменяет хранение данных</span></label></div><p class="quiz-why" hidden>Обратная связь замыкает цикл и корректирует работу.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Напишите слово, которым называют свойство системы давать результат, недостижимый для отдельных частей.</p><input type="text" class="short-answer" data-answers="[&quot;эмерджентность&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Напишите слово, которым называют свойство системы давать результат, недостижимый для отдельных частей."><p class="quiz-why" hidden>Это свойство называют эмерджентностью.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой шаг цикла возвращает результат работы системы на вход для корректировки?</p><input type="text" class="short-answer" data-answers="[&quot;обратная связь&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой шаг цикла возвращает результат работы системы на вход для корректировки?"><p class="quiz-why" hidden>Обратная связь замыкает контур управления.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Напишите слово, которым называют зафиксированные факты до их обработки.</p><input type="text" class="short-answer" data-answers="[&quot;данные&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Напишите слово, которым называют зафиксированные факты до их обработки."><p class="quiz-why" hidden>Данные это сырые факты, которые ещё не объясняют ситуацию.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-prakt-01.html"><span>Следующее занятие →</span>Практика 1. Классификация информационных систем по признакам</a></nav></main>
-<div class="modal" data-modal="submit" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
-    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-    <h2 id="submit-title">Результат теста</h2>
-    <label class="modal-name" data-student-label><span>ФИО студента</span>
-      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
-    </label>
-    <p class="modal-student" data-student-view hidden></p>
-    <p class="modal-result" data-modal-result></p>
-    <dl class="modal-times">
-      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
-      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
-    </dl>
-    <button type="button" class="modal-ok" data-modal-close>Готово</button>
-  </div>
-</div>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что превращает данные в информацию в работе информационной системы?</p><div class="opts"><label class="opt"><input type="radio" name="q150_0" value="0" data-ok><span>Обработка данных под конкретную задачу пользователя</span></label><label class="opt"><input type="radio" name="q150_0" value="1"><span>Увеличение объёма хранимых данных</span></label><label class="opt"><input type="radio" name="q150_0" value="2"><span>Замена текстового формата на табличный</span></label><label class="opt"><input type="radio" name="q150_0" value="3"><span>Копирование данных в резервную базу</span></label></div><p class="quiz-why" hidden>Данные становятся информацией, когда их обрабатывают под конкретный вопрос.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какие элементы относятся к циклу обработки информации в ИС?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_1" value="0" data-ok><span>Сбор данных</span></label><label class="opt"><input type="checkbox" name="q150_1" value="1" data-ok><span>Обработка данных</span></label><label class="opt"><input type="checkbox" name="q150_1" value="2" data-ok><span>Хранение данных</span></label><label class="opt"><input type="checkbox" name="q150_1" value="3" data-ok><span>Выдача информации</span></label><label class="opt"><input type="checkbox" name="q150_1" value="4"><span>Резервное копирование как обязательный шаг</span></label><label class="opt"><input type="checkbox" name="q150_1" value="5"><span>Удаление обратной связи</span></label></div><p class="quiz-why" hidden>Цикл включает сбор, регистрацию, обработку, хранение, выдачу и обратную связь.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Какой шаг цикла часто забывают в схемах, хотя без него система не исправляет свои ошибки?</p><div class="opts"><label class="opt"><input type="radio" name="q150_2" value="0" data-ok><span>Обратная связь</span></label><label class="opt"><input type="radio" name="q150_2" value="1"><span>Регистрация</span></label><label class="opt"><input type="radio" name="q150_2" value="2"><span>Хранение</span></label><label class="opt"><input type="radio" name="q150_2" value="3"><span>Сбор</span></label></div><p class="quiz-why" hidden>Обратная связь возвращает результат и меняет поведение системы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Какие утверждения о данных и информации верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_3" value="0" data-ok><span>Данные это зафиксированные факты</span></label><label class="opt"><input type="checkbox" name="q150_3" value="1" data-ok><span>Информация уменьшает неопределённость</span></label><label class="opt"><input type="checkbox" name="q150_3" value="2" data-ok><span>Обработка превращает данные в информацию</span></label><label class="opt"><input type="checkbox" name="q150_3" value="3" data-ok><span>Информация нужна для решения задачи</span></label><label class="opt"><input type="checkbox" name="q150_3" value="4"><span>Данные всегда уже готовы к решению</span></label><label class="opt"><input type="checkbox" name="q150_3" value="5"><span>Информация не зависит от получателя</span></label></div><p class="quiz-why" hidden>Данные становятся информацией в контексте задачи.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Чем автоматизированная ИС отличается от автоматической?</p><div class="opts"><label class="opt"><input type="radio" name="q150_4" value="0" data-ok><span>В автоматизированной системе человек обязательно участвует в контуре управления</span></label><label class="opt"><input type="radio" name="q150_4" value="1"><span>Автоматизированная система не использует базы данных</span></label><label class="opt"><input type="radio" name="q150_4" value="2"><span>Автоматизированная система всегда работает без сети</span></label><label class="opt"><input type="radio" name="q150_4" value="3"><span>Автоматическая система не может хранить данные</span></label></div><p class="quiz-why" hidden>В автоматической системе все шаги выполняет техника, в автоматизированной человек остаётся в контуре.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какие признаки автоматической системы верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_5" value="0" data-ok><span>Все шаги цикла выполняет техника</span></label><label class="opt"><input type="checkbox" name="q150_5" value="1" data-ok><span>Человек не участвует в контуре управления</span></label><label class="opt"><input type="checkbox" name="q150_5" value="2" data-ok><span>Решение принимается по заданному правилу</span></label><label class="opt"><input type="checkbox" name="q150_5" value="3"><span>Человек подтверждает каждое решение</span></label><label class="opt"><input type="checkbox" name="q150_5" value="4"><span>Система не использует данные</span></label></div><p class="quiz-why" hidden>Автоматическая система работает без участия человека в контуре.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Что такое данные в отличие от информации?</p><div class="opts"><label class="opt"><input type="radio" name="q150_6" value="0" data-ok><span>Зафиксированные факты, которые сами по себе не объясняют ситуацию</span></label><label class="opt"><input type="radio" name="q150_6" value="1"><span>Сведения, уменьшающие неопределённость и готовые к решению</span></label><label class="opt"><input type="radio" name="q150_6" value="2"><span>Любой отчёт, подготовленный для руководителя</span></label><label class="opt"><input type="radio" name="q150_6" value="3"><span>Правила обработки, записанные в программе</span></label></div><p class="quiz-why" hidden>Данные это сырые факты, информация это результат их обработки.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие признаки автоматизированной системы верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_7" value="0" data-ok><span>Человек участвует в контуре управления</span></label><label class="opt"><input type="checkbox" name="q150_7" value="1" data-ok><span>Техника выполняет рутинные операции</span></label><label class="opt"><input type="checkbox" name="q150_7" value="2" data-ok><span>Решение может подтверждать человек</span></label><label class="opt"><input type="checkbox" name="q150_7" value="3"><span>Человек не участвует вообще</span></label><label class="opt"><input type="checkbox" name="q150_7" value="4"><span>Система работает без данных</span></label></div><p class="quiz-why" hidden>Автоматизированная система оставляет человеку принятие решений.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Почему базу данных нельзя отождествлять с информационной системой?</p><div class="opts"><label class="opt"><input type="radio" name="q150_8" value="0" data-ok><span>База данных отвечает только за хранение, а ИС охватывает весь цикл обработки</span></label><label class="opt"><input type="radio" name="q150_8" value="1"><span>База данных не умеет хранить текстовые значения</span></label><label class="opt"><input type="radio" name="q150_8" value="2"><span>База данных всегда меньше по объёму, чем программа</span></label><label class="opt"><input type="radio" name="q150_8" value="3"><span>Информационная система не может использовать базу данных</span></label></div><p class="quiz-why" hidden>База данных это одна часть ИС, а не вся система.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Что входит в состав информационной системы?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_9" value="0" data-ok><span>Функциональные подсистемы</span></label><label class="opt"><input type="checkbox" name="q150_9" value="1" data-ok><span>Обеспечивающие подсистемы</span></label><label class="opt"><input type="checkbox" name="q150_9" value="2" data-ok><span>Базы данных</span></label><label class="opt"><input type="checkbox" name="q150_9" value="3" data-ok><span>Пользователи и организационные ресурсы</span></label><label class="opt"><input type="checkbox" name="q150_9" value="4"><span>Только прикладные программы</span></label><label class="opt"><input type="checkbox" name="q150_9" value="5"><span>Только технические средства</span></label></div><p class="quiz-why" hidden>ИС включает функциональные и обеспечивающие части, данные и людей.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какое свойство ИС означает, что система в целом даёт результат, недостижимый для отдельных частей?</p><div class="opts"><label class="opt"><input type="radio" name="q150_10" value="0" data-ok><span>Эмерджентность</span></label><label class="opt"><input type="radio" name="q150_10" value="1"><span>Делимость</span></label><label class="opt"><input type="radio" name="q150_10" value="2"><span>Ручной режим</span></label><label class="opt"><input type="radio" name="q150_10" value="3"><span>Резервное копирование</span></label></div><p class="quiz-why" hidden>Целое даёт новый результат, которого нет у отдельных частей.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какие утверждения об обратной связи верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q150_11" value="0" data-ok><span>Она меняет поведение системы по результату</span></label><label class="opt"><input type="checkbox" name="q150_11" value="1" data-ok><span>Без неё система повторяет ошибки</span></label><label class="opt"><input type="checkbox" name="q150_11" value="2" data-ok><span>Она замыкает цикл управления</span></label><label class="opt"><input type="checkbox" name="q150_11" value="3"><span>Она нужна только для красоты схемы</span></label><label class="opt"><input type="checkbox" name="q150_11" value="4"><span>Она заменяет хранение данных</span></label></div><p class="quiz-why" hidden>Обратная связь замыкает цикл и корректирует работу.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Напишите слово, которым называют свойство системы давать результат, недостижимый для отдельных частей.</p><input type="text" class="short-answer" data-answers="[&quot;эмерджентность&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Напишите слово, которым называют свойство системы давать результат, недостижимый для отдельных частей."><p class="quiz-why" hidden>Это свойство называют эмерджентностью.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какой шаг цикла возвращает результат работы системы на вход для корректировки?</p><input type="text" class="short-answer" data-answers="[&quot;обратная связь&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой шаг цикла возвращает результат работы системы на вход для корректировки?"><p class="quiz-why" hidden>Обратная связь замыкает контур управления.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Напишите слово, которым называют зафиксированные факты до их обработки.</p><input type="text" class="short-answer" data-answers="[&quot;данные&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Напишите слово, которым называют зафиксированные факты до их обработки."><p class="quiz-why" hidden>Данные это сырые факты, которые ещё не объясняют ситуацию.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-prakt-01.html"><span>Следующее занятие →</span>Практика 1. Классификация информационных систем по признакам</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
@@ -850,7 +878,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     <button type="button" class="modal-ok" data-modal-close>Понятно</button>
   </div>
 </div>
-
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
 <script>
 (function(){
   var root = document.documentElement;
@@ -909,6 +937,34 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 })();
 
 (function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
@@ -938,9 +994,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   function viewingMs(){ tick(); return activeMs; }
   function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
     return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
-  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
-  var studentName = '';
-  var submitModal = document.querySelector('[data-modal="submit"]');
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
   var warnModal = document.querySelector('[data-modal="warn"]');
 
   function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
@@ -969,51 +1023,78 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
 
-  function evaluate(quiz){
-    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
-    qs.forEach(function(q){
-      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
-      if(ok) right++;
-      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
-      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
     });
-    return {right: right, total: qs.length};
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
   }
 
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    quiz._firstAt = null; quiz._lastAt = null;
-    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
-    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    var progress = quiz.querySelector('[data-quiz-progress]');
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function setProgress(text){ if(progress) progress.textContent = text; }
+    function showQuestion(i){
+      current = i;
+      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      var field = qs[i].querySelector('input');
+      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      setProgress('Тест завершён');
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var nextBtn = q.querySelector('[data-next]');
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    quiz.querySelector('[data-reset]').addEventListener('click', function(){
-      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
-      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
-      quiz._firstAt = null; quiz._lastAt = null;
-    });
-    quiz.querySelector('[data-submit]').addEventListener('click', function(){
-      var r = evaluate(quiz);
-      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
-      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
-      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
-      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
-      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
-      var nameInput = submitModal.querySelector('[data-student-name]');
-      var nameLabel = submitModal.querySelector('[data-student-label]');
-      var nameView = submitModal.querySelector('[data-student-view]');
-      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
-      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
-      openModal(submitModal);
-    });
+    showQuestion(0);
   });
-
-  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
-  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>

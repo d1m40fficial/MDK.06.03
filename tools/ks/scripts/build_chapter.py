@@ -15,6 +15,7 @@ Markdown conventions (see references/writing.md §5):
   > [!CHECK] Question text   (body = answer)   collapsible self-check
   > [!RECAP]                                   dark recap block
   ::figure <fig-id> | caption                  an Anatomy figure from figures/<fig-id>/
+  ::gate Question? ... ::/gate                 reveal this part of a lecture after a click
 """
 import base64
 import html
@@ -150,6 +151,43 @@ FIG_SCRIPT = r"""
 """
 
 
+GATE_SCRIPT = r"""
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+"""
+
+GATE_NOSCRIPT = ('<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}'
+                 '.gate-btn{display:none!important}</style></noscript>')
+
+QUIZ_NOSCRIPT = ('<noscript><style>.quiz-q[hidden]{display:block!important}'
+                 '.quiz-actions{display:none!important}</style></noscript>')
+
+
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
 NAV_BUTTON_HTML = '<a class="nav-btn" href="index.html">К учебному плану</a>'
@@ -192,22 +230,6 @@ def lesson_tools(warn: bool) -> str:
             f'<div class="lesson-tools-right">{warn_html}{THEME_TOGGLE}{PDF_BUTTON_HTML}</div></div>')
 
 QUIZ_MODALS_HTML = r"""
-<div class="modal" data-modal="submit" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
-    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-    <h2 id="submit-title">Результат теста</h2>
-    <label class="modal-name" data-student-label><span>ФИО студента</span>
-      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
-    </label>
-    <p class="modal-student" data-student-view hidden></p>
-    <p class="modal-result" data-modal-result></p>
-    <dl class="modal-times">
-      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
-      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
-    </dl>
-    <button type="button" class="modal-ok" data-modal-close>Готово</button>
-  </div>
-</div>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
@@ -226,9 +248,7 @@ QUIZ_SCRIPT = r"""
   function viewingMs(){ tick(); return activeMs; }
   function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
     return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
-  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
-  var studentName = '';
-  var submitModal = document.querySelector('[data-modal="submit"]');
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
   var warnModal = document.querySelector('[data-modal="warn"]');
 
   function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
@@ -257,54 +277,80 @@ QUIZ_SCRIPT = r"""
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
 
-  function evaluate(quiz){
-    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
-    qs.forEach(function(q){
-      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
-      if(ok) right++;
-      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
-      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
     });
-    return {right: right, total: qs.length};
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
   }
 
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    quiz._firstAt = null; quiz._lastAt = null;
-    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
-    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    var progress = quiz.querySelector('[data-quiz-progress]');
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function setProgress(text){ if(progress) progress.textContent = text; }
+    function showQuestion(i){
+      current = i;
+      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      var field = qs[i].querySelector('input');
+      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      setProgress('Тест завершён');
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var nextBtn = q.querySelector('[data-next]');
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    quiz.querySelector('[data-reset]').addEventListener('click', function(){
-      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
-      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
-      quiz._firstAt = null; quiz._lastAt = null;
-    });
-    quiz.querySelector('[data-submit]').addEventListener('click', function(){
-      var r = evaluate(quiz);
-      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
-      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
-      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
-      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
-      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
-      var nameInput = submitModal.querySelector('[data-student-name]');
-      var nameLabel = submitModal.querySelector('[data-student-label]');
-      var nameView = submitModal.querySelector('[data-student-view]');
-      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
-      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
-      openModal(submitModal);
-    });
+    showQuestion(0);
   });
-
-  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
-  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 """
-
 
 def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
     """Parse Q: / + / - / = lines into an interactive, self-scoring test.
@@ -341,13 +387,19 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
         if not is_short and not q["correct"]:
             print(f"WARNING: quiz question {qi + 1} has no correct option")
         why = (f'<p class="quiz-why" hidden>{md(q["why"])[3:-4]}</p>' if q.get("why") else "")
+        hidden = "" if qi == 0 else " hidden"
+        number = f'<span class="quiz-no" aria-hidden="true">{qi + 1:02d}</span>'
+        actions = ('<div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button>'
+                   '<button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button>'
+                   '<span class="quiz-note" data-note hidden></span></div>')
         if is_short:
             answers = esc(json.dumps(q["short"], ensure_ascii=False))
             body = (f'<input type="text" class="short-answer" data-answers="{answers}" '
                     f'placeholder="Введите ответ" autocomplete="off" spellcheck="false" '
                     f'aria-label="{esc(q["q"])}">')
-            items.append(f'<div class="quiz-q" data-type="short"><p class="quiz-p">{md(q["q"])[3:-4]}</p>'
-                         f'{body}{why}</div>')
+            items.append(f'<div class="quiz-q" data-type="short" data-q="{qi + 1}"{hidden}>'
+                         f'<p class="quiz-p">{number}{md(q["q"])[3:-4]}</p>'
+                         f'{body}{why}{actions}</div>')
         else:
             input_type = "checkbox" if is_multi else "radio"
             opts = "".join(
@@ -355,8 +407,8 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
                 f'{" data-ok" if oi in q["correct"] else ""}><span>{md(opt)[3:-4]}</span></label>'
                 for oi, opt in enumerate(q["opts"]))
             qtype = "multi" if is_multi else "single"
-            items.append(f'<div class="quiz-q" data-type="{qtype}" data-correct="{len(q["correct"])}">'
-                         f'<p class="quiz-p">{md(q["q"])[3:-4]}</p><div class="opts">{opts}</div>{why}</div>')
+            items.append(f'<div class="quiz-q" data-type="{qtype}" data-correct="{len(q["correct"])}" data-q="{qi + 1}"{hidden}>'
+                         f'<p class="quiz-p">{number}{md(q["q"])[3:-4]}</p><div class="opts">{opts}</div>{why}{actions}</div>')
     if kind == "chapter":
         counts = {"single": 0, "multi": 0, "short": 0}
         for q in questions:
@@ -370,18 +422,27 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
             print(f"WARNING: lecture quiz has {len(questions)} questions, expected 15")
         if not all(counts.values()):
             print("WARNING: lecture quiz must contain single-choice, multiple-choice and short-answer questions")
+    result = ('<div class="quiz-result" data-quiz-result hidden aria-live="polite">'
+              '<span class="label">Результат теста</span><h3>Тест завершён</h3>'
+              '<label class="modal-name" data-student-label><span>ФИО студента</span>'
+              '<input type="text" data-student-name maxlength="80" autocomplete="name" '
+              'placeholder="Иванов Иван Иванович"></label>'
+              '<p class="modal-result" data-modal-result></p>'
+              '<dl class="modal-times">'
+              '<div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>'
+              '<div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>'
+              '</dl></div>')
     html_block = (f'\n<div class="quiz" data-quiz><span class="label">Тест по лекции</span>'
-                  f'{"".join(items)}<div class="quiz-foot"><button type="button" data-check>Проверить ответы</button>'
-                  f'<button type="button" data-reset>Сбросить</button>'
-                  f'<span class="quiz-score" data-score></span>'
-                  f'<button type="button" class="submit" data-submit>Сдать работу</button></div></div>\n')
+                  f'<div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из {len(questions)}</div>'
+                  f'{"".join(items)}{result}</div>\n')
     return html_block, True
 
 
 def preprocess(body: str, base: Path, figures: list, page_kind: str = "chapter"):
-    """Turn callouts and ::figure lines into HTML blocks before Markdown runs."""
-    out, lines, i, n_fig = [], body.split("\n"), 0, 0
+    """Turn callouts, figures, gates and quizzes into HTML blocks before Markdown runs."""
+    out, lines, i, n_fig = [], body.split("\n"), 0, len(figures)
     has_quiz = False
+    has_gate = False
     in_fence = False
     while i < len(lines):
         line = lines[i]
@@ -389,6 +450,38 @@ def preprocess(body: str, base: Path, figures: list, page_kind: str = "chapter")
             in_fence = not in_fence
         if in_fence:
             out.append(line); i += 1; continue
+        gm = re.match(r"^::gate\s+(.+?)\s*$", line.strip())
+        if gm:
+            question = md(gm.group(1).strip())[3:-4]
+            block, i = [], i + 1
+            fence = False
+            closed = False
+            while i < len(lines):
+                candidate = lines[i]
+                if candidate.lstrip().startswith("```"):
+                    fence = not fence
+                if not fence and candidate.strip() == "::/gate":
+                    closed = True
+                    i += 1
+                    break
+                block.append(candidate)
+                i += 1
+            if not closed:
+                print("WARNING: ::gate was not closed with ::/gate; closing it at the end")
+            inner_pre, inner_quiz, inner_gate = preprocess("\n".join(block), base, figures, page_kind)
+            if inner_gate:
+                print("WARNING: nested gates are not supported; flatten the lecture gates")
+            inner_html = md(inner_pre)
+            n_fig = len(figures)
+            has_quiz = has_quiz or inner_quiz
+            out.extend(["", '<div class="gate-step" data-gate>',
+                        '<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false">'
+                        '<span class="gate-q" aria-hidden="true">?</span>'
+                        f'<span>{question}</span></button></p>',
+                        f'<div class="gate-content" hidden>{inner_html}</div>',
+                        '</div>', ""])
+            has_gate = True
+            continue
         if line.strip() == "::quiz":
             block = []
             i += 1
@@ -440,7 +533,7 @@ def preprocess(body: str, base: Path, figures: list, page_kind: str = "chapter")
             continue
         out.append(line)
         i += 1
-    return "\n".join(out), has_quiz
+    return "\n".join(out), has_quiz, has_gate
 
 
 def number_headings(html_body: str):
@@ -515,7 +608,7 @@ def main():
 
     figures = []
     kind = fm.get("kind", "chapter")  # chapter | notes | cheatsheet
-    pre, has_quiz = preprocess(body, base, figures, kind)
+    pre, has_quiz, has_gate = preprocess(body, base, figures, kind)
     html_body, toc = number_headings(md(pre))
 
     ch = fm.get("chapter")
@@ -573,11 +666,14 @@ def main():
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
     script = (READ_SCRIPT + PDF_SCRIPT
+              + (GATE_SCRIPT if has_gate else "")
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""
+    gate_noscript = GATE_NOSCRIPT if has_gate else ""
+    quiz_noscript = QUIZ_NOSCRIPT if has_quiz else ""
     body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz)}{hero}{outcomes}{toc_html}'
-                 f'<article class="prose">{html_body}</article>{pager}</main>{modals}')
+                 f'<article class="prose">{html_body}</article>{pager}</main>{modals}{gate_noscript}{quiz_noscript}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")
     if bad:

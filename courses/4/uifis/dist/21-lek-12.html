@@ -181,31 +181,58 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
 
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
 /* ---------- interactive test (::quiz) ---------- */
 .quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
 .quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 4px; }
 .quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q[hidden] { display: none; }
 .quiz-q:first-of-type { border-top: 0; }
 .quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
 .quiz .opts { display: grid; gap: 6px; }
 .quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
 .quiz .opt:hover { border-color: var(--accent); }
 .quiz .opt input { margin-top: 4px; }
 .quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
 .quiz-q.bad .quiz-p { color: var(--bad); }
 .quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
 .quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
-.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
-.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
 .quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
 .quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
 .quiz-q.ok .short-answer { border-color: var(--ok); }
 .quiz-q.bad .short-answer { border-color: var(--bad); }
-.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-foot button.submit:hover { filter: brightness(.95); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
 
 /* ---------- test submission and warnings ---------- */
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
@@ -261,6 +288,8 @@ html.modal-open { overflow: hidden; }
   .prose p, .prose li { text-align: left; hyphens: none; }
   a { color: #000; text-decoration: none; }
   .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
   .recap { background: #fff; color: #000; }
   .recap li, .recap p { color: #000; }
   .figure { break-inside: avoid; }
@@ -560,7 +589,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Вот почему пример с записью «Иванов Иван» и «Иванов И.И.» при переводе всегда короткий: в справочнике ERP поле зафиксировано как строка с инициалами, и адаптер обязан уметь сократить фамилию по правилу, а не спросить у пользователя. Правило обязано быть в словаре, иначе адаптер не знает, по какому образцу переписать.</p>
 <p>Хорошая новость: словарь соответствий можно зафиксировать в виде таблицы «поле исходника, поле приёмника, правило», и у каждого правила свой тест. Тогда вместо «нашлите нам лог запроса» можно открыть словарь и посмотреть, каким правилом пренебрегли.</p>
-<h2 id="способы-интеграции"><span class="num">03</span>Способы интеграции</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какими способами системы обмениваются данными?</span></button></p>
+<div class="gate-content" hidden><h2 id="способы-интеграции"><span class="num">03</span>Способы интеграции</h2>
 <p>Способ выбирают по задаче, а не по моде.</p>
 <p><strong>Обмен файлами</strong> прост: одна система выгружает CSV или XML, другая загружает. Он годится для отчётов и ночных обменов, но плохо показывает ошибки и задержки. Если файл потерялся или разобрался наполовину, нужна сверка. Никакой сложной инфраструктуры не требуется, но и оперативного обмена получить не получится.</p>
 <p><strong>Прямое подключение к базе</strong> даёт быстрый доступ, но создаёт жёсткую связь. Изменение схемы ломает вторую систему, а права доступа к базе становятся слишком широкими. Для учебного проекта это допустимо, для промышленной ИС опасно. Правильный вариант тот же, что и с HTTP: доступ только через контракт, а не напрямую к таблице.</p>
@@ -581,8 +612,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>идентификаторы и правила их сопоставления;</li>
 <li>версию контракта.</li>
 </ul>
-<p>Версия контракта важна так же, как версия приложения: сначала контракт описывает 1.0 со «суммой» в рублях, затем добавляется поле «валюта», и приёмник, который не знает о валюте, получает несовместимую запись. Вместо способности угадывать версию по содержанию, контракт нумеруется явно, и приёмник умеет принять 1.0 и 1.1 или явно отказаться, если он узнал не ту версию.</p>
-<h2 id="etl-и-преобразование"><span class="num">05</span>ETL и преобразование</h2>
+<p>Версия контракта важна так же, как версия приложения: сначала контракт описывает 1.0 со «суммой» в рублях, затем добавляется поле «валюта», и приёмник, который не знает о валюте, получает несовместимую запись. Вместо способности угадывать версию по содержанию, контракт нумеруется явно, и приёмник умеет принять 1.0 и 1.1 или явно отказаться, если он узнал не ту версию.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как привести данные к общему формату?</span></button></p>
+<div class="gate-content" hidden><h2 id="etl-и-преобразование"><span class="num">05</span>ETL и преобразование</h2>
 <p><strong>Extract</strong> забирает данные из источника. <strong>Transform</strong> приводит их к нужному виду: переименовывает поля, меняет типы, объединяет справочники, проверяет обязательные значения. <strong>Load</strong> записывает результат в приёмник.</p>
 <p>Преобразование не должно быть «магией». Если <code>fio</code> разбивается на фамилию, имя и отчество, нужна функция разбора и правило для двойных фамилий. Если код клиента в одной системе числовой, а в другой строковый, нужно явное сопоставление, а не надежда на автоматическое приведение.</p>
 <p><strong>Идемпотентность</strong> важна и здесь. Повторная загрузка одного файла не должна создавать дубликаты. Для этого используют естественный ключ, хеш записи или таблицу уже обработанных сообщений. Клиент, отправивший ту же запись второй раз, получает тот же результат, что и первый: ничего не добавилось и не удалось.</p>
@@ -615,16 +650,24 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="качество-и-безопасность"><span class="num">08</span>Качество и безопасность</h2>
 <p><strong>Сверка</strong> сравнивает источник и приёмник: число записей, суммы, ключи, даты. Расхождение может быть нормой на время загрузки, но должно объясняться. Правильный отчёт обходится просто: «сейчас принято 98 из 100, остальные на очереди», и через минуту счётчики сходятся. Когда объяснить расхождение нечем, это признак потерянных или продублированных сообщений.</p>
 <p><strong>Мониторинг</strong> следит за задержкой очереди, числом ошибок, повторными попытками. <strong>Аудит</strong> хранит, кто и когда менял данные. Если вы пишете жалобу «запись дважды принималась» и не можете этого никак доказать, значит, аудит не работает: журнал сам поймает повтор и скажет, кто и когда.</p>
-<p><strong>Безопасность</strong> требует TLS, авторизации, минимальных прав и защиты персональных данных. В журналах не должно быть паролей и лишних персональных данных. Для учебного обмена достаточно токена и тестовых данных, но принцип тот же.</p>
-<h2 id="куда-ставить-проверку-три-рубежа"><span class="num">09</span>Куда ставить проверку: три рубежа</h2>
+<p><strong>Безопасность</strong> требует TLS, авторизации, минимальных прав и защиты персональных данных. В журналах не должно быть паролей и лишних персональных данных. Для учебного обмена достаточно токена и тестовых данных, но принцип тот же.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Где проверять данные при обмене?</span></button></p>
+<div class="gate-content" hidden><h2 id="куда-ставить-проверку-три-рубежа"><span class="num">09</span>Куда ставить проверку: три рубежа</h2>
 <p>Интеграцию проверяют не только после обмена. Лучше всего ставить проверку на три рубежа:</p>
 <ol>
 <li><strong>На входе адаптера.</strong> Обязательные поля, типы, границы значений. Ошибка ловится здесь и возвращается источнику с причиной.</li>
 <li><strong>На выходе адаптера.</strong> Запись соответствует схеме приёмника, справочники применены, ключ присвоен.</li>
 <li><strong>После загрузки.</strong> Число записей и суммы в приёмнике совпали с источником, журнал записал операцию.</li>
 </ol>
-<p>Это тот же принцип, что и в HTTP: «сначала проверь вход, потом делай работу». И здесь он экономит особенно много времени: ошибка, пойманная на выходе адаптера, почти всегда указывает на конкретное поле, которое вчера никто не проверял, и сервер может сообщить точнее, чем «ошибка на третьем шаге».</p>
-<h2 id="куда-смотреть-когда-обмен-не-работает"><span class="num">10</span>Куда смотреть, когда обмен не работает</h2>
+<p>Это тот же принцип, что и в HTTP: «сначала проверь вход, потом делай работу». И здесь он экономит особенно много времени: ошибка, пойманная на выходе адаптера, почти всегда указывает на конкретное поле, которое вчера никто не проверял, и сервер может сообщить точнее, чем «ошибка на третьем шаге».</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Почему обмен ломается и где искать причину?</span></button></p>
+<div class="gate-content" hidden><h2 id="куда-смотреть-когда-обмен-не-работает"><span class="num">10</span>Куда смотреть, когда обмен не работает</h2>
 <p>Когда обмен пошёл не так, полезно понимать, что именно сломалось:</p>
 <ul>
 <li><strong>Ошибка на входе.</strong> Источник прислал запись без обязательного поля или с неверным типом. Проверка: посмотрите словарь и версию контракта.</li>
@@ -663,23 +706,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </ul>
 <h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
 <p>В тесте 15 вопросов: 6 с одним правильным ответом, 6 с несколькими правильными ответами и 3 с кратким ответом.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает адаптер?</p><div class="opts"><label class="opt"><input type="radio" name="q284_0" value="0" data-ok><span>Переписывает данные по словарю соответствий</span></label><label class="opt"><input type="radio" name="q284_0" value="1"><span>Копирует базу источника целиком</span></label><label class="opt"><input type="radio" name="q284_0" value="2"><span>Заменяет API у приёмника</span></label><label class="opt"><input type="radio" name="q284_0" value="3"><span>Ускоряет поиск по таблицам</span></label></div><p class="quiz-why" hidden>Адаптер приводит данные к требованиям приёмника по словарю соответствий.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что означает ETL?</p><div class="opts"><label class="opt"><input type="radio" name="q284_1" value="0" data-ok><span>Extract, Transform, Load</span></label><label class="opt"><input type="radio" name="q284_1" value="1"><span>Encode, Test, Lock</span></label><label class="opt"><input type="radio" name="q284_1" value="2"><span>Export, Transfer, Log</span></label><label class="opt"><input type="radio" name="q284_1" value="3"><span>Edit, Type, Link</span></label></div><p class="quiz-why" hidden>ETL выгружает, преобразует и загружает данные.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое dead letter queue?</p><div class="opts"><label class="opt"><input type="radio" name="q284_2" value="0" data-ok><span>Очередь необработанных сообщений</span></label><label class="opt"><input type="radio" name="q284_2" value="1"><span>Список пользователей</span></label><label class="opt"><input type="radio" name="q284_2" value="2"><span>Таблица базы данных</span></label><label class="opt"><input type="radio" name="q284_2" value="3"><span>Журнал аудита</span></label></div><p class="quiz-why" hidden>Туда попадают сообщения, которые не удалось обработать.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое идемпотентность?</p><div class="opts"><label class="opt"><input type="radio" name="q284_3" value="0" data-ok><span>Повторная операция не создаёт новый эффект</span></label><label class="opt"><input type="radio" name="q284_3" value="1"><span>Операция всегда выполняется быстрее</span></label><label class="opt"><input type="radio" name="q284_3" value="2"><span>Данные всегда в JSON</span></label><label class="opt"><input type="radio" name="q284_3" value="3"><span>Система работает без авторизации</span></label></div><p class="quiz-why" hidden>Идемпотентность защищает от дубликатов при повторах.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что используется, чтобы повторная загрузка не создала дубликат?</p><div class="opts"><label class="opt"><input type="radio" name="q284_4" value="0" data-ok><span>Ключ идемпотентности</span></label><label class="opt"><input type="radio" name="q284_4" value="1"><span>Отключение журнала</span></label><label class="opt"><input type="radio" name="q284_4" value="2"><span>Повторный POST без заголовков</span></label><label class="opt"><input type="radio" name="q284_4" value="3"><span>Ручная правка каждой записи</span></label></div><p class="quiz-why" hidden>Ключ идемпотентности делает повторную доставку безопасной.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой код состояния подтверждает лишь обработку запроса, но не корректность данных?</p><div class="opts"><label class="opt"><input type="radio" name="q284_5" value="0" data-ok><span>200</span></label><label class="opt"><input type="radio" name="q284_5" value="1"><span>400</span></label><label class="opt"><input type="radio" name="q284_5" value="2"><span>404</span></label><label class="opt"><input type="radio" name="q284_5" value="3"><span>500</span></label></div><p class="quiz-why" hidden>200 OK означает «запрос обработан», корректность данных проверяет сверка.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие форматы используются для обмена данными между системами?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_6" value="0" data-ok><span>JSON</span></label><label class="opt"><input type="checkbox" name="q284_6" value="1" data-ok><span>XML</span></label><label class="opt"><input type="checkbox" name="q284_6" value="2" data-ok><span>CSV</span></label><label class="opt"><input type="checkbox" name="q284_6" value="3"><span>PNG</span></label><label class="opt"><input type="checkbox" name="q284_6" value="4"><span>EXE</span></label></div><p class="quiz-why" hidden>JSON, XML и CSV переносят структурированные данные.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие свойства важны для контракта API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_7" value="0" data-ok><span>Пути</span></label><label class="opt"><input type="checkbox" name="q284_7" value="1" data-ok><span>Методы</span></label><label class="opt"><input type="checkbox" name="q284_7" value="2" data-ok><span>Схемы данных</span></label><label class="opt"><input type="checkbox" name="q284_7" value="3" data-ok><span>Коды ошибок</span></label><label class="opt"><input type="checkbox" name="q284_7" value="4"><span>Цвет кнопки</span></label><label class="opt"><input type="checkbox" name="q284_7" value="5"><span>Модель процессора</span></label></div><p class="quiz-why" hidden>Контракт фиксирует интерфейс и ошибки.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие проверки ставят на рубежах интеграции?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_8" value="0" data-ok><span>Валидация полей на входе адаптера</span></label><label class="opt"><input type="checkbox" name="q284_8" value="1" data-ok><span>Соответствие схеме на выходе адаптера</span></label><label class="opt"><input type="checkbox" name="q284_8" value="2" data-ok><span>Сверка количества и сумм после загрузки</span></label><label class="opt"><input type="checkbox" name="q284_8" value="3"><span>Проверка цвета интерфейса</span></label><label class="opt"><input type="checkbox" name="q284_8" value="4"><span>Замер температуры сервера</span></label></div><p class="quiz-why" hidden>Три рубежа ловят разные причины отказов, каждая со своим адресом.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие правила обязательно включают в словарь соответствий?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_9" value="0" data-ok><span>Имена и типы полей</span></label><label class="opt"><input type="checkbox" name="q284_9" value="1" data-ok><span>Обязательность значений</span></label><label class="opt"><input type="checkbox" name="q284_9" value="2" data-ok><span>Правило ключа записи (что считать «той же самой записью»)</span></label><label class="opt"><input type="checkbox" name="q284_9" value="3"><span>Цвет кнопки интерфейса</span></label><label class="opt"><input type="checkbox" name="q284_9" value="4"><span>Список имён сотрудников</span></label></div><p class="quiz-why" hidden>Словарь должен однозначно объяснять, что и куда переписать.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Что характерно для асинхронного обмена?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_10" value="0" data-ok><span>Очередь сообщений</span></label><label class="opt"><input type="checkbox" name="q284_10" value="1" data-ok><span>Повторные попытки с задержкой</span></label><label class="opt"><input type="checkbox" name="q284_10" value="2" data-ok><span>Dead letter queue для разобранных вручную ошибок</span></label><label class="opt"><input type="checkbox" name="q284_10" value="3"><span>Клиент блокируется до прихода ответа</span></label><label class="opt"><input type="checkbox" name="q284_10" value="4"><span>Ответ всегда приходит мгновенно</span></label></div><p class="quiz-why" hidden>Асинхронный обмен развязывает отправителя и получателя через очередь.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что проверять после успешного ответа API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q284_11" value="0" data-ok><span>Обязательные поля в JSON</span></label><label class="opt"><input type="checkbox" name="q284_11" value="1" data-ok><span>Количество записей</span></label><label class="opt"><input type="checkbox" name="q284_11" value="2" data-ok><span>Контрольные суммы</span></label><label class="opt"><input type="checkbox" name="q284_11" value="3" data-ok><span>Соответствие справочникам</span></label><label class="opt"><input type="checkbox" name="q284_11" value="4"><span>Отсутствие ошибок по статусу 200</span></label><label class="opt"><input type="checkbox" name="q284_11" value="5"><span>Отсутствие журнала операций</span></label></div><p class="quiz-why" hidden>Статус 200 не доказывает корректность данных: сверка идёт отдельно.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется спецификация описания API с путями, методами и схемами?</p><input type="text" class="short-answer" data-answers="[&quot;OpenAPI&quot;, &quot;swagger&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется спецификация описания API с путями, методами и схемами?"><p class="quiz-why" hidden>Это OpenAPI, её первую версию называли Swagger.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой формат обмена удобнее всего для веб-API?</p><input type="text" class="short-answer" data-answers="[&quot;JSON&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой формат обмена удобнее всего для веб-API?"><p class="quiz-why" hidden>JSON компактен и легко отображается на структуры языка.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?</p><input type="text" class="short-answer" data-answers="[&quot;сверка&quot;, &quot;reconciliation&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?"><p class="quiz-why" hidden>Это сверка данных.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><a class="" href="20-lek-11.html"><span>← Предыдущее занятие</span>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</a><span></span></nav></main>
-<div class="modal" data-modal="submit" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
-    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-    <h2 id="submit-title">Результат теста</h2>
-    <label class="modal-name" data-student-label><span>ФИО студента</span>
-      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
-    </label>
-    <p class="modal-student" data-student-view hidden></p>
-    <p class="modal-result" data-modal-result></p>
-    <dl class="modal-times">
-      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
-      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
-    </dl>
-    <button type="button" class="modal-ok" data-modal-close>Готово</button>
-  </div>
-</div>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что делает адаптер?</p><div class="opts"><label class="opt"><input type="radio" name="q160_0" value="0" data-ok><span>Переписывает данные по словарю соответствий</span></label><label class="opt"><input type="radio" name="q160_0" value="1"><span>Копирует базу источника целиком</span></label><label class="opt"><input type="radio" name="q160_0" value="2"><span>Заменяет API у приёмника</span></label><label class="opt"><input type="radio" name="q160_0" value="3"><span>Ускоряет поиск по таблицам</span></label></div><p class="quiz-why" hidden>Адаптер приводит данные к требованиям приёмника по словарю соответствий.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Что означает ETL?</p><div class="opts"><label class="opt"><input type="radio" name="q160_1" value="0" data-ok><span>Extract, Transform, Load</span></label><label class="opt"><input type="radio" name="q160_1" value="1"><span>Encode, Test, Lock</span></label><label class="opt"><input type="radio" name="q160_1" value="2"><span>Export, Transfer, Log</span></label><label class="opt"><input type="radio" name="q160_1" value="3"><span>Edit, Type, Link</span></label></div><p class="quiz-why" hidden>ETL выгружает, преобразует и загружает данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что такое dead letter queue?</p><div class="opts"><label class="opt"><input type="radio" name="q160_2" value="0" data-ok><span>Очередь необработанных сообщений</span></label><label class="opt"><input type="radio" name="q160_2" value="1"><span>Список пользователей</span></label><label class="opt"><input type="radio" name="q160_2" value="2"><span>Таблица базы данных</span></label><label class="opt"><input type="radio" name="q160_2" value="3"><span>Журнал аудита</span></label></div><p class="quiz-why" hidden>Туда попадают сообщения, которые не удалось обработать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что такое идемпотентность?</p><div class="opts"><label class="opt"><input type="radio" name="q160_3" value="0" data-ok><span>Повторная операция не создаёт новый эффект</span></label><label class="opt"><input type="radio" name="q160_3" value="1"><span>Операция всегда выполняется быстрее</span></label><label class="opt"><input type="radio" name="q160_3" value="2"><span>Данные всегда в JSON</span></label><label class="opt"><input type="radio" name="q160_3" value="3"><span>Система работает без авторизации</span></label></div><p class="quiz-why" hidden>Идемпотентность защищает от дубликатов при повторах.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что используется, чтобы повторная загрузка не создала дубликат?</p><div class="opts"><label class="opt"><input type="radio" name="q160_4" value="0" data-ok><span>Ключ идемпотентности</span></label><label class="opt"><input type="radio" name="q160_4" value="1"><span>Отключение журнала</span></label><label class="opt"><input type="radio" name="q160_4" value="2"><span>Повторный POST без заголовков</span></label><label class="opt"><input type="radio" name="q160_4" value="3"><span>Ручная правка каждой записи</span></label></div><p class="quiz-why" hidden>Ключ идемпотентности делает повторную доставку безопасной.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какой код состояния подтверждает лишь обработку запроса, но не корректность данных?</p><div class="opts"><label class="opt"><input type="radio" name="q160_5" value="0" data-ok><span>200</span></label><label class="opt"><input type="radio" name="q160_5" value="1"><span>400</span></label><label class="opt"><input type="radio" name="q160_5" value="2"><span>404</span></label><label class="opt"><input type="radio" name="q160_5" value="3"><span>500</span></label></div><p class="quiz-why" hidden>200 OK означает «запрос обработан», корректность данных проверяет сверка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какие форматы используются для обмена данными между системами?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_6" value="0" data-ok><span>JSON</span></label><label class="opt"><input type="checkbox" name="q160_6" value="1" data-ok><span>XML</span></label><label class="opt"><input type="checkbox" name="q160_6" value="2" data-ok><span>CSV</span></label><label class="opt"><input type="checkbox" name="q160_6" value="3"><span>PNG</span></label><label class="opt"><input type="checkbox" name="q160_6" value="4"><span>EXE</span></label></div><p class="quiz-why" hidden>JSON, XML и CSV переносят структурированные данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие свойства важны для контракта API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_7" value="0" data-ok><span>Пути</span></label><label class="opt"><input type="checkbox" name="q160_7" value="1" data-ok><span>Методы</span></label><label class="opt"><input type="checkbox" name="q160_7" value="2" data-ok><span>Схемы данных</span></label><label class="opt"><input type="checkbox" name="q160_7" value="3" data-ok><span>Коды ошибок</span></label><label class="opt"><input type="checkbox" name="q160_7" value="4"><span>Цвет кнопки</span></label><label class="opt"><input type="checkbox" name="q160_7" value="5"><span>Модель процессора</span></label></div><p class="quiz-why" hidden>Контракт фиксирует интерфейс и ошибки.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какие проверки ставят на рубежах интеграции?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_8" value="0" data-ok><span>Валидация полей на входе адаптера</span></label><label class="opt"><input type="checkbox" name="q160_8" value="1" data-ok><span>Соответствие схеме на выходе адаптера</span></label><label class="opt"><input type="checkbox" name="q160_8" value="2" data-ok><span>Сверка количества и сумм после загрузки</span></label><label class="opt"><input type="checkbox" name="q160_8" value="3"><span>Проверка цвета интерфейса</span></label><label class="opt"><input type="checkbox" name="q160_8" value="4"><span>Замер температуры сервера</span></label></div><p class="quiz-why" hidden>Три рубежа ловят разные причины отказов, каждая со своим адресом.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие правила обязательно включают в словарь соответствий?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_9" value="0" data-ok><span>Имена и типы полей</span></label><label class="opt"><input type="checkbox" name="q160_9" value="1" data-ok><span>Обязательность значений</span></label><label class="opt"><input type="checkbox" name="q160_9" value="2" data-ok><span>Правило ключа записи (что считать «той же самой записью»)</span></label><label class="opt"><input type="checkbox" name="q160_9" value="3"><span>Цвет кнопки интерфейса</span></label><label class="opt"><input type="checkbox" name="q160_9" value="4"><span>Список имён сотрудников</span></label></div><p class="quiz-why" hidden>Словарь должен однозначно объяснять, что и куда переписать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что характерно для асинхронного обмена?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_10" value="0" data-ok><span>Очередь сообщений</span></label><label class="opt"><input type="checkbox" name="q160_10" value="1" data-ok><span>Повторные попытки с задержкой</span></label><label class="opt"><input type="checkbox" name="q160_10" value="2" data-ok><span>Dead letter queue для разобранных вручную ошибок</span></label><label class="opt"><input type="checkbox" name="q160_10" value="3"><span>Клиент блокируется до прихода ответа</span></label><label class="opt"><input type="checkbox" name="q160_10" value="4"><span>Ответ всегда приходит мгновенно</span></label></div><p class="quiz-why" hidden>Асинхронный обмен развязывает отправителя и получателя через очередь.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что проверять после успешного ответа API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q160_11" value="0" data-ok><span>Обязательные поля в JSON</span></label><label class="opt"><input type="checkbox" name="q160_11" value="1" data-ok><span>Количество записей</span></label><label class="opt"><input type="checkbox" name="q160_11" value="2" data-ok><span>Контрольные суммы</span></label><label class="opt"><input type="checkbox" name="q160_11" value="3" data-ok><span>Соответствие справочникам</span></label><label class="opt"><input type="checkbox" name="q160_11" value="4"><span>Отсутствие ошибок по статусу 200</span></label><label class="opt"><input type="checkbox" name="q160_11" value="5"><span>Отсутствие журнала операций</span></label></div><p class="quiz-why" hidden>Статус 200 не доказывает корректность данных: сверка идёт отдельно.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется спецификация описания API с путями, методами и схемами?</p><input type="text" class="short-answer" data-answers="[&quot;OpenAPI&quot;, &quot;swagger&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется спецификация описания API с путями, методами и схемами?"><p class="quiz-why" hidden>Это OpenAPI, её первую версию называли Swagger.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какой формат обмена удобнее всего для веб-API?</p><input type="text" class="short-answer" data-answers="[&quot;JSON&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой формат обмена удобнее всего для веб-API?"><p class="quiz-why" hidden>JSON компактен и легко отображается на структуры языка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?</p><input type="text" class="short-answer" data-answers="[&quot;сверка&quot;, &quot;reconciliation&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?"><p class="quiz-why" hidden>Это сверка данных.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="20-lek-11.html"><span>← Предыдущее занятие</span>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</a><span></span></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
@@ -688,7 +716,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     <button type="button" class="modal-ok" data-modal-close>Понятно</button>
   </div>
 </div>
-
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
 <script>
 (function(){
   var root = document.documentElement;
@@ -747,6 +775,34 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 })();
 
 (function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
@@ -776,9 +832,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   function viewingMs(){ tick(); return activeMs; }
   function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
     return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
-  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
-  var studentName = '';
-  var submitModal = document.querySelector('[data-modal="submit"]');
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
   var warnModal = document.querySelector('[data-modal="warn"]');
 
   function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
@@ -807,51 +861,78 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
 
-  function evaluate(quiz){
-    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
-    qs.forEach(function(q){
-      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
-      if(ok) right++;
-      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
-      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
     });
-    return {right: right, total: qs.length};
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
   }
 
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    quiz._firstAt = null; quiz._lastAt = null;
-    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
-    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    var progress = quiz.querySelector('[data-quiz-progress]');
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function setProgress(text){ if(progress) progress.textContent = text; }
+    function showQuestion(i){
+      current = i;
+      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      var field = qs[i].querySelector('input');
+      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      setProgress('Тест завершён');
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var nextBtn = q.querySelector('[data-next]');
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    quiz.querySelector('[data-reset]').addEventListener('click', function(){
-      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
-      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
-      quiz._firstAt = null; quiz._lastAt = null;
-    });
-    quiz.querySelector('[data-submit]').addEventListener('click', function(){
-      var r = evaluate(quiz);
-      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
-      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
-      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
-      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
-      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
-      var nameInput = submitModal.querySelector('[data-student-name]');
-      var nameLabel = submitModal.querySelector('[data-student-label]');
-      var nameView = submitModal.querySelector('[data-student-view]');
-      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
-      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
-      openModal(submitModal);
-    });
+    showQuestion(0);
   });
-
-  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
-  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>

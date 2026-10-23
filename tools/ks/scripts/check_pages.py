@@ -6,7 +6,9 @@ Usage:
 
 For every page: JS errors (page and figures), figures that failed to load or are
 still pending, figure frames that are too short (clipped), horizontal page scroll
-(naming the element), empty sections, em dashes in visible text (page and figures). Saves a full-page PNG and one PNG per figure.
+(naming the element), empty sections, em dashes in visible text (page and figures).
+Lecture gates are opened before the checks so hidden figures and sections are inspected.
+Saves a full-page PNG and one PNG per figure.
 Exit 1 on any problem. Then open the PNGs: the review is yours, not the script's.
 
 Needs: pip install playwright && playwright install chromium
@@ -54,6 +56,9 @@ def check(page, path: Path, shots: Path, tag: str, problems: list):
     page.on("pageerror", lambda e: errs.append(str(e)))
     page.goto(path.as_uri())
     page.wait_for_timeout(500)
+    # reveal every ::gate so hidden figures and sections are checked too
+    page.evaluate("""() => document.querySelectorAll('.gate-btn').forEach(b => b.click())""")
+    page.wait_for_timeout(200)
     # scroll through so lazy figures load, then let them settle
     h = page.evaluate("document.body.scrollHeight")
     for y in range(0, h + 900, 700):

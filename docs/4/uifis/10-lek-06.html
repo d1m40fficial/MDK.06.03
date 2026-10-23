@@ -181,31 +181,58 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
 
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
 /* ---------- interactive test (::quiz) ---------- */
 .quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
 .quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 4px; }
 .quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q[hidden] { display: none; }
 .quiz-q:first-of-type { border-top: 0; }
 .quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
 .quiz .opts { display: grid; gap: 6px; }
 .quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
 .quiz .opt:hover { border-color: var(--accent); }
 .quiz .opt input { margin-top: 4px; }
 .quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
 .quiz-q.bad .quiz-p { color: var(--bad); }
 .quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
 .quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
-.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
-.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
 .quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
 .quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
 .quiz-q.ok .short-answer { border-color: var(--ok); }
 .quiz-q.bad .short-answer { border-color: var(--bad); }
-.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-foot button.submit:hover { filter: brightness(.95); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
 
 /* ---------- test submission and warnings ---------- */
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
@@ -261,6 +288,8 @@ html.modal-open { overflow: hidden; }
   .prose p, .prose li { text-align: left; hyphens: none; }
   a { color: #000; text-decoration: none; }
   .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
   .recap { background: #fff; color: #000; }
   .recap li, .recap p { color: #000; }
   .figure { break-inside: avoid; }
@@ -577,7 +606,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p><strong>IOPS</strong> это число операций ввода-вывода в секунду. Для базы данных важна не только ёмкость диска, но и то, сколько мелких операций он выдерживает. <strong>Задержка</strong> показывает, сколько времени проходит от запроса до ответа. Диск на 10 ТБ и диск на 1 ТБ могут иметь одинаковую ёмкость на терабайт, но разную скорость.</p>
 <p><strong>Пропускная способность</strong> сети измеряется в битах в секунду, а размер файлов обычно в байтах. В одном байте восемь бит, поэтому канал 1 Гбит/с теоретически передаёт около 125 МБ/с, а 10 Гбит/с около 1,25 ГБ/с. На практике скорость ниже из-за накладных расходов, но этот расчёт помогает сразу увидеть несоответствие: копировать 10 ТБ по каналу 1 Гбит/с со скоростью 100 МБ/с придётся около 28 часов.</p>
-<h2 id="сервер"><span class="num">04</span>Сервер</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Из каких ресурсов состоит серверная стойка?</span></button></p>
+<div class="gate-content" hidden><h2 id="сервер"><span class="num">04</span>Сервер</h2>
 <p><strong>Сервер</strong> это компьютер, рассчитанный на круглосуточную работу и обслуживание многих пользователей. Он отличается от настольного компьютера не только мощностью, но и устройством:</p>
 <ul>
 <li><strong>Процессорные сокеты.</strong> В сервере обычно один или два сокета, поэтому ядер может быть значительно больше, чем в настольной машине.</li>
@@ -614,8 +645,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="питание-и-охлаждение"><span class="num">08</span>Питание и охлаждение</h2>
 <p><strong>Блок питания</strong> преобразует переменный ток в постоянный, который нужен компонентам. <strong>ИБП</strong> (источник бесперебойного питания) держит нагрузку при пропадании внешнего питания и даёт время корректно завершить работу или перейти на генератор. <strong>PDU</strong> распределяет питание по стойке и позволяет считать нагрузку по линиям.</p>
 <p>В учебной стойке ИБП рассчитан на 6 кВА при коэффициенте мощности 0,9, то есть около 5,4 кВт. Текущая нагрузка 1,6 кВт, поэтому запас есть, а время автономной работы при такой нагрузке составляет примерно 30 минут. Это не генератор: ИБП не рассчитан на многочасовую работу, он закрывает короткие перерывы и аварийное завершение.</p>
-<p>Почти вся потребляемая мощность превращается в тепло. Стойка на 1,6 кВт выделяет около 1,6 кВт тепла, и это тепло нужно удалить. В серверной комнате считают мощность кондиционирования, направление воздушного потока и температуру на входе в сервер. Если поставить серверы плотно и закрыть вентиляцию, они начнут снижать частоту процессора или выключаться от перегрева.</p>
-<h2 id="как-выбрать-оборудование"><span class="num">09</span>Как выбрать оборудование</h2>
+<p>Почти вся потребляемая мощность превращается в тепло. Стойка на 1,6 кВт выделяет около 1,6 кВт тепла, и это тепло нужно удалить. В серверной комнате считают мощность кондиционирования, направление воздушного потока и температуру на входе в сервер. Если поставить серверы плотно и закрыть вентиляцию, они начнут снижать частоту процессора или выключаться от перегрева.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как характеристики ресурсов влияют на выбор?</span></button></p>
+<div class="gate-content" hidden><h2 id="как-выбрать-оборудование"><span class="num">09</span>Как выбрать оборудование</h2>
 <p>Выбор начинают с профиля нагрузки, а не с прайс-листа.</p>
 <ol>
 <li><strong>Какая задача преобладает.</strong> Много коротких запросов к базе, тяжёлые расчёты, хранение файлов или видеоконференции требуют разных ресурсов.</li>
@@ -643,8 +678,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>резервный сервер или кластер;</li>
 <li>регулярная проверка резервных копий.</li>
 </ul>
-<p>Важно найти <strong>единую точку отказа</strong>: компонент, после отказа которого система останавливается. Если все серверы подключены к одному коммутатору, этот коммутатор и есть единая точка отказа. Если резервная копия лежит на том же диске, что и данные, она не защищает от отказа диска.</p>
-<h2 id="типичные-ошибки"><span class="num">12</span>Типичные ошибки</h2>
+<p>Важно найти <strong>единую точку отказа</strong>: компонент, после отказа которого система останавливается. Если все серверы подключены к одному коммутатору, этот коммутатор и есть единая точка отказа. Если резервная копия лежит на том же диске, что и данные, она не защищает от отказа диска.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Где ошибаются при выборе оборудования?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки"><span class="num">12</span>Типичные ошибки</h2>
 <ul>
 <li><strong>Считать, что больше ядер всегда быстрее.</strong> Если узкое место в диске или сети, лишние ядра простаивают.</li>
 <li><strong>Путать RAID и резервное копирование.</strong> RAID защищает от отказа диска, но не от ошибки, вируса или пожара.</li>
@@ -677,7 +716,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <h2 id="тест-по-лекции"><span class="num">15</span>Тест по лекции</h2>
 <p>Ответьте на вопросы и нажмите «Проверить ответы». Верный вариант подсветится зелёным, а под неверными появится объяснение, почему ответ неверный.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Чему равен один юнит 1U в серверной стойке?</p><div class="opts"><label class="opt"><input type="radio" name="q274_0" value="0" data-ok><span>44,45 мм</span></label><label class="opt"><input type="radio" name="q274_0" value="1"><span>1 дюйм</span></label><label class="opt"><input type="radio" name="q274_0" value="2"><span>1 ГБ</span></label><label class="opt"><input type="radio" name="q274_0" value="3"><span>1 Вт</span></label></div><p class="quiz-why" hidden>Один юнит равен 44,45 мм. Дюйм это 25,4 мм, гигабайт измеряет данные, а ватт мощность.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой ресурс в первую очередь даёт система хранения данных?</p><div class="opts"><label class="opt"><input type="radio" name="q274_1" value="0" data-ok><span>Долговременное хранение данных</span></label><label class="opt"><input type="radio" name="q274_1" value="1"><span>Выполнение вычислений</span></label><label class="opt"><input type="radio" name="q274_1" value="2"><span>Показ интерфейса пользователю</span></label><label class="opt"><input type="radio" name="q274_1" value="3"><span>Маршрутизацию между сетями</span></label></div><p class="quiz-why" hidden>СХД хранит данные и выдаёт их по запросу. Вычисления даёт процессор, интерфейс клиент, маршрутизацию маршрутизатор.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Чем сервер отличается от настольного компьютера?</p><div class="opts"><label class="opt"><input type="radio" name="q274_2" value="0" data-ok><span>Рассчитан на круглосуточную работу и удалённое управление</span></label><label class="opt"><input type="radio" name="q274_2" value="1"><span>Всегда имеет монитор и клавиатуру</span></label><label class="opt"><input type="radio" name="q274_2" value="2"><span>Не использует процессор</span></label><label class="opt"><input type="radio" name="q274_2" value="3"><span>Не имеет оперативной памяти</span></label></div><p class="quiz-why" hidden>Сервер рассчитан на постоянную работу, горячую замену дисков, резервное питание и удалённое управление. Монитор, процессор и память у него есть.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает коммутатор?</p><div class="opts"><label class="opt"><input type="radio" name="q274_3" value="0" data-ok><span>Передаёт кадры между устройствами внутри сети</span></label><label class="opt"><input type="radio" name="q274_3" value="1"><span>Хранит файлы на дисках</span></label><label class="opt"><input type="radio" name="q274_3" value="2"><span>Выполняет бизнес-логику приложения</span></label><label class="opt"><input type="radio" name="q274_3" value="3"><span>Преобразует переменный ток в постоянный</span></label></div><p class="quiz-why" hidden>Коммутатор соединяет устройства и передаёт кадры по MAC-адресам. Хранение, логика и питание это другие компоненты.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что означает RAID 1?</p><div class="opts"><label class="opt"><input type="radio" name="q274_4" value="0" data-ok><span>Зеркалирование, когда данные записываются на два диска</span></label><label class="opt"><input type="radio" name="q274_4" value="1"><span>Чередование без чётности</span></label><label class="opt"><input type="radio" name="q274_4" value="2"><span>Хранение чётности на одном диске</span></label><label class="opt"><input type="radio" name="q274_4" value="3"><span>Объединение всех дисков в один быстрый том</span></label></div><p class="quiz-why" hidden>RAID 1 повторяет данные на двух дисках, поэтому отказ одного не теряет данные. Чередование без чётности это RAID 0, чётность используется в RAID 5 и 6.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что такое тонкий клиент?</p><div class="opts"><label class="opt"><input type="radio" name="q274_5" value="0" data-ok><span>Устройство, которое в основном показывает интерфейс, а вычисления идут на сервере</span></label><label class="opt"><input type="radio" name="q274_5" value="1"><span>Клиент, который работает только без сети</span></label><label class="opt"><input type="radio" name="q274_5" value="2"><span>Сервер без локальных дисков</span></label><label class="opt"><input type="radio" name="q274_5" value="3"><span>Программа для резервного копирования</span></label></div><p class="quiz-why" hidden>Тонкий клиент зависит от сервера и сети, потому что сам почти не вычисляет. Без сети он как раз теряет работоспособность.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие ресурсы даёт сервер?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_6" value="0" data-ok><span>Вычисления</span></label><label class="opt"><input type="checkbox" name="q274_6" value="1" data-ok><span>Оперативную память</span></label><label class="opt"><input type="checkbox" name="q274_6" value="2" data-ok><span>Локальные диски</span></label><label class="opt"><input type="checkbox" name="q274_6" value="3"><span>Бумагу для печати</span></label></div><p class="quiz-why" hidden>Сервер даёт процессорные ядра, оперативную память и локальные диски. Бумага это расходный материал периферии, а не ресурс сервера.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие характеристики важны для системы хранения данных?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_7" value="0" data-ok><span>Ёмкость</span></label><label class="opt"><input type="checkbox" name="q274_7" value="1" data-ok><span>Число операций ввода-вывода в секунду</span></label><label class="opt"><input type="checkbox" name="q274_7" value="2" data-ok><span>Задержка доступа</span></label><label class="opt"><input type="checkbox" name="q274_7" value="3"><span>Частота обновления монитора</span></label></div><p class="quiz-why" hidden>Для СХД важны ёмкость, IOPS и задержка. Частота монитора относится к устройству вывода, а не к хранению.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Что относится к сетевому оборудованию?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_8" value="0" data-ok><span>Коммутатор</span></label><label class="opt"><input type="checkbox" name="q274_8" value="1" data-ok><span>Маршрутизатор</span></label><label class="opt"><input type="checkbox" name="q274_8" value="2" data-ok><span>Патч-панель</span></label><label class="opt"><input type="checkbox" name="q274_8" value="3"><span>Принтер</span></label></div><p class="quiz-why" hidden>Коммутатор, маршрутизатор и патч-панель работают с сетевыми подключениями. Принтер это периферийное устройство, даже если он подключён к сети.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Что повышает отказоустойчивость системы?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_9" value="0" data-ok><span>Резервный блок питания</span></label><label class="opt"><input type="checkbox" name="q274_9" value="1" data-ok><span>RAID для дисков</span></label><label class="opt"><input type="checkbox" name="q274_9" value="2" data-ok><span>Второй коммутатор</span></label><label class="opt"><input type="checkbox" name="q274_9" value="3"><span>Один диск без резервной копии</span></label></div><p class="quiz-why" hidden>Резервный блок питания, RAID и второй коммутатор убирают отдельные точки отказа. Один диск без копии как раз повышает риск потери данных.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Что нужно учитывать при выборе оборудования?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_10" value="0" data-ok><span>Нагрузку и число одновременных сессий</span></label><label class="opt"><input type="checkbox" name="q274_10" value="1" data-ok><span>Рост объёма данных</span></label><label class="opt"><input type="checkbox" name="q274_10" value="2" data-ok><span>Питание и охлаждение</span></label><label class="opt"><input type="checkbox" name="q274_10" value="3"><span>Цвет корпуса</span></label></div><p class="quiz-why" hidden>На выбор влияют нагрузка, рост данных, питание, охлаждение, совместимость и стоимость владения. Цвет корпуса не влияет на работу системы.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие утверждения верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q274_11" value="0" data-ok><span>RAID не заменяет резервное копирование</span></label><label class="opt"><input type="checkbox" name="q274_11" value="1" data-ok><span>ИБП даёт время корректно завершить работу</span></label><label class="opt"><input type="checkbox" name="q274_11" value="2" data-ok><span>Сеть может быть узким местом</span></label><label class="opt"><input type="checkbox" name="q274_11" value="3"><span>Больше ядер всегда ускоряет любую задачу</span></label></div><p class="quiz-why" hidden>RAID защищает от отказа диска, но не от ошибок и вирусов, поэтому нужна отдельная копия. ИБП закрывает короткий перерыв питания. Сеть может ограничивать систему, а лишние ядра не помогают, если узкое место в другом ресурсе.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Сколько миллиметров в одном юните?</p><input type="text" class="short-answer" data-answers="[&quot;44,45&quot;, &quot;44.45&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Сколько миллиметров в одном юните?"><p class="quiz-why" hidden>Один юнит равен 44,45 мм. Это стандартная высота юнита в 19-дюймовой стойке.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Назовите два ресурса, которые даёт сервер.</p><input type="text" class="short-answer" data-answers="[&quot;ядра&quot;, &quot;оперативная память&quot;, &quot;процессор&quot;, &quot;ОЗУ&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Назовите два ресурса, которые даёт сервер."><p class="quiz-why" hidden>Сервер даёт вычисления (ядра процессора), оперативную память, локальные диски и сетевые порты. Достаточно назвать любые два ресурса.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Что нужно сделать, чтобы RAID не считался резервной копией?</p><input type="text" class="short-answer" data-answers="[&quot;настроить резервное копирование&quot;, &quot;делать резервные копии&quot;, &quot;копировать данные на отдельный носитель&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Что нужно сделать, чтобы RAID не считался резервной копией?"><p class="quiz-why" hidden>RAID повышает доступность, но не защищает от ошибки, вируса или повреждения массива. Нужна отдельная резервная копия на другом носителе или площадке.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Чему равен один юнит 1U в серверной стойке?</p><div class="opts"><label class="opt"><input type="radio" name="q146_0" value="0" data-ok><span>44,45 мм</span></label><label class="opt"><input type="radio" name="q146_0" value="1"><span>1 дюйм</span></label><label class="opt"><input type="radio" name="q146_0" value="2"><span>1 ГБ</span></label><label class="opt"><input type="radio" name="q146_0" value="3"><span>1 Вт</span></label></div><p class="quiz-why" hidden>Один юнит равен 44,45 мм. Дюйм это 25,4 мм, гигабайт измеряет данные, а ватт мощность.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какой ресурс в первую очередь даёт система хранения данных?</p><div class="opts"><label class="opt"><input type="radio" name="q146_1" value="0" data-ok><span>Долговременное хранение данных</span></label><label class="opt"><input type="radio" name="q146_1" value="1"><span>Выполнение вычислений</span></label><label class="opt"><input type="radio" name="q146_1" value="2"><span>Показ интерфейса пользователю</span></label><label class="opt"><input type="radio" name="q146_1" value="3"><span>Маршрутизацию между сетями</span></label></div><p class="quiz-why" hidden>СХД хранит данные и выдаёт их по запросу. Вычисления даёт процессор, интерфейс клиент, маршрутизацию маршрутизатор.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Чем сервер отличается от настольного компьютера?</p><div class="opts"><label class="opt"><input type="radio" name="q146_2" value="0" data-ok><span>Рассчитан на круглосуточную работу и удалённое управление</span></label><label class="opt"><input type="radio" name="q146_2" value="1"><span>Всегда имеет монитор и клавиатуру</span></label><label class="opt"><input type="radio" name="q146_2" value="2"><span>Не использует процессор</span></label><label class="opt"><input type="radio" name="q146_2" value="3"><span>Не имеет оперативной памяти</span></label></div><p class="quiz-why" hidden>Сервер рассчитан на постоянную работу, горячую замену дисков, резервное питание и удалённое управление. Монитор, процессор и память у него есть.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что делает коммутатор?</p><div class="opts"><label class="opt"><input type="radio" name="q146_3" value="0" data-ok><span>Передаёт кадры между устройствами внутри сети</span></label><label class="opt"><input type="radio" name="q146_3" value="1"><span>Хранит файлы на дисках</span></label><label class="opt"><input type="radio" name="q146_3" value="2"><span>Выполняет бизнес-логику приложения</span></label><label class="opt"><input type="radio" name="q146_3" value="3"><span>Преобразует переменный ток в постоянный</span></label></div><p class="quiz-why" hidden>Коммутатор соединяет устройства и передаёт кадры по MAC-адресам. Хранение, логика и питание это другие компоненты.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что означает RAID 1?</p><div class="opts"><label class="opt"><input type="radio" name="q146_4" value="0" data-ok><span>Зеркалирование, когда данные записываются на два диска</span></label><label class="opt"><input type="radio" name="q146_4" value="1"><span>Чередование без чётности</span></label><label class="opt"><input type="radio" name="q146_4" value="2"><span>Хранение чётности на одном диске</span></label><label class="opt"><input type="radio" name="q146_4" value="3"><span>Объединение всех дисков в один быстрый том</span></label></div><p class="quiz-why" hidden>RAID 1 повторяет данные на двух дисках, поэтому отказ одного не теряет данные. Чередование без чётности это RAID 0, чётность используется в RAID 5 и 6.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что такое тонкий клиент?</p><div class="opts"><label class="opt"><input type="radio" name="q146_5" value="0" data-ok><span>Устройство, которое в основном показывает интерфейс, а вычисления идут на сервере</span></label><label class="opt"><input type="radio" name="q146_5" value="1"><span>Клиент, который работает только без сети</span></label><label class="opt"><input type="radio" name="q146_5" value="2"><span>Сервер без локальных дисков</span></label><label class="opt"><input type="radio" name="q146_5" value="3"><span>Программа для резервного копирования</span></label></div><p class="quiz-why" hidden>Тонкий клиент зависит от сервера и сети, потому что сам почти не вычисляет. Без сети он как раз теряет работоспособность.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какие ресурсы даёт сервер?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_6" value="0" data-ok><span>Вычисления</span></label><label class="opt"><input type="checkbox" name="q146_6" value="1" data-ok><span>Оперативную память</span></label><label class="opt"><input type="checkbox" name="q146_6" value="2" data-ok><span>Локальные диски</span></label><label class="opt"><input type="checkbox" name="q146_6" value="3"><span>Бумагу для печати</span></label></div><p class="quiz-why" hidden>Сервер даёт процессорные ядра, оперативную память и локальные диски. Бумага это расходный материал периферии, а не ресурс сервера.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие характеристики важны для системы хранения данных?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_7" value="0" data-ok><span>Ёмкость</span></label><label class="opt"><input type="checkbox" name="q146_7" value="1" data-ok><span>Число операций ввода-вывода в секунду</span></label><label class="opt"><input type="checkbox" name="q146_7" value="2" data-ok><span>Задержка доступа</span></label><label class="opt"><input type="checkbox" name="q146_7" value="3"><span>Частота обновления монитора</span></label></div><p class="quiz-why" hidden>Для СХД важны ёмкость, IOPS и задержка. Частота монитора относится к устройству вывода, а не к хранению.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что относится к сетевому оборудованию?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_8" value="0" data-ok><span>Коммутатор</span></label><label class="opt"><input type="checkbox" name="q146_8" value="1" data-ok><span>Маршрутизатор</span></label><label class="opt"><input type="checkbox" name="q146_8" value="2" data-ok><span>Патч-панель</span></label><label class="opt"><input type="checkbox" name="q146_8" value="3"><span>Принтер</span></label></div><p class="quiz-why" hidden>Коммутатор, маршрутизатор и патч-панель работают с сетевыми подключениями. Принтер это периферийное устройство, даже если он подключён к сети.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Что повышает отказоустойчивость системы?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_9" value="0" data-ok><span>Резервный блок питания</span></label><label class="opt"><input type="checkbox" name="q146_9" value="1" data-ok><span>RAID для дисков</span></label><label class="opt"><input type="checkbox" name="q146_9" value="2" data-ok><span>Второй коммутатор</span></label><label class="opt"><input type="checkbox" name="q146_9" value="3"><span>Один диск без резервной копии</span></label></div><p class="quiz-why" hidden>Резервный блок питания, RAID и второй коммутатор убирают отдельные точки отказа. Один диск без копии как раз повышает риск потери данных.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что нужно учитывать при выборе оборудования?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_10" value="0" data-ok><span>Нагрузку и число одновременных сессий</span></label><label class="opt"><input type="checkbox" name="q146_10" value="1" data-ok><span>Рост объёма данных</span></label><label class="opt"><input type="checkbox" name="q146_10" value="2" data-ok><span>Питание и охлаждение</span></label><label class="opt"><input type="checkbox" name="q146_10" value="3"><span>Цвет корпуса</span></label></div><p class="quiz-why" hidden>На выбор влияют нагрузка, рост данных, питание, охлаждение, совместимость и стоимость владения. Цвет корпуса не влияет на работу системы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какие утверждения верны?</p><div class="opts"><label class="opt"><input type="checkbox" name="q146_11" value="0" data-ok><span>RAID не заменяет резервное копирование</span></label><label class="opt"><input type="checkbox" name="q146_11" value="1" data-ok><span>ИБП даёт время корректно завершить работу</span></label><label class="opt"><input type="checkbox" name="q146_11" value="2" data-ok><span>Сеть может быть узким местом</span></label><label class="opt"><input type="checkbox" name="q146_11" value="3"><span>Больше ядер всегда ускоряет любую задачу</span></label></div><p class="quiz-why" hidden>RAID защищает от отказа диска, но не от ошибок и вирусов, поэтому нужна отдельная копия. ИБП закрывает короткий перерыв питания. Сеть может ограничивать систему, а лишние ядра не помогают, если узкое место в другом ресурсе.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Сколько миллиметров в одном юните?</p><input type="text" class="short-answer" data-answers="[&quot;44,45&quot;, &quot;44.45&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Сколько миллиметров в одном юните?"><p class="quiz-why" hidden>Один юнит равен 44,45 мм. Это стандартная высота юнита в 19-дюймовой стойке.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Назовите два ресурса, которые даёт сервер.</p><input type="text" class="short-answer" data-answers="[&quot;ядра&quot;, &quot;оперативная память&quot;, &quot;процессор&quot;, &quot;ОЗУ&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Назовите два ресурса, которые даёт сервер."><p class="quiz-why" hidden>Сервер даёт вычисления (ядра процессора), оперативную память, локальные диски и сетевые порты. Достаточно назвать любые два ресурса.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Что нужно сделать, чтобы RAID не считался резервной копией?</p><input type="text" class="short-answer" data-answers="[&quot;настроить резервное копирование&quot;, &quot;делать резервные копии&quot;, &quot;копировать данные на отдельный носитель&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Что нужно сделать, чтобы RAID не считался резервной копией?"><p class="quiz-why" hidden>RAID повышает доступность, но не защищает от ошибки, вируса или повреждения массива. Нужна отдельная резервная копия на другом носителе или площадке.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div>
 
 <div class="recap"><span class="label">Итоги занятия</span><ul>
 <li>Аппаратное обеспечение даёт четыре ресурса: вычисления, память, хранение и сеть.</li>
@@ -685,23 +724,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>СХД хранит данные, RAID повышает доступность, но не заменяет резервную копию.</li>
 <li>Сеть и питание могут стать узким местом не реже, чем процессор.</li>
 <li>Конфигурацию выбирают по нагрузке, росту, доступности и полной стоимости владения.</li>
-</ul></div></article><nav class="pager"><a class="" href="09-prakt-04.html"><span>← Предыдущее занятие</span>Практика 4. Проектирование архитектуры информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="11-prakt-05.html"><span>Следующее занятие →</span>Практика 5. Подбор аппаратной конфигурации ИС</a></nav></main>
-<div class="modal" data-modal="submit" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
-    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-    <h2 id="submit-title">Результат теста</h2>
-    <label class="modal-name" data-student-label><span>ФИО студента</span>
-      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
-    </label>
-    <p class="modal-student" data-student-view hidden></p>
-    <p class="modal-result" data-modal-result></p>
-    <dl class="modal-times">
-      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
-      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
-    </dl>
-    <button type="button" class="modal-ok" data-modal-close>Готово</button>
-  </div>
-</div>
+</ul></div></div>
+</div></article><nav class="pager"><a class="" href="09-prakt-04.html"><span>← Предыдущее занятие</span>Практика 4. Проектирование архитектуры информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="11-prakt-05.html"><span>Следующее занятие →</span>Практика 5. Подбор аппаратной конфигурации ИС</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
@@ -710,7 +734,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     <button type="button" class="modal-ok" data-modal-close>Понятно</button>
   </div>
 </div>
-
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
 <script>
 (function(){
   var root = document.documentElement;
@@ -769,6 +793,34 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 })();
 
 (function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
@@ -798,9 +850,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
   function viewingMs(){ tick(); return activeMs; }
   function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
     return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
-  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
-  var studentName = '';
-  var submitModal = document.querySelector('[data-modal="submit"]');
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
   var warnModal = document.querySelector('[data-modal="warn"]');
 
   function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
@@ -829,51 +879,78 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
 
-  function evaluate(quiz){
-    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
-    qs.forEach(function(q){
-      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
-      if(ok) right++;
-      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
-      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
     });
-    return {right: right, total: qs.length};
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
   }
 
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    quiz._firstAt = null; quiz._lastAt = null;
-    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
-    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    var progress = quiz.querySelector('[data-quiz-progress]');
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function setProgress(text){ if(progress) progress.textContent = text; }
+    function showQuestion(i){
+      current = i;
+      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      var field = qs[i].querySelector('input');
+      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      setProgress('Тест завершён');
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var nextBtn = q.querySelector('[data-next]');
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    quiz.querySelector('[data-reset]').addEventListener('click', function(){
-      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
-      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
-      quiz._firstAt = null; quiz._lastAt = null;
-    });
-    quiz.querySelector('[data-submit]').addEventListener('click', function(){
-      var r = evaluate(quiz);
-      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
-      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
-      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
-      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
-      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
-      var nameInput = submitModal.querySelector('[data-student-name]');
-      var nameLabel = submitModal.querySelector('[data-student-label]');
-      var nameView = submitModal.querySelector('[data-student-view]');
-      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
-      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
-      openModal(submitModal);
-    });
+    showQuestion(0);
   });
-
-  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
-  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>

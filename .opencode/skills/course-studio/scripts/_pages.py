@@ -18,6 +18,50 @@ FONTS = (
     '&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
 )
 
+THEME_TOGGLE = ('<button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">'
+                'Тёмная тема</button>')
+
+THEME_BOOT = (
+    '<script>(function(){try{var t=localStorage.getItem("mdk-theme");'
+    'if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>'
+)
+
+THEME_SCRIPT = r"""
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+"""
+
 # Preset identities for the four built-in courses (matched by slug). course.json can override any of these.
 KNOWN = {
     "dsa": {"code": "DSA", "accent": "#D04A28", "tint": "#F4E1D8", "accentDark": "#F06A45", "tintDark": "#3A2219"},
@@ -30,6 +74,38 @@ FALLBACK = {"accent": "#2F6F5E", "tint": "#DDEBE5", "accentDark": "#5CC4A4", "ti
 
 def esc(s) -> str:
     return html.escape("" if s is None else str(s))
+
+
+def code_class(code) -> str:
+    n = len(str(code or ""))
+    if n <= 2:
+        return ""
+    if n <= 4:
+        return "code-md"
+    if n <= 7:
+        return "code-lg"
+    return "code-xl"
+
+
+def lesson_slots(chapters) -> int:
+    """Total lesson slots: a 180-minute chapter counts as two slots of 90 minutes each."""
+    total = 0
+    for ch in chapters or []:
+        total += max(1, round(int(ch.get("minutes") or 90) / 90))
+    return total
+
+
+def plural_lessons(n: int) -> str:
+    """Correct Russian plural form of «занятие» for a count."""
+    n = abs(int(n)) % 100
+    if 11 <= n <= 14:
+        return "занятий"
+    n %= 10
+    if n == 1:
+        return "занятие"
+    if n in (2, 3, 4):
+        return "занятия"
+    return "занятий"
 
 
 def load_course(path: Path) -> dict:
@@ -57,11 +133,12 @@ def accent_vars(c: dict) -> str:
 def page(title: str, body: str, style_vars: str = "", extra_css: str = "", script: str = "") -> str:
     css = (ASSETS / "notes.css").read_text(encoding="utf-8")
     return f"""<!doctype html>
-<html lang="en" style="{style_vars}">
+<html lang="ru" style="{style_vars}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
+{THEME_BOOT}
 {FONTS}
 <style>
 {css}
@@ -70,7 +147,7 @@ def page(title: str, body: str, style_vars: str = "", extra_css: str = "", scrip
 </head>
 <body>
 {body}
-{f"<script>{script}</script>" if script else ""}
+<script>{THEME_SCRIPT}{script}</script>
 </body>
 </html>
 """

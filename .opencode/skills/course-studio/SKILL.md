@@ -167,12 +167,16 @@ written chapter by chapter unless the user asks for a batch.
    `<id>-light.html` next to it. When several figures are pending, brief them all and
    hand each to a subagent; write the chapter meanwhile (`figures.md` §5).
 5. **Write the chapter** in `chapter.md` following the arc and rules. Run every code
-   block; verify every number and real-world claim against sources. End every lecture with
-   a `::quiz` of 15 questions: 6 single-choice (`+`/`-`), 6 multiple-choice (several `+`)
-   and 3 short-answer (`=`), each with an explanation `!`. Practices do not get a test.
+   block; verify every number and real-world claim against sources. Break a lecture into
+   2-4 `::gate Вопрос?` ... `::/gate` blocks after complete thoughts; the button question
+   previews the next block and the first block keeps the signature figure. End every
+   lecture with a `::quiz` of 15 questions: 6 single-choice (`+`/`-`), 6 multiple-choice
+   (several `+`) and 3 short-answer (`=`), each with an explanation `!`. The quiz belongs
+   inside the final gate. Practices do not get a test.
 6. **Build and check.** `python tools/ks/scripts/build_chapter.py <chapter.md>`, then
    `python tools/build_site.py`. Use `tools/ks/scripts/check_pages.py <dist-dir>` where
-   Playwright/Chromium is available, including `--mobile` and `--dark`.
+   Playwright/Chromium is available, including `--mobile` and `--dark`. The checker opens
+   every gate before inspecting figures and sections.
 7. **Reconcile text and figure.** The text must name the moments the figure shows with
    the same numbers and words. Update `course.json` and rebuild.
 8. **Deliver** with one line on what was made, what is pending, and the next chapter.
@@ -217,6 +221,26 @@ The site flow is: landing (specialty rows, each opening year cards) -> year page
 plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12 and
 09.02.13 are empty placeholders.
 
+## Lecture gates and quiz flow
+
+- A gate is a flat pair of directives: `::gate Как работает поиск?` opens a hidden block
+  and `::/gate` closes it. Put 2-4 gates in a lecture depending on its length, always
+  between complete thoughts. Do not nest gates.
+- The visible first block must contain the hook and the signature figure. The next gate
+  button appears at the end of that block, centered. Its text is a question about the
+  following material, not a generic continuation label.
+- The final gate contains the remaining sections, the self-check and the `::quiz`, so the
+  test cannot be reached by scrolling past the lesson.
+- The builder owns the interaction: clicking reveals the block, hides the button and
+  shows the next gate. Opening a TOC link or a direct section link reveals the gates it
+  needs. Print and PDF show every gate open.
+- Quiz questions are rendered one at a time. After an answer the builder marks the
+  choices, shows the explanation for both a correct and a wrong answer, and only then
+  shows `Следующий вопрос`. After the last answer the former submission card appears
+  inline with the name field, score, test time and view time, without a submit button.
+- Do not add `Проверить ответы`, `Сбросить`, `Сдать работу`, a custom submission form or
+  a second result dialog to a chapter.
+
 ## Quality bar
 
 - One discipline plan is complete: outcomes, prerequisites, chapter sequence, one
@@ -230,11 +254,16 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   `course.json` and the syllabus card.
 - Lesson cards and prose do not mention the demo exam. Disciplines and lessons stand on
   their own; exam skills are the outcome of the course.
+- Every lecture is paced by 2-4 reveal gates. Each gate button asks a specific question
+  about the next block, never says «Продолжить», and the first block stays visible with
+  the signature figure. Gates never nest and each closes with `::/gate`.
 - Every lecture ends with a 15-question test: 6 single-choice, 6 multiple-choice, 3
-  short-answer, all with explanations. The test footer, PDF button, reading progress,
-  warning button, dark-theme toggle and submission dialog come from the shared builder;
-  do not rebuild them
-  inside a chapter.
+  short-answer, all with explanations. The builder shows one question at a time, reveals
+  the correct answer and explanation after every answer (right or wrong), and shows the
+  next question only after the answer. After the last answer it shows an inline result
+  card with the student name, score, test time and lecture view time, with no action
+  button. PDF button, reading progress, warning button and dark-theme toggle also come
+  from the shared builder; do not rebuild these elements inside a chapter.
 - The figure is an Anatomy figure that passes Anatomy's own verification, not a diagram
   of boxes, and it shows exactly the moments the text refers to with the same numbers.
 - Visualise diagrams follow the design system and stay readable at 390 px.

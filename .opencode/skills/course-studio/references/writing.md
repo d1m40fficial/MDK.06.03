@@ -27,7 +27,7 @@ Outline before writing. For every section write one sentence: *what the learner 
 7. **Pitfalls**: specific bugs, each with the line, the input that breaks it and the symptom. Outside software: the common misconception, or how the thing fails and why.
 8. **Check yourself**: 3–4 transfer questions with answers.
 9. **Recap**: 3–5 bullets a learner could revise from.
-10. **Test**: end every lecture with a 15-question `::quiz`: 6 single-choice, 6 multiple-choice and 3 short-answer. Cover the whole lecture, not only the last section. Practices do not get a test.
+10. **Test**: end every lecture with a 15-question `::quiz`: 6 single-choice, 6 multiple-choice and 3 short-answer. Cover the whole lecture, not only the last section. Put the test inside the final `::gate` so it is reached after the lesson, not scrolled past. Practices do not get a test.
 
 The figure's idle tour, readout and caption must show exactly the moments the text refers to. Write the paragraph around `::figure` first, then the brief from it.
 
@@ -102,9 +102,10 @@ Prose…
 ```
 
 - `::figure <id> | lead-in` must be on its own line. The figure folder is `figures/<id>/` next to `chapter.md`; if it isn't there, the builder looks in the other chapters of the course (so notes can reuse a chapter's figure). The lead-in is optional: the Anatomy card already has a title and caption.
+- `::gate Вопрос?` opens a hidden block and `::/gate` closes it. Use 2-4 flat gates per lecture, between complete thoughts. The button text is a real question about the next block, not «Продолжить». Keep the signature figure in the first visible block and the quiz in the final gate. Gates cannot be nested. The builder reveals the block, hides the button and shows the next gate; TOC and hash links open the gates they need, and print/PDF shows all content.
 - A figure that isn't built yet renders as a dashed "pending" box showing the first line of its `brief.md`, so the chapter can be reviewed before figures exist.
 - Fenced code gets syntax highlighting (light and dark). Tables, footnote-free Markdown, and inline HTML work.
-- `::quiz` starts a test. `Q:` starts a question. One `+` with `-` lines makes a single-choice question; two or more `+` lines make a multiple-choice question with checkboxes; one or more `=` lines make a short answer (each `=` line is an accepted wording). Do not mix options and `=` in one question. Each lecture gets 15 questions: 6 single-choice, 6 multiple-choice and 3 short-answer, all based on that lecture. The builder warns when the count or the set of types is wrong. The footer has `Проверить ответы`, `Сбросить` and `Сдать работу`; the last one opens the result dialog with the student name, score, test time and lecture viewing time.
+- `::quiz` starts a test. `Q:` starts a question. One `+` with `-` lines makes a single-choice question; two or more `+` lines make a multiple-choice question with checkboxes; one or more `=` lines make a short answer (each `=` line is an accepted wording). Do not mix options and `=` in one question. Each lecture gets 15 questions: 6 single-choice, 6 multiple-choice and 3 short-answer, all based on that lecture, each with an explanation `!`. The builder warns when the count or the set of types is wrong. Questions open one at a time: after `Ответить` the builder marks the choices, shows the explanation for a correct or wrong answer, and only then shows `Следующий вопрос`. After the last answer the result card appears inline with the student name, score, test time and lecture viewing time, without a submit button. Do not add `Проверить ответы`, `Сбросить`, `Сдать работу`, a custom submission form or a second result dialog.
 - Add `{.nonum}` after a heading (`## Appendix {.nonum}`) to leave it unnumbered.
 - The same `chapter.md` is valid MDX/GFM input for a Next.js platform: callouts follow GitHub's `> [!NOTE]` syntax and `::figure` is a single directive line that a remark plugin can map to a `<Figure id>` component.
 
@@ -122,3 +123,4 @@ Read the draft as the learner:
 3. Does every code block run, and does the output in the text match? Are there zero em dashes?
 4. Does the text around each figure name moments the figure actually shows?
 5. Are the checks answerable from the chapter but not by copying a sentence?
+6. Do the gate questions preview the next block, and does the first block keep the signature figure?

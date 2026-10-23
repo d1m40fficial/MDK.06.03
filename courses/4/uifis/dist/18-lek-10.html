@@ -181,31 +181,58 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 560px) { .syllabus > li { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
 
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
 /* ---------- interactive test (::quiz) ---------- */
 .quiz { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 20px 14px; margin: 24px 0; }
 .quiz > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 4px; }
 .quiz-q { padding: 10px 0; border-top: 1px solid var(--rule-2); }
+.quiz-q[hidden] { display: none; }
 .quiz-q:first-of-type { border-top: 0; }
 .quiz-p { font-weight: 600; margin: 0 0 8px; }
+.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
 .quiz .opts { display: grid; gap: 6px; }
 .quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
 .quiz .opt:hover { border-color: var(--accent); }
 .quiz .opt input { margin-top: 4px; }
 .quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-.quiz-q.bad .opt.correct { border-color: var(--ok); }
+.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
 .quiz-q.bad .quiz-p { color: var(--bad); }
 .quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
 .quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
-.quiz-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
-.quiz-foot button { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-foot button[data-check] { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-score { font: 600 13px var(--font-mono); color: var(--ink-2); margin-left: auto; }
+.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
 .quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
 .quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
 .quiz-q.ok .short-answer { border-color: var(--ok); }
 .quiz-q.bad .short-answer { border-color: var(--bad); }
-.quiz-foot button.submit { background: var(--accent); color: #fff; border-color: transparent; }
-.quiz-foot button.submit:hover { filter: brightness(.95); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
 
 /* ---------- test submission and warnings ---------- */
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
@@ -261,6 +288,8 @@ html.modal-open { overflow: hidden; }
   .prose p, .prose li { text-align: left; hyphens: none; }
   a { color: #000; text-decoration: none; }
   .callout, .check, .recap, .quiz, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
   .recap { background: #fff; color: #000; }
   .recap li, .recap p { color: #000; }
   .figure { break-inside: avoid; }
@@ -622,7 +651,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Порты в таблице это значения по умолчанию, а не свойство протокола. Веб-службу можно поднять на <code>8080</code>, SSH на <code>2222</code>, а панель управления на нестандартном порту. Тогда меняется конфигурация клиента, firewall и проброс порта. Проверять всё равно нужно порт, который реально слушается, а не тот, который напечатан в учебнике.</p>
 <div class="callout note"><span class="label">Порт это дверь, а не служба</span><p>Открытый порт <code>443</code> не доказывает, что веб-приложение работает. За портом может стоять обратный прокси, который отвечает <code>502</code>, потому что backend недоступен. Сначала смотрят, кто слушает порт, затем какой ответ возвращается.</p></div>
 
-<h2 id="dns-имена-вместо-адресов"><span class="num">03</span>DNS: имена вместо адресов</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как имя сайта превращается в адрес сервера?</span></button></p>
+<div class="gate-content" hidden><h2 id="dns-имена-вместо-адресов"><span class="num">03</span>DNS: имена вместо адресов</h2>
 <p><strong>DNS</strong> (Domain Name System) переводит понятное имя в IP-адрес. Браузер не обязан знать, что <code>portal.uifis.test</code> находится на <code>10.0.0.15</code>. Он спрашивает резолвер, получает ответ и открывает соединение уже по адресу. Имена нужны не только людям: по имени выбирается виртуальный сайт на общем IP, проверяется сертификат HTTPS и строится ссылка в документации.</p>
 <p>Домен <code>uifis.test</code> выбран для обучения не случайно. Зона <code>.test</code> зарезервирована для примеров и не встречается в публичном интернете. Для реальной ИС используют домен организации, а не <code>.local</code>: <code>.local</code> занят протоколом mDNS и может вести себя непредсказуемо в обычной DNS-инфраструктуре.</p>
 <p>Разрешение имени идёт по цепочке:</p>
@@ -720,8 +751,12 @@ resolvectl<span class="w"> </span>status
 <p>В <code>ip -4 addr</code> видно адрес, маску и интерфейс. В <code>ip route</code> должен быть маршрут по умолчанию через шлюз. В <code>resolvectl status</code> видно, какой DNS выдал DHCP. Если адрес есть, но шлюза нет, проблема не в кабеле, а в параметрах аренды.</p>
 <div class="callout tradeoff"><span class="label">Статический адрес, резервирование и DHCP</span><p>Статический адрес хорош для маршрутизатора и гипервизора: он не зависит от DHCP. Резервирование удобнее для серверов и принтеров: адрес предсказуем, но менять его можно в одном месте. Динамическая аренда подходит обычным клиентам: меньше ручной работы и меньше конфликтов.</p></div>
 
-<p>В учебной виртуальной машине с NAT адрес гостю выдаёт DHCP VirtualBox. Если запустить внутри гостя собственный DHCP-сервер, он не начнёт обслуживать сеть хоста и другие виртуальные машины: NAT изолирует гостевую сеть. Для настоящей DHCP-службы нужен режим внутренней сети или отдельный стенд, а не проброс одного порта.</p>
-<h2 id="веб-служба"><span class="num">05</span>Веб-служба</h2>
+<p>В учебной виртуальной машине с NAT адрес гостю выдаёт DHCP VirtualBox. Если запустить внутри гостя собственный DHCP-сервер, он не начнёт обслуживать сеть хоста и другие виртуальные машины: NAT изолирует гостевую сеть. Для настоящей DHCP-службы нужен режим внутренней сети или отдельный стенд, а не проброс одного порта.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что происходит, когда браузер открывает страницу?</span></button></p>
+<div class="gate-content" hidden><h2 id="веб-служба"><span class="num">05</span>Веб-служба</h2>
 <p><strong>Веб-служба</strong> принимает HTTP-запрос и возвращает ответ. Минимальный обмен выглядит так:</p>
 <div class="codehilite"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/health.json</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">portal.uifis.test</span>
@@ -785,9 +820,12 @@ resolvectl<span class="w"> </span>status
 </tbody>
 </table>
 <p>Отдельная тема это <strong>health check</strong>. Главная страница может отдавать <code>200</code>, даже если приложение не может подключиться к базе. Поэтому проверяют отдельный endpoint, который отвечает за состояние службы и, при необходимости, за готовность принимать трафик. Проверка живости процесса и проверка готовности приложения это разные вещи: первая отвечает, жив ли процесс, вторая, можно ли отправлять ему пользователей.</p>
-<div class="callout pitfall"><span class="label">`200` на главной не доказывает, что API работает</span><p>Страница может быть статической заглушкой, а API уже упал. Проверяйте тот endpoint, который нужен пользователю, и смотрите, какие зависимости он затрагивает.</p></div>
+<div class="callout pitfall"><span class="label">`200` на главной не доказывает, что API работает</span><p>Страница может быть статической заглушкой, а API уже упал. Проверяйте тот endpoint, который нужен пользователю, и смотрите, какие зависимости он затрагивает.</p></div></div>
+</div>
 
-<h2 id="файловые-почтовые-и-службы-каталога"><span class="num">06</span>Файловые, почтовые и службы каталога</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Чем сетевая папка отличается от локальной?</span></button></p>
+<div class="gate-content" hidden><h2 id="файловые-почтовые-и-службы-каталога"><span class="num">06</span>Файловые, почтовые и службы каталога</h2>
 <p><strong>Файловая служба</strong> даёт общий доступ к каталогам. В Windows это обычно SMB по TCP <code>445</code>, в Linux NFS по TCP <code>2049</code>. Пользователь видит сетевой диск, но за этим стоят права, блокировки и журнал доступа. Для ИС важно не только открыть папку, но и ограничить её по группам. Общий каталог с правом записи для всех превращается в точку утечки и место, где один пользователь случайно удаляет чужие файлы.</p>
 <p>Проверка файловой службы идёт от клиента: доступен ли сервер по сети, открыт ли порт, проходит ли аутентификация, виден ли каталог и можно ли создать файл. Если диск не открывается, не стоит сразу менять права: сначала смотрят, доходит ли клиент до сервера и какой код возвращает служба.</p>
 <p><strong>Почтовая служба</strong> принимает, хранит и отдаёт сообщения. SMTP отвечает за передачу между серверами и приём почты от клиента. IMAP и POP3 отвечают за доступ к ящику. Порты по умолчанию: <code>25</code> для SMTP между серверами, <code>587</code> для отправки с аутентификацией, <code>143</code> и <code>993</code> для IMAP, <code>110</code> и <code>995</code> для POP3. Современная почта почти всегда использует TLS.</p>
@@ -805,9 +843,12 @@ chronyc<span class="w"> </span>tracking
 </code></pre></div>
 
 <p><code>timedatectl</code> показывает часовой пояс и признак синхронизации. <code>chronyc tracking</code> показывает источник, смещение и дрейф. Если <code>NTPSynchronized</code> равно <code>no</code>, проверяют службу времени, доступность UDP <code>123</code> и настройки firewall. В виртуальной машине время может уплыть после паузы, приостановки или восстановления из снимка. После таких операций синхронизацию проверяют заново, а не считают, что часы остались верными.</p>
-<div class="callout pitfall"><span class="label">Часы не влияют на данные, но ломают доверие</span><p>Строки в базе не исчезнут из-за сдвига часов. Зато журналы перестанут сходиться, токены могут стать недействительными, а вход в домен сломается. Ошибка времени часто выглядит как ошибка пароля или сертификата.</p></div>
+<div class="callout pitfall"><span class="label">Часы не влияют на данные, но ломают доверие</span><p>Строки в базе не исчезнут из-за сдвига часов. Зато журналы перестанут сходиться, токены могут стать недействительными, а вход в домен сломается. Ошибка времени часто выглядит как ошибка пароля или сертификата.</p></div></div>
+</div>
 
-<h2 id="зависимости-и-диагностика"><span class="num">08</span>Зависимости и диагностика</h2>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как найти причину, если служба не отвечает?</span></button></p>
+<div class="gate-content" hidden><h2 id="зависимости-и-диагностика"><span class="num">08</span>Зависимости и диагностика</h2>
 <p>Службы образуют граф зависимостей. Портал зависит от DNS, сети, обратного прокси, приложения, базы данных и, возможно, каталога пользователей. DHCP должен выдать адрес до того, как клиент обратится к DNS. NTP должен синхронизировать время до проверки билета Kerberos. Если проверять всё подряд, легко заменить одну гипотезу другой и не найти причину.</p>
 <p>Рабочий порядок диагностики:</p>
 <ol>
@@ -912,23 +953,8 @@ chronyc<span class="w"> </span>tracking
 </ul>
 <h2 id="тест-по-лекции"><span class="num">13</span>Тест по лекции</h2>
 <p>В тесте 15 вопросов: 6 с одним правильным ответом, 6 с несколькими правильными ответами и 3 с кратким ответом.</p>
-<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает DNS?</p><div class="opts"><label class="opt"><input type="radio" name="q406_0" value="0" data-ok><span>Переводит имя узла в IP-адрес</span></label><label class="opt"><input type="radio" name="q406_0" value="1"><span>Выдаёт узлу IP-адрес на время</span></label><label class="opt"><input type="radio" name="q406_0" value="2"><span>Шифрует трафик между узлами</span></label><label class="opt"><input type="radio" name="q406_0" value="3"><span>Синхронизирует время в сети</span></label></div><p class="quiz-why" hidden>DNS отвечает за разрешение имён.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой порт по умолчанию использует HTTPS?</p><div class="opts"><label class="opt"><input type="radio" name="q406_1" value="0" data-ok><span>443</span></label><label class="opt"><input type="radio" name="q406_1" value="1"><span>80</span></label><label class="opt"><input type="radio" name="q406_1" value="2"><span>53</span></label><label class="opt"><input type="radio" name="q406_1" value="3"><span>25</span></label></div><p class="quiz-why" hidden>HTTPS работает по TCP-порту 443.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какая служба синхронизирует время?</p><div class="opts"><label class="opt"><input type="radio" name="q406_2" value="0" data-ok><span>NTP</span></label><label class="opt"><input type="radio" name="q406_2" value="1"><span>DNS</span></label><label class="opt"><input type="radio" name="q406_2" value="2"><span>DHCP</span></label><label class="opt"><input type="radio" name="q406_2" value="3"><span>SMTP</span></label></div><p class="quiz-why" hidden>NTP поддерживает единое время на узлах.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что означает ответ 502?</p><div class="opts"><label class="opt"><input type="radio" name="q406_3" value="0" data-ok><span>Шлюз или прокси получил ошибку от backend</span></label><label class="opt"><input type="radio" name="q406_3" value="1"><span>Пользователь не авторизован</span></label><label class="opt"><input type="radio" name="q406_3" value="2"><span>Ресурс не найден</span></label><label class="opt"><input type="radio" name="q406_3" value="3"><span>Запрос выполнен успешно</span></label></div><p class="quiz-why" hidden>502 Bad Gateway указывает на проблему с backend, а не на отсутствие страницы.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Какой адрес указывает на неудачную автоматическую настройку DHCP?</p><div class="opts"><label class="opt"><input type="radio" name="q406_4" value="0" data-ok><span>169.254.x.x</span></label><label class="opt"><input type="radio" name="q406_4" value="1"><span>10.0.0.15</span></label><label class="opt"><input type="radio" name="q406_4" value="2"><span>127.0.0.1</span></label><label class="opt"><input type="radio" name="q406_4" value="3"><span>224.0.0.1</span></label></div><p class="quiz-why" hidden>Адрес из диапазона 169.254.0.0/16 означает, что DHCP не ответил.</p></div><div class="quiz-q" data-type="single" data-correct="1"><p class="quiz-p">Что делает обратный прокси?</p><div class="opts"><label class="opt"><input type="radio" name="q406_5" value="0" data-ok><span>Принимает запросы клиентов, завершает TLS и передаёт их приложению</span></label><label class="opt"><input type="radio" name="q406_5" value="1"><span>Хранит таблицы базы данных</span></label><label class="opt"><input type="radio" name="q406_5" value="2"><span>Выдаёт адреса DHCP</span></label><label class="opt"><input type="radio" name="q406_5" value="3"><span>Синхронизирует время</span></label></div><p class="quiz-why" hidden>Обратный прокси стоит перед приложением и управляет входящими соединениями.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие параметры может выдать DHCP?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_6" value="0" data-ok><span>IP-адрес</span></label><label class="opt"><input type="checkbox" name="q406_6" value="1" data-ok><span>Маску подсети</span></label><label class="opt"><input type="checkbox" name="q406_6" value="2" data-ok><span>Шлюз по умолчанию</span></label><label class="opt"><input type="checkbox" name="q406_6" value="3" data-ok><span>Адреса DNS</span></label><label class="opt"><input type="checkbox" name="q406_6" value="4"><span>Содержимое файлов</span></label><label class="opt"><input type="checkbox" name="q406_6" value="5"><span>Пароль пользователя</span></label></div><p class="quiz-why" hidden>DHCP выдаёт сетевые параметры, а не данные приложения.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие записи DNS существуют?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_7" value="0" data-ok><span>A</span></label><label class="opt"><input type="checkbox" name="q406_7" value="1" data-ok><span>AAAA</span></label><label class="opt"><input type="checkbox" name="q406_7" value="2" data-ok><span>CNAME</span></label><label class="opt"><input type="checkbox" name="q406_7" value="3" data-ok><span>MX</span></label><label class="opt"><input type="checkbox" name="q406_7" value="4"><span>TCP</span></label><label class="opt"><input type="checkbox" name="q406_7" value="5"><span>HTTP</span></label></div><p class="quiz-why" hidden>A, AAAA, CNAME и MX это типы записей DNS.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что проверить, если служба active, но с хоста не открывается?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_8" value="0" data-ok><span>Адрес, который слушает служба</span></label><label class="opt"><input type="checkbox" name="q406_8" value="1" data-ok><span>Правила firewall</span></label><label class="opt"><input type="checkbox" name="q406_8" value="2" data-ok><span>Проброс порта в VirtualBox</span></label><label class="opt"><input type="checkbox" name="q406_8" value="3" data-ok><span>Номер порта в пробросе</span></label><label class="opt"><input type="checkbox" name="q406_8" value="4"><span>Цвет интерфейса</span></label><label class="opt"><input type="checkbox" name="q406_8" value="5"><span>Размер монитора</span></label></div><p class="quiz-why" hidden>Нужно проверить адрес прослушивания, firewall и проброс до того же порта.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Какие порты относятся к файловым, почтовым или службам каталога?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_9" value="0" data-ok><span>SMB 445</span></label><label class="opt"><input type="checkbox" name="q406_9" value="1" data-ok><span>NFS 2049</span></label><label class="opt"><input type="checkbox" name="q406_9" value="2" data-ok><span>IMAP 993</span></label><label class="opt"><input type="checkbox" name="q406_9" value="3" data-ok><span>LDAP 636</span></label><label class="opt"><input type="checkbox" name="q406_9" value="4"><span>DNS 53</span></label><label class="opt"><input type="checkbox" name="q406_9" value="5"><span>NTP 123</span></label></div><p class="quiz-why" hidden>Это порты разных служб, но не DNS и не NTP.</p></div><div class="quiz-q" data-type="multi" data-correct="3"><p class="quiz-p">Какие признаки указывают на проблему DNS?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_10" value="0" data-ok><span>Сообщение <code>Could not resolve host</code></span></label><label class="opt"><input type="checkbox" name="q406_10" value="1" data-ok><span>Ответ NXDOMAIN</span></label><label class="opt"><input type="checkbox" name="q406_10" value="2" data-ok><span>Страница открывается по IP, но не по имени</span></label><label class="opt"><input type="checkbox" name="q406_10" value="3"><span><code>Connection refused</code> на известном порту</span></label><label class="opt"><input type="checkbox" name="q406_10" value="4"><span>Ответ 502 от прокси</span></label></div><p class="quiz-why" hidden>Все признаки DNS связаны с разрешением имени, а не с отказом уже найденного порта.</p></div><div class="quiz-q" data-type="multi" data-correct="4"><p class="quiz-p">Что даёт оформление службы через systemd?</p><div class="opts"><label class="opt"><input type="checkbox" name="q406_11" value="0" data-ok><span>Автозапуск после перезагрузки</span></label><label class="opt"><input type="checkbox" name="q406_11" value="1" data-ok><span>Единый журнал через journalctl</span></label><label class="opt"><input type="checkbox" name="q406_11" value="2" data-ok><span>Фиксированные пользователь и рабочая директория</span></label><label class="opt"><input type="checkbox" name="q406_11" value="3" data-ok><span>Перезапуск при сбое</span></label><label class="opt"><input type="checkbox" name="q406_11" value="4"><span>Автоматическое открытие порта в firewall</span></label><label class="opt"><input type="checkbox" name="q406_11" value="5"><span>Замену резервного копирования</span></label></div><p class="quiz-why" hidden>Systemd управляет процессом и журналом, но не настраивает сеть и firewall за вас.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Как называется служба, которая переводит имя в адрес?</p><input type="text" class="short-answer" data-answers="[&quot;DNS&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется служба, которая переводит имя в адрес?"><p class="quiz-why" hidden>Это DNS.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой протокол автоматически выдаёт сетевые настройки?</p><input type="text" class="short-answer" data-answers="[&quot;DHCP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол автоматически выдаёт сетевые настройки?"><p class="quiz-why" hidden>Это DHCP.</p></div><div class="quiz-q" data-type="short"><p class="quiz-p">Какой протокол синхронизирует время?</p><input type="text" class="short-answer" data-answers="[&quot;NTP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол синхронизирует время?"><p class="quiz-why" hidden>Это NTP.</p></div><div class="quiz-foot"><button type="button" data-check>Проверить ответы</button><button type="button" data-reset>Сбросить</button><span class="quiz-score" data-score></span><button type="button" class="submit" data-submit>Сдать работу</button></div></div></article><nav class="pager"><a class="" href="17-prakt-08.html"><span>← Предыдущее занятие</span>Практика 8. Настройка сети и диагностика соединений</a><a class="next" style="text-align:right;margin-left:auto" href="19-prakt-09.html"><span>Следующее занятие →</span>Практика 9. Развёртывание базовой сетевой службы</a></nav></main>
-<div class="modal" data-modal="submit" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-title">
-    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-    <h2 id="submit-title">Результат теста</h2>
-    <label class="modal-name" data-student-label><span>ФИО студента</span>
-      <input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович">
-    </label>
-    <p class="modal-student" data-student-view hidden></p>
-    <p class="modal-result" data-modal-result></p>
-    <dl class="modal-times">
-      <div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div>
-      <div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>
-    </dl>
-    <button type="button" class="modal-ok" data-modal-close>Готово</button>
-  </div>
-</div>
+<div class="quiz" data-quiz><span class="label">Тест по лекции</span><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что делает DNS?</p><div class="opts"><label class="opt"><input type="radio" name="q201_0" value="0" data-ok><span>Переводит имя узла в IP-адрес</span></label><label class="opt"><input type="radio" name="q201_0" value="1"><span>Выдаёт узлу IP-адрес на время</span></label><label class="opt"><input type="radio" name="q201_0" value="2"><span>Шифрует трафик между узлами</span></label><label class="opt"><input type="radio" name="q201_0" value="3"><span>Синхронизирует время в сети</span></label></div><p class="quiz-why" hidden>DNS отвечает за разрешение имён.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какой порт по умолчанию использует HTTPS?</p><div class="opts"><label class="opt"><input type="radio" name="q201_1" value="0" data-ok><span>443</span></label><label class="opt"><input type="radio" name="q201_1" value="1"><span>80</span></label><label class="opt"><input type="radio" name="q201_1" value="2"><span>53</span></label><label class="opt"><input type="radio" name="q201_1" value="3"><span>25</span></label></div><p class="quiz-why" hidden>HTTPS работает по TCP-порту 443.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Какая служба синхронизирует время?</p><div class="opts"><label class="opt"><input type="radio" name="q201_2" value="0" data-ok><span>NTP</span></label><label class="opt"><input type="radio" name="q201_2" value="1"><span>DNS</span></label><label class="opt"><input type="radio" name="q201_2" value="2"><span>DHCP</span></label><label class="opt"><input type="radio" name="q201_2" value="3"><span>SMTP</span></label></div><p class="quiz-why" hidden>NTP поддерживает единое время на узлах.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что означает ответ 502?</p><div class="opts"><label class="opt"><input type="radio" name="q201_3" value="0" data-ok><span>Шлюз или прокси получил ошибку от backend</span></label><label class="opt"><input type="radio" name="q201_3" value="1"><span>Пользователь не авторизован</span></label><label class="opt"><input type="radio" name="q201_3" value="2"><span>Ресурс не найден</span></label><label class="opt"><input type="radio" name="q201_3" value="3"><span>Запрос выполнен успешно</span></label></div><p class="quiz-why" hidden>502 Bad Gateway указывает на проблему с backend, а не на отсутствие страницы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Какой адрес указывает на неудачную автоматическую настройку DHCP?</p><div class="opts"><label class="opt"><input type="radio" name="q201_4" value="0" data-ok><span>169.254.x.x</span></label><label class="opt"><input type="radio" name="q201_4" value="1"><span>10.0.0.15</span></label><label class="opt"><input type="radio" name="q201_4" value="2"><span>127.0.0.1</span></label><label class="opt"><input type="radio" name="q201_4" value="3"><span>224.0.0.1</span></label></div><p class="quiz-why" hidden>Адрес из диапазона 169.254.0.0/16 означает, что DHCP не ответил.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что делает обратный прокси?</p><div class="opts"><label class="opt"><input type="radio" name="q201_5" value="0" data-ok><span>Принимает запросы клиентов, завершает TLS и передаёт их приложению</span></label><label class="opt"><input type="radio" name="q201_5" value="1"><span>Хранит таблицы базы данных</span></label><label class="opt"><input type="radio" name="q201_5" value="2"><span>Выдаёт адреса DHCP</span></label><label class="opt"><input type="radio" name="q201_5" value="3"><span>Синхронизирует время</span></label></div><p class="quiz-why" hidden>Обратный прокси стоит перед приложением и управляет входящими соединениями.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какие параметры может выдать DHCP?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_6" value="0" data-ok><span>IP-адрес</span></label><label class="opt"><input type="checkbox" name="q201_6" value="1" data-ok><span>Маску подсети</span></label><label class="opt"><input type="checkbox" name="q201_6" value="2" data-ok><span>Шлюз по умолчанию</span></label><label class="opt"><input type="checkbox" name="q201_6" value="3" data-ok><span>Адреса DNS</span></label><label class="opt"><input type="checkbox" name="q201_6" value="4"><span>Содержимое файлов</span></label><label class="opt"><input type="checkbox" name="q201_6" value="5"><span>Пароль пользователя</span></label></div><p class="quiz-why" hidden>DHCP выдаёт сетевые параметры, а не данные приложения.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие записи DNS существуют?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_7" value="0" data-ok><span>A</span></label><label class="opt"><input type="checkbox" name="q201_7" value="1" data-ok><span>AAAA</span></label><label class="opt"><input type="checkbox" name="q201_7" value="2" data-ok><span>CNAME</span></label><label class="opt"><input type="checkbox" name="q201_7" value="3" data-ok><span>MX</span></label><label class="opt"><input type="checkbox" name="q201_7" value="4"><span>TCP</span></label><label class="opt"><input type="checkbox" name="q201_7" value="5"><span>HTTP</span></label></div><p class="quiz-why" hidden>A, AAAA, CNAME и MX это типы записей DNS.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что проверить, если служба active, но с хоста не открывается?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_8" value="0" data-ok><span>Адрес, который слушает служба</span></label><label class="opt"><input type="checkbox" name="q201_8" value="1" data-ok><span>Правила firewall</span></label><label class="opt"><input type="checkbox" name="q201_8" value="2" data-ok><span>Проброс порта в VirtualBox</span></label><label class="opt"><input type="checkbox" name="q201_8" value="3" data-ok><span>Номер порта в пробросе</span></label><label class="opt"><input type="checkbox" name="q201_8" value="4"><span>Цвет интерфейса</span></label><label class="opt"><input type="checkbox" name="q201_8" value="5"><span>Размер монитора</span></label></div><p class="quiz-why" hidden>Нужно проверить адрес прослушивания, firewall и проброс до того же порта.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие порты относятся к файловым, почтовым или службам каталога?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_9" value="0" data-ok><span>SMB 445</span></label><label class="opt"><input type="checkbox" name="q201_9" value="1" data-ok><span>NFS 2049</span></label><label class="opt"><input type="checkbox" name="q201_9" value="2" data-ok><span>IMAP 993</span></label><label class="opt"><input type="checkbox" name="q201_9" value="3" data-ok><span>LDAP 636</span></label><label class="opt"><input type="checkbox" name="q201_9" value="4"><span>DNS 53</span></label><label class="opt"><input type="checkbox" name="q201_9" value="5"><span>NTP 123</span></label></div><p class="quiz-why" hidden>Это порты разных служб, но не DNS и не NTP.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какие признаки указывают на проблему DNS?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_10" value="0" data-ok><span>Сообщение <code>Could not resolve host</code></span></label><label class="opt"><input type="checkbox" name="q201_10" value="1" data-ok><span>Ответ NXDOMAIN</span></label><label class="opt"><input type="checkbox" name="q201_10" value="2" data-ok><span>Страница открывается по IP, но не по имени</span></label><label class="opt"><input type="checkbox" name="q201_10" value="3"><span><code>Connection refused</code> на известном порту</span></label><label class="opt"><input type="checkbox" name="q201_10" value="4"><span>Ответ 502 от прокси</span></label></div><p class="quiz-why" hidden>Все признаки DNS связаны с разрешением имени, а не с отказом уже найденного порта.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что даёт оформление службы через systemd?</p><div class="opts"><label class="opt"><input type="checkbox" name="q201_11" value="0" data-ok><span>Автозапуск после перезагрузки</span></label><label class="opt"><input type="checkbox" name="q201_11" value="1" data-ok><span>Единый журнал через journalctl</span></label><label class="opt"><input type="checkbox" name="q201_11" value="2" data-ok><span>Фиксированные пользователь и рабочая директория</span></label><label class="opt"><input type="checkbox" name="q201_11" value="3" data-ok><span>Перезапуск при сбое</span></label><label class="opt"><input type="checkbox" name="q201_11" value="4"><span>Автоматическое открытие порта в firewall</span></label><label class="opt"><input type="checkbox" name="q201_11" value="5"><span>Замену резервного копирования</span></label></div><p class="quiz-why" hidden>Systemd управляет процессом и журналом, но не настраивает сеть и firewall за вас.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется служба, которая переводит имя в адрес?</p><input type="text" class="short-answer" data-answers="[&quot;DNS&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется служба, которая переводит имя в адрес?"><p class="quiz-why" hidden>Это DNS.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какой протокол автоматически выдаёт сетевые настройки?</p><input type="text" class="short-answer" data-answers="[&quot;DHCP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол автоматически выдаёт сетевые настройки?"><p class="quiz-why" hidden>Это DHCP.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Какой протокол синхронизирует время?</p><input type="text" class="short-answer" data-answers="[&quot;NTP&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой протокол синхронизирует время?"><p class="quiz-why" hidden>Это NTP.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><button type="button" class="quiz-next" data-next hidden>Следующий вопрос</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="17-prakt-08.html"><span>← Предыдущее занятие</span>Практика 8. Настройка сети и диагностика соединений</a><a class="next" style="text-align:right;margin-left:auto" href="19-prakt-09.html"><span>Следующее занятие →</span>Практика 9. Развёртывание базовой сетевой службы</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
@@ -937,7 +963,7 @@ chronyc<span class="w"> </span>tracking
     <button type="button" class="modal-ok" data-modal-close>Понятно</button>
   </div>
 </div>
-
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
 <script>
 (function(){
   var root = document.documentElement;
@@ -996,6 +1022,34 @@ chronyc<span class="w"> </span>tracking
 })();
 
 (function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
   var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
   function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
     f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
@@ -1025,9 +1079,7 @@ chronyc<span class="w"> </span>tracking
   function viewingMs(){ tick(); return activeMs; }
   function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
     return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
-  function norm(s){ return String(s||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' '); }
-  var studentName = '';
-  var submitModal = document.querySelector('[data-modal="submit"]');
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
   var warnModal = document.querySelector('[data-modal="warn"]');
 
   function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
@@ -1056,51 +1108,78 @@ chronyc<span class="w"> </span>tracking
     return !!(chosen && chosen.hasAttribute('data-ok'));
   }
 
-  function evaluate(quiz){
-    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q')), right = 0;
-    qs.forEach(function(q){
-      var ok = questionCorrect(q); q.classList.remove('ok','bad'); q.classList.add(ok ? 'ok' : 'bad');
-      if(ok) right++;
-      q.querySelectorAll('.opt').forEach(function(o){ var i = o.querySelector('input'); o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok'))); });
-      var why = q.querySelector('.quiz-why'); if(why) why.hidden = ok;
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
     });
-    return {right: right, total: qs.length};
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
   }
 
   document.querySelectorAll('[data-quiz]').forEach(function(quiz){
-    quiz._firstAt = null; quiz._lastAt = null;
-    function mark(){ var now = performance.now(); if(quiz._firstAt === null) quiz._firstAt = now; quiz._lastAt = now; }
-    quiz.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.addEventListener('change', function(e){ if(e.target.matches('input')) mark(); });
-    quiz.querySelector('[data-check]').addEventListener('click', function(){
-      var r = evaluate(quiz); var s = quiz.querySelector('[data-score]'); if(s) s.textContent = 'Верно ' + r.right + ' из ' + r.total;
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    var progress = quiz.querySelector('[data-quiz-progress]');
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function setProgress(text){ if(progress) progress.textContent = text; }
+    function showQuestion(i){
+      current = i;
+      qs.forEach(function(q, k){ q.hidden = k !== i; });
+      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
+      var field = qs[i].querySelector('input');
+      if(field) setTimeout(function(){ try { field.focus({preventScroll:true}); } catch(e){ field.focus(); } }, 50);
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      setProgress('Тест завершён');
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { var next = q.querySelector('[data-next]'); if(next) next.hidden = false; }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var nextBtn = q.querySelector('[data-next]');
+      if(nextBtn) nextBtn.addEventListener('click', function(){ showQuestion(idx + 1); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
     });
-    quiz.querySelector('[data-reset]').addEventListener('click', function(){
-      quiz.querySelectorAll('.quiz-q').forEach(function(q){ q.classList.remove('ok','bad');
-        q.querySelectorAll('input').forEach(function(i){ if(i.type === 'radio' || i.type === 'checkbox') i.checked = false; else i.value = ''; });
-        q.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('correct'); });
-        var w = q.querySelector('.quiz-why'); if(w) w.hidden = true; });
-      var s = quiz.querySelector('[data-score]'); if(s) s.textContent = '';
-      quiz._firstAt = null; quiz._lastAt = null;
-    });
-    quiz.querySelector('[data-submit]').addEventListener('click', function(){
-      var r = evaluate(quiz);
-      var testMs = (quiz._firstAt !== null && quiz._lastAt !== null) ? Math.max(0, quiz._lastAt - quiz._firstAt) : 0;
-      var pct = r.total ? Math.round(r.right / r.total * 100) : 0;
-      submitModal.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + r.right + ' из ' + r.total + ' (' + pct + '%)';
-      submitModal.querySelector('[data-test-time]').textContent = fmt(testMs);
-      submitModal.querySelector('[data-view-time]').textContent = fmt(viewingMs());
-      var nameInput = submitModal.querySelector('[data-student-name]');
-      var nameLabel = submitModal.querySelector('[data-student-label]');
-      var nameView = submitModal.querySelector('[data-student-view]');
-      if(studentName){ nameLabel.hidden = true; nameView.hidden = false; nameView.textContent = 'Студент: ' + studentName; }
-      else { nameLabel.hidden = false; nameView.hidden = true; nameInput.value = ''; }
-      openModal(submitModal);
-    });
+    showQuestion(0);
   });
-
-  var nameInput = submitModal ? submitModal.querySelector('[data-student-name]') : null;
-  if(nameInput){ nameInput.addEventListener('input', function(){ studentName = nameInput.value.trim(); }); }
 })();
 </script>
 </body>
