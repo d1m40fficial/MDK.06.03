@@ -1,0 +1,1457 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#9A7300;--course-tint:#EDE5D2;--course-accent-dark:#D6A520;--course-tint-dark:#2E2814;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Качество</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление проектами</a><span>/</span><span>Качество</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.144">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 14</span><span class="pill">Управление проектами</span></div>
+<div class="hero-panel"><h1>Качество</h1><p class="dek">Качество это соответствие записанным требованиям, а не роскошь и не вкус. Дефект, найденный на приёмке, стоит около ста дефектов, найденных в требованиях, и платит за это бюджет проекта.</p></div>
+<div class="glyph" aria-hidden="true">Л8</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Отличать качество от сорта и вкуса</li><li>Различать обеспечение и контроль качества</li><li>Строить критерии приёмки и план проверок</li><li>Объяснять рост стоимости дефекта по фазам</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#стенд-воронка-проверок">Стенд: воронка проверок</a></li><li><a href="#качество-и-сорт">Качество и сорт</a></li><li><a href="#план-качества-и-измеримые-критерии">План качества и измеримые критерии</a></li><li><a href="#обеспечение-качества-и-контроль-качества">Обеспечение качества и контроль качества</a></li><li><a href="#пять-уровней-проверок">Пять уровней проверок</a></li><li><a href="#стоимость-дефекта-по-фазам">Стоимость дефекта по фазам</a></li><li><a href="#правило-1-10-100-и-его-границы">Правило 1-10-100 и его границы</a></li><li><a href="#метрики-качества">Метрики качества</a></li><li><a href="#приёмка-и-доказательства">Приёмка и доказательства</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>В уставе проекта «Заявки» стояли двенадцать функций, шесть месяцев, 1,2 млн рублей и команда из пяти человек. Среди требований была строка: «интерфейс должен быть удобным для оператора». Строку читали пятеро, и каждый понимал её по-своему. На приёмке оператор сказал, что принять заявку можно за семь действий, а нужно за три. Разработчик ответил, что кнопки крупные, цвета спокойные и вообще делали удобно. Спор шёл не о системе. Спор шёл о строке, в которой не было числа.</p>
+<p><strong>Качество это соответствие записанным требованиям, а не роскошь и не вкус.</strong> Дорогая система с сотней настроек может быть некачественной, если она не делает того, что обещано. Дешёвая система на двенадцать функций может быть качественной, если каждое обещание выполнено и проверено. Цена и насыщенность к качеству отношения не имеют.</p>
+<p><strong>Дефект это несоответствие требованию.</strong> У этого определения есть полезное следствие: пока требование не записано с числом, дефекта нет, есть мнение. Два часа аналитика в начале превратили бы строку про удобство в критерий: «оператор принимает заявку не более чем за три действия, список сортируется по сроку подачи». Правка формулировки стоит 500 рублей. Та же правка после приёмки обошлась в двадцать четыре человеко-дня и 48 000 рублей, а дата уехала на двенадцать рабочих дней.</p>
+<p><strong>Чем позже найден дефект, тем дороже он стоит.</strong> Причина не в злой воле, а в объёме переделки: ранняя находка меняет одну строку, поздняя тянет за собой схему, код, тесты, документацию, повторную приёмку и дату. Второе следствие: <strong>качество планируют, а не проверяют в конце.</strong> Проверка в конце только показывает, сколько уже потеряно.</p>
+<h2 id="стенд-воронка-проверок"><span class="num">02</span>Стенд: воронка проверок</h2>
+<p>Смотрите на воронку слева. Пять уровней стоят один под другим: требования, проект, код, тесты, приёмка. Рядом с каждым уровнем счётчик пойманных дефектов и множитель цены: 1x, 3x, 10x, 30x и 100x. Правее столбик цены, ещё правее панель итога. Ведите курсор по табло слева направо и смотрите не на число пойманных, а на то, как растёт цена.</p>
+<figure class="figure" data-fig="fig-08-quality" data-one="H4sIAAAAAAAC/61abY/bxhH+rl+x5sGRGFM6vuiVPCq1E6cN4BhF3BRFDX9YkUsda4pkSeruVPmAxH0JirTIS1u0CJCkCIp+dt24sd3Y+QvUX+gv6cwuKYk6yXcuCvik3eXs7Mwzz87OUj645EZONosZOcwmwbB2gF8koOHYlpKpNDw4ZNQdHkxYRolzSJOUZbY0zbxmXypGQzphtnTks+M4SjKJOFGYsRCkjn03O7RdduQ7rMk7ih/6mU+DZurQgNmaBOtlfhawYf5p/nzxXv48f5Y/zR8Q/Fh8kD9avL+4nz/MHxzsC7GDNJvBV81MoiibN5sxjVli7nk9z2B9q9n0w7vmnt42VINCbzLNmGvudTs9redAP/BDZu45xsihA+hSxwE7zb0B7RmqCgMOTUDc8zzX60E3wckj3aC6B71xwlgIyr2e22lDfxRMGXY7bp+e1l6dj6KTZur/wg/H5ihKXJY0YeS0Norc2XxCk7Efmqo1os7dcRJNQ9c8okmjcEC2nCiIkmIIfJAtD0A0tXZ8sq+1OkS6xcYRI+++JSnpLM3YpDn1lZSGaTNlie+d1lrHCY1hmROBs9nrq/GJVS5L6DSLrJi6LlqndWOwqxUHNGPzOEohIlFoJgz6/hGzhPGmFp+QNAp8lwirEDt53X4coAnAQl0fYGxoHdVlY6WAD75VIM5ALvQ1UWyamhraVVpiQIegk6TT5jYh1+aun4JtM9ML2In1s2ma+d6sWZDKTGMKZBqx7BiiYY1pbGo6aES4EH1mamC4FbAsgzVRGNdpaWxiZewka2YJgOZFycScxgC8Q1NWwZ4zRi6AgwBmWTQxhW1pRsdsadwoiJy7lgBbU9XL1iHzx4eZyZHOoqlzCPTiwMY0bM6saJpx9oVRyEplphc507R55Kf+KGDzUkTfQF7QVC5VNCPPg01YWBVGLpt7fhAseZtmSXQXmDnqUTYYFN2CFlrLsDgEIubiGWnpqYIqsFGobEXhvFRUbI+KIr3Vtpar9lkXpgHbX8oQmBKMgvla5HgguQaxg09r6dGYYNxKWxC9qiIVyOSDBkFanI3oTmhQ0awuNYtcADKZH87WRAZLiT7t6z0dJCa+O9/gFe8ei0h3AZOqta2RP16fYWzM6J2dQU/8dAn0aOBoTncDKBAaJ2BJKcQM13FGVaFWH6RcfzKPkPDZzGzp6EACuwlIs9rjdAS8AoZbCbcHd55VcFzvn7+LVAO20a4MdiZt7Lmu23b0jf3fXtv+SPQuT1OrtHUZswAEdIvRAfOqNqPJhScdtWq+us38zstlAbDE4UmVJ1FYjKhEtTb4unXaXTZLq2kMP5qYo0384HmrXeQ+K/BT0IjnmuB3sWAXF1xidfGFSeCb5oiBe2xeZk3pP3/+QCqm7NF+XzfcMscJADuYTL43Ya5PSWMVj04XgJTn4nQpTQEkTsvTo4wkGsvzOH9YEk/o7p4JzakIMQ9odxnEbjWylb15urIuTpjHkhRP56nD3OYkKs4v7IKtPCOuJTmecU9rB/uidDjY5wVN7QAP5uGB6x8RJ6BpCuUKOAk1jeePpwkrB6EnVaS441i3rI2hRpACpoXDN/0xUfuwGnbE0Lm1jZDdB42gF3NeoZefEhLB0upadGJLwD/S66qkrasSSSKooKQUthpLJJLRkR+6DIUkQhOfNgM6YoEtnbN4IXxEoZqZ+OFquhihoLC3PhJGxygDdibMyQg87kpkxj9FuSf12n2JiNPQltoqdBKQ0kAv5j5b2vP6UKyBvEhhMOD2HW9EpX0sBmF7Lr3HLC7hErqh8kVQM9/ANHQOo8SWIEW7AUQDnPwi/yv8fZ5/ln9M8i9559P8T/z7M6geYdZO9e32DvWAPxS0w/zvoOhz1PtHaPwN/j7Lv8o/XmodE98FpoCSQjVSEPgQ0+yQwJO3+2oLAqeTG8aq1cWWpkMTyoei+VPA4BwIBu0dECzuQ5Qf5f+ASENYIdqPFx8VFlZUgnxFoabpOzQ29XL+/vhc7DRV3w6edrKJk7YTJ03tIRJGG/DpGMumwZt9aGp6r2heACqt091Fl+/4jniUP13cvxBGvV2oN42Xwajb3o6RcQYjfTdGRhshGHQBGL27bKrY1NvQ1DrtonkBjHRt55Z6Cgh9fRF0dGMXzs32S6Cj690dDFLPwGPshqerofedPrmhDwbLZg+bhgpNra8VzYvA01d3bjeRQxcfXgiiQf//QSC9vyNDGWchau+GqN9BBHQVcVk1O7zZw6ZaNi8AkdHWX7TLHi8+yb/FQ+ciMEFS3AWT+hIwGR11F5PWcDrHrf6uiGk6yb+G4P9K5A/MtyT/Dr6egKOYeJ/jc/hYd//xRnhGNAzx2C7Wh9odIsRP1GIEblPcno4u7EEiFgesrqqrA1ZDX/GA7W+GqgS3q5cZemc6/AscZ1/kf6iEiFu5StVwtalqa6u78dmH02xbvFcwL9V0jV1GvRjjs7Yau20d7PJ80Ll8MTtfkCfFWfIQrMXvp6QYeIIOrFvKibsP1V21dixqZYm4NKPNojfcKNOATY/J4n2s5Bb3TbL4PWJCYJ0H+Tf5s8WH+SPCLfgtEk2UkevlKRTbYOiXpaFg2WPMXxxSsvhlMf5s8VH+LSiHZfNvBdzf5P9CsWewTuFPhfsKQTUo/HVRZHJxqDUJN/w5rtMqLeJfWF7DrQor89I8h5fd06Ds4yUGBgIfsf0IUuzv1myE5Z6QCuZ8c4EwTtiyN5fPcApaRRa/QUcWH1ZFHwjB/WkwzL86W0opZL1oUIg4HnlYlicByf+NU9Dmim6x1GZGaGE5uQblOso8pk/4UHXWI2UN2eIRPEAceOJ5WDwuuFENDJ/3TxTjYap4z6duKSEXv4b4rWI25B24H62uK07ix5DY4KqZZuTWj67/8JZ9W/rf+SspRALu/RsNOHNbQTVg73uCv9z5YkKFEA+2uJI/MTfT9AZZHmzVtB72/MEZHcaFdHCybJnd3jK75BP4+N6a+Y8uvvTyzDXhvri5HxQy6BROFRuhTK/VPMZNKagG2vjWgZ24wRoMIX/yCdLxIYETtgirdMcqOHHT5qxoBSwcZ4dWLWAZ3P1YbKtK5k9YYqulJL/v2m7kTCcszFo/n7JkdosFcCxGSaMuXprW5VK6yJU75W+vZ9Q76/PwTYF9DPfl6Lg1oZlz+Da+WmjUd71bKKbIdVmIs9SqedOQv98l6WF03AjlOXep0Qgv35Sv3JQv37SKlVuY/l8vfhPhSNxG0TsWd6eVsuxqliX+aJqxRr1y0a4rt+BBOG6gvCyfMwGXgRmrBWSLxnEwE7Ot0zWLsRpqyHPfa1ziEXjllUuFhyIgsMRbYG8CehsN2R5yF1HNFU1W4A6rbqiLYtDmBIwmy2lckWyVAT6tCeOp614/AiBu+KAOKqBGHbI9hCGsK8wezpEaoR1Og8AC4xi+z7Jtu341SaLjd7Dgqd+7Vx19N67LoS1sOzvnBvPOTnkDlysmNauTfhBNGD5SK6PXQxcHbwrh8JLNLZTnrAV8QW/eYB6dBgCpJbCwCk5Yp6fAul2ex5GPaE2iIya8F/Qc2WLCmGXX8DUrEOD1AH9heQd43cCfivhWOaQJs9+Gmh4oedJQFdH0w4amgOUOn/GT5qiFL9nk/VGLF49y1cLlHHBNKPCCCLYOV/7qTRnEL+AAxB094Kx6gTT/sQPFImDjij2en93AN1UpUKhGyPbNfDUIGvXyxwDYhV6UXKfOYSMD1GASIVkrYQjk2s5A0Rs85eDWRyGB3NjOAJ4oZWnWqI/hGcF9MJZhk2fTJFwXBRxiZo83EwvW6YrjJ8B4hQWBH6dMwduVEkfBbByFpU4+fZteQMjmD1vQukkn8B3diI5Z8jpNWaNibToqJJEO16KThqyQbAQuLPtCmq9XRPnevUtZGfAtq9Mj6gfE5lYAu4Uj9deEt62kNQIjfkyDFs8qr2qtNjFJoxAu3F1Jn2wVLy1paurKvtKmoTDglVeEJUOtLc+zjbS2FjyFSwFCb/onzG1oQMpNaXGyXHXxx8K6Ui/e+F8N3e8Hs/gwrWO6IgSpfFor0v5ZfiYMXzbXlSUhkaUrclo1hLhIk0UGBbLjNkIfaytGi6wbcjoLxCc0tm/DFoN/qqIpumIo7TuIC/C4gTnPx4xz0LH8K1fk5Q6ACF8PGDavzd5yYQPVr/hyixfJaDUgMh4H4D0QTsElbod3IEQ+B3ynEnHxrG/TA5dQUBQedM/RYMDstTMNmBQO7S55jdThOlWH6Ndfq79Yg7ZTQ3F5XGrh7+1FhXmwL97Y74v/p/Bfjc+Oe7ggAAA="><iframe title="Figure 1: fig-08-quality" scrolling="no"></iframe><figcaption>Проведите по уровням: чем позже найден дефект, тем дороже он стоит.</figcaption></figure>
+
+<p>Вы прошли воронку до конца. В ней пять уровней: проверка требований, проверка проекта, проверка кода, тестирование и приёмка. Счётчики показывают 2, 3, 4, 3 и 0, цена растёт от 1x до 100x. Панель итога складывает результат: 12 из 12 дефектов поймано до приёмки, 95 процентов проверок пройдено.</p>
+<p>Порядок на табло:</p>
+<ol>
+<li>«качество и сорт: это разные вещи»: сорт делит продукты на категории, качество отвечает, выполнены ли требования.</li>
+<li>«план качества и критерии»: у каждого требования есть число, способ проверки и владелец.</li>
+<li>«проверка требований: поймано 2 дефекта»: две формулировки без числа, обе про интерфейс и скорость.</li>
+<li>«проверка проекта: поймано 3 дефекта»: поле темы без обязательности, экран с семью шагами вместо трёх, права без разделения по ролям.</li>
+<li>«проверка кода: поймано 4 дефекта»: четыре ревью, четыре находки в порциях до двухсот строк.</li>
+<li>«тестирование: поймано 3 дефекта»: сценарии через модули, границы и отказы.</li>
+<li>«приёмка: 0 дефектов, 95 процентов проверок»: тридцать восемь из сорока проверок, две перенесены с датой.</li>
+<li>«стоимость дефекта растёт в 100 раз»: от 500 рублей в требованиях до 50 000 на приёмке.</li>
+</ol>
+<p>Двенадцать это все дефекты проекта: 2 + 3 + 4 + 3 = 12, на приёмке новых не осталось. Проверок в чек-листе сорок, выполнено тридцать восемь, это 95 процентов; две перенесены на первую неделю сопровождения, дата стоит в акте. Ноль на приёмке здесь не чудо, а результат четырёх работающих уровней выше.</p>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Чем качество отличается от сорта и что делает критерий измеримым?</span></button></p>
+<div class="gate-content" hidden><h2 id="качество-и-сорт"><span class="num">03</span>Качество и сорт</h2>
+<p>В быту качество означает «хорошо сделано». В проекте оно означает другое: <strong>выполнены ли записанные требования</strong>. Филип Кросби в книге «Качество бесплатно» (1979) сформулировал это коротко: качество это соответствие требованиям, а не добротность и не роскошь. Джозеф Джуран говорил о пригодности к использованию: результат делает то, для чего его берут. Оба сходятся: критерий приходит из требований, а не из ощущения.</p>
+<p><strong>Сорт это категория, а качество это соответствие.</strong> Автомобиль экономкласса и автомобиль премиумкласса могут быть оба качественными, если каждый выполняет свои требования. Сорт отвечает на вопрос «сколько возможностей», качество на вопрос «выполнено ли обещанное».</p>
+<table>
+<thead>
+<tr>
+<th>Вопрос</th>
+<th>Сорт</th>
+<th>Качество</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Что делит</td>
+<td>продукты на категории по возможностям</td>
+<td>результат на соответствующие и несоответствующие требованиям</td>
+</tr>
+<tr>
+<td>Пример</td>
+<td>базовая и расширенная версия</td>
+<td>базовая версия, которая делает обещанное</td>
+</tr>
+<tr>
+<td>Кто задаёт</td>
+<td>рынок и цена</td>
+<td>заказчик в требованиях</td>
+</tr>
+<tr>
+<td>Можно ли спорить</td>
+<td>да, это выбор</td>
+<td>нет, есть критерий</td>
+</tr>
+</tbody>
+</table>
+<p>В «Заявках» сорт это набор функций: двенадцать в первой версии, ещё четыре в следующем релизе. Качество это другое: сохраняется ли заявка, укладывается ли оператор в три действия, видит ли он только свои заявки. Смешать сорт и качество значит спорить о количестве функций, когда речь о выполнении обещаний.</p>
+<p><strong>Вкус это предпочтение без критерия.</strong> «Мне не нравится этот цвет» это вкус. «Кнопка приёма лежит в третьем меню, и оператор не находит её за три шага» это дефект, потому что есть требование и есть число. У заказчика есть право на вкус, но вкус не оплачивают из бюджета как дефект: его оформляют изменением требования, с ценой и датой.</p>
+<h2 id="план-качества-и-измеримые-критерии"><span class="num">04</span>План качества и измеримые критерии</h2>
+<p><strong>План качества это таблица, где у каждого требования есть критерий, проверка, владелец и доказательство.</strong> Пять граф закрывают весь путь: что обещали, по какому числу судим, чем проверяем, кто и когда, что останется в документах. Ниже показаны три из них.</p>
+<table>
+<thead>
+<tr>
+<th>Требование</th>
+<th>Критерий с числом</th>
+<th>Проверка</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Сохранение заявки</td>
+<td>ответ не более 2 секунд при 50 одновременных пользователях</td>
+<td>нагрузочный сценарий на 50 потоков</td>
+</tr>
+<tr>
+<td>Приёмка заявки оператором</td>
+<td>не более 3 действий</td>
+<td>сценарий из трёх шагов, действия считают</td>
+</tr>
+<tr>
+<td>Список заявок</td>
+<td>1 000 записей открываются за 1,5 секунды</td>
+<td>замер на копии рабочей базы</td>
+</tr>
+<tr>
+<td>Ошибка ввода</td>
+<td>сообщение на русском, без кода 500</td>
+<td>шесть сценариев неверного ввода</td>
+</tr>
+<tr>
+<td>Доступ</td>
+<td>оператор не видит чужие заявки</td>
+<td>три попытки доступа под чужой ролью</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Критерий без числа это вкус, записанный в документ.</strong> «Быстро» превращается в «1,5 секунды на тысячу записей», «удобно» в «не более трёх действий», «надёжно» в «после сбоя питания заявка не теряется». Число должно быть выполнимым и наблюдаемым: его проверяет человек, у которого нет доступа к замыслу разработчика.</p>
+<p>Из двенадцати функций и тридцати шести критериев выросли сорок проверок приёмки: часть критериев проверяют двумя способами, например права смотрят и через интерфейс, и прямым запросом к базе. План пишут до разработки, а не перед приёмкой. Критерий, придуманный в конце, описывает то, что уже сделано, и поэтому всегда выполняется.</p>
+<div class="callout key"><span class="label">Требование без критерия это пожелание. Критерий без числа это вкус. Число без способа проверки это обещание.</span></div></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Кто отвечает за качество: тот, кто строит, или тот, кто проверяет?</span></button></p>
+<div class="gate-content" hidden><h2 id="обеспечение-качества-и-контроль-качества"><span class="num">05</span>Обеспечение качества и контроль качества</h2>
+<p>Два слова звучат похоже, но отвечают на разные вопросы. <strong>Обеспечение качества</strong> смотрит на процесс и спрашивает: правильно ли мы делаем. <strong>Контроль качества</strong> смотрит на результат и спрашивает: получилось ли правильное.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Обеспечение (QA)</th>
+<th>Контроль (QC)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>На что смотрит</td>
+<td>на процесс</td>
+<td>на результат</td>
+</tr>
+<tr>
+<td>Когда работает</td>
+<td>до и во время работы</td>
+<td>после того, как результат получен</td>
+</tr>
+<tr>
+<td>Вопрос</td>
+<td>правильно ли мы делаем</td>
+<td>получилось ли правильное</td>
+</tr>
+<tr>
+<td>Примеры</td>
+<td>шаблон требования, обязательное ревью, чек-лист готовности пакета</td>
+<td>прогон тестов, ревью кода, приёмка</td>
+</tr>
+<tr>
+<td>Что даёт</td>
+<td>причину убирают</td>
+<td>дефект находят</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Обеспечение предотвращает, контроль обнаруживает.</strong> Закупка автотестов без изменения процесса оставляет причину дефектов на месте: тесты будут стабильно находить одно и то же, а работа будет стабильно это же порождать.</p>
+<p>В команде из пяти человек отдела качества нет, и это нормально. Обеспечение здесь это три решения процесса, а не должность. Первое: шаблон требования с обязательным полем «критерий с числом», без него строка не попадает в реестр. Второе: ревью перед слиянием, и автор не проверяет сам себя. Третье: чек-лист готовности пакета, где рядом с результатом стоят критерии и доказательство.</p>
+<p>Эти три решения связывают курс в одно: пакет работ из лекции про WBS уже требовал критериев приёмки. Здесь те же критерии становятся планом проверок, а не строчкой в словаре.</p>
+<h2 id="пять-уровней-проверок"><span class="num">06</span>Пять уровней проверок</h2>
+<p>Каждая следующая проверка дороже предыдущей, поэтому ранние должны работать.</p>
+<p><strong>Требования.</strong> Ревью реестра: у каждого требования есть число, нет противоречий, границы описаны. Здесь ловят две ошибки из двенадцати: «удобный интерфейс» и «быстрая работа со списком». Обе формулировки не проверяемы, обе стоили бы дорого позже.</p>
+<p><strong>Проект.</strong> Схема базы, макеты, права. Смотрят обязательность полей, индексы под частые запросы, число шагов на экране, разделение ролей. Здесь находят три дефекта: поле темы допускает пустое значение, экран приёмки требует семи действий, права не разделены между оператором и администратором.</p>
+<p><strong>Код.</strong> Ревью перед слиянием, порция до двухсот строк, чек-лист на обработку ошибок и границ. Здесь четыре находки. Маленькая порция важна: в diff на тысячу строк ревьюер видит форматирование и не видит логику.</p>
+<p><strong>Интеграция.</strong> Сценарии через модули: заявка проходит путь от подачи до закрытия, отказ базы, повторная отправка, граница по числу записей. Здесь три дефекта. Этот уровень называют тестированием, и он проверяет стыки, а не отдельные функции.</p>
+<p><strong>Приёмка.</strong> Заказчик идёт по чек-листу из сорока проверок. Здесь ноль новых дефектов, потому что четыре уровня выше уже отработали.</p>
+<table>
+<thead>
+<tr>
+<th>Уровень</th>
+<th>Что проверяют</th>
+<th>Кто</th>
+<th>Поймано</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Требования</td>
+<td>формулировки и критерии</td>
+<td>аналитик и заказчик</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Проект</td>
+<td>схема базы, макеты, права</td>
+<td>аналитик и разработчик</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Код</td>
+<td>порция до 200 строк</td>
+<td>второй разработчик</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Интеграция</td>
+<td>сценарии через модули</td>
+<td>тестировщик</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Приёмка</td>
+<td>чек-лист из 40 проверок</td>
+<td>заказчик</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Сдвиг влево это перенос проверки на более ранний уровень, а не увеличение числа тестов.</strong> Дешевле прочитать двенадцать критериев за три часа, чем построить систему и обнаружить, что критерий не тот.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Почему дефект, найденный позже, стоит в сто раз дороже?</span></button></p>
+<div class="gate-content" hidden><h2 id="стоимость-дефекта-по-фазам"><span class="num">07</span>Стоимость дефекта по фазам</h2>
+<p>Цена дефекта это не только время программиста. В неё входят разбор, поиск причины, правка, повторная проверка связанного с ней, повторная приёмка и сдвиг даты. Чем позже находка, тем больше пунктов в этом списке.</p>
+<table>
+<thead>
+<tr>
+<th>Где найден</th>
+<th>Часы</th>
+<th>Рубли</th>
+<th>Что входит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Требования</td>
+<td>2</td>
+<td>500</td>
+<td>правка формулировки и согласование</td>
+</tr>
+<tr>
+<td>Проект</td>
+<td>6</td>
+<td>1 500</td>
+<td>правка схемы и макетов, повторное ревью</td>
+</tr>
+<tr>
+<td>Код</td>
+<td>20</td>
+<td>5 000</td>
+<td>правка, ревью, локальные проверки</td>
+</tr>
+<tr>
+<td>Тестирование</td>
+<td>60</td>
+<td>15 000</td>
+<td>разбор, правка, регресс, повторный прогон</td>
+</tr>
+<tr>
+<td>Приёмка</td>
+<td>200</td>
+<td>50 000</td>
+<td>разбор с заказчиком, доработка, регресс по сорока проверкам, повторная приёмка, сдвиг даты</td>
+</tr>
+</tbody>
+</table>
+<p>Часы пересчитаны по ставке 250 рублей в час: 40 тысяч рублей на человека в месяц при 160 часах. Двести часов на приёмке это двадцать пять человеко-дней, две с половиной недели для двух человек.</p>
+<p>Посчитайте, во что обошлись двенадцать дефектов проекта:</p>
+<p><code>2 × 500 + 3 × 1 500 + 4 × 5 000 + 3 × 15 000 = 1 000 + 4 500 + 20 000 + 45 000 = 70 500 рублей</code></p>
+<p>В условных единицах те же слагаемые короче: <code>2 × 1 + 3 × 3 + 4 × 10 + 3 × 30 = 141</code>, и одна единица равна 500 рублям.</p>
+<p>Если те же двенадцать доживают до приёмки, счёт другой: <code>12 × 50 000 = 600 000 рублей</code>. Это половина бюджета 1,2 млн и 1 200 часов, то есть 7,5 человеко-месяца из тридцати. Разница между двумя сценариями 529 500 рублей, и она появилась не из новых денег, а из места, где искали.</p>
+<p>Проверки не бесплатны. Ревью требований 6 часов, ревью проекта 9, ревью кода 16, интеграционные сценарии 24, всего 55 часов и 13 750 рублей. Эти часы стоят в плане с первого дня, а не берутся из резерва в конце. Два дефекта из двенадцати вернулись после исправления, повторный круг входит в цену своей фазы.</p>
+<h2 id="правило-1-10-100-и-его-границы"><span class="num">08</span>Правило 1-10-100 и его границы</h2>
+<p><strong>Правило 1-10-100 говорит: цена дефекта растёт примерно на порядок при переходе к следующей фазе, а путь от требований до эксплуатации даёт множитель около ста.</strong> Отсюда и имя: один, десять, сто.</p>
+<p>Барри Боэм в книге Software Engineering Economics (1981) показал на больших проектах, что стоимость исправления растёт примерно на порядок от фазы к фазе. Точные числа у разных проектов разные, устойчив только порядок роста.</p>
+<p>В «Заявках» множители 1, 3, 10, 30 и 100. Между проектом и кодом рост втрое, а не в десять раз, потому что схема правится в одном месте и не тянет за собой обучение. Между тестированием и приёмкой рост больше, потому что добавляются заказчик, повторная приёмка и дата.</p>
+<p>Множитель зависит от трёх вещей: сколько артефактов надо переделать, сколько людей должны заново подтвердить результат и двигается ли дата. Если правка меняет только текст, множитель маленький. Если правка меняет схему данных, множитель большой, потому что за схемой идут миграции, отчёты и выгрузки.</p>
+<p>Практическое следствие короткое: <strong>проверка окупается, если она дешевле ожидаемой цены пропущенного дефекта.</strong> Пятьдесят пять часов проверок против 529 500 рублей разницы, и вопрос закрыт.</p>
+<h2 id="метрики-качества"><span class="num">09</span>Метрики качества</h2>
+<p>Число дефектов само по себе не говорит ничего: много находок может означать и плохой продукт, и хорошую проверку. Смотрят на отношения.</p>
+<table>
+<thead>
+<tr>
+<th>Показатель</th>
+<th>Значение в «Заявках»</th>
+<th>Что показывает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Доля пойманных до приёмки</td>
+<td>100 процентов, 12 из 12</td>
+<td>насколько рано работает воронка</td>
+</tr>
+<tr>
+<td>Плотность</td>
+<td>1 дефект на функцию</td>
+<td>сколько ошибок даёт единица объёма</td>
+</tr>
+<tr>
+<td>Стоимость исправления</td>
+<td>70 500 рублей, 141 единица</td>
+<td>во что обошлась ранняя находка</td>
+</tr>
+<tr>
+<td>Повторно открытые</td>
+<td>2 из 12, 17 процентов</td>
+<td>качество исправления, а не скорость</td>
+</tr>
+<tr>
+<td>Выполнено проверок приёмки</td>
+<td>38 из 40, 95 процентов</td>
+<td>полнота доказательств</td>
+</tr>
+<tr>
+<td>Среднее время до закрытия</td>
+<td>2 дня</td>
+<td>скорость реакции на находку</td>
+</tr>
+</tbody>
+</table>
+<p>Доля пойманных до приёмки важнее абсолютного числа. Если из двенадцати до приёмки поймано шесть, вторая половина придёт заказчику, и цена каждой находки умножится на сто. Плотность нужна, чтобы сравнивать релизы между собой: двенадцать дефектов на двенадцать функций и двенадцать на сто функций это разный уровень.</p>
+<p><strong>Метрика без порога и решения это украшение отчёта.</strong> У каждой строчки есть граница: доля пойманных ниже 85 процентов значит, что ранние уровни работают слабо; повторно открытых больше 20 процентов значит, что исправление лечит симптом; выполнено меньше 95 процентов проверок значит, что акт подписывать рано.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как доказать, что система готова, и какие ошибки чаще всего ломают приёмку?</span></button></p>
+<div class="gate-content" hidden><h2 id="приёмка-и-доказательства"><span class="num">10</span>Приёмка и доказательства</h2>
+<p><strong>Приёмка это сверка с критериями и подпись, а не показ.</strong> Заказчик приходит не смотреть, а проверять: у него в руках чек-лист, и каждая строка закрывается фактом.</p>
+<p>Пакет доказательств собирают по ходу проекта, а не в последнюю ночь:</p>
+<ul>
+<li>реестр требований, где у каждого пункта есть число;</li>
+<li>протоколы ревью требований и проекта, по одному на круг;</li>
+<li>отчёт о ревью кода с числом порций и находок;</li>
+<li>протокол интеграционного тестирования со сценариями и результатами;</li>
+<li>журнал дефектов с фазой обнаружения и фазой закрытия;</li>
+<li>чек-лист приёмки с отметками и акт.</li>
+</ul>
+<p>Акт фиксирует три вещи: что принято, что перенесено с датой, кто подписал. Перенос это не слабость, а записанное решение: две проверки из сорока ждут данных заказчика и закрываются на первой неделе сопровождения. Хуже, когда про перенос молчат, а потом выясняется, что пятая часть проверок не выполнялась.</p>
+<p>Ноль дефектов на приёмке это хороший результат только вместе с записями четырёх уровней выше. Отдельно от них он не доказывает ничего: журнал, в котором двенадцать находок и ноль на приёмке, показывает работающую воронку, а журнал, в котором ноль и там, и там, показывает слабую проверку.</p>
+<h2 id="типичные-ошибки"><span class="num">11</span>Типичные ошибки</h2>
+<p><strong>Критерий без числа.</strong> «Удобный интерфейс» и «быстрая работа» переходят из устава в приёмку и превращаются в спор о вкусе. Лечится заменой на число и способ проверки до начала разработки.</p>
+<p><strong>Тестирование в конце.</strong> Если все двенадцать дефектов ждут приёмки, счёт становится 600 000 рублей, половина бюджета, и дата уезжает. Ранние уровни стоят дешевле не потому, что там работают лучше, а потому, что там меньше переделки.</p>
+<p><strong>«Сами проверим».</strong> Разработчик проверяет свою работу по своей же схеме и не видит того, чего не заметил при написании. Ревью нужно вторым человеком, по чек-листу, на маленькой порции. Это обеспечение качества, а не недоверие.</p>
+<p><strong>Отчёт о качестве без дефектов.</strong> Доклад, в котором всё зелёное, а журнала находок нет, означает одно из двух: проверяли слабо или находки не записывают. Оба варианта опасны, потому что следующий дефект придёт к заказчику без предупреждения.</p>
+<p><strong>Путаница обеспечения с контролем.</strong> Команда покупает инструмент автотестов и считает, что качество налажено, но шаблон требования и ревью остались прежними. Инструмент усиливает контроль, а причина дефектов живёт в процессе.</p>
+<div class="callout pitfall"><span class="label">Отчёт, в котором нет ни одного дефекта, читают не как хорошую новость, а как вопрос: где записи проверок.</span></div>
+
+<h2 id="проверьте-себя"><span class="num">12</span>Проверьте себя</h2>
+<details class="check"><summary><span>Критерий звучит так: «система должна работать быстро». Перепишите его так, чтобы он стал проверяемым.</span></summary><div><p>Нужны число, условие и способ проверки: «список из 1 000 заявок открывается за 1,5 секунды на копии рабочей базы, замер делают три раза и берут худший». Тогда спор о вкусе заменяется замером, а результат можно принять или отклонить.</p></div></details>
+
+<details class="check"><summary><span>Команда сообщает: на приёмке ноль дефектов, значит качество отличное. Что спросить до того, как согласиться?</span></summary><div><p>Сколько дефектов нашли четыре предыдущих уровня и где записи. Ноль на приёмке ценно только вместе с журналом: двенадцать находок раньше это работающая воронка, ноль находок везде это слабая проверка или сокрытие.</p></div></details>
+
+<details class="check"><summary><span>Ревью кода отменили, чтобы успеть к дате, а тестирование усилили вдвое. Что произойдёт с ценой дефектов?</span></summary><div><p>Находки переедут с уровня кода на уровень тестирования, и цена каждой вырастет с 5 000 до 15 000 рублей, то есть втрое. Проверка не исчезла, она подорожала и стала позже, а дата всё равно под угрозой, потому что исправления пойдут в конце.</p></div></details>
+
+<details class="check"><summary><span>Заказчик просит добавить ещё одну проверку перед приёмкой. Когда её дешевле выполнить и почему?</span></summary><div><p>На уровне требований, пока проверка меняет одну строку критерия и один сценарий. Перед приёмкой та же проверка требует готовой системы, данных и людей, а найденное несоответствие тянет переделку и повторную приёмку.</p></div></details>
+
+<h2 id="итоги"><span class="num">13</span>Итоги</h2>
+<ul>
+<li>Качество это соответствие записанным требованиям, а не цена, насыщенность или вкус заказчика.</li>
+<li>Сорт делит продукты на категории, качество отвечает на вопрос о выполнении требований; вкус оформляют изменением, а не дефектом.</li>
+<li>План качества связывает требование, критерий с числом, способ проверки, владельца и доказательство.</li>
+<li>Обеспечение качества меняет процесс и предотвращает дефект, контроль проверяет результат и находит его.</li>
+<li>Пять уровней проверок идут от требований к приёмке, и каждый следующий уровень дороже предыдущего.</li>
+<li>Цена дефекта растёт как 1, 3, 10, 30 и 100: двенадцать ранних находок стоят 70 500 рублей против 600 000 на приёмке.</li>
+<li>Приёмка опирается на записи: реестр с критериями, протоколы, журнал дефектов, чек-лист и акт с перенесёнными проверками.</li>
+</ul>
+<h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что такое качество в проекте?</p><div class="opts"><label class="opt"><input type="radio" name="q164_0" value="0" data-ok><span>Соответствие результата записанным требованиям</span></label><label class="opt"><input type="radio" name="q164_0" value="1"><span>Максимальная насыщенность функциями</span></label><label class="opt"><input type="radio" name="q164_0" value="2"><span>Дорогая реализация без экономии</span></label><label class="opt"><input type="radio" name="q164_0" value="3"><span>Впечатление заказчика на показе</span></label></div><p class="quiz-why" hidden>Качество измеряют по требованиям, а не по цене и не по вкусу.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Чем сорт отличается от качества?</p><div class="opts"><label class="opt"><input type="radio" name="q164_1" value="0" data-ok><span>Сорт делит продукты на категории, качество говорит о выполнении требований</span></label><label class="opt"><input type="radio" name="q164_1" value="1"><span>Сорт это качество премиальных продуктов</span></label><label class="opt"><input type="radio" name="q164_1" value="2"><span>Сорт всегда ниже качества</span></label><label class="opt"><input type="radio" name="q164_1" value="3"><span>Сорт и качество это одно и то же</span></label></div><p class="quiz-why" hidden>Продукт низкого сорта может быть качественным, если выполняет свои требования.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что делает критерий приёмки проверяемым?</p><div class="opts"><label class="opt"><input type="radio" name="q164_2" value="0" data-ok><span>Число и условие измерения</span></label><label class="opt"><input type="radio" name="q164_2" value="1"><span>Формулировка «удобно и быстро»</span></label><label class="opt"><input type="radio" name="q164_2" value="2"><span>Согласие разработчика</span></label><label class="opt"><input type="radio" name="q164_2" value="3"><span>Количество экранов</span></label></div><p class="quiz-why" hidden>Без числа и условия спор переходит во вкус.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что относится к обеспечению качества?</p><div class="opts"><label class="opt"><input type="radio" name="q164_3" value="0" data-ok><span>Шаблон требования с обязательным критерием</span></label><label class="opt"><input type="radio" name="q164_3" value="1"><span>Прогон приёмочных сценариев заказчиком</span></label><label class="opt"><input type="radio" name="q164_3" value="2"><span>Подписание акта приёмки</span></label><label class="opt"><input type="radio" name="q164_3" value="3"><span>Разбор дефектов после приёмки</span></label></div><p class="quiz-why" hidden>Обеспечение меняет процесс, чтобы дефект не появился.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что относится к контролю качества?</p><div class="opts"><label class="opt"><input type="radio" name="q164_4" value="0" data-ok><span>Прогон интеграционных сценариев и ревью кода</span></label><label class="opt"><input type="radio" name="q164_4" value="1"><span>Обучение команды</span></label><label class="opt"><input type="radio" name="q164_4" value="2"><span>Стандарт оформления требований</span></label><label class="opt"><input type="radio" name="q164_4" value="3"><span>Выбор инструмента для команды</span></label></div><p class="quiz-why" hidden>Контроль проверяет уже полученный результат.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Где один и тот же дефект стоит дороже всего?</p><div class="opts"><label class="opt"><input type="radio" name="q164_5" value="0" data-ok><span>На приёмке у заказчика</span></label><label class="opt"><input type="radio" name="q164_5" value="1"><span>На ревью требований</span></label><label class="opt"><input type="radio" name="q164_5" value="2"><span>На ревью проекта</span></label><label class="opt"><input type="radio" name="q164_5" value="3"><span>На ревью кода</span></label></div><p class="quiz-why" hidden>Поздняя находка требует переделки, регресса и сдвига даты.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Сколько дефектов воронка поймала до приёмки в проекте «Заявки»?</p><div class="opts"><label class="opt"><input type="radio" name="q164_6" value="0" data-ok><span>12</span></label><label class="opt"><input type="radio" name="q164_6" value="1"><span>5</span></label><label class="opt"><input type="radio" name="q164_6" value="2"><span>9</span></label><label class="opt"><input type="radio" name="q164_6" value="3"><span>40</span></label></div><p class="quiz-why" hidden>2 + 3 + 4 + 3 = 12, на приёмке новых не осталось.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Во сколько раз выросла цена дефекта от требований до приёмки?</p><div class="opts"><label class="opt"><input type="radio" name="q164_7" value="0" data-ok><span>В 100 раз</span></label><label class="opt"><input type="radio" name="q164_7" value="1"><span>В 5 раз</span></label><label class="opt"><input type="radio" name="q164_7" value="2"><span>В 10 раз</span></label><label class="opt"><input type="radio" name="q164_7" value="3"><span>В 30 раз</span></label></div><p class="quiz-why" hidden>500 рублей в требованиях против 50 000 на приёмке.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что означает ноль дефектов на приёмке без записей предыдущих проверок?</p><div class="opts"><label class="opt"><input type="radio" name="q164_8" value="0" data-ok><span>Признак слабых проверок или сокрытия дефектов</span></label><label class="opt"><input type="radio" name="q164_8" value="1"><span>Доказательство высокого качества</span></label><label class="opt"><input type="radio" name="q164_8" value="2"><span>Признак слишком строгих критериев</span></label><label class="opt"><input type="radio" name="q164_8" value="3"><span>Нормальный результат любой команды</span></label></div><p class="quiz-why" hidden>Ноль без доказательств не подтверждает ничего.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Что входит в пакет доказательств на приёмке?</p><div class="opts"><label class="opt"><input type="checkbox" name="q164_9" value="1" data-ok><span>Протоколы ревью требований и проекта</span></label><label class="opt"><input type="checkbox" name="q164_9" value="5"><span>Скриншот главного экрана</span></label><label class="opt"><input type="checkbox" name="q164_9" value="3" data-ok><span>Акт с перечнем перенесённых проверок</span></label><label class="opt"><input type="checkbox" name="q164_9" value="2" data-ok><span>Чек-лист приёмки с отметками</span></label><label class="opt"><input type="checkbox" name="q164_9" value="4"><span>Устное подтверждение разработчика</span></label><label class="opt"><input type="checkbox" name="q164_9" value="0" data-ok><span>Журнал дефектов с фазами обнаружения</span></label></div><p class="quiz-why" hidden>Приёмка опирается на записи, а не на впечатление.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какие метрики считают по дефектам?</p><div class="opts"><label class="opt"><input type="checkbox" name="q164_10" value="2" data-ok><span>Стоимость исправления по фазам</span></label><label class="opt"><input type="checkbox" name="q164_10" value="0" data-ok><span>Доля пойманных до приёмки</span></label><label class="opt"><input type="checkbox" name="q164_10" value="4"><span>Число строк кода</span></label><label class="opt"><input type="checkbox" name="q164_10" value="3" data-ok><span>Время от обнаружения до закрытия</span></label><label class="opt"><input type="checkbox" name="q164_10" value="5"><span>Цвет кнопок интерфейса</span></label><label class="opt"><input type="checkbox" name="q164_10" value="1" data-ok><span>Плотность дефектов на функцию</span></label></div><p class="quiz-why" hidden>Метрики описывают, где и как рано работает проверка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какие решения относятся к обеспечению качества?</p><div class="opts"><label class="opt"><input type="checkbox" name="q164_11" value="5"><span>Исправление дефектов, найденных на тестировании</span></label><label class="opt"><input type="checkbox" name="q164_11" value="0" data-ok><span>Обязательное ревью перед слиянием</span></label><label class="opt"><input type="checkbox" name="q164_11" value="4"><span>Подписание акта приёмки</span></label><label class="opt"><input type="checkbox" name="q164_11" value="1" data-ok><span>Чек-лист готовности пакета</span></label><label class="opt"><input type="checkbox" name="q164_11" value="3"><span>Прогон приёмочных сценариев заказчиком</span></label><label class="opt"><input type="checkbox" name="q164_11" value="2" data-ok><span>Шаблон требования с полем критерия</span></label></div><p class="quiz-why" hidden>Обеспечение работает до результата, контроль после.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Сколько процентов проверок выполнено на приёмке учебной системы?</p><input type="text" class="short-answer" data-answers="[&quot;95&quot;, &quot;95 процентов&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Сколько процентов проверок выполнено на приёмке учебной системы?"><p class="quiz-why" hidden>Тридцать восемь из сорока проверок, две перенесены с датой.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Как называется документ, в котором записано, что принято, что перенесено и кто подписал?</p><input type="text" class="short-answer" data-answers="[&quot;акт приёмки&quot;, &quot;акт&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется документ, в котором записано, что принято, что перенесено и кто подписал?"><p class="quiz-why" hidden>Акт фиксирует результат приёмки и перенос проверок.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется правило, по которому цена дефекта растёт примерно на порядок при переходе к следующей фазе?</p><input type="text" class="short-answer" data-answers="[&quot;1-10-100&quot;, &quot;1 10 100&quot;, &quot;один десять сто&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется правило, по которому цена дефекта растёт примерно на порядок при переходе к следующей фазе?"><p class="quiz-why" hidden>Правило 1-10-100 даёт порядок роста, а не точную цифру.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="11-lek-07.html"><span>← Предыдущее занятие</span>Лекция 7. Риски</a><a class="next" style="text-align:right;margin-left:auto" href="13-prakt-05.html"><span>Следующее занятие →</span>Практика 5. План качества и план коммуникаций</a></nav></main>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
+  function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
+    f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
+  function load(fig){
+    var t='light'; if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
+    var f=fig.querySelector('iframe'), one=fig.getAttribute('data-one');
+    var b=atob(one || fig.getAttribute('data-light')), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
+    f.style.colorScheme = 'light';
+    new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text().then(function(html){
+      if (one) html = html.split('data-theme="dark"').join('data-theme="light"');
+      html = html.replace('</head>', FIX.split('__T__').join('light') + '</head>');
+      f.srcdoc = html;
+    });
+    f.onload=function(){ size(f); setTimeout(function(){size(f)},300); setTimeout(function(){size(f)},1200);
+      try{ new ResizeObserver(function(){size(f)}).observe(f.contentDocument.body); }catch(e){} };
+  }
+  var figs=[].slice.call(document.querySelectorAll('figure.figure'));
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
+  figs.forEach(function(f){ io ? io.observe(f) : load(f); });
+  addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
+    });
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function showQuestion(i){
+      current = i;
+      qs[i].hidden = false;
+      if(window.__readProgress) window.__readProgress();
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { showQuestion(idx + 1); }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
+    });
+    showQuestion(0);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#9A7300;--course-tint:#EDE5D2;--course-accent-dark:#D6A520;--course-tint-dark:#2E2814;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Коммуникации и команда</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление проектами</a><span>/</span><span>Коммуникации и команда</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.144">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 17</span><span class="pill">Управление проектами</span></div>
+<div class="hero-panel"><h1>Коммуникации и команда</h1><p class="dek">Проект срывается не из-за кода, а из-за того, что люди поняли друг друга по-разному и вовремя не переспросили. Сообщение, канал, шум и обратная связь показывают, где именно теряется смысл.</p></div>
+<div class="glyph" aria-hidden="true">Л9</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Объяснять модель коммуникации и роль обратной связи</li><li>Считать число каналов и выбирать канал под задачу</li><li>Различать стадии развития команды</li><li>Разбирать конфликт по интересам, а не по людям</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#модель-коммуникации">Модель коммуникации</a></li><li><a href="#канал-под-задачу">Канал под задачу</a></li><li><a href="#сколько-каналов-в-команде">Сколько каналов в команде</a></li><li><a href="#стадии-развития-команды">Стадии развития команды</a></li><li><a href="#raci-и-правило-одного-a">RACI и правило одного A</a></li><li><a href="#мотивация-и-обратная-связь">Мотивация и обратная связь</a></li><li><a href="#конфликт-интересов-и-разбор-по-фактам">Конфликт интересов и разбор по фактам</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>Вторник, встреча по ИС «Заявки». Заказчик, начальник учебного отдела, объясняет: после начала занятия отменять заявку нельзя, преподаватель отмечает неявку. Руководитель проекта повторяет: «Значит, отмена только заранее». В протоколе появляется строка: «Отмена заявки возможна до занятия». Все соглашаются, встреча заканчивается.</p>
+<p>Через две недели на демонстрации выясняется, что разработчик сделал кнопку «Отменить» активной в любой момент, администратор настроил удаление заявки после начала занятия, а преподаватель ждал, что заявка останется и он отметит неявку. Три разных поведения, один протокол и ни одного человека, который соврал.</p>
+<p><strong>Проект срывается не из-за кода.</strong> Он срывается из-за того, что люди поняли друг друга неправильно и вовремя не переспросили. На встрече достаточно было одного вопроса. Предположение стоило двух недель работы, переделки и сдвига демонстрации.</p>
+<p>Сообщение не передаётся, как файл. <strong>Получатель восстанавливает смысл из своих слов и своего опыта</strong>, и совпадение с замыслом не гарантировано. Поэтому коммуникация это не «я сказал», а «меня поняли так, как я хотел». Проверяют второе, а не первое.</p>
+<p>Посмотрите на схему. Семь кружков это люди, которые обмениваются сообщениями, и каждая линия между ними это двусторонний канал. Справа панель коммуникации: в ней по очереди подсвечиваются отправитель, канал, шум, получатель и обратная связь, а число в нижней части панели показывает, сколько каналов даёт сеть. Проведите по схеме слева направо и остановитесь на шаге «шум: термины и спешка». В этот момент подсвечены отправитель и получатель, а между ними стоит помеха: не злой умысел, а слова, которые каждый понимает по-своему. На шаге «сеть: семь человек дают 21 канал» подсветятся все семь узлов и все линии сразу. На шаге «RACI: у работы один A» панель переключится на девять сторон и покажет 36: в матрицу ответственности входят и те, кого нет в ежедневной сети. На последнем шаге «встреча: повестка, решение, протокол» видно, чем заканчивается разговор, у которого был план.</p>
+<figure class="figure" data-fig="fig-09-comms" data-one="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"><iframe title="Figure 1: fig-09-comms" scrolling="no"></iframe><figcaption>Проведите по шагам: сообщение идёт от отправителя к получателю и обратно.</figcaption></figure>
+
+<p>Вы увидели семь узлов: руководитель проекта, заказчик, преподаватель, студент, администратор, разработчик и поддержка. Это руководитель проекта и шестеро участников реестра сторон. Пятый человек команды, аналитик, работает с требованиями и в ежедневную сеть обмена не входит. Линий двадцать одна: каждый из семи связан с шестью остальными, и каждая линия посчитана один раз.</p>
+<p>Панель справа показывает путь одного сообщения: отправитель, канал, шум, получатель, обратная связь. Восемь шагов табло проходят этот путь целиком: «отправитель: руководитель проекта», «канал: встреча или письмо», «шум: термины и спешка», «получатель: преподаватель», «обратная связь: понял или нет», «сеть: семь человек дают 21 канал», «RACI: у работы один A», «встреча: повестка, решение, протокол». Внизу панели число 21 сменяется на 36, когда в расчёт входят девять сторон.</p>
+<p>Схема показывает главное: у сообщения есть путь, и на каждом участке смысл может измениться. Дальше разберём этот путь по частям и посмотрим, где именно он рвётся в проекте.</p>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Где сообщение теряет смысл по дороге к получателю?</span></button></p>
+<div class="gate-content" hidden><h2 id="модель-коммуникации"><span class="num">02</span>Модель коммуникации</h2>
+<p><strong>Отправитель</strong> начинает не с текста, а с цели: что получатель должен сделать иначе после сообщения. Если цели нет, сообщение превращается в новость, которую можно не применять.</p>
+<p><strong>Кодирование</strong> это перевод мысли в слова, пример, схему. Кодировать нужно под получателя. Преподавателю не нужно слово «бэклог», ему нужен «список заявок на семестр». Фраза «отмена до занятия» кодирует решение неточно: она не говорит, что происходит после начала.</p>
+<p><strong>Канал</strong> это встреча, звонок, чат, письмо, документ. У канала есть скорость, богатство и след. Богатый канал передаёт тон и вопрос, но не оставляет записи. Письмо оставляет запись, но не даёт переспросить сразу.</p>
+<p><strong>Шум</strong> это всё, что искажает сообщение: термины, спешка, отвлечение, усталость, разный уровень знания, разные ожидания. Шум не обязательно чья-то вина. Он есть в любом канале, и его учитывают, а не игнорируют.</p>
+<p><strong>Получатель и декодирование.</strong> Получатель собирает смысл из своих слов. Один и тот же протокол читают по-разному, потому что за словом «отмена» у разработчика стоит кнопка, у администратора удаление, у преподавателя неявка.</p>
+<p><strong>Обратная связь</strong> замыкает цикл. Это не вежливое «понял?», на которое всегда отвечают «да». Это проверка: «повтори, что сделаешь» или «покажи на примере». Без обратной связи отправитель не знает, что именно передал.</p>
+<p>В истории с отменой обратной связи не было. Руководитель спросил «всем понятно?», все кивнули, и кивок приняли за понимание. Кивок подтверждает, что человек услышал звук, а не то, что он восстановил то же решение.</p>
+<p>Проверка понимания стоит одно предложение: «Скажи, что происходит с заявкой после звонка». Если ответ расходится с решением, ошибка найдена на встрече, а не через две недели. Это главный приём лекции: <strong>не спрашивайте «понял?», просите пересказать или показать</strong>.</p>
+<p>Сложное сообщение передают дважды и двумя способами: голосом, чтобы можно было переспросить, и письменно, чтобы осталась запись. Одно без другого даёт либо непонимание, либо потерю.</p>
+<h2 id="канал-под-задачу"><span class="num">03</span>Канал под задачу</h2>
+<p>Канал выбирают по задаче. У канала три свойства: скорость, богатство и след.</p>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>Канал</th>
+<th>Почему</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Конфликт по срокам</td>
+<td>личная встреча</td>
+<td>нужен тон и возможность переспросить</td>
+</tr>
+<tr>
+<td>Решение по составу версии</td>
+<td>встреча, затем письмо</td>
+<td>обсуждают голосом, фиксируют письменно</td>
+</tr>
+<tr>
+<td>Изменение требования</td>
+<td>письмо с подтверждением</td>
+<td>нужна дата и версия</td>
+</tr>
+<tr>
+<td>Авария на стенде</td>
+<td>звонок</td>
+<td>нужна скорость</td>
+</tr>
+<tr>
+<td>Инструкция для преподавателя</td>
+<td>документ</td>
+<td>нужен повторяемый текст</td>
+</tr>
+<tr>
+<td>Ежедневный статус</td>
+<td>короткая встреча или чат</td>
+<td>нужна регулярность, а не архив</td>
+</tr>
+</tbody>
+</table>
+<p>Богатый канал не всегда лучше. Для факта, который должен дойти одинаково до многих, письмо надёжнее встречи: его перечитывают и на него ссылаются. Для конфликта письмо опасно: оно фиксирует позиции раньше, чем стороны услышали друг друга.</p>
+<p>Две ошибки встречаются чаще всего. Первая: «написал в чат» вместо разговора о проблеме. Непонимание превращается в переписку, где каждый защищает формулировку. Вторая: «обсудили голосом» без записи. Решение остаётся в памяти, а память у участников разная.</p>
+<p>Правило проекта: <strong>решение сложного вопроса голосом, фиксация письменно</strong>. После встречи остаётся короткая запись: что решили, кто делает, к какому сроку, что осталось открытым. Не пересказ разговора, а решение.</p>
+<p>План коммуникаций сводит каналы в таблицу: сторона, вопрос, формат, частота, ответственный. Без него каналы выбираются по привычке: кто-то любит звонки, кто-то почту, а заказчик узнаёт о решении последним.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Почему семь человек дают двадцать один канал, а не семь?</span></button></p>
+<div class="gate-content" hidden><h2 id="сколько-каналов-в-команде"><span class="num">04</span>Сколько каналов в команде</h2>
+<p>Каждый человек может говорить с каждым. Если людей n, у каждого n-1 собеседник. Произведение n(n-1) считает каждую линию дважды, со стороны обоих участников, поэтому делим на два: <strong>n(n-1)/2</strong>.</p>
+<p>Пять человек дают 10 каналов, семь дают 21, девять дают 36. Проверка: 5<em>4/2 = 10, 7</em>6/2 = 21, 9*8/2 = 36.</p>
+<p>Важен не сам счёт, а его рост. Пятый человек добавляет четыре канала, шестой пять, седьмой шесть. Каждый новый участник приносит не одну связь, а n-1 связей, поэтому стоимость координации растёт быстрее числа людей. Отсюда правило Брукса: опоздавшему проекту новые люди сначала добавляют каналы, а потом работу.</p>
+<p>Из двадцати одного канала не все нужны. Сеть показывает возможные связи, а план коммуникаций оставляет рабочие. У каждой пары есть повод, формат и частота. Без плана сеть работает шумом: все со всеми, но никто не знает, где принимается решение.</p>
+<p>Девять сторон дают 36 каналов, но это верхняя граница. Если каждый из девяти будет писать каждому, проект утонет в переписке. Постоянных каналов в проекте несколько: команда, заказчик, преподаватели. Остальные включаются по событию: приёмка, изменение, авария.</p>
+<h2 id="стадии-развития-команды"><span class="num">05</span>Стадии развития команды</h2>
+<p>Команда не появляется готовой. Она проходит пять стадий, и на каждой нужен свой стиль руководства.</p>
+<ol>
+<li><strong>Формирование.</strong> Люди вежливы, ждут указаний, роли неясны. Руководитель задаёт рамку: цель, роли, правила встреч, место для протокола.</li>
+<li><strong>Конфликт.</strong> Появляются споры о ролях, качестве и темпе. «Почему я делаю это, а он нет». Это нормальная стадия, а не признак плохой команды. Задача руководителя не погасить спор, а перевести его в правила.</li>
+<li><strong>Нормирование.</strong> Команда договаривается, как принимают решения, как фиксируют, как эскалируют и что считается готовым. Появляются протокол и общий язык.</li>
+<li><strong>Работа.</strong> Команда сама распределяет задачи, спорит по делу, обращается за помощью. Руководитель меньше командует и больше убирает препятствия.</li>
+<li><strong>Расставание.</strong> Проект закрывается, люди передают дела и фиксируют уроки. Без этой стадии знания уходят вместе с людьми.</li>
+</ol>
+<p>Стадии не идут строго по календарю. После смены состава или сорванного срока команда возвращается в конфликт. Признак возврата простой: снова обсуждают, кто виноват, вместо того чтобы обсуждать, что делать.</p>
+<p>Пропущенный конфликт не исчезает. Если на формировании все согласились молча, спор о ролях вспыхнет позже, часто на приёмке. Пройти его раньше дешевле, потому что цена ошибки ниже.</p>
+<p>Руководитель на каждой стадии делает разное. На формировании задаёт рамку, на конфликте переводит спор в правила, на нормировании закрепляет договорённости, на работе убирает препятствия, на расставании сохраняет знания.</p>
+<h2 id="raci-и-правило-одного-a"><span class="num">06</span>RACI и правило одного A</h2>
+<p>Матрица RACI отвечает, кто что делает с работой. R исполняет, A отвечает за результат и принимает решение, C консультирует до решения, I получает результат после.</p>
+<table>
+<thead>
+<tr>
+<th>Работа</th>
+<th>Заказчик</th>
+<th>Руководитель</th>
+<th>Разработчик</th>
+<th>Администратор</th>
+<th>Преподаватель</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Состав первой версии</td>
+<td>A</td>
+<td>R</td>
+<td>C</td>
+<td>I</td>
+<td>I</td>
+</tr>
+<tr>
+<td>Правило отмены заявки</td>
+<td>A</td>
+<td>R</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Права доступа</td>
+<td>I</td>
+<td>A</td>
+<td>C</td>
+<td>R</td>
+<td>I</td>
+</tr>
+<tr>
+<td>Обучение преподавателей</td>
+<td>A</td>
+<td>R</td>
+<td>I</td>
+<td>I</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Протокол встречи</td>
+<td>C</td>
+<td>A</td>
+<td>I</td>
+<td>I</td>
+<td>I</td>
+</tr>
+</tbody>
+</table>
+<p><strong>На одну работу ровно один A.</strong> Два A означают, что ответственного нет: каждый ждёт другого или оба считают, что решили. Ноль A означает, что работу никто не защищает. R может быть несколько: работу делают вместе.</p>
+<p>Консультанта привлекают до решения. Если C высказался после, его замечание становится переделкой, а не мнением. Наблюдатель I не голосует и не согласовывает, он получает результат.</p>
+<p>RACI не оргсхема и не список обязанностей на год. Это матрица решений и результатов: строки это работы, столбцы это роли. Если в каждой клетке стоит буква, матрица перестаёт читаться. Если строки описывают «всю работу команды», её никто не заполнит.</p>
+<p>В строке «правило отмены заявки» A у заказчика, R у руководителя проекта, C у разработчика, администратора и преподавателя. Такая строка заставляет собрать всех, кто знает правило, до того как написан код.</p>
+<p>Спор об ответственности почти всегда спор о том, кто A. Пока A не назван, работу двигает тот, кто громче говорит, а отвечает тот, кто первым заметил проблему.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как говорить о проблеме, не обесценивая человека?</span></button></p>
+<div class="gate-content" hidden><h2 id="мотивация-и-обратная-связь"><span class="num">07</span>Мотивация и обратная связь</h2>
+<p>Мотивация не сводится к деньгам, но и без денег не работает. В проекте люди остаются за три вещи: понятную цель, возможность расти и признание работы. Все три ломаются одинаково, когда результат не замечают, а ошибку объявляют публично.</p>
+<p>Обратная связь отличается от оценки. Оценка говорит о человеке: «ты невнимательный». Обратная связь говорит о работе: «в форме не хватает проверки даты». Первое вызывает защиту, второе можно исправить.</p>
+<p>Рабочая схема состоит из четырёх шагов: факт, эффект, запрос, договорённость.</p>
+<ul>
+<li><strong>Факт.</strong> Что произошло, без интерпретации.</li>
+<li><strong>Эффект.</strong> К чему это привело.</li>
+<li><strong>Запрос.</strong> Что сделать иначе.</li>
+<li><strong>Договорённость.</strong> Что человек берёт на себя и когда это проверим.</li>
+</ul>
+<p>Вместо «ты подвёл команду» лучше сказать так: «На демонстрации в среду формы не было, заказчик не увидел сценарий, приёмку перенесли. Что помешало и что меняем в оценке задачи?» Это не мягче по смыслу. Это точнее по адресу.</p>
+<p>Хвалить нужно так же конкретно. «Молодец» не говорит, что повторять. «Ты разобрал журнал и нашёл причину дубля заявок» говорит.</p>
+<p>Обесценивание бывает бытовым: «это ерунда», «я же говорил», «все так делают». Оно не делает работу лучше, зато гарантирует, что в следующий раз человек промолчит. Молчание в команде дороже конфликта: конфликт видно, молчание нет.</p>
+<p>Правило простое: <strong>критикуют работу наедине, хвалят при команде</strong>. Публичный разбор ошибки учит не тому, как делать, а тому, как не попадаться.</p>
+<h2 id="конфликт-интересов-и-разбор-по-фактам"><span class="num">08</span>Конфликт интересов и разбор по фактам</h2>
+<p>Конфликт в команде не обязательно чья-то злая воля. Чаще это два разумных интереса в одном ограничении. Разработчик хочет взять готовую библиотеку, чтобы успеть. Администратор хочет обойтись без зависимости, потому что её придётся обновлять и объяснять на поддержке. Оба правы.</p>
+<p>Разбирают конфликт по фактам, а не по людям. Сначала отделяют факт от оценки. «Ты тормозишь» это оценка. «Задача висит восемь дней, зависимости не согласованы» это факт. Потом называют интерес каждой стороны. Потом ищут проверку, которая рассудит: срок, стоимость поддержки, требования безопасности. Потом фиксируют решение и того, кто его держит.</p>
+<p>Фраза «я же говорил» не работает как аргумент. Память у участников разная, а запись одна. Если решение записано в протоколе, спор идёт о факте, а не о том, кто что помнит. Если записи нет, спор идёт о памяти, и выигрывает тот, кто увереннее.</p>
+<p>Если согласия нет, решение принимает A и записывает причину и цену. Молчаливое решение хуже эскалации: оно создаёт обещание, о котором узнают на приёмке.</p>
+<h2 id="типичные-ошибки"><span class="num">09</span>Типичные ошибки</h2>
+<p><strong>Совещание без повестки.</strong> Люди приходят узнать, зачем пришли. Решение зависит от того, кто громче. Лечение: повестка с вопросами и с тем, какое решение нужно принять.</p>
+<p><strong>Протокол без решений.</strong> Пересказ разговора вместо строк «решили, кто, когда». Лечение: три колонки, решение, владелец, срок.</p>
+<p><strong>«Я же говорил».</strong> Память вместо записи. Лечение: одно место, где лежат решения, и ссылка на него вместо спора.</p>
+<p><strong>RACI на всю команду.</strong> Матрица, где у каждого все буквы, или два A на строку. Лечение: строки это работы и решения, а не должности, и один A на строку.</p>
+<p><strong>Канал не по задаче.</strong> Конфликт письмом, решение чатом, изменение требования устно. Лечение: сначала определить задачу, потом выбрать канал.</p>
+<p><strong>Обратная связь о человеке.</strong> Ярлык вместо факта. Лечение: факт, эффект, запрос, договорённость.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что проверить в своей команде после этой лекции?</span></button></p>
+<div class="gate-content" hidden><h2 id="проверьте-себя"><span class="num">10</span>Проверьте себя</h2>
+<details class="check"><summary><span>На встрече решили одно, а в протоколе записали другое. Что проверять в первую очередь?</span></summary><div><p>Сначала смотрят, что записано, потому что протокол это единственная общая версия решения. Потом возвращаются к обратной связи: если никто не пересказал решение своими словами, расхождение не заметили на встрече. Лечение: запись решения и проверка понимания до конца разговора.</p></div></details>
+
+<details class="check"><summary><span>В команде шесть человек. Сколько у неё каналов, и сколько станет, если добавить седьмого?</span></summary><div><p>Шесть человек дают 6*5/2 = 15 каналов. Седьмой добавляет шесть связей, и каналов становится 21. Каждый новый участник приносит n-1 связей, поэтому координация дорожает быстрее, чем растёт команда.</p></div></details>
+
+<details class="check"><summary><span>На второй неделе новый разработчик спорит, что задачи распределены нечестно. Это признак плохой команды?</span></summary><div><p>Нет, это стадия конфликта. Команда проверяет роли и правила, и спор нужно перевести в договорённость: как распределяют задачи, кто решает, как фиксируют. Если спор замолчать, он вернётся позже и дороже.</p></div></details>
+
+<details class="check"><summary><span>Разработчик и администратор спорят о библиотеке. С чего начать разбор?</span></summary><div><p>С фактов и интересов. Разработчику нужен срок, администратору нужна поддержка без лишних зависимостей. Дальше ищут проверку, которая рассудит: срок, стоимость обновления, требования безопасности. Решение фиксирует A и записывает причину.</p></div></details>
+
+<h2 id="итоги"><span class="num">11</span>Итоги</h2>
+<ul>
+<li>Проект срывает не код, а расхождение в понимании, которое вовремя не заметили: сообщение идёт через канал и шум, и его замыкает обратная связь.</li>
+<li>Понимание проверяют пересказом или показом, а не вопросом «понял?».</li>
+<li>Канал выбирают по задаче: сложное обсуждают голосом, решение фиксируют письменно.</li>
+<li>Число каналов считают по формуле n(n-1)/2: семь человек дают 21, девять дают 36.</li>
+<li>Команда проходит стадии формирования, конфликта, нормирования, работы и расставания.</li>
+<li>В RACI на одну работу ровно один A, а консультанта привлекают до решения.</li>
+<li>Конфликт разбирают по фактам и интересам, а решение записывают в протокол.</li>
+</ul>
+<h2 id="тест-по-лекции"><span class="num">12</span>Тест по лекции</h2>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что в модели коммуникации называют шумом?</p><div class="opts"><label class="opt"><input type="radio" name="q133_0" value="0" data-ok><span>Всё, что искажает сообщение по пути к получателю</span></label><label class="opt"><input type="radio" name="q133_0" value="1"><span>Только громкие звуки в помещении</span></label><label class="opt"><input type="radio" name="q133_0" value="2"><span>Любую ошибку отправителя</span></label><label class="opt"><input type="radio" name="q133_0" value="3"><span>Разницу во времени отправки</span></label></div><p class="quiz-why" hidden>Шум это термины, спешка, отвлечение и другие помехи, из-за которых получатель собирает не тот смысл.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Зачем в коммуникации нужна обратная связь?</p><div class="opts"><label class="opt"><input type="radio" name="q133_1" value="0" data-ok><span>Чтобы отправитель узнал, как его поняли</span></label><label class="opt"><input type="radio" name="q133_1" value="1"><span>Чтобы получатель согласился с любым решением</span></label><label class="opt"><input type="radio" name="q133_1" value="2"><span>Чтобы сообщение стало короче</span></label><label class="opt"><input type="radio" name="q133_1" value="3"><span>Чтобы канал стал богаче</span></label></div><p class="quiz-why" hidden>Обратная связь замыкает цикл и показывает расхождение до того, как оно стало переделкой.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Какой канал лучше выбрать для конфликта по срокам?</p><div class="opts"><label class="opt"><input type="radio" name="q133_2" value="0" data-ok><span>Личную встречу</span></label><label class="opt"><input type="radio" name="q133_2" value="1"><span>Письмо с копией директору</span></label><label class="opt"><input type="radio" name="q133_2" value="2"><span>Сообщение в общий чат</span></label><label class="opt"><input type="radio" name="q133_2" value="3"><span>Запись в протоколе без обсуждения</span></label></div><p class="quiz-why" hidden>Конфликту нужен богатый канал: тон, вопросы и возможность переспросить. Письмо фиксирует позиции раньше, чем стороны услышали друг друга.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Сколько двусторонних каналов у семи человек?</p><div class="opts"><label class="opt"><input type="radio" name="q133_3" value="0" data-ok><span>21</span></label><label class="opt"><input type="radio" name="q133_3" value="1"><span>7</span></label><label class="opt"><input type="radio" name="q133_3" value="2"><span>14</span></label><label class="opt"><input type="radio" name="q133_3" value="3"><span>42</span></label></div><p class="quiz-why" hidden>n(n-1)/2 = 7*6/2 = 21.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Сколько каналов у команды из пяти человек?</p><div class="opts"><label class="opt"><input type="radio" name="q133_4" value="0" data-ok><span>10</span></label><label class="opt"><input type="radio" name="q133_4" value="1"><span>5</span></label><label class="opt"><input type="radio" name="q133_4" value="2"><span>20</span></label><label class="opt"><input type="radio" name="q133_4" value="3"><span>25</span></label></div><p class="quiz-why" hidden>5*4/2 = 10. Каждый новый участник добавляет n-1 связей.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что происходит на стадии конфликта?</p><div class="opts"><label class="opt"><input type="radio" name="q133_5" value="0" data-ok><span>Команда спорит о ролях и правилах, и это нормально</span></label><label class="opt"><input type="radio" name="q133_5" value="1"><span>Команда уже работает без руководителя</span></label><label class="opt"><input type="radio" name="q133_5" value="2"><span>Команда закрывает проект и передаёт дела</span></label><label class="opt"><input type="radio" name="q133_5" value="3"><span>Команда молчит и ждёт указаний</span></label></div><p class="quiz-why" hidden>Конфликт это стадия, на которой спор о ролях переводят в правила, а не повод распускать команду.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Сколько ответственных A должно быть на одну работу в RACI?</p><div class="opts"><label class="opt"><input type="radio" name="q133_6" value="0" data-ok><span>Ровно один</span></label><label class="opt"><input type="radio" name="q133_6" value="1"><span>Хотя бы два</span></label><label class="opt"><input type="radio" name="q133_6" value="2"><span>Столько, сколько исполнителей</span></label><label class="opt"><input type="radio" name="q133_6" value="3"><span>Ни одного, если работа простая</span></label></div><p class="quiz-why" hidden>Два A означают, что ответственного нет; ноль A означает, что работу никто не защищает.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Когда привлекают консультанта C?</p><div class="opts"><label class="opt"><input type="radio" name="q133_7" value="0" data-ok><span>До решения, чтобы его мнение вошло в решение</span></label><label class="opt"><input type="radio" name="q133_7" value="1"><span>После решения, чтобы сообщить результат</span></label><label class="opt"><input type="radio" name="q133_7" value="2"><span>Только на приёмке</span></label><label class="opt"><input type="radio" name="q133_7" value="3"><span>Только если он входит в команду</span></label></div><p class="quiz-why" hidden>C даёт мнение до решения; после решения его замечание превращается в переделку.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что делает протокол встречи рабочим документом?</p><div class="opts"><label class="opt"><input type="radio" name="q133_8" value="0" data-ok><span>Фиксирует решение, владельца и срок</span></label><label class="opt"><input type="radio" name="q133_8" value="1"><span>Пересказывает все реплики по порядку</span></label><label class="opt"><input type="radio" name="q133_8" value="2"><span>Перечисляет участников без решений</span></label><label class="opt"><input type="radio" name="q133_8" value="3"><span>Повторяет повестку</span></label></div><p class="quiz-why" hidden>Протокол нужен не как стенограмма, а как запись решения и ответственности.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие элементы входят в модель коммуникации?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_9" value="1" data-ok><span>Канал</span></label><label class="opt"><input type="checkbox" name="q133_9" value="3" data-ok><span>Обратная связь</span></label><label class="opt"><input type="checkbox" name="q133_9" value="4"><span>Критический путь</span></label><label class="opt"><input type="checkbox" name="q133_9" value="0" data-ok><span>Отправитель и получатель</span></label><label class="opt"><input type="checkbox" name="q133_9" value="5"><span>Бюджет проекта</span></label><label class="opt"><input type="checkbox" name="q133_9" value="2" data-ok><span>Шум</span></label></div><p class="quiz-why" hidden>Модель описывает путь сообщения и помехи, а не сроки и деньги.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какие ошибки типичны для матрицы RACI?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_10" value="0" data-ok><span>Два A на одну работу</span></label><label class="opt"><input type="checkbox" name="q133_10" value="5"><span>R исполняет работу</span></label><label class="opt"><input type="checkbox" name="q133_10" value="2" data-ok><span>Консультант C привлечён после решения</span></label><label class="opt"><input type="checkbox" name="q133_10" value="4"><span>Один A на работу</span></label><label class="opt"><input type="checkbox" name="q133_10" value="1" data-ok><span>Ни одного A на работу</span></label><label class="opt"><input type="checkbox" name="q133_10" value="3" data-ok><span>Матрица заполнена на всю команду без конкретных работ</span></label></div><p class="quiz-why" hidden>Ошибки связаны с размытой ответственностью и поздним привлечением консультанта.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что делает обратную связь рабочей?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_11" value="0" data-ok><span>Факт вместо оценки человека</span></label><label class="opt"><input type="checkbox" name="q133_11" value="4"><span>Публичный разбор ошибки при команде</span></label><label class="opt"><input type="checkbox" name="q133_11" value="1" data-ok><span>Эффект, к которому привёл поступок</span></label><label class="opt"><input type="checkbox" name="q133_11" value="5"><span>Обобщение «ты всегда опаздываешь»</span></label><label class="opt"><input type="checkbox" name="q133_11" value="2" data-ok><span>Конкретный запрос на изменение</span></label><label class="opt"><input type="checkbox" name="q133_11" value="3" data-ok><span>Разговор наедине, если речь об ошибке</span></label></div><p class="quiz-why" hidden>Обратная связь говорит о работе, а не о личности, и предлагает проверяемое изменение.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Сколько двусторонних каналов у девяти человек?</p><input type="text" class="short-answer" data-answers="[&quot;36&quot;, &quot;тридцать шесть&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Сколько двусторонних каналов у девяти человек?"><p class="quiz-why" hidden>9*8/2 = 36.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Как называется стадия, на которой команда спорит о ролях и правилах?</p><input type="text" class="short-answer" data-answers="[&quot;конфликт&quot;, &quot;шторм&quot;, &quot;storming&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется стадия, на которой команда спорит о ролях и правилах?"><p class="quiz-why" hidden>Это стадия конфликта, или шторминга. Её проходят, чтобы договориться о правилах.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется документ, который фиксирует решения встречи, владельца и срок?</p><input type="text" class="short-answer" data-answers="[&quot;протокол&quot;, &quot;протокол встречи&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется документ, который фиксирует решения встречи, владельца и срок?"><p class="quiz-why" hidden>Протокол превращает разговор в запись, на которую можно сослаться.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="13-prakt-05.html"><span>← Предыдущее занятие</span>Практика 5. План качества и план коммуникаций</a><a class="next" style="text-align:right;margin-left:auto" href="15-prakt-06.html"><span>Следующее занятие →</span>Практика 6. Scrum-доска</a></nav></main>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
+  function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
+    f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
+  function load(fig){
+    var t='light'; if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
+    var f=fig.querySelector('iframe'), one=fig.getAttribute('data-one');
+    var b=atob(one || fig.getAttribute('data-light')), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
+    f.style.colorScheme = 'light';
+    new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text().then(function(html){
+      if (one) html = html.split('data-theme="dark"').join('data-theme="light"');
+      html = html.replace('</head>', FIX.split('__T__').join('light') + '</head>');
+      f.srcdoc = html;
+    });
+    f.onload=function(){ size(f); setTimeout(function(){size(f)},300); setTimeout(function(){size(f)},1200);
+      try{ new ResizeObserver(function(){size(f)}).observe(f.contentDocument.body); }catch(e){} };
+  }
+  var figs=[].slice.call(document.querySelectorAll('figure.figure'));
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
+  figs.forEach(function(f){ io ? io.observe(f) : load(f); });
+  addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
+    });
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function showQuestion(i){
+      current = i;
+      qs[i].hidden = false;
+      if(window.__readProgress) window.__readProgress();
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { showQuestion(idx + 1); }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
+    });
+    showQuestion(0);
+  });
+})();
+</script>
+</body>
+</html>

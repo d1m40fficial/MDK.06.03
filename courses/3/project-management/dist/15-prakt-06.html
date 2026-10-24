@@ -1,0 +1,1552 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#9A7300;--course-tint:#EDE5D2;--course-accent-dark:#D6A520;--course-tint-dark:#2E2814;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrum-доска</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление проектами</a><span>/</span><span>Scrum-доска</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.144">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 18</span><span class="pill">Управление проектами</span></div>
+<div class="hero-panel"><h1>Scrum-доска</h1><p class="dek">Соберите бэклог из восьми историй на 40 пунктов, возьмите в спринт ровно 20, проведите его на доске и покажите на графике сгорания, где план разошёлся с фактом.</p></div>
+<div class="glyph" aria-hidden="true">П6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Писать пользовательскую историю с критериями приёмки</li><li>Оценивать историю в story points</li><li>Планировать спринт под скорость команды</li><li>Вести доску и читать график сгорания</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-пользовательские-истории">Задание 1. Пользовательские истории</a></li><li><a href="#задание-2-оценка">Задание 2. Оценка</a></li><li><a href="#задание-3-планирование-спринта">Задание 3. Планирование спринта</a></li><li><a href="#задание-4-доска-и-ежедневная-встреча">Задание 4. Доска и ежедневная встреча</a></li><li><a href="#задание-5-график-сгорания">Задание 5. График сгорания</a></li><li><a href="#задание-6-итоги-и-защита">Задание 6. Итоги и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<p>Проект учебного центра перешёл в разработку: устав подписан, WBS разложен, бюджет посчитан, риски занесены в реестр. На встрече заказчик задаёт вопрос, на который в этих документах нет ответа: «Что я увижу через две недели?» В бюджете 174 часа, в WBS четырнадцать пакетов. Ни одна из этих цифр не говорит, что получит центр в конце ближайшего отрезка времени.</p>
+<p>Ответ даёт инкремент: несколько историй в состоянии «принято». Спринт это не «две недели работы», а коробка с датой на конце, куда кладут столько ценности, сколько успевают довести до готовности. Не приняли результат, спринт не состоялся, сколько бы часов ни потратили.</p>
+<p>Бэклог не заменяет WBS. WBS отвечает, из чего состоит результат: форма, справочник, база, отчёт. Бэклог отвечает, что нужнее раньше и зачем это пользователю. В WBS стоит пакет «Модуль заявок», в бэклоге история «Как студент, я хочу подать заявку с телефона, чтобы не приезжать в центр». Первое описывает кусок системы, второе человека и его цель. Требование фиксирует поведение системы, история фиксирует потребность и несёт критерии приёмки, те же проверки, но привязанные к нужде человека.</p>
+<p>Результат работы: бэклог на 40 пунктов, спринт на 20, доска с шестью карточками, график из одиннадцати точек, итоги спринта и заполненный отчёт. Границы: только система «Заявки», восемь историй и один спринт, код и дизайн не пишем.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>В бэклоге восемь историй, у каждой роль, потребность, ценность и два-четыре проверяемых критерия. Оценки по шкале 1, 2, 3, 5, 8, 13 дают 40. В спринте ровно 20 пунктов, есть цель и риски с мерами. Доска показывает колонку каждой карточки по дням. На графике две линии, одиннадцать точек и подписанный скачок объёма. Итоги содержат числа: сколько принято, сколько вернулось, что изменим.</p></div>
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/PM_practice-06_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/PM_practice-06_scrum-board.csv" download>Бэклог и доска в CSV</a>
+<p>В шаблоне уже есть таблицы бэклога, плана спринта, доски, графика и итогов. В CSV десять строк под истории: «Как», «Я хочу», «Чтобы», оценка, приоритет, критерий приёмки, спринт, колонка и кто ведёт.</p>
+</div>
+
+<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<p>Нужны Excel или LibreOffice Calc и Word. Доску можно вести на листе Excel, а можно собрать из стикеров на стене: карточку видно целиком, её легко переставить и сфотографировать. Платные сервисы и регистрация аккаунтов не требуются, права администратора тоже.</p>
+<p>Создайте папку практики:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">06</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">06</span>
+</code></pre></div>
+
+<p>Скачайте в неё оба файла из блока выше и проверьте расширения: <code>PM_practice-06_report-template.docx</code> и <code>PM_practice-06_scrum-board.csv</code>, а не <code>.docx.docx</code> или <code>.csv.txt</code>. Шаблон отчёта сразу сохраните под своим именем, например <code>PM_scrum_Иванов.docx</code>.</p>
+<p>CSV сохранён с разделителем «точка с запятой» и в кодировке UTF-8. В Excel откройте его через <strong>Данные → Из текста</strong>, укажите разделитель «точка с запятой» и кодировку UTF-8. Если русские буквы превратились в кракозябры, выбрана не та кодировка: закройте файл без сохранения и повторите.</p>
+<p>Доску ведите на отдельном листе Excel: четыре колонки это четыре столбца, карточка это строка с идентификатором, историей, оценкой, владельцем, днём начала и блокером. Движение фиксируйте датой и таблицей по дням.</p>
+<p>График стройте типом «Точечная с прямыми отрезками»: ось X это дни от 0 до 10, ось Y оставшиеся пункты, два ряда «Идеал» и «Факт». Сглаживание отключите.</p>
+<p>Работайте группой из трёх человек. Владелец продукта это заказчик из практики 1, директор учебного центра: он решает, что важнее, и принимает результат. Scrum-мастер это руководитель проекта: он ведёт встречи, следит за доской и снимает блокеры. Два разработчика делают истории. Если работаете один, играйте все роли по очереди, но записывайте решения так, будто их приняли разные люди.</p>
+<h2 id="задание-1-пользовательские-истории"><span class="num">03</span>Задание 1. Пользовательские истории</h2>
+<p>История собирается из трёх частей: <strong>роль, потребность, ценность</strong>. Шаблон один: «Как &lt;роль&gt;, я хочу &lt;действие&gt;, чтобы &lt;ценность&gt;». Роль отвечает, кто получает пользу. Потребность отвечает, что человек хочет сделать. Ценность отвечает, зачем ему это, и позволяет отбросить ненужную историю.</p>
+<p>Плохая запись: «Сделать форму заявки». Здесь нет ни роли, ни ценности, а «сделать» описывает работу команды, а не жизнь пользователя. Хорошая запись: «Как студент, я хочу подать заявку на курс с телефона, чтобы не приезжать в центр ради записи». Из неё видно, что форма должна открываться на узком экране, а после отправки человек получает подтверждение.</p>
+<p>Критерии приёмки это наблюдения, по которым видно, что история готова. Их два-четыре, и каждый начинается с действия проверяющего: открыть, ввести, нажать, посмотреть. Плохой критерий: «форма удобная». Хороший: «пустое поле не отправляется, сообщение стоит у конкретного поля». Плохой: «письмо приходит быстро». Хороший: «в теме письма есть номер заявки».</p>
+<p>Ещё одно правило: <strong>история должна закрываться за один спринт</strong>. Если критериев двенадцать и они не помещаются на экран, историю делят. Признак хорошей истории описывают словом INVEST: независимая, обсуждаемая, ценная, оцениваемая, маленькая, проверяемая.</p>
+<p>Соберите восемь историй для системы «Заявки». Порядок в таблице это приоритет: сверху то, без чего не работает путь заявки от формы до очереди.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Как</th>
+<th>Я хочу</th>
+<th>Чтобы</th>
+<th>Критерий приёмки</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US1</td>
+<td>студент</td>
+<td>подать заявку на курс с телефона, указав ФИО, телефон, курс и группу</td>
+<td>не приезжать в центр ради записи</td>
+<td>Пустое поле не отправляется, сообщение стоит у поля. Телефон принимается из 10 или 11 цифр, буквы отклоняются. После отправки заявка получает номер вида <code>З-2027-0043</code> и статус «Новая», повторное нажатие не создаёт вторую заявку</td>
+</tr>
+<tr>
+<td>US2</td>
+<td>администратор</td>
+<td>видеть очередь заявок с фильтром по статусу и поиском по номеру</td>
+<td>находить заявку за несколько секунд, а не листать тетрадь</td>
+<td>В строке видны номер, дата, ФИО, курс и статус, сортировка по дате работает. Фильтр «Новая» скрывает остальные заявки. Поиск по номеру находит заявку, неизвестный номер даёт пустой список с сообщением</td>
+</tr>
+<tr>
+<td>US3</td>
+<td>методист</td>
+<td>вести справочник курсов и групп</td>
+<td>форма всегда предлагала только действующие курсы</td>
+<td>Курс добавляется, переименовывается и архивируется. Архивированный курс исчезает из формы, но остаётся в старых заявках. Курс с заявками удалить нельзя</td>
+</tr>
+<tr>
+<td>US4</td>
+<td>студент</td>
+<td>получить письмо-подтверждение с номером заявки</td>
+<td>не звонить и не проверять, дошла ли запись</td>
+<td>Письмо приходит на адрес из заявки, в теме и тексте есть номер. Если почтовый шлюз недоступен, заявка сохраняется, письмо попадает в очередь повторной отправки, администратор видит отметку</td>
+</tr>
+<tr>
+<td>US5</td>
+<td>студент</td>
+<td>видеть предупреждение, если подаю вторую заявку на тот же курс за неделю</td>
+<td>не создавать дубль случайно</td>
+<td>При совпадении телефона и курса за 7 дней показывается номер прошлой заявки и кнопка отмены. Отмена возвращает к форме без создания записи, подтверждение создаёт новую</td>
+</tr>
+<tr>
+<td>US6</td>
+<td>администратор</td>
+<td>переводить заявку по статусам, не нарушая правила</td>
+<td>в журнале не появлялось записей, которые потом не объяснить</td>
+<td>Разрешены переходы «Новая → В работе → Записана» и «Отказ» с причиной из списка. Запрещённый переход отклоняется с сообщением, отказ без причины не сохраняется. Каждый переход попадает в журнал: кто, когда, из какого статуса в какой</td>
+</tr>
+<tr>
+<td>US7</td>
+<td>директор центра</td>
+<td>получать отчёт по заявкам за период</td>
+<td>видеть, какие курсы набираются, а какие нет</td>
+<td>Отчёт показывает число заявок по курсам и статусам и долю дошедших до «Записана». Период задаётся двумя датами, пустой период даёт нули, а не ошибку. Выгрузка CSV открывается в Excel без кракозябр</td>
+</tr>
+<tr>
+<td>US8</td>
+<td>администратор</td>
+<td>выгружать список группы в CSV</td>
+<td>передавать его преподавателю без ручного переписывания</td>
+<td>В файле ФИО, телефон, курс, дата заявки и статус. Пустая группа даёт файл с одной строкой заголовка. Файл открывается в Excel с разделителем «точка с запятой» и кодировкой UTF-8</td>
+</tr>
+</tbody>
+</table>
+<p>Восемь историй покрывают основной сценарий: человек подаёт заявку, администратор её видит и переводит по статусам, центр получает отчёт. В таблице нет слов «модуль» и «сервис»: если историю нельзя пересказать пользователю, она написана для программиста.</p>
+<p>Заполните колонки CSV: «Спринт» пока пустой, в «Колонке» у всех To do, в «Кто» владелец истории, а не автор кода.</p>
+<div class="callout shot"><span class="label">Скриншот 1</span><p>Таблица бэклога из восьми историй с критериями приёмки и расставленным приоритетом.</p></div>
+
+<h2 id="задание-2-оценка"><span class="num">04</span>Задание 2. Оценка</h2>
+<p>Оценивать историю в часах удобно ровно до первого разговора. Один разработчик сделает форму за три часа, второй за шесть, потому что первый уже делал похожую. Часы зависят от человека, пункты от объёма, сложности и неизвестности истории. Поэтому шкала пунктов относительная: она сравнивает истории между собой, а не с календарём.</p>
+<p>Шкала в этой работе такая: 1, 2, 3, 5, 8, 13. Соседние значения отличаются примерно вдвое: человек плохо различает «семь» и «восемь», но уверенно отличает «в два раза больше».</p>
+<table>
+<thead>
+<tr>
+<th>Пункты</th>
+<th>Что означает</th>
+<th>Пример из бэклога</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Одно небольшое изменение, которое видно сразу</td>
+<td>Такой истории в бэклоге нет, и это нормально</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Один экран или одно письмо, есть готовый образец</td>
+<td>US4, письмо-подтверждение</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Небольшая форма или справочник с проверками</td>
+<td>US3, справочник курсов</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Экран с фильтрами и связью с другой частью системы</td>
+<td>US2, очередь заявок</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Несколько связанных экранов и правил, есть неизвестность</td>
+<td>US1, подача заявки</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Слишком большая история, конец не виден</td>
+<td>US6, переходы статусов</td>
+</tr>
+</tbody>
+</table>
+<p>Опорная история это US4 на 2 пункта: один экран плюс одно письмо, образец уже есть. Остальные оцениваются относительно неё. US1 на 8 пунктов не «в четыре раза дольше» US4: она в четыре раза больше по объёму, сложности и неизвестности. В ней проверка полей, номер, защита от двойного нажатия и передача в очередь.</p>
+<p>Планирование покером снимает давление самого громкого. Владелец продукта читает историю и критерии. Команда задаёт вопросы, пока не станет понятно, что проверяется. Каждый молча выбирает карту и кладёт лицом вниз. Карты открывают одновременно, крайние оценки объясняют ход мысли, после чего голосуют снова. Оценка фиксируется, когда карты сошлись.</p>
+<p>Разброс больше двух шагов, например 3 и 13, означает проблему не в оценке, а в истории: критерии неясны или объём велик. Историю делят или дописывают критерии, а не берут среднее. Среднее между «не понимаю» и «понимаю» не означает «почти понимаю».</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>История</th>
+<th>Пункты</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US1</td>
+<td>Подача заявки с телефона</td>
+<td>8</td>
+</tr>
+<tr>
+<td>US2</td>
+<td>Очередь заявок с фильтром</td>
+<td>5</td>
+</tr>
+<tr>
+<td>US3</td>
+<td>Справочник курсов и групп</td>
+<td>3</td>
+</tr>
+<tr>
+<td>US4</td>
+<td>Письмо-подтверждение</td>
+<td>2</td>
+</tr>
+<tr>
+<td>US5</td>
+<td>Предупреждение о дубле</td>
+<td>2</td>
+</tr>
+<tr>
+<td>US6</td>
+<td>Переходы статусов и журнал</td>
+<td>13</td>
+</tr>
+<tr>
+<td>US7</td>
+<td>Отчёт за период</td>
+<td>5</td>
+</tr>
+<tr>
+<td>US8</td>
+<td>Выгрузка группы в CSV</td>
+<td>2</td>
+</tr>
+<tr>
+<td></td>
+<td>Итого</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+<p>Сложите восемь оценок: 8 + 5 + 3 + 2 + 2 + 13 + 5 + 2 = 40. Сорок пунктов это известный объём по этому бэклогу, а не обещание сделать всё за сорок дней.</p>
+<p>Скорость команды это сумма пунктов, принятых за спринт. В учебном проекте прошлых спринтов нет, поэтому скорость задана условием: 20 пунктов. В рабочем проекте её считают по двум-трём закрытым спринтам, например 18 и 22 дают среднюю 20. Скорость нужна только для планирования. Она не годится для сравнения команд: пункты относительны, у каждой команды своя опорная история и своя шкала. Команда, которая оценивает всё крупнее, выглядит медленной, хотя работает быстрее.</p>
+<div class="callout pitfall"><span class="label">Перевод пунктов в часы</span><p>Как только кто-то делит 20 пунктов на 160 часов и получает «8 часов за пункт», шкала ломается. Пункты перестают быть относительными, оценка превращается в обещание. Заказчику нужны даты и содержание, а не коэффициент пересчёта: дату даёт скорость, содержание даёт бэклог.</p></div>
+
+<h2 id="задание-3-планирование-спринта"><span class="num">05</span>Задание 3. Планирование спринта</h2>
+<p>Цель спринта это одно предложение о том, что изменится для пользователя. Для выбранного набора она звучит так: «Студент подаёт заявку с телефона и получает подтверждение, что запись дошла, а администратор видит её в очереди».</p>
+<p>Посчитайте, сколько влезает. При скорости 20 набор должен давать ровно 20, а не 23 и не 26. Соберите два кандидата: наборов на 20 пунктов больше одного.</p>
+<table>
+<thead>
+<tr>
+<th>Набор</th>
+<th>Истории</th>
+<th>Сумма</th>
+<th>Что увидит заказчик в конце</th>
+<th>Риск</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>А</td>
+<td>US1 8, US2 5, US3 3, US4 2, US5 2</td>
+<td>20</td>
+<td>Работающий вход в систему: заявка, очередь, справочник, письмо, защита от дубля</td>
+<td>US1 крупная, если не влезет, спринт потеряет половину ценности</td>
+</tr>
+<tr>
+<td>Б</td>
+<td>US6 13, US7 5, US4 2</td>
+<td>20</td>
+<td>Порядок в обработке: статусы, журнал, отчёт и письмо</td>
+<td>В систему нечем подать новую заявку, демонстрировать нечего на входе</td>
+</tr>
+</tbody>
+</table>
+<p>Выбран набор А: он даёт законченный путь снаружи внутрь, человек отправил заявку и она появилась у администратора. Набор Б полезен, но система без входа показывает отчёт по пустой базе. Именно цель спринта выбирает, какая ценность появится первой.</p>
+<p>US5 на 2 пункта взята не потому, что важнее US6 на 13, а потому, что влезает и закрывает реальную боль: три студента отправили по две одинаковые заявки. US6 не входит: 13 вместе с US1 дают 21, а с очередью 26, тогда как весь спринт стоит 20. Такую историю делят на следующем планировании.</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Длина спринта</td>
+<td>10 рабочих дней</td>
+</tr>
+<tr>
+<td>Скорость команды</td>
+<td>20 story points</td>
+</tr>
+<tr>
+<td>Цель спринта</td>
+<td>Студент подаёт заявку с телефона и получает подтверждение, администратор видит её в очереди</td>
+</tr>
+<tr>
+<td>Выбрано историй</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Сумма story points</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Остаток бэклога</td>
+<td>20 пунктов: US6, US7, US8</td>
+</tr>
+</tbody>
+</table>
+<p>В спринт попадают пять карточек. У каждой есть владелец и критерии приёмки, без которых карточка не считается готовой к работе.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>История</th>
+<th>Пункты</th>
+<th>Владелец</th>
+<th>Что должно быть верно к концу спринта</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US1</td>
+<td>Подача заявки</td>
+<td>8</td>
+<td>Студент</td>
+<td>Заявка создаётся с телефона, получает номер и попадает в очередь</td>
+</tr>
+<tr>
+<td>US2</td>
+<td>Очередь заявок</td>
+<td>5</td>
+<td>Администратор</td>
+<td>Очередь с фильтром и поиском показывает созданную заявку</td>
+</tr>
+<tr>
+<td>US3</td>
+<td>Справочник курсов</td>
+<td>3</td>
+<td>Методист</td>
+<td>Шесть действующих курсов доступны в форме, архивный скрыт</td>
+</tr>
+<tr>
+<td>US4</td>
+<td>Письмо-подтверждение</td>
+<td>2</td>
+<td>Студент</td>
+<td>Письмо с номером приходит, при сбое шлюза заявка не теряется</td>
+</tr>
+<tr>
+<td>US5</td>
+<td>Предупреждение о дубле</td>
+<td>2</td>
+<td>Студент</td>
+<td>Повторная заявка за 7 дней даёт предупреждение с номером прошлой</td>
+</tr>
+</tbody>
+</table>
+<p>Риски пишут до старта, а не после провала. У каждого есть признак, по которому видно, что он начал сбываться, и заранее принятая мера.</p>
+<table>
+<thead>
+<tr>
+<th>Риск</th>
+<th>Признак</th>
+<th>Мера</th>
+<th>Кто следит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Нет доступа к тестовому домену</td>
+<td>US1 негде проверить с телефона</td>
+<td>Доступ запрашивается в день 1, запасной вариант это локальный запуск на ноутбуке</td>
+<td>Scrum-мастер</td>
+</tr>
+<tr>
+<td>Методист не подтвердил список курсов</td>
+<td>US3 стоит в Review больше дня</td>
+<td>Список из шести курсов согласуется до дня 3, при задержке берутся курсы из бумажного журнала</td>
+<td>Владелец продукта</td>
+</tr>
+<tr>
+<td>Письма уходят в спам</td>
+<td>US4 принята, но студент письма не видит</td>
+<td>Проверка на трёх почтовых ящиках, при провале письмо дублируется в личный кабинет</td>
+<td>Разработчик US4</td>
+</tr>
+<tr>
+<td>US1 оказалась больше 8 пунктов</td>
+<td>К дню 6 не готов даже черновик формы</td>
+<td>Объём US1 пересматривается на ежедневной встрече, защита от дубля выносится в отдельную историю</td>
+<td>Вся команда</td>
+</tr>
+</tbody>
+</table>
+<p>Заполненный план показывает главное: 20 пунктов это не «сколько успеем», а «сколько команда закрывала раньше». Если добавлять истории «на энтузиазме», к концу спринта появятся три недоделанные карточки, и график соврёт раньше, чем вы его построите.</p>
+<h2 id="задание-4-доска-и-ежедневная-встреча"><span class="num">06</span>Задание 4. Доска и ежедневная встреча</h2>
+<p>Доска показывает состояние работы сейчас. Четыре колонки: <strong>To do</strong>, <strong>In progress</strong>, <strong>Review</strong>, <strong>Done</strong>. В To do лежат истории спринта, ещё не начатые. В In progress одна-две карточки, над которыми действительно идёт работа. В Review карточка ждёт проверки критериев. В Done только то, что принято, а не то, что «вроде готово».</p>
+<p>Ограничение одновременной работы поставьте сразу: не больше двух карточек в In progress и двух в Review. Причина арифметическая: в команде три человека, и если в работе пять карточек, минимум две стоят без движения. Ограничение это приём из Kanban, на Scrum-доске он работает так же.</p>
+<p>На карточке пишут семь полей: идентификатор, историю в одну строку, пункты, владельца, день начала, блокер и ссылку на критерии. Критерии держите на обратной стороне стикера или во второй таблице, но они должны быть доступны в момент проверки.</p>
+<p>Готовность определяется общим правилом. Карточка переходит в Done, когда все критерии проверены, владелец продукта посмотрел результат, блокирующий дефект закрыт и изменение попало в общую ветку. Пока хотя бы один пункт не выполнен, карточка стоит в Review, даже если код написан.</p>
+<table>
+<thead>
+<tr>
+<th>История</th>
+<th>Пункты</th>
+<th>To do</th>
+<th>In progress</th>
+<th>Review</th>
+<th>Done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US1</td>
+<td>8</td>
+<td>день 1</td>
+<td>дни 2–6</td>
+<td>день 7</td>
+<td>день 8</td>
+</tr>
+<tr>
+<td>US2</td>
+<td>5</td>
+<td>дни 1–7</td>
+<td>день 8</td>
+<td>день 9</td>
+<td>день 9</td>
+</tr>
+<tr>
+<td>US3</td>
+<td>3</td>
+<td>дни 1–3</td>
+<td>день 4</td>
+<td>день 4</td>
+<td>день 5</td>
+</tr>
+<tr>
+<td>US4</td>
+<td>2</td>
+<td>дни 1–2</td>
+<td>день 2</td>
+<td>день 3</td>
+<td>день 3</td>
+</tr>
+<tr>
+<td>US5</td>
+<td>2</td>
+<td>дни 1–10</td>
+<td>не начата</td>
+<td>не начата</td>
+<td>не начата</td>
+</tr>
+<tr>
+<td>US9</td>
+<td>2</td>
+<td>день 6</td>
+<td>дни 8–10</td>
+<td>день 10</td>
+<td>не принята</td>
+</tr>
+</tbody>
+</table>
+<p>Таблица выше это факт, а не план. В шаблоне доски пять строк, шестую добавьте под US9. US4 прошла путь за три дня, потому что у неё был готовый образец письма. US1 шла шесть дней: форма, проверки, номер, защита от двойного нажатия. US2 стояла в To do неделю не потому, что её забыли, а потому, что ждала заявок из US1.</p>
+<div class="callout shot"><span class="label">Скриншот 2</span><p>Доска на день 5: US4 и US3 в Done, US1 в In progress, US2 и US5 в To do.</p></div>
+
+<p>Блокеры записывайте отдельно, иначе они растворяются в разговоре. У каждого есть причина и владелец, который её снимает.</p>
+<table>
+<thead>
+<tr>
+<th>День</th>
+<th>Карточка</th>
+<th>Блокер</th>
+<th>Кто снимает</th>
+<th>Итог</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>US1</td>
+<td>Нет доступа к тестовому домену</td>
+<td>Scrum-мастер через администратора</td>
+<td>Доступ получен к концу дня 2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>US3</td>
+<td>Методист не подтвердил шесть курсов</td>
+<td>Владелец продукта</td>
+<td>Список подтверждён в день 5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>US1, US4</td>
+<td>Письма попадают в спам на учебной почте</td>
+<td>Разработчик US4</td>
+<td>Настройки проверены, письмо дублируется в кабинет</td>
+</tr>
+</tbody>
+</table>
+<p>Ежедневная встреча идёт стоя и коротко, в одно и то же время, у доски. Каждый отвечает на три вопроса: что закрыл вчера, что делаю сегодня, что мешает. Споры переносятся после встречи. Блокер, который живёт больше дня, поднимается выше, иначе команда привыкает к препятствию.</p>
+<p>В середине спринта, в день 6, владелец продукта просит добавить проверку формата телефона: в заявках появились номера из пяти цифр. Команда не заменяет историю молча, а добавляет карточку US9 на 2 пункта и фиксирует изменение объёма. Цель не меняется, но два пункта придётся откуда-то взять. Взяли из запаса: US5 осталась в To do. Решение с последствием должно быть видно на графике.</p>
+<div class="callout pitfall"><span class="label">Доска для отчёта</span><p>Если карточки переставляют в конце дня, чтобы «выглядело красиво», доска перестаёт быть инструментом. Через неделю по ней нельзя ответить, где застряла работа. Правило простое: карточка двигается в момент изменения состояния.</p></div>
+
+<h2 id="задание-5-график-сгорания"><span class="num">07</span>Задание 5. График сгорания</h2>
+<p>График сгорания отвечает на вопрос «сколько работы осталось». По горизонтали дни от 0 до 10, по вертикали оставшиеся пункты. В день 0 остаток равен 20, в день 10 идеальная линия приходит в ноль. Идеальная линия это прямая: 20 пунктов делим на 10 дней и получаем 2 пункта в день.</p>
+<p>В Excel сделайте четыре колонки: день, идеал, факт, комментарий. В «Идеале» поставьте формулу <code>=$B$2-2*A3</code> и протяните до дня 10. «Факт» заполняйте в конце дня: это сумма пунктов, которые ещё не приняты. Комментарий пишите сразу, иначе через неделю скачок будет нечем объяснить.</p>
+<table>
+<thead>
+<tr>
+<th>День</th>
+<th>Идеал</th>
+<th>Факт</th>
+<th>Что произошло</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>20</td>
+<td>20</td>
+<td>Старт спринта, пять историй в To do</td>
+</tr>
+<tr>
+<td>1</td>
+<td>18</td>
+<td>20</td>
+<td>US1 ещё в To do: нет доступа к домену</td>
+</tr>
+<tr>
+<td>2</td>
+<td>16</td>
+<td>20</td>
+<td>Доступ получен, US1 и US4 в работе</td>
+</tr>
+<tr>
+<td>3</td>
+<td>14</td>
+<td>18</td>
+<td>US4 принята, минус 2 пункта</td>
+</tr>
+<tr>
+<td>4</td>
+<td>12</td>
+<td>18</td>
+<td>US3 в Review, методист не подтвердил курсы</td>
+</tr>
+<tr>
+<td>5</td>
+<td>10</td>
+<td>15</td>
+<td>US3 принята, минус 3 пункта</td>
+</tr>
+<tr>
+<td>6</td>
+<td>8</td>
+<td>17</td>
+<td>Добавлена US9 на 2 пункта, объём вырос</td>
+</tr>
+<tr>
+<td>7</td>
+<td>6</td>
+<td>17</td>
+<td>US1 в Review, US2 ждёт её результата</td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td>9</td>
+<td>US1 принята, минус 8 пунктов</td>
+</tr>
+<tr>
+<td>9</td>
+<td>2</td>
+<td>4</td>
+<td>US2 принята, минус 5 пунктов</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0</td>
+<td>4</td>
+<td>US5 не начата, US9 не принята</td>
+</tr>
+</tbody>
+</table>
+<p>Прочитайте три момента. Дни 1–2: линия стоит на 20, хотя работа идёт. График показывает принятый результат, а не усилие. День 6: линия прыгает с 15 на 17. Это не откат, а добавленный объём; без комментария читатель решит, что команда сломала сделанное. День 10: разрыв 4 пункта означает не «медленно работали», а «две истории по 2 пункта не приняты».</p>
+<p>Считайте итог по числам. Объём: 20 + 2 = 22 пункта. Принято: 2 + 3 + 8 + 5 = 18. Осталось: 22 − 18 = 4. Скорость спринта равна 18, а не 20, потому что скорость считается по принятому.</p>
+<p>Четыре правила держат график честным. В факт попадает только принятое: карточка в Done без проверки критериев занижает линию и создаёт ложный успех. Обновляйте график в конце дня. Скачки объёма отмечайте вертикальной линией и подписью. Не сглаживайте линию и не начинайте заново после неудачного дня: сглаженная кривая скрывает то, ради чего график строят.</p>
+<p>Линия ниже идеальной не всегда означает, что команда впереди. Иногда истории ставят в Done до проверки или вычёркивают критерии, чтобы успеть. Поэтому график читают вместе с доской: если в Done четыре карточки, а в Review пусто, посмотрите, кто и по каким критериям их принимал.</p>
+<div class="callout shot"><span class="label">Скриншот 3</span><p>График сгорания с идеальной линией, фактом и отмеченным добавлением объёма в день 6.</p></div>
+
+<h2 id="задание-6-итоги-и-защита"><span class="num">08</span>Задание 6. Итоги и защита</h2>
+<p>Обзор спринта это демонстрация, а не пересказ задач. Покажите заказчику четыре принятые истории в порядке, в котором ими пользуется человек: студент подаёт заявку, получает письмо, администратор находит её в очереди, методист видит курс. Назовите числа: план 20, добавлено 2, принято 18, осталось 4. Две истории по 2 пункта вернулись в бэклог, и это решение.</p>
+<p>Ретроспектива отвечает не «кто виноват», а «что изменим». Каждая из четырёх строк опирается на факт с доски или графика.</p>
+<table>
+<thead>
+<tr>
+<th>Вопрос</th>
+<th>Ответ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Что сделано</td>
+<td>Четыре истории на 18 пунктов: подача, очередь, справочник, письмо</td>
+</tr>
+<tr>
+<td>Что не сделано и почему</td>
+<td>US5 осталась в To do: после добавления US9 объём вырос до 22 пунктов, и пятую историю не начинали. US9 не прошла проверку к дню 10</td>
+</tr>
+<tr>
+<td>Что изменим в следующем спринте</td>
+<td>Принимать истории по одной в день, а не пачкой в конце. Перед планированием проверять доступы и справочники по чек-листу. Добавление объёма обсуждать с владельцем продукта только с заменой, а не поверх плана</td>
+</tr>
+<tr>
+<td>Где доска соврала</td>
+<td>US1 день висела в Review, хотя проверяли не по критериям, а «на глаз». US2 стояла в To do, пока по ней уже шла работа: карточку переставили позже</td>
+</tr>
+</tbody>
+</table>
+<p>Третья строка важнее первых двух: только она меняет следующий спринт. У каждого изменения есть владелец и срок. Приём по одной истории ведёт Scrum-мастер, чек-лист доступов составляет руководитель до планирования, правило замены объёма фиксирует владелец продукта. Изменение без владельца и даты остаётся пожеланием.</p>
+<p>Следующий спринт планируйте по скорости 18. В бэклоге 24 пункта: 20 непопавших историй плюс 4 вернувшихся. US6 на 13 разделите на переходы на 8 и журнал на 5. В следующий спринт войдут 8 + 5 + 2 + 2 = 17 пунктов.</p>
+<p>В отчёт приложите:</p>
+<ol>
+<li>Таблицу бэклога из восьми историй с критериями и оценками.</li>
+<li>План спринта с целью, пятью историями, суммой 20 и рисками.</li>
+<li>Доску с движением карточек по десяти дням, скриншотом или фотографией.</li>
+<li>Таблицу блокеров с владельцами и итогом.</li>
+<li>График сгорания с двумя линиями, одиннадцатью точками и подписанным скачком объёма.</li>
+<li>Итоги спринта и ретроспективу с тремя изменениями.</li>
+<li>Вывод: какая оценка оказалась неточной и что измените в планировании.</li>
+</ol>
+<p>Контрольные вопросы:</p>
+<ol>
+<li>Чем story points отличаются от часов и что ломается, если разделить пункты на часы?</li>
+<li>Почему скорость одной команды нельзя сравнивать со скоростью другой?</li>
+<li>Что делать, если фактическая линия сгорания идёт выше идеальной?</li>
+<li>Зачем нужна цель спринта, если есть список историй?</li>
+<li>Какая история из вашего бэклога не готова к спринту и почему?</li>
+<li>Что означает скачок линии вверх и как отличить добавление объёма от потери работы?</li>
+<li>Почему карточка в Done без проверки критериев делает график ложным?</li>
+<li>Что вы измените в следующем спринте и по какому признаку поймёте, что изменение сработало?</li>
+</ol>
+<p>Критерии оценки:</p>
+<ul>
+<li><strong>5</strong>: восемь историй имеют роль, потребность, ценность и проверяемые критерии, оценки дают 40 пунктов, спринт собран на 20 пунктов с целью и рисками, доска показывает движение по дням, график построен по одиннадцати точкам, скачок объёма объяснён, итоги опираются на числа, ретроспектива содержит изменения с владельцами.</li>
+<li><strong>4</strong>: бэклог и спринт собраны, доска заполнена, график построен, но один критерий приёмки сформулирован качественно, скачок объёма не подписан или итоги пересказывают события без чисел.</li>
+<li><strong>3</strong>: истории есть, но критерии общие, оценки не складываются в 40, спринт перегружен или недогружен, доска заполнена только на последний день, график отсутствует или построен без идеальной линии.</li>
+</ul></article><nav class="pager"><a class="" href="14-lek-09.html"><span>← Предыдущее занятие</span>Лекция 9. Коммуникации и команда</a><a class="next" style="text-align:right;margin-left:auto" href="16-lek-10.html"><span>Следующее занятие →</span>Лекция 10. Agile, Scrum и завершение</a></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+</script>
+</body>
+</html>

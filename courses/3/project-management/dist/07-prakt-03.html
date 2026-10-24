@@ -1,0 +1,1772 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#9A7300;--course-tint:#EDE5D2;--course-accent-dark:#D6A520;--course-tint-dark:#2E2814;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WBS и диаграмма Ганта в Excel</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление проектами</a><span>/</span><span>WBS и диаграмма Ганта в Excel</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.144">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятия 7-8</span><span class="pill">Управление проектами</span></div>
+<div class="hero-panel"><h1>WBS и диаграмма Ганта в Excel</h1><p class="dek">Разложите результат на 14 пакетов, оцените их, найдите цепочку, которая держит дату, и постройте расписание в Excel, которое не разваливается при сдвиге старта.</p></div>
+<div class="glyph" aria-hidden="true">П3</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Разложить результат на уровни WBS по правилу 100 процентов</li><li>Составить словарь работ с результатом и оценкой</li><li>Определить зависимости и критический путь</li><li>Построить диаграмму Ганта в Excel и сохранить базовый план</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-wbs-по-результатам">Задание 1. WBS по результатам</a></li><li><a href="#задание-2-словарь-работ">Задание 2. Словарь работ</a></li><li><a href="#задание-3-оценки">Задание 3. Оценки</a></li><li><a href="#задание-4-зависимости-и-сеть">Задание 4. Зависимости и сеть</a></li><li><a href="#задание-5-диаграмма-ганта-в-excel">Задание 5. Диаграмма Ганта в Excel</a></li><li><a href="#задание-6-проверка-и-защита">Задание 6. Проверка и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<p>Группа сдала план проекта на 14 строк. Полосы в Excel были ровные, дата окончания стояла красивая, и всё сходилось, пока заказчик не спросил: «Почему приёмка начинается двадцать седьмого, если модуль уведомлений ещё не готов?» В файле этого не было видно. Строки шли по порядку, каждая полоса начиналась там, где её поставили мышью, а связей между работами не было ни одной. Дата оказалась не планом, а картинкой.</p>
+<p>План держится на трёх вещах, и Excel участвует только в третьей. Дерево работ отвечает, из чего состоит результат. Сеть отвечает, в каком порядке это делается и какая цепочка держит дату. Диаграмма Ганта показывает, когда каждая полоса идёт. Порядок жёсткий: числа появляются до Excel, а нарисованную мышью полосу нельзя ни проверить, ни защитить.</p>
+<p>Второе правило: <strong>дерево режет результат, а не действия</strong>. Лист дерева это то, что можно предъявить и принять. Пока в листе написано «разработать модуль», непонятно, закончен он или нет, и оценка повисает.</p>
+<p>Работа идёт по шагам. Сначала раскладываем результат учебного проекта на 4 ветви и 14 пакетов с кодами до третьего уровня. Потом заполняем словарь: у каждого пакета вход, работа, выход, критерий готовности, оценка и ответственный. Затем оцениваем длительности тремя способами и сравниваем числа. После этого связываем работы зависимостями, считаем ранние и поздние сроки и находим критический путь. И только в конце строим диаграмму Ганта в Excel: сетка по дням, условное форматирование, вехи, критическая цепочка цветом и копия листа как базовая линия.</p>
+<p>Пример в заданиях продолжает ИС «Заявки» учебного центра: студент подаёт заявку, сотрудник её обрабатывает, администратор смотрит журнал. Если ваш проект про библиотеку, склад или расписание, структура та же: результат, четыре ветви, четырнадцать пакетов. Вашими будут названия, оценки и дата.</p>
+<p>Границы работы: деньги, риски, выравнивание ресурсов, фактическое выполнение и доска задач остаются следующим занятиям. На выходе нужен проверяемый план на бумаге и в файле.</p>
+<p>Готовый результат: дерево на 19 строк, словарь на 14 пакетов, оценки с методом и разбросом, сеть из 6 работ с резервом каждой, диаграмма Ганта на 17 строк с тремя вехами, базовая линия, отчёт и вывод.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>В корне дерева стоит результат проекта, а не действие. Двенадцать функций из устава встречаются ровно по одному разу, ни одна не потеряна и не посчитана дважды. У каждого пакета есть измеримый выход, один ответственный и оценка от 2 до 8 дней. Критический путь даёт 34 дня, и эта сумма пересчитывается вручную. Работы с нулевым резервом образуют непрерывную цепочку от первого пакета до приёмки. Диаграмма Ганта построена формулами и условным форматированием, а не нарисована мышью, и при сдвиге старта на два дня все полосы двигаются вместе.</p></div>
+
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/PM_practice-03_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/PM_practice-03_wbs.csv" download>Дерево работ в CSV</a>
+<a href="reports/PM_practice-03_gantt-plan.csv" download>План для диаграммы Ганта в CSV</a>
+<p>В шаблоне отчёта уже есть таблицы дерева, словаря, зависимостей и проверки плана, а также место для скриншота диаграммы. В CSV дерева шесть строк: корень и пять ветвей второго уровня, третьего уровня нет, поэтому оставьте свои четыре ветви, пятую удалите и добавьте четырнадцать пакетов. В CSV плана восемь колонок и двенадцать пустых строк. Шаблоны не переписывайте с нуля: дополняйте их.</p>
+</div>
+
+<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<p>Создайте папку практики:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">03</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">03</span>
+</code></pre></div>
+
+<p>Скачайте в неё три файла и проверьте расширения: <code>PM_practice-03_report-template.docx</code>, <code>PM_practice-03_wbs.csv</code> и <code>PM_practice-03_gantt-plan.csv</code>, а не <code>.docx.docx</code> или <code>.csv.txt</code>.</p>
+<p>Оба CSV сохранены с разделителем <code>;</code> в кодировке UTF-8. В Excel откройте файл через <strong>Данные → Из текста</strong>, укажите разделитель «точка с запятой» и кодировку UTF-8. Если русские буквы превратились в кракозябры, выбрана не та кодировка: закройте файл без сохранения и повторите. Дерево удобнее вести прямо в Excel на листе «WBS», а в Word перенести готовым.</p>
+<p>Для работы нужны Excel или LibreOffice Calc и Word. Платные сервисы, установка программ и права администратора не требуются: всё считается формулами на одном листе. Если интерфейс английский, имена функций будут <code>AND</code>, <code>SUM</code>, <code>MAX</code>, <code>COUNTIF</code>, <code>IF</code>, а разделитель аргументов станет запятой; смысл формул от этого не меняется. В тексте имена русские, потому что локализация русская, и в ней разделитель это точка с запятой.</p>
+<p>Файлы практики держите в одной папке проекта. Имена лучше сразу сделать постоянными: <code>plan.xlsx</code> для книги, <code>report.docx</code> для отчёта, оба CSV рядом. Тогда через неделю не придётся искать, какая версия плана настоящая.</p>
+<h2 id="задание-1-wbs-по-результатам"><span class="num">03</span>Задание 1. WBS по результатам</h2>
+<p>В корне стоит результат проекта, а не процесс: «ИС Заявки: двенадцать функций на учебном сервере, с подписанным протоколом приёмки». Это то, что заказчик получает и может проверить. «Разработать ИС Заявки» корнем быть не может: такой корень нельзя принять, потому что непонятно, когда разработка закончилась.</p>
+<p>Ниже корня четыре ветви по крупным результатам: требования, проектирование, разработка, внедрение. Ветви идут в порядке, в котором результат переходит из рук в руки, но это порядок содержания, а не расписания. Расписание появится позже и может поставить часть работ параллельно.</p>
+<p>Третий уровень это пакеты, и на нём дерево заканчивается. Код собирается из номеров родителей: <code>1</code> корень, <code>1.2</code> ветвь проектирования, <code>1.2.3</code> третий пакет этой ветви. По коду один и тот же пакет находят в словаре, отчёте и диаграмме, поэтому фраза «тот модуль, который после макетов» больше не нужна.</p>
+<table>
+<thead>
+<tr>
+<th>Код</th>
+<th>Уровень</th>
+<th>Название</th>
+<th>Результат, который предъявляем</th>
+<th>Ответственный</th>
+<th>Дни</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>ИС «Заявки»</td>
+<td>Двенадцать функций на сервере и подписанный протокол приёмки</td>
+<td>Руководитель проекта</td>
+<td>34</td>
+</tr>
+<tr>
+<td>1.1</td>
+<td>2</td>
+<td>Требования</td>
+<td>Согласованный реестр на 12 функций с критериями</td>
+<td>Руководитель проекта</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1.1.1</td>
+<td>3</td>
+<td>Реестр функций с приоритетами</td>
+<td>Таблица 12 функций с приоритетом и источником</td>
+<td>Руководитель проекта</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1.1.2</td>
+<td>3</td>
+<td>Критерии приёмки на 12 функций</td>
+<td>По каждому пункту есть проверка, которую можно провести</td>
+<td>Руководитель проекта</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.1.3</td>
+<td>3</td>
+<td>Согласованный реестр требований</td>
+<td>Подпись заказчика на титуле реестра</td>
+<td>Руководитель проекта</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>2</td>
+<td>Проектирование</td>
+<td>Модель данных, макеты и схема уведомлений</td>
+<td>Архитектор</td>
+<td>14</td>
+</tr>
+<tr>
+<td>1.2.1</td>
+<td>3</td>
+<td>Модель данных на шесть сущностей</td>
+<td>Схема из шести таблиц со связями</td>
+<td>Архитектор</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.2.2</td>
+<td>3</td>
+<td>Макеты пяти экранов</td>
+<td>Пять макетов, согласованных с заказчиком</td>
+<td>Дизайнер</td>
+<td>5</td>
+</tr>
+<tr>
+<td>1.2.3</td>
+<td>3</td>
+<td>Скрипты миграции и тестовые данные</td>
+<td>База создаётся с нуля одним скриптом</td>
+<td>Разработчик 2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.2.4</td>
+<td>3</td>
+<td>Схема уведомлений и импорта</td>
+<td>Список событий и формат CSV для импорта</td>
+<td>Архитектор</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.3</td>
+<td>2</td>
+<td>Разработка</td>
+<td>Четыре модуля, которые запускаются вместе</td>
+<td>Разработчик 1</td>
+<td>16</td>
+</tr>
+<tr>
+<td>1.3.1</td>
+<td>3</td>
+<td>Модуль подачи заявки</td>
+<td>Форма сохраняет заявку и выдаёт номер</td>
+<td>Разработчик 1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>1.3.2</td>
+<td>3</td>
+<td>Модуль обработки и статусов</td>
+<td>Сотрудник ведёт заявку по допустимым переходам</td>
+<td>Разработчик 1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>1.3.3</td>
+<td>3</td>
+<td>Отчёт по заявкам</td>
+<td>Отчёт за период с выгрузкой в CSV</td>
+<td>Разработчик 1</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.3.4</td>
+<td>3</td>
+<td>Модуль уведомлений и импорт</td>
+<td>Письмо о смене статуса и импорт заявок из CSV</td>
+<td>Разработчик 2</td>
+<td>4</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>2</td>
+<td>Внедрение</td>
+<td>Приёмка, инструкция и программа обучения</td>
+<td>Руководитель проекта</td>
+<td>12</td>
+</tr>
+<tr>
+<td>1.4.1</td>
+<td>3</td>
+<td>Протокол приёмки на 12 функций</td>
+<td>Подписанный протокол с двенадцатью отметками</td>
+<td>Руководитель проекта</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1.4.2</td>
+<td>3</td>
+<td>Инструкция пользователя и памятка</td>
+<td>Инструкция на две страницы, проверенная на студенте</td>
+<td>Руководитель проекта</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1.4.3</td>
+<td>3</td>
+<td>Программа обучения группы</td>
+<td>План занятия с упражнением и проверкой</td>
+<td>Руководитель проекта</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Размер пакета тоже правило: от 16 до 64 часов, то есть от двух до восьми дней. Меньше двух дней удобнее присоединить к соседу, оценивать полдня дороже, чем сделать. Больше восьми дней трудно оценить честно, внутри обычно спрятаны три разных результата. Все четырнадцать пакетов дерева в этот коридор попадают.</p>
+<p>У корня в колонке дней стоит 34, у ветвей 8, 14, 16 и 12: сумма ветвей 50 больше срока, потому что часть работ идёт параллельно. Об этом ниже, на шаге оценок и сети.</p>
+<p>Проверка на сто процентов: в уставе двенадцать функций, каждая должна найтись ровно один раз. Считаем по ветви разработки: <code>1.3.1</code> закрывает подачу заявки, проверку обязательных полей и выдачу номера, это три функции. <code>1.3.2</code> закрывает очередь, смену статуса по правилам, отклонение с причиной, список своих заявок и журнал изменений, это пять. <code>1.3.3</code> закрывает отчёт за период и выгрузку в CSV, это две. <code>1.3.4</code> закрывает уведомление о смене статуса и импорт заявок, это две. Три плюс пять плюс две плюс две равно двенадцать. Ни одна функция не осталась без пакета и ни одна не посчитана дважды.</p>
+<p>Проверка идёт в обе стороны. Меньше родителя значит пропуск: функция обещана, а работы под неё нет, и на приёмке выяснится, что её никто не делал. Больше значит лишнюю работу, которой в содержании не было, и она съест срок. Оба случая ловятся до начала работ, если посчитать, а не прикинуть на глаз.</p>
+<p>Отдельно про глаголы. Название пакета не начинается с глагола, и это не придирка к стилю, а три конкретные поломки.</p>
+<p>Первое: пакет нельзя принять. «Протестировать систему» готово на сорок процентов или на восемьдесят? Спорить не о чем, предмета приёмки нет. Протокол приёмки на 12 функций принять можно: он либо есть, либо нет.</p>
+<p>Второе: пакет нельзя оценить. У действия нет границы, оценка превращается в обещание «примерно неделя». У результата граница есть: пять экранов, двенадцать функций, шесть сущностей.</p>
+<p>Третье: по дереву нельзя измерить ход проекта. Честный показатель это принятые пакеты, делённые на все, а процентов готовности в дереве из глаголов нет.</p>
+<p>Три пары. «Разработать модуль заявок» становится «Модуль подачи заявки, который сохраняет запись и выдаёт номер». «Протестировать систему» становится «Протокол приёмки на 12 функций». «Обучить пользователей» становится «Программа обучения группы». Глагол не исчезает из проекта: он переезжает в словарь, в колонку «Работа».</p>
+<div class="callout pitfall"><span class="label">Пакеты без выхода</span><p>«Работа с заказчиком», «Уточнение деталей», «Поддержка проекта» звучат солидно, но предъявить по ним нечего. Внутри может сидеть сколько угодно часов, и никто не скажет, закончился пакет или нет. Если такой лист уже стоит в дереве, найдите его выход или уберите лист: работа без выхода не имеет ни оценки, ни критерия готовности, ни владельца.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 1</span><p>Лист «WBS»: девятнадцать строк, коды до третьего уровня, оценки в днях.</p></div>
+
+<h2 id="задание-2-словарь-работ"><span class="num">04</span>Задание 2. Словарь работ</h2>
+<p>Дерево отвечает, из чего состоит результат. Словарь отвечает, как понять, что конкретный пакет сделан правильно. Это разные документы: по дереву видно состав, по словарю договариваются о границе.</p>
+<p>В словаре у пакета два лица. Имя остаётся результатом, как в дереве. Строка «Работа» описывает действие: что именно делают руками. Это единственное место, где глагол уместен: здесь он объясняет способ, а не подменяет результат.</p>
+<p>Обязательные поля словаря: код, вход, работа, выход, критерий готовности, оценка, ответственный. Вход это предъявленный результат другой работы, а не «желание работать». Выход это то, что переходит дальше. Критерий готовности это проверка, которую может провести человек, не участвовавший в работе.</p>
+<p>Разберём один пакет целиком, <code>1.3.1</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Код</td>
+<td>1.3.1</td>
+</tr>
+<tr>
+<td>Пакет</td>
+<td>Модуль подачи заявки</td>
+</tr>
+<tr>
+<td>Вход</td>
+<td>Согласованный реестр требований <code>1.1.3</code>, модель данных <code>1.2.1</code>, макеты пяти экранов <code>1.2.2</code></td>
+</tr>
+<tr>
+<td>Работа</td>
+<td>Собрать форму из десяти элементов, подключить проверку обязательных полей, записать заявку в базу, выдать номер</td>
+</tr>
+<tr>
+<td>Выход</td>
+<td>Страница заявки сохраняет запись и показывает номер вида <code>З-2026-0001</code></td>
+</tr>
+<tr>
+<td>Критерий готовности</td>
+<td>Пустая форма не отправляется, сообщение стоит у конкретного поля; номер не повторяется; автор и дата пишутся в журнал</td>
+</tr>
+<tr>
+<td>Оценка</td>
+<td>5 дней, три точки 4, 5 и 6</td>
+</tr>
+<tr>
+<td>Ответственный</td>
+<td>Разработчик 1</td>
+</tr>
+<tr>
+<td>Работа сети</td>
+<td>T4</td>
+</tr>
+</tbody>
+</table>
+<p>Критерий здесь важнее названия. «Форма работает корректно» проверить нельзя, поэтому такой строкой нельзя ни принять работу, ни поспорить с заказчиком. «Пустая форма не отправляется, сообщение стоит у поля» проверяется одним действием, и по ней видно, кто прав.</p>
+<p>Ещё четыре пакета в сокращённом виде, чтобы был виден принцип.</p>
+<table>
+<thead>
+<tr>
+<th>Код</th>
+<th>Работа</th>
+<th>Вход</th>
+<th>Выход</th>
+<th>Критерий готовности</th>
+<th>Оценка</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1.2</td>
+<td>Собрать по каждой функции проверку и ожидаемый результат</td>
+<td>Реестр функций <code>1.1.1</code>, устав</td>
+<td>Таблица критериев на 12 строк</td>
+<td>У каждой функции есть проверка и ожидаемый результат, спорных формулировок нет</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.2.3</td>
+<td>Написать скрипт создания базы и заполнить тестовые данные</td>
+<td>Модель данных <code>1.2.1</code></td>
+<td>База из шести таблиц и скрипт</td>
+<td>Скрипт выполняется на чистой базе без ошибок, тестовых заявок не меньше двадцати</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1.3.2</td>
+<td>Сделать очередь, карточку и переходы статуса</td>
+<td>Макеты <code>1.2.2</code>, модель данных <code>1.2.1</code></td>
+<td>Работающий модуль обработки</td>
+<td>Запрещённый переход отклоняется с сообщением, причина отказа видна студенту</td>
+<td>4</td>
+</tr>
+<tr>
+<td>1.4.1</td>
+<td>Провести приёмку по двенадцати функциям и оформить протокол</td>
+<td>Все модули <code>1.3.1</code>…<code>1.3.4</code>, критерии <code>1.1.2</code></td>
+<td>Подписанный протокол</td>
+<td>Двенадцать отметок, по каждой ссылка на проверку, подпись заказчика</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<p>Правила простые, но нарушаются постоянно. У пакета один ответственный, а не «команда»: отвечать должен человек, которого можно спросить. Вход ссылается на код, а не на «готовые требования». Оценка стоит в днях, а не в процентах готовности. Критерий пишется до работы, иначе он описывает то, что случайно получилось.</p>
+<p>Оценка в днях это длительность, а не трудозатраты: пять дней модуля не станут двумя с половиной, если на форму посадить двоих. Параллельную работу записывают отдельно, а в план ставят календарную длительность.</p>
+<div class="callout note"><span class="label">Словарь защищает приёмку</span><p>Когда заказчик говорит «я имел в виду другое», открывают строку критериев. Если строки нет, прав тот, кто громче. Если строка есть и подписана на старте, спор идёт о факте, а не о памяти.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 2</span><p>Словарь работ: четырнадцать строк, у каждой вход, выход и критерий готовности.</p></div>
+
+<h2 id="задание-3-оценки"><span class="num">05</span>Задание 3. Оценки</h2>
+<p>Оценка это не одно число, а три способа получить число и сравнение между ними. Сравнение и есть работа: одно число прячет неопределённость, три показывают, где её слишком много.</p>
+<p><strong>Аналоговая оценка</strong> берёт похожую работу из прошлого. В прошлом семестре макеты пяти экранов заняли четыре дня, здесь заказчик незнакомый и экранов столько же, поэтому ставят пять. Способ быстрый и грубый, работает только при настоящем аналоге: чужой проект и другой исполнитель дают не аналог, а воспоминание.</p>
+<p><strong>Параметрическая оценка</strong> считает по ставке на единицу. Критерии приёмки: двенадцать функций по четверти дня дают три дня. Модуль обработки: восемь допустимых переходов статуса по половине дня дают четыре. Приёмка: двенадцать функций по половине дня дают шесть дней, плюс два дня на протокол и подписи, итого восемь. Способ хорош, когда единица измерима и по ней есть статистика.</p>
+<p><strong>Оценка по трём точкам</strong> спрашивает оптимистичное <code>O</code>, вероятное <code>M</code> и пессимистичное <code>P</code>, а ожидание считает по формуле <code>(O + 4M + P) / 6</code>. Для приёмки это 5, 8 и 11: <code>(5 + 32 + 11) / 6 = 48 / 6 = 8</code> дней. Четвёрка перед вероятным значением не случайна: крайние оценки встречаются реже, поэтому среднее смещают к <code>M</code>.</p>
+<p>Разброс считают отдельно: <code>(P − O) / 6</code>. Для приёмки это <code>(11 − 5) / 6 = 1</code> день. То есть работа может занять девять дней без всяких происшествий, и это нормально. Разброс не прячут, его показывают заказчику: именно из таких чисел потом собирается резерв.</p>
+<p>Теперь сходимость, ради которой всё и делается. По приёмке три способа дали 8, 8 и 8: аналог прошлого проекта с восемью функциями дал шесть дней плюс два за двенадцать функций, параметрическая ставка дала шесть плюс два, три точки дали ровно восемь. Три независимых пути сошлись, число можно ставить в план.</p>
+<p>А бывает иначе. Для схемы уведомлений <code>1.2.4</code> аналог даёт два дня, параметрическая ставка пять, три точки при 1, 3 и 5 дают три. Разброс методов от двух до пяти при оценке в три дня это сигнал: работа зависит от чужого формата CSV, и никто не знает, насколько кривой он придёт. Правильное решение здесь не «возьмём среднее 3,3», а «берём три дня, в первый же день проверяем импорт на реальном файле и держим в уме резерв». Если разброс больше половины оценки, пакет не понят: его делят или проверяют прототипом, а не занижают.</p>
+<table>
+<thead>
+<tr>
+<th>Работа</th>
+<th>Пакеты</th>
+<th>Дни</th>
+<th>Как получена</th>
+<th>Разброс</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1. Реестр требований</td>
+<td>1.1.1, 1.1.2, 1.1.3</td>
+<td>8</td>
+<td>Сумма трёх оценок, реестр по аналогу прошлого проекта</td>
+<td>1 день</td>
+</tr>
+<tr>
+<td>T2. Схема базы</td>
+<td>1.2.1, 1.2.3</td>
+<td>6</td>
+<td>Параметрическая: шесть сущностей по половине дня, дважды</td>
+<td>0,7 дня</td>
+</tr>
+<tr>
+<td>T3. Макеты</td>
+<td>1.2.2</td>
+<td>5</td>
+<td>Аналоговая: пять экранов по дню</td>
+<td>0,3 дня</td>
+</tr>
+<tr>
+<td>T4. Модули и отчёты</td>
+<td>1.3.1, 1.3.2, 1.3.3</td>
+<td>12</td>
+<td>Параметрическая по элементам формы и переходам статуса</td>
+<td>1 день</td>
+</tr>
+<tr>
+<td>T5. Уведомления и импорт</td>
+<td>1.2.4, 1.3.4</td>
+<td>7</td>
+<td>Смешанная, разброс по импорту</td>
+<td>1 день</td>
+</tr>
+<tr>
+<td>T6. Приёмка</td>
+<td>1.4.1</td>
+<td>8</td>
+<td>Три точки: 5, 8 и 11</td>
+<td>1 день</td>
+</tr>
+</tbody>
+</table>
+<p>Сумма оценок всех четырнадцати пакетов равна 50 дням, а срок проекта будет 34. Противоречия здесь нет: сумма считает работу, а срок считает календарь, в котором часть ветвей идёт параллельно. Об этом следующий шаг.</p>
+<details class="check"><summary><span>Оценка по трём точкам дала 6 дней при O = 2, M = 5 и P = 14. Что с ней делать?</span></summary><div><p>Разброс <code>(14 − 2) / 6 = 2</code> дня при оценке 6, то есть треть срока. Такую работу нельзя ставить в план одной цифрой: либо внутри сидит неизвестное (тогда её делят и проверяют рискованную часть первой), либо оценка сделана наугад (тогда её пересобирают по единицам).</p></div></details>
+
+<h2 id="задание-4-зависимости-и-сеть"><span class="num">06</span>Задание 4. Зависимости и сеть</h2>
+<p>Зависимость говорит, что работа не может двигаться свободно, пока не выполнено условие по другой. Типов четыре, и путать их дорого.</p>
+<p><strong>FS, finish to start.</strong> Последователь начинается после того, как предшественник закончился. Самая частая связь: схема базы после требований, приёмка после модулей.</p>
+<p><strong>SS, start to start.</strong> Последователь стартует, когда предшественник уже начался. Обучение можно начать через два дня после старта переноса данных: ждать конца не нужно, но и начинать вместе нельзя. Разница в два дня это лаг, он записывается числом.</p>
+<p><strong>FF, finish to finish.</strong> Связаны окончания: протокол приёмки не закрыть раньше последнего исправления.</p>
+<p><strong>SF, start to finish.</strong> Последователь заканчивается, когда предшественник начинается. Смена дежурств заканчивается в момент, когда новая смена принимает пост.</p>
+<p>У зависимости есть тип, лаг и владелец. Лаг это ожидание, которое не работа команды: согласование макетов занимает четыре дня, и кто-то должен их подтвердить. Владелец отвечает за то, что условие выполнится. Зависимость, которая живёт только в голове, не существует: её нет ни в сети, ни в дате.</p>
+<p>Четырнадцать пакетов в сеть не ставят, иначе схема перестаёт читаться. Их укрупняют до шести работ, но укрупняют по смыслу, а не по удобству: каждая работа сети собирает пакеты одной или двух соседних ветвей.</p>
+<table>
+<thead>
+<tr>
+<th>Работа</th>
+<th>Пакеты</th>
+<th>Предшественник</th>
+<th>Тип</th>
+<th>Дни</th>
+<th>ES</th>
+<th>EF</th>
+<th>LS</th>
+<th>LF</th>
+<th>Резерв</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1. Реестр требований</td>
+<td>1.1.1, 1.1.2, 1.1.3</td>
+<td>старт</td>
+<td>FS</td>
+<td>8</td>
+<td>0</td>
+<td>8</td>
+<td>0</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr>
+<td>T2. Схема базы</td>
+<td>1.2.1, 1.2.3</td>
+<td>T1</td>
+<td>FS</td>
+<td>6</td>
+<td>8</td>
+<td>14</td>
+<td>8</td>
+<td>14</td>
+<td>0</td>
+</tr>
+<tr>
+<td>T3. Макеты</td>
+<td>1.2.2</td>
+<td>T1</td>
+<td>FS</td>
+<td>5</td>
+<td>8</td>
+<td>13</td>
+<td>9</td>
+<td>14</td>
+<td>1</td>
+</tr>
+<tr>
+<td>T4. Модули и отчёты</td>
+<td>1.3.1, 1.3.2, 1.3.3</td>
+<td>T2, T3</td>
+<td>FS</td>
+<td>12</td>
+<td>14</td>
+<td>26</td>
+<td>14</td>
+<td>26</td>
+<td>0</td>
+</tr>
+<tr>
+<td>T5. Уведомления и импорт</td>
+<td>1.2.4, 1.3.4</td>
+<td>T2</td>
+<td>FS</td>
+<td>7</td>
+<td>14</td>
+<td>21</td>
+<td>19</td>
+<td>26</td>
+<td>5</td>
+</tr>
+<tr>
+<td>T6. Приёмка</td>
+<td>1.4.1</td>
+<td>T4, T5</td>
+<td>FS</td>
+<td>8</td>
+<td>26</td>
+<td>34</td>
+<td>26</td>
+<td>34</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Сеть первого релиза покрывает двенадцать пакетов из четырнадцати. Инструкция <code>1.4.2</code> и программа обучения <code>1.4.3</code> идут параллельно приёмке и на дату не влияют, поэтому в шесть работ не попали и появятся отдельными строками диаграммы.</p>
+<p>Прямой проход идёт слева направо и даёт ранние сроки. Раннее начало <code>ES</code> это самый ранний момент старта, раннее окончание <code>EF</code> равно <code>ES</code> плюс длительность. У работы без предшественников <code>ES</code> равно нулю. При нескольких предшественниках <code>ES</code> равно максимуму их <code>EF</code>: начать можно тогда, когда закончилась самая медленная ветка. Проверьте на T4: схема базы кончается на 14, макеты на 13, значит старт на 14, а не на 13.</p>
+<p>Обратный проход идёт справа налево и даёт поздние сроки. Позднее окончание <code>LF</code> это самый поздний конец без сдвига проекта, позднее начало <code>LS</code> равно <code>LF</code> минус длительность. При нескольких последователях <code>LF</code> равно минимуму их <code>LS</code>. Проверьте на T2: модули могут начаться не позже 14, уведомления не позже 19, значит <code>LF</code> равно 14, а не 19.</p>
+<p>Резерв это <code>LS</code> минус <code>ES</code>, или <code>LF</code> минус <code>EF</code>. У T1, T2, T4 и T6 он нулевой, у T3 равен одному дню, у T5 пяти. Дата проекта это максимум <code>EF</code>, то есть 34 дня.</p>
+<p>Критический путь это цепочка с нулевым резервом, сумма длительностей которой равна сроку. Здесь это T1, T2, T4 и T6: <code>8 + 6 + 12 + 8 = 34</code>. Задержка любой из них на день сдвигает приёмку на день. Работа T5 с резервом пять дней может начаться на пять дней позже, и приёмка всё равно начнётся на двадцать седьмой день. Сжатие T5 на три дня не даёт экономии: запас просто вырастет с пяти до восьми.</p>
+<p>Теперь важное различие, которое спрашивают на защите. Общий резерв это запас до сдвига проекта, он считается по <code>LS</code> и <code>ES</code>. Свободный резерв это запас до сдвига ближайшего последователя: <code>ES</code> последователя минус <code>EF</code> работы. У схемы уведомлений <code>1.2.4</code> общий резерв пять дней, а свободный ноль: она кончается на семнадцатый день, и модуль уведомлений стартует восемнадцатого. Задержать её на день можно без вреда для проекта, но нельзя без сдвига следующей работы. У модуля уведомлений <code>1.3.4</code> оба резерва по пять дней, потому что приёмка ждёт до двадцать седьмого.</p>
+<div class="callout pitfall"><span class="label">Строка SS в шаблоне</span><p>В таблице зависимостей шаблона отчёта третья строка заранее помечена как SS. В этой сети все связи FS, поэтому пометку надо заменить. Оставленный по привычке SS означает, что модули начинаются вместе со схемой базы, и весь расчёт едет. Тип связи это решение, а не оформление.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Таблица зависимостей: шесть работ, типы связей, ранние и поздние сроки, резерв.</p></div>
+
+<h2 id="задание-5-диаграмма-ганта-в-excel"><span class="num">07</span>Задание 5. Диаграмма Ганта в Excel</h2>
+<p>Диаграмма собирается на листе из трёх частей: таблица работ, строка дней и сетка, в которой условное форматирование закрашивает нужные клетки. Ни одна полоса не рисуется мышью, потому что нарисованную полосу нельзя пересчитать.</p>
+<p>Создайте в книге лист «План». В строке 3 поставьте заголовки: <code>Задача</code>, <code>Начало</code>, <code>Длительность</code>, <code>Окончание</code>, <code>Предшественник</code>, <code>Ресурс</code>, <code>Веха</code>, <code>Критическая</code>, <code>Резерв</code>. Столбцы <code>A</code>…<code>I</code>. В <code>J4</code> поставьте <code>1</code>, в <code>K4</code> формулу <code>=J4+1</code> и протяните её вправо до <code>AS4</code>: получится тридцать шесть дней, по одному столбцу на день.</p>
+<p>Дни здесь рабочие: день 1 это первый рабочий день, выходные в сетку не попадают, и проверка «34» остаётся арифметикой, а не календарём. Если нужен календарь, номер дня превращается в дату формулой <code>=РАБДЕНЬ($B$1;B5-1)</code>, где в <code>B1</code> лежит дата старта, но для этого задания хватает номеров.</p>
+<p>Заполните строки 5…21: четырнадцать пакетов и три вехи. Порядок строк по коду дерева, а не по дате: так видно ветви и рядом стоят работы, которые делают одни люди. Вехи отмечают событие, а не отрезок работы: согласованный реестр, готовые модули, подписанная приёмка. У вехи нулевая длительность, поэтому она стоит в день окончания предшественника, а не на следующий.</p>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>Начало</th>
+<th>Дни</th>
+<th>Окончание</th>
+<th>Предшественник</th>
+<th>Ресурс</th>
+<th>Резерв</th>
+<th>Критическая</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1.1 Реестр функций</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>старт</td>
+<td>Руководитель проекта</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.1.2 Критерии приёмки</td>
+<td>3</td>
+<td>3</td>
+<td>5</td>
+<td>1.1.1</td>
+<td>Руководитель проекта</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.1.3 Реестр с подписью</td>
+<td>6</td>
+<td>3</td>
+<td>8</td>
+<td>1.1.2</td>
+<td>Руководитель проекта</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>М1 Реестр согласован</td>
+<td>8</td>
+<td>0</td>
+<td>8</td>
+<td>1.1.3</td>
+<td>Заказчик</td>
+<td>0</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.2.1 Модель данных</td>
+<td>9</td>
+<td>3</td>
+<td>11</td>
+<td>1.1.3</td>
+<td>Архитектор</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.2.2 Макеты пяти экранов</td>
+<td>9</td>
+<td>5</td>
+<td>13</td>
+<td>1.1.3</td>
+<td>Дизайнер</td>
+<td>1</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.2.3 Скрипты миграции</td>
+<td>12</td>
+<td>3</td>
+<td>14</td>
+<td>1.2.1</td>
+<td>Разработчик 2</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.2.4 Схема уведомлений</td>
+<td>15</td>
+<td>3</td>
+<td>17</td>
+<td>1.2.3</td>
+<td>Архитектор</td>
+<td>5</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.3.1 Модуль подачи</td>
+<td>15</td>
+<td>5</td>
+<td>19</td>
+<td>1.2.2, 1.2.3</td>
+<td>Разработчик 1</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.3.4 Модуль уведомлений</td>
+<td>18</td>
+<td>4</td>
+<td>21</td>
+<td>1.2.4</td>
+<td>Разработчик 2</td>
+<td>5</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.3.2 Модуль обработки</td>
+<td>20</td>
+<td>4</td>
+<td>23</td>
+<td>1.3.1</td>
+<td>Разработчик 1</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.3.3 Отчёт по заявкам</td>
+<td>24</td>
+<td>3</td>
+<td>26</td>
+<td>1.3.2</td>
+<td>Разработчик 1</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>М2 Модули готовы</td>
+<td>26</td>
+<td>0</td>
+<td>26</td>
+<td>1.3.3, 1.3.4</td>
+<td>Руководитель проекта</td>
+<td>0</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.4.1 Протокол приёмки</td>
+<td>27</td>
+<td>8</td>
+<td>34</td>
+<td>1.3.3, 1.3.4</td>
+<td>Руководитель проекта</td>
+<td>0</td>
+<td>да</td>
+</tr>
+<tr>
+<td>1.4.2 Инструкция</td>
+<td>27</td>
+<td>2</td>
+<td>28</td>
+<td>1.3.3</td>
+<td>Руководитель проекта</td>
+<td>4</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>1.4.3 Программа обучения</td>
+<td>29</td>
+<td>2</td>
+<td>30</td>
+<td>1.4.2</td>
+<td>Руководитель проекта</td>
+<td>4</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>М3 Система принята</td>
+<td>34</td>
+<td>0</td>
+<td>34</td>
+<td>1.4.1</td>
+<td>Заказчик</td>
+<td>0</td>
+<td>нет</td>
+</tr>
+</tbody>
+</table>
+<p>Колонки «Веха» в таблице нет, чтобы не расширять страницу: у строк с кодом М в ней стоит <code>да</code>, у работ пусто.</p>
+<p>Окончание не вписывают руками, его считает формула. В <code>D5</code> поставьте <code>=ЕСЛИ($C5=0;$B5;$B5+$C5-1)</code> и протяните до <code>D21</code>. Для работы с длительностью пять дней, которая началась в пятнадцатый, окончание будет девятнадцатое: <code>15 + 5 − 1</code>. Единица вычитается потому, что день старта уже входит в длительность. У вехи длительность нулевая, поэтому формула отдельно возвращает день начала, иначе окончание оказалось бы раньше начала.</p>
+<p>Теперь сетка. В <code>J5</code> напишите <code>=И(J$4&gt;=$B5;J$4&lt;=$D5)</code> и протяните на весь блок <code>J5:AS21</code>. Формула вернёт <code>ИСТИНА</code> в тех клетках, где номер дня попадает между началом и окончанием. Знаки доллара здесь не украшение: <code>J$4</code> держит строку дней при копировании вниз, а <code>$B5</code> и <code>$D5</code> держат столбцы начала и окончания своей строки.</p>
+<p>Дальше условное форматирование. Выделите <code>J5:AS21</code>, откройте <strong>Главная → Условное форматирование → Создать правило → Использовать формулу</strong> и добавьте три правила именно в таком порядке.</p>
+<ol>
+<li>Вехи: <code>=И($G5="да";J$4=$B5)</code>, заливка тёмная, галочка «Остановить, если истина». Веха отмечается одной клеткой в свой день.</li>
+<li>Критическая цепочка: <code>=И($H5="да";J$4&gt;=$B5;J$4&lt;=$D5)</code>, заливка красная, «Остановить, если истина».</li>
+<li>Остальные работы: <code>=И(J$4&gt;=$B5;J$4&lt;=$D5)</code>, заливка спокойная синяя.</li>
+</ol>
+<p>Порядок правил и есть приоритет: верхнее проверяется первым. Если поставить общее правило выше критического, красного не будет видно, синяя заливка перекроет его. Галочка «Остановить, если истина» снимает эту ловушку.</p>
+<p>Закрепите области. Встаньте в <code>J5</code> и выберите <strong>Вид → Закрепить области</strong>: слева останутся названия задач, сверху строка дней, и при прокрутке вправо не потеряется, какая строка к какому пакету относится. Заодно выключите сетку листа (<strong>Вид → Сетка</strong>), иначе она спорит с полосами.</p>
+<p>Ниже таблицы, в строках 24…29, поставьте блок проверки. Он считается сам и отвечает на вопросы, которые задают на защите.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Формула</th>
+<th>Ожидание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Плановая дата окончания</td>
+<td><code>=МАКС(D5:D21)</code></td>
+<td>34</td>
+</tr>
+<tr>
+<td>Сумма длительностей пакетов</td>
+<td><code>=СУММ(C5:C21)</code></td>
+<td>50</td>
+</tr>
+<tr>
+<td>Критических работ</td>
+<td><code>=СЧЁТЕСЛИ(H5:H21;"да")</code></td>
+<td>9</td>
+</tr>
+<tr>
+<td>Вех</td>
+<td><code>=СЧЁТЕСЛИ(G5:G21;"да")</code></td>
+<td>3</td>
+</tr>
+<tr>
+<td>Работ с резервом</td>
+<td><code>=СЧЁТЕСЛИ(I5:I21;"&gt;0")</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td>Сходится с сетью</td>
+<td><code>=ЕСЛИ(B24=34;"да";"нет")</code></td>
+<td>да</td>
+</tr>
+</tbody>
+</table>
+<p>Сумма 50 и дата 34 объясняются вместе: пятьдесят дней работы распределены по тридцати четырём дням календаря, потому что макеты, схема уведомлений, инструкция и программа обучения идут параллельно главной цепочке.</p>
+<p>Проверьте диаграмму на прочность. Поменяйте в <code>B5</code> единицу на тройку: все полосы должны сдвинуться на две клетки вправо, а окончание стать 36. Если сдвинулись только некоторые или полосы поехали вкось, значит в формуле условного форматирования потерян доллар. Верните единицу обратно.</p>
+<div class="callout pitfall"><span class="label">Три ошибки, которые ломают Ганта</span><p>Первая: в формуле стоит <code>J4</code> вместо <code>J$4</code>, и при копировании вниз сетка сравнивает дни с соседними строками. Вторая: в <code>J5</code> записано число, а не формула, поэтому полоса не двигается вместе со стартом. Третья: объединённые ячейки в строке дней, из-за которых красится блок целиком. Все три ловятся проверкой со сдвигом старта.</p></div>
+
+<p>Последний шаг это базовая линия. Когда проверки сошлись, правой кнопкой по ярлычку листа «План» выберите <strong>Переместить/скопировать</strong>, поставьте галочку <strong>Создать копию</strong> и нажмите ОК. Новый лист назовите «База». В его ячейке <code>A1</code> напишите дату фиксации, плановую дату окончания тридцать четвёртый день и число критических работ девять. Затем выделите лист и защитите его: <strong>Рецензирование → Защитить лист</strong>. Пароль запишите в отчёт, иначе через месяц лист не открыть.</p>
+<p>Зачем копия, если план всё равно изменится? Затем, чтобы изменение было видно. План живёт, база стоит: когда заказчик попросит перенести приёмку, два листа рядом покажут, что сдвинулось. Без базы любой сдвиг выглядит как «мы так и планировали». Сдвиг числом даёт столбец <code>=D5-База!D5</code>: сразу после копии там нули, после перепланирования появятся дни.</p>
+<div class="callout shot"><span class="label">Скриншот 4</span><p>Диаграмма Ганта: полосы по дням, три вехи, красная критическая цепочка.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 5</span><p>Лист «База» с датой фиксации и защитой листа.</p></div>
+
+<h2 id="задание-6-проверка-и-защита"><span class="num">08</span>Задание 6. Проверка и защита</h2>
+<p>План проверяют числами, а не глазами. Пройдите по списку и запишите факт в третью колонку: не «вроде да», а полученное значение.</p>
+<table>
+<thead>
+<tr>
+<th>Пункт</th>
+<th>Что проверяем</th>
+<th>Ожидание</th>
+<th>Факт</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Сумма длительностей критического пути</td>
+<td>34 дня, равна сроку проекта</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работы с нулевым резервом</td>
+<td>9 работ, непрерывная цепочка от 1.1.1 до 1.4.1</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Все 14 пакетов имеют результат</td>
+<td>да, у каждого измеримый выход</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>У каждой строки есть предшественник или пометка «старт»</td>
+<td>да</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Сумма оценок пакетов</td>
+<td>50 дней, больше срока из-за параллельных ветвей</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Число вех и их дни</td>
+<td>3 вехи: 8, 26, 34</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Ни одна работа не начинается раньше окончания предшественника</td>
+<td>да, проверено по колонке <code>B</code> и <code>D</code></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Полосы не выходят за 34-й день</td>
+<td>да</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Сдвиг старта на два дня двигает все полосы</td>
+<td>да, окончание становится 36</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Базовая линия сохранена копией листа</td>
+<td>да, с датой и защитой</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Пункт 9 самый полезный. Он ловит почти все ошибки формул разом, и его стоит повторить после каждой правки.</p>
+<div class="callout pitfall"><span class="label">Дата сошлась случайно</span><p>Бывает, что <code>МАКС</code> показывает 34, а цепочка при этом рваная: где-то работа начинается раньше предшественника, и сумма просто совпала. Проверяйте не только дату, но и непрерывность цепочки от первого пакета до приёмки.</p></div>
+
+<p>Контрольные вопросы:</p>
+<ol>
+<li>Почему дерево режет результат, а не действия? Назовите свой лист, который пришлось переписать, и что изменилось после переформулировки.</li>
+<li>Что проверяет правило ста процентов и как вы проверили его на двенадцати функциях?</li>
+<li>Чем свободный резерв отличается от общего? Покажите разницу на пакете <code>1.2.4</code>.</li>
+<li>Почему критический путь даёт 34 дня, если сумма оценок пакетов равна 50?</li>
+<li>У макетов резерв один день, у уведомлений пять. Что можно сделать с этими запасами и чего сделать нельзя?</li>
+<li>Какая ошибка в условном форматировании ломает диаграмму при сдвиге старта и как её заметить?</li>
+<li>Зачем нужна базовая линия, если план всё равно изменится?</li>
+<li>Что произойдёт с датой, если приёмка начнётся на два дня позже плана?</li>
+</ol>
+<p>Критерии оценки:</p>
+<ul>
+<li><strong>5</strong>: дерево трёх уровней на 14 пакетов, все двенадцать функций найдены по одному разу, словарь заполнен на все пакеты, оценки получены не менее чем двумя способами, критический путь найден и совпадает со сроком, диаграмма построена формулами и условным форматированием, базовая линия сохранена, проверки пройдены.</li>
+<li><strong>4</strong>: дерево и диаграмма готовы, но словарь заполнен не на все пакеты либо проверка плана неполная, а одна связь в сети не учтена.</li>
+<li><strong>3</strong>: дерево есть, но листья названы действиями, критический путь найден с ошибкой, диаграмма нарисована вручную или полосы не совпадают с датами.</li>
+</ul>
+<p>К отчёту приложите: заполненный шаблон DOCX, оба CSV с деревом и планом на те же 14 пакетов, книгу <code>plan.xlsx</code> с листами «План», «База» и «WBS», скриншоты диаграммы и базовой линии, заполненный чек-лист и вывод на 5–7 предложений. В выводе ответьте на три вопроса: какой пакет оказался самым неопределённым, что вы сделали с его разбросом и какая связь держит дату сильнее всего.</p></article><nav class="pager"><a class="" href="06-lek-04.html"><span>← Предыдущее занятие</span>Лекция 4. Заинтересованные стороны</a><a class="next" style="text-align:right;margin-left:auto" href="08-lek-05.html"><span>Следующее занятие →</span>Лекция 5. WBS и расписание</a></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Воронка качества</title><style>
+:root{--paper:#f7f3e8;--ink:#24303a;--muted:#65717c;--line:#c3bca9;--accent:#9a7300;--card:#fffdf7;--red:#b23a2f;--green:#2f7d54;--blue:#2f5d8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.plate{position:relative;border:1px solid var(--line);background:linear-gradient(150deg,#fffdf7,#f0ead9);border-radius:10px;padding:30px 14px 54px}
+.head{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stage{display:block;width:100%;height:auto;touch-action:pan-y;outline:none}
+.stage:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.node{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3;transition:stroke .2s,fill .2s}
+.node.on{stroke:#9a7300;stroke-width:2.4;fill:#fff8e6}
+.box{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3}
+.lbl{font-size:12px;fill:#24303a}
+svg text{stroke:none;stroke-width:0;paint-order:fill}
+.small{font-size:10px;fill:#65717c}
+.tiny{font-size:9px;fill:#8a8272}
+.mid{font-size:11px;font-weight:600;fill:#24303a}
+.big{font-size:13px;font-weight:700;fill:#24303a}
+.axis{stroke:#b9c1c6;stroke-width:1}
+.grid{stroke:#e3dccb;stroke-width:.8}
+.dim{opacity:.22}
+.readout{position:absolute;right:14px;bottom:28px;font-size:11px;letter-spacing:.03em;background:var(--paper);border:1px solid #ddd4c2;border-radius:4px;padding:2px 6px;max-width:78%}
+.hint{position:absolute;left:14px;bottom:8px;right:150px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:6px 0;padding:0;font-size:12px;color:var(--muted)}
+.keys li::before{content:"◇";color:#a8823d;margin-right:5px}
+@media (max-width:560px){.wrap{padding:8px}.plate{padding:26px 4px 58px}.readout{right:6px;font-size:10px}.hint{left:6px;right:6px;bottom:8px;font-size:9px}}
+@media (prefers-reduced-motion:reduce){.node{transition:none}}
+</style></head>
+<body><div class="wrap"><figure class="fig"><div class="plate">
+<div class="head"><span>Fig 08</span><span>Воронка качества</span></div>
+<svg class="stage" viewBox="0 0 760 420" role="slider" tabindex="0" aria-label="Воронка качества" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<rect x="6" y="6" width="748" height="408" rx="10" fill="#f8f3e6" stroke="#d8cfba"/>
+<text class="small" x="230" y="48" text-anchor="middle">ВОРОНКА ПРОВЕРОК</text>
+<text class="small" x="440" y="48" text-anchor="start">ЦЕНА ДЕФЕКТА</text>
+<g id="f0" class="node"><path d="M80.0 72 L380.0 72 L360.0 122 L100.0 122 Z"/><text class="small" x="230" y="94" text-anchor="middle">требования</text><text class="mid" x="230" y="112" text-anchor="middle">-2</text></g>
+<text class="small" x="440" y="102" text-anchor="start">1x</text>
+<g id="f1" class="node"><path d="M107.0 134 L353.0 134 L333.0 184 L127.0 184 Z"/><text class="small" x="230" y="156" text-anchor="middle">проект</text><text class="mid" x="230" y="174" text-anchor="middle">-3</text></g>
+<text class="small" x="440" y="164" text-anchor="start">3x</text>
+<g id="f2" class="node"><path d="M134.0 196 L326.0 196 L306.0 246 L154.0 246 Z"/><text class="small" x="230" y="218" text-anchor="middle">код</text><text class="mid" x="230" y="236" text-anchor="middle">-4</text></g>
+<text class="small" x="440" y="226" text-anchor="start">10x</text>
+<g id="f3" class="node"><path d="M161.0 258 L299.0 258 L279.0 308 L181.0 308 Z"/><text class="small" x="230" y="280" text-anchor="middle">тесты</text><text class="mid" x="230" y="298" text-anchor="middle">-3</text></g>
+<text class="small" x="440" y="288" text-anchor="start">30x</text>
+<g id="f4" class="node"><path d="M185.0 320 L275.0 320 L255.0 370 L205.0 370 Z"/><text class="small" x="230" y="342" text-anchor="middle">приёмка</text><text class="mid" x="230" y="360" text-anchor="middle">-0</text></g>
+<text class="small" x="440" y="350" text-anchor="start">100x</text>
+<text class="small" x="230" y="388" text-anchor="middle">12 дефектов поймано до приёмки</text>
+<g id="banner" class="dim"><rect class="box" x="520" y="80" width="200" height="150" rx="8"/><text class="mid" x="620" y="106" text-anchor="middle">ИТОГ</text><text id="b1" class="big" x="620" y="140" text-anchor="middle">12 / 12</text><text class="small" x="620" y="163" text-anchor="middle">дефектов поймано</text><text id="b3" class="big" x="620" y="196" text-anchor="middle">95%</text><text class="small" x="620" y="218" text-anchor="middle">проверок пройдено</text></g>
+</svg>
+<div class="readout" data-readout>качество и сорт: это разные вещи</div>
+<div class="hint">Проведите по уровням: чем позже найден дефект, тем дороже он стоит.</div>
+</div><figcaption class="cap"><ul class="keys"><li>пять уровней проверки</li><li>12 дефектов</li><li>рост цены дефекта</li></ul>Требования, проект, код и тесты ловят дефекты до приёмки. Дефект, найденный на приёмке, стоит примерно в сто раз дороже того же дефекта в требованиях.</figcaption></figure></div>
+<script>
+const STEPS=["качество и сорт: это разные вещи", "план качества и критерии", "проверка требований: поймано 2 дефекта", "проверка проекта: поймано 3 дефекта", "проверка кода: поймано 4 дефекта", "тестирование: поймано 3 дефекта", "приёмка: 0 дефектов, 95 процентов проверок", "стоимость дефекта растёт в 100 раз"];
+const N=STEPS.length;
+let step=0,timer=0;
+const stage=document.querySelector('.stage');
+const readout=document.querySelector('[data-readout]');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(n){step=((n%N)+N)%N;readout.textContent=STEPS[step];stage.setAttribute('aria-valuenow',String(step));stage.setAttribute('aria-valuetext',STEPS[step]);apply(step);}
+function start(){if(!timer&&!reduce)timer=setInterval(()=>show(step+1),3800);}
+function stop(){clearInterval(timer);timer=0;}
+stage.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight'||e.key==='ArrowUp')n=step+1;if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=step-1;if(e.key==='Home')n=0;if(e.key==='End')n=N-1;if(n!==null){e.preventDefault();stop();show(n);}});
+stage.addEventListener('pointermove',e=>{const b=stage.getBoundingClientRect();const share=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));stop();show(Math.min(N-1,Math.floor(share*N)));});
+stage.addEventListener('pointerleave',start);
+stage.addEventListener('focus',stop);
+function fitLabels(){
+  document.querySelectorAll('svg text').forEach(t=>{
+    t.removeAttribute('textLength');
+    const g=t.closest('g'); if(!g) return;
+    const shape=g.querySelector('rect,circle,ellipse,path,polygon'); if(!shape) return;
+    const tag=shape.tagName.toLowerCase();
+    const sb=shape.getBBox(), tb=t.getBBox();
+    if(!sb.width||!tb.width) return;
+    const avail = tag==='circle'? shape.r.baseVal.value*1.4 : (tag==='ellipse'? shape.rx.baseVal.value*1.4 : sb.width-10);
+    if(tb.width>avail && avail>14){t.setAttribute('textLength',avail.toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+}
+window.addEventListener('resize',fitLabels);
+fitLabels();
+if(!reduce)start();
+show(0);
+
+
+function apply(n){
+  const map=[-1,-1,0,1,2,3,4];
+  for(let i=0;i<5;i++)document.getElementById('f'+i).classList.toggle('on', map[n]===i);
+  document.getElementById('banner').classList.toggle('dim', n<6);
+  document.getElementById('b3').textContent = n>=6 ? '95%' : '?';
+  document.getElementById('b1').textContent = n>=6 ? '12 / 12' : '?';
+}
+</script></body></html>

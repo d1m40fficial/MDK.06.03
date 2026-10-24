@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Треугольник ограничений</title><style>
+:root{--paper:#f7f3e8;--ink:#24303a;--muted:#65717c;--line:#c3bca9;--accent:#9a7300;--card:#fffdf7;--red:#b23a2f;--green:#2f7d54;--blue:#2f5d8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.plate{position:relative;border:1px solid var(--line);background:linear-gradient(150deg,#fffdf7,#f0ead9);border-radius:10px;padding:30px 14px 54px}
+.head{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stage{display:block;width:100%;height:auto;touch-action:pan-y;outline:none}
+.stage:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.node{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3;transition:stroke .2s,fill .2s}
+.node.on{stroke:#9a7300;stroke-width:2.4;fill:#fff8e6}
+.box{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3}
+.lbl{font-size:12px;fill:#24303a}
+svg text{stroke:none;stroke-width:0;paint-order:fill}
+.small{font-size:10px;fill:#65717c}
+.tiny{font-size:9px;fill:#8a8272}
+.mid{font-size:11px;font-weight:600;fill:#24303a}
+.big{font-size:13px;font-weight:700;fill:#24303a}
+.axis{stroke:#b9c1c6;stroke-width:1}
+.grid{stroke:#e3dccb;stroke-width:.8}
+.dim{opacity:.22}
+.readout{position:absolute;right:14px;bottom:28px;font-size:11px;letter-spacing:.03em;background:var(--paper);border:1px solid #ddd4c2;border-radius:4px;padding:2px 6px;max-width:78%}
+.hint{position:absolute;left:14px;bottom:8px;right:150px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:6px 0;padding:0;font-size:12px;color:var(--muted)}
+.keys li::before{content:"◇";color:#a8823d;margin-right:5px}
+@media (max-width:560px){.wrap{padding:8px}.plate{padding:26px 4px 58px}.readout{right:6px;font-size:10px}.hint{left:6px;right:6px;bottom:8px;font-size:9px}}
+@media (prefers-reduced-motion:reduce){.node{transition:none}}
+</style></head>
+<body><div class="wrap"><figure class="fig"><div class="plate">
+<div class="head"><span>Fig 01</span><span>Треугольник ограничений</span></div>
+<svg class="stage" viewBox="0 0 760 420" role="slider" tabindex="0" aria-label="Треугольник ограничений" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<rect x="6" y="6" width="748" height="408" rx="10" fill="#f8f3e6" stroke="#d8cfba"/>
+<text class="small" x="380" y="38" text-anchor="middle">ТРИ ОГРАНИЧЕНИЯ ОДНОГО ПРОЕКТА</text>
+<polygon id="tri" points="380,105 130,325 630,325" fill="#fbf6ea" stroke="#b7ae99" stroke-width="2"/>
+<circle id="q" cx="380" cy="243" r="48" fill="#fffdf7" stroke="#9a7300" stroke-width="2"/>
+<text id="qt" class="mid" x="380" y="236" text-anchor="middle">качество</text>
+<text id="qv" class="big" x="380" y="258" text-anchor="middle">95%</text>
+<circle id="v0" cx="380" cy="105" r="15" fill="#fff8e6" stroke="#9a7300" stroke-width="2"/>
+<text id="l0" class="lbl" x="380" y="83" text-anchor="middle">содержание</text>
+<circle id="v1" cx="130" cy="325" r="15" fill="#fff8e6" stroke="#9a7300" stroke-width="2"/>
+<text id="l1" class="lbl" x="130" y="357" text-anchor="middle">срок</text>
+<circle id="v2" cx="630" cy="325" r="15" fill="#fff8e6" stroke="#9a7300" stroke-width="2"/>
+<text id="l2" class="lbl" x="630" y="357" text-anchor="middle">стоимость</text>
+<text class="small" x="228" y="300" text-anchor="middle">12 функций</text>
+<text class="small" x="380" y="300" text-anchor="middle">6 месяцев</text>
+<text class="small" x="540" y="300" text-anchor="middle">1,2 млн рублей</text>
+<g id="badge" class="dim"><rect x="248" y="158" width="264" height="34" rx="8" fill="#fff4dc" stroke="#9a7300"/><text class="mid" x="380" y="180" text-anchor="middle">+2 функции → +6 недель</text></g>
+</svg>
+<div class="readout" data-readout>операция или проект</div>
+<div class="hint">Проведите по треугольнику: каждая вершина тянет две другие.</div>
+</div><figcaption class="cap"><ul class="keys"><li>содержание</li><li>срок</li><li>стоимость</li><li>качество в центре</li></ul>Проект держит четыре величины одновременно. Усиление одной вершины отзывается в двух других, а качество стоит в центре: его снижают последним.</figcaption></figure></div>
+<script>
+const STEPS=["операция или проект", "цель: заявки к сентябрю", "содержание: 12 функций", "срок: 6 месяцев", "бюджет: 1,2 млн рублей", "качество: 95 процентов", "компромисс: +2 функции = +6 недель", "успех: результат, срок, бюджет, выгода"];
+const N=STEPS.length;
+let step=0,timer=0;
+const stage=document.querySelector('.stage');
+const readout=document.querySelector('[data-readout]');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(n){step=((n%N)+N)%N;readout.textContent=STEPS[step];stage.setAttribute('aria-valuenow',String(step));stage.setAttribute('aria-valuetext',STEPS[step]);apply(step);}
+function start(){if(!timer&&!reduce)timer=setInterval(()=>show(step+1),3800);}
+function stop(){clearInterval(timer);timer=0;}
+stage.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight'||e.key==='ArrowUp')n=step+1;if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=step-1;if(e.key==='Home')n=0;if(e.key==='End')n=N-1;if(n!==null){e.preventDefault();stop();show(n);}});
+stage.addEventListener('pointermove',e=>{const b=stage.getBoundingClientRect();const share=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));stop();show(Math.min(N-1,Math.floor(share*N)));});
+stage.addEventListener('pointerleave',start);
+stage.addEventListener('focus',stop);
+function fitLabels(){
+  document.querySelectorAll('svg text').forEach(t=>{
+    t.removeAttribute('textLength');
+    const g=t.closest('g'); if(!g) return;
+    const shape=g.querySelector('rect,circle,ellipse,path,polygon'); if(!shape) return;
+    const tag=shape.tagName.toLowerCase();
+    const sb=shape.getBBox(), tb=t.getBBox();
+    if(!sb.width||!tb.width) return;
+    const avail = tag==='circle'? shape.r.baseVal.value*1.4 : (tag==='ellipse'? shape.rx.baseVal.value*1.4 : sb.width-10);
+    if(tb.width>avail && avail>14){t.setAttribute('textLength',avail.toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+}
+window.addEventListener('resize',fitLabels);
+fitLabels();
+if(!reduce)start();
+show(0);
+
+
+function apply(n){
+  const vals=[[50, 50, 50], [55, 60, 56], [85, 58, 54], [55, 90, 60], [55, 58, 92], [58, 62, 64], [86, 94, 70], [70, 72, 70]]; const v=vals[n];
+  const ax=380, ay=105-(v[0]-50)*0.6;
+  const lx=130-(v[1]-50)*1.5, ly=325-(v[1]-50)*0.35;
+  const rx=630+(v[2]-50)*1.5, ry=325-(v[2]-50)*0.35;
+  document.getElementById('tri').setAttribute('points', `${ax},${ay} ${lx},${ly} ${rx},${ry}`);
+  [['v0','l0',ax,ay,-22,0],['v1','l1',lx,ly,32,0],['v2','l2',rx,ry,32,0]].forEach(([id,lid,x,y,dy])=>{
+    const c=document.getElementById(id); c.setAttribute('cx',x); c.setAttribute('cy',y);
+    const l=document.getElementById(lid); l.setAttribute('x',x); l.setAttribute('y',y+dy);
+  });
+  const cx=(ax+lx+rx)/3, cy=(ay+ly+ry)/3-6;
+  document.getElementById('q').setAttribute('cx',cx); document.getElementById('q').setAttribute('cy',cy);
+  document.getElementById('qt').setAttribute('x',cx); document.getElementById('qt').setAttribute('y',cy-7);
+  document.getElementById('qv').setAttribute('x',cx); document.getElementById('qv').setAttribute('y',cy+15);
+  document.getElementById('qv').textContent = n===6?'88%':'95%';
+  document.getElementById('q').setAttribute('stroke', n===6?'#b23a2f':'#9a7300');
+  document.getElementById('badge').classList.toggle('dim', n!==6);
+}
+</script></body></html>

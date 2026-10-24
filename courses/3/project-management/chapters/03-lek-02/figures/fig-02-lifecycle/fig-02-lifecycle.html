@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Конвейер жизненного цикла</title><style>
+:root{--paper:#f7f3e8;--ink:#24303a;--muted:#65717c;--line:#c3bca9;--accent:#9a7300;--card:#fffdf7;--red:#b23a2f;--green:#2f7d54;--blue:#2f5d8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.plate{position:relative;border:1px solid var(--line);background:linear-gradient(150deg,#fffdf7,#f0ead9);border-radius:10px;padding:30px 14px 54px}
+.head{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stage{display:block;width:100%;height:auto;touch-action:pan-y;outline:none}
+.stage:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.node{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3;transition:stroke .2s,fill .2s}
+.node.on{stroke:#9a7300;stroke-width:2.4;fill:#fff8e6}
+.box{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3}
+.lbl{font-size:12px;fill:#24303a}
+svg text{stroke:none;stroke-width:0;paint-order:fill}
+.small{font-size:10px;fill:#65717c}
+.tiny{font-size:9px;fill:#8a8272}
+.mid{font-size:11px;font-weight:600;fill:#24303a}
+.big{font-size:13px;font-weight:700;fill:#24303a}
+.axis{stroke:#b9c1c6;stroke-width:1}
+.grid{stroke:#e3dccb;stroke-width:.8}
+.dim{opacity:.22}
+.readout{position:absolute;right:14px;bottom:28px;font-size:11px;letter-spacing:.03em;background:var(--paper);border:1px solid #ddd4c2;border-radius:4px;padding:2px 6px;max-width:78%}
+.hint{position:absolute;left:14px;bottom:8px;right:150px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:6px 0;padding:0;font-size:12px;color:var(--muted)}
+.keys li::before{content:"◇";color:#a8823d;margin-right:5px}
+@media (max-width:560px){.wrap{padding:8px}.plate{padding:26px 4px 58px}.readout{right:6px;font-size:10px}.hint{left:6px;right:6px;bottom:8px;font-size:9px}}
+@media (prefers-reduced-motion:reduce){.node{transition:none}}
+</style></head>
+<body><div class="wrap"><figure class="fig"><div class="plate">
+<div class="head"><span>Fig 02</span><span>Конвейер жизненного цикла</span></div>
+<svg class="stage" viewBox="0 0 760 420" role="slider" tabindex="0" aria-label="Конвейер жизненного цикла" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<rect x="6" y="6" width="748" height="408" rx="10" fill="#f8f3e6" stroke="#d8cfba"/>
+<text class="small" x="380" y="56" text-anchor="middle">ПЯТЬ ФАЗ, ЧЕТВЕРО ВОРОТ, ОДНА ВОЗВРАТНАЯ ПЕТЛЯ</text>
+<line x1="60" y1="294" x2="700" y2="294" stroke="#cabfa5" stroke-width="10" stroke-linecap="round"/>
+<path id="loop" d="M520 215 C520 140 240 140 240 215" fill="none" stroke="#2f5d8a" stroke-width="4" stroke-dasharray="9 8" class="dim"/>
+<text class="small" x="380" y="132" text-anchor="middle">возврат на перепланирование</text>
+<g id="st0" class="node"><rect class="" x="50" y="215" width="100" height="68" rx="9"/><text class="mid" x="100" y="243" text-anchor="middle">инициация</text><text class="small" x="100" y="263" text-anchor="middle">устав</text></g>
+<g id="st1" class="node"><rect class="" x="190" y="215" width="100" height="68" rx="9"/><text class="mid" x="240" y="243" text-anchor="middle">планирование</text><text class="small" x="240" y="263" text-anchor="middle">WBS, бюджет</text></g>
+<g id="st2" class="node"><rect class="" x="330" y="215" width="100" height="68" rx="9"/><text class="mid" x="380" y="243" text-anchor="middle">исполнение</text><text class="small" x="380" y="263" text-anchor="middle">продукт</text></g>
+<g id="st3" class="node"><rect class="" x="470" y="215" width="100" height="68" rx="9"/><text class="mid" x="520" y="243" text-anchor="middle">контроль</text><text class="small" x="520" y="263" text-anchor="middle">отклонение</text></g>
+<g id="st4" class="node"><rect class="" x="610" y="215" width="100" height="68" rx="9"/><text class="mid" x="660" y="243" text-anchor="middle">закрытие</text><text class="small" x="660" y="263" text-anchor="middle">приёмка</text></g>
+<g id="g0"><polygon points="170,294 181,282 192,294 181,306" fill="#fffdf7" stroke="#9a7300" stroke-width="2"/></g>
+<text class="small" x="181" y="324" text-anchor="middle">в.1</text>
+<g id="g1"><polygon points="310,294 321,282 332,294 321,306" fill="#fffdf7" stroke="#9a7300" stroke-width="2"/></g>
+<text class="small" x="321" y="324" text-anchor="middle">в.2</text>
+<g id="g2"><polygon points="450,294 461,282 472,294 461,306" fill="#fffdf7" stroke="#9a7300" stroke-width="2"/></g>
+<text class="small" x="461" y="324" text-anchor="middle">в.3</text>
+<g id="g3"><polygon points="590,294 601,282 612,294 601,306" fill="#fffdf7" stroke="#9a7300" stroke-width="2"/></g>
+<text class="small" x="601" y="324" text-anchor="middle">в.4</text>
+<g id="cart" transform="translate(100 186)"><rect x="-20" y="-30" width="40" height="28" rx="5" fill="#9a7300"/><circle cx="-11" cy="2" r="6" fill="#24303a"/><circle cx="11" cy="2" r="6" fill="#24303a"/><text class="small" x="0" y="-11" text-anchor="middle" fill="#fff8e6">ИС</text></g>
+<text class="small" x="100" y="392" text-anchor="start">6 месяцев</text>
+<text class="small" x="430" y="392" text-anchor="start">3 итерации</text>
+</svg>
+<div class="readout" data-readout>инициация: устав</div>
+<div class="hint">Проведите тележку по фазам: каждая пара ворот спрашивает результат.</div>
+</div><figcaption class="cap"><ul class="keys"><li>пять фаз</li><li>четверо ворот</li><li>возвратная петля</li></ul>Тележка идёт по фазам слева направо и останавливается у ворот. На контроле она может вернуться на перепланирование, но не назад в инициацию.</figcaption></figure></div>
+<script>
+const STEPS=["инициация: устав", "ворота 1: устав подписан", "планирование: WBS и бюджет", "ворота 2: базовый план", "исполнение: продукт", "контроль: отклонение", "возврат: перепланирование", "закрытие: приёмка и уроки"];
+const N=STEPS.length;
+let step=0,timer=0;
+const stage=document.querySelector('.stage');
+const readout=document.querySelector('[data-readout]');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(n){step=((n%N)+N)%N;readout.textContent=STEPS[step];stage.setAttribute('aria-valuenow',String(step));stage.setAttribute('aria-valuetext',STEPS[step]);apply(step);}
+function start(){if(!timer&&!reduce)timer=setInterval(()=>show(step+1),3800);}
+function stop(){clearInterval(timer);timer=0;}
+stage.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight'||e.key==='ArrowUp')n=step+1;if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=step-1;if(e.key==='Home')n=0;if(e.key==='End')n=N-1;if(n!==null){e.preventDefault();stop();show(n);}});
+stage.addEventListener('pointermove',e=>{const b=stage.getBoundingClientRect();const share=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));stop();show(Math.min(N-1,Math.floor(share*N)));});
+stage.addEventListener('pointerleave',start);
+stage.addEventListener('focus',stop);
+function fitLabels(){
+  document.querySelectorAll('svg text').forEach(t=>{
+    t.removeAttribute('textLength');
+    const g=t.closest('g'); if(!g) return;
+    const shape=g.querySelector('rect,circle,ellipse,path,polygon'); if(!shape) return;
+    const tag=shape.tagName.toLowerCase();
+    const sb=shape.getBBox(), tb=t.getBBox();
+    if(!sb.width||!tb.width) return;
+    const avail = tag==='circle'? shape.r.baseVal.value*1.4 : (tag==='ellipse'? shape.rx.baseVal.value*1.4 : sb.width-10);
+    if(tb.width>avail && avail>14){t.setAttribute('textLength',avail.toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+}
+window.addEventListener('resize',fitLabels);
+fitLabels();
+if(!reduce)start();
+show(0);
+
+
+function apply(n){
+  const xs=[100, 170, 240, 450, 520, 520, 240, 680];
+  document.getElementById('cart').setAttribute('transform', `translate(${xs[n]} 186)`);
+  const map=[0,0,1,1,2,3,4,4];
+  for(let i=0;i<5;i++)document.getElementById('st'+i).classList.toggle('on', map[n]===i);
+  for(let i=0;i<4;i++)document.getElementById('g'+i).classList.toggle('dim', n!==(i*2+1));
+  document.getElementById('loop').classList.toggle('dim', n!==6);
+}
+</script></body></html>

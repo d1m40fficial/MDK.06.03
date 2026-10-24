@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Сеть коммуникаций</title><style>
+:root{--paper:#f7f3e8;--ink:#24303a;--muted:#65717c;--line:#c3bca9;--accent:#9a7300;--card:#fffdf7;--red:#b23a2f;--green:#2f7d54;--blue:#2f5d8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.plate{position:relative;border:1px solid var(--line);background:linear-gradient(150deg,#fffdf7,#f0ead9);border-radius:10px;padding:30px 14px 54px}
+.head{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stage{display:block;width:100%;height:auto;touch-action:pan-y;outline:none}
+.stage:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.node{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3;transition:stroke .2s,fill .2s}
+.node.on{stroke:#9a7300;stroke-width:2.4;fill:#fff8e6}
+.box{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3}
+.lbl{font-size:12px;fill:#24303a}
+svg text{stroke:none;stroke-width:0;paint-order:fill}
+.small{font-size:10px;fill:#65717c}
+.tiny{font-size:9px;fill:#8a8272}
+.mid{font-size:11px;font-weight:600;fill:#24303a}
+.big{font-size:13px;font-weight:700;fill:#24303a}
+.axis{stroke:#b9c1c6;stroke-width:1}
+.grid{stroke:#e3dccb;stroke-width:.8}
+.dim{opacity:.22}
+.readout{position:absolute;right:14px;bottom:28px;font-size:11px;letter-spacing:.03em;background:var(--paper);border:1px solid #ddd4c2;border-radius:4px;padding:2px 6px;max-width:78%}
+.hint{position:absolute;left:14px;bottom:8px;right:150px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:6px 0;padding:0;font-size:12px;color:var(--muted)}
+.keys li::before{content:"◇";color:#a8823d;margin-right:5px}
+@media (max-width:560px){.wrap{padding:8px}.plate{padding:26px 4px 58px}.readout{right:6px;font-size:10px}.hint{left:6px;right:6px;bottom:8px;font-size:9px}}
+@media (prefers-reduced-motion:reduce){.node{transition:none}}
+</style></head>
+<body><div class="wrap"><figure class="fig"><div class="plate">
+<div class="head"><span>Fig 09</span><span>Сеть коммуникаций</span></div>
+<svg class="stage" viewBox="0 0 760 420" role="slider" tabindex="0" aria-label="Сеть коммуникаций" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<rect x="6" y="6" width="748" height="408" rx="10" fill="#f8f3e6" stroke="#d8cfba"/>
+<text class="small" x="280" y="48" text-anchor="middle">СЕМЬ УЧАСТНИКОВ, 21 КАНАЛ</text>
+<line x1="280.0" y1="105.0" x2="373.8" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="280.0" y1="105.0" x2="397.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="280.0" y1="105.0" x2="332.1" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="280.0" y1="105.0" x2="227.9" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="280.0" y1="105.0" x2="163.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="280.0" y1="105.0" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="373.8" y1="146.4" x2="397.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="373.8" y1="146.4" x2="332.1" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="373.8" y1="146.4" x2="227.9" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="373.8" y1="146.4" x2="163.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="373.8" y1="146.4" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="397.0" y1="239.5" x2="332.1" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="397.0" y1="239.5" x2="227.9" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="397.0" y1="239.5" x2="163.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="397.0" y1="239.5" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="332.1" y1="314.1" x2="227.9" y2="314.1" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="332.1" y1="314.1" x2="163.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="332.1" y1="314.1" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="227.9" y1="314.1" x2="163.0" y2="239.5" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="227.9" y1="314.1" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<line x1="163.0" y1="239.5" x2="186.2" y2="146.4" stroke="#ddd3bd" stroke-width="1.2"/>
+<g id="p0" class="node"><circle cx="280.0" cy="105.0" r="26"/><text class="small" x="280.0" y="109.0" text-anchor="middle">РП</text></g>
+<g id="p1" class="node"><circle cx="373.8" cy="146.4" r="26"/><text class="small" x="373.8" y="150.4161217955393" text-anchor="middle">заказчик</text></g>
+<g id="p2" class="node"><circle cx="397.0" cy="239.5" r="26"/><text class="small" x="397.0" y="243.4773027351946" text-anchor="middle">препод.</text></g>
+<g id="p3" class="node"><circle cx="332.1" cy="314.1" r="26"/><text class="small" x="332.1" y="318.1065754692661" text-anchor="middle">студент</text></g>
+<g id="p4" class="node"><circle cx="227.9" cy="314.1" r="26"/><text class="small" x="227.9" y="318.1065754692661" text-anchor="middle">админ</text></g>
+<g id="p5" class="node"><circle cx="163.0" cy="239.5" r="26"/><text class="small" x="163.0" y="243.4773027351946" text-anchor="middle">разраб.</text></g>
+<g id="p6" class="node"><circle cx="186.2" cy="146.4" r="26"/><text class="small" x="186.2" y="150.4161217955393" text-anchor="middle">поддержка</text></g>
+<circle id="msg" cx="280.0" cy="105.0" r="31" fill="none" stroke="#9a7300" stroke-width="3"/>
+<rect class="box" x="470" y="80" width="260" height="240" rx="8"/>
+<text class="mid" x="600" y="106" text-anchor="middle">КОММУНИКАЦИЯ</text>
+<text id="t1" class="small" x="486" y="138" text-anchor="start">отправитель: РП</text>
+<text id="t2" class="small" x="486" y="162" text-anchor="start">канал: встреча</text>
+<text id="t3" class="small" x="486" y="186" text-anchor="start">шум: термины и спешка</text>
+<text id="t4" class="small" x="486" y="210" text-anchor="start">получатель: преподаватель</text>
+<text id="t5" class="small" x="486" y="234" text-anchor="start">обратная связь: вопрос</text>
+<text id="t6" class="big" x="600" y="262" text-anchor="middle">21</text>
+<text id="t7" class="small" x="600" y="284" text-anchor="middle">канал при семи людях</text>
+</svg>
+<div class="readout" data-readout>отправитель: руководитель проекта</div>
+<div class="hint">Проведите по шагам: сообщение идёт от отправителя к получателю и обратно.</div>
+</div><figcaption class="cap"><ul class="keys"><li>отправитель и получатель</li><li>канал и шум</li><li>21 канал на семерых</li><li>RACI</li></ul>Семь человек дают 21 двусторонний канал, девять уже 36. Чем больше команда, тем дороже каждый новый участник и тем важнее повестка и протокол.</figcaption></figure></div>
+<script>
+const STEPS=["отправитель: руководитель проекта", "канал: встреча или письмо", "шум: термины и спешка", "получатель: преподаватель", "обратная связь: понял или нет", "сеть: семь человек дают 21 канал", "RACI: у работы один A", "встреча: повестка, решение, протокол"];
+const N=STEPS.length;
+let step=0,timer=0;
+const stage=document.querySelector('.stage');
+const readout=document.querySelector('[data-readout]');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(n){step=((n%N)+N)%N;readout.textContent=STEPS[step];stage.setAttribute('aria-valuenow',String(step));stage.setAttribute('aria-valuetext',STEPS[step]);apply(step);}
+function start(){if(!timer&&!reduce)timer=setInterval(()=>show(step+1),3800);}
+function stop(){clearInterval(timer);timer=0;}
+stage.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight'||e.key==='ArrowUp')n=step+1;if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=step-1;if(e.key==='Home')n=0;if(e.key==='End')n=N-1;if(n!==null){e.preventDefault();stop();show(n);}});
+stage.addEventListener('pointermove',e=>{const b=stage.getBoundingClientRect();const share=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));stop();show(Math.min(N-1,Math.floor(share*N)));});
+stage.addEventListener('pointerleave',start);
+stage.addEventListener('focus',stop);
+function fitLabels(){
+  document.querySelectorAll('svg text').forEach(t=>{
+    t.removeAttribute('textLength');
+    const g=t.closest('g'); if(!g) return;
+    const shape=g.querySelector('rect,circle,ellipse,path,polygon'); if(!shape) return;
+    const tag=shape.tagName.toLowerCase();
+    const sb=shape.getBBox(), tb=t.getBBox();
+    if(!sb.width||!tb.width) return;
+    const avail = tag==='circle'? shape.r.baseVal.value*1.4 : (tag==='ellipse'? shape.rx.baseVal.value*1.4 : sb.width-10);
+    if(tb.width>avail && avail>14){t.setAttribute('textLength',avail.toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+}
+window.addEventListener('resize',fitLabels);
+fitLabels();
+if(!reduce)start();
+show(0);
+
+
+function apply(n){
+  const nodes=[[280.0, 105.0], [373.8, 146.4], [397.0, 239.5], [332.1, 314.1], [227.9, 314.1], [163.0, 239.5], [186.2, 146.4]];
+  const on={0:[0],1:[0,3],2:[0,3],3:[3],4:[0,3],5:[0,1,2,3,4,5,6],6:[0],7:[0,1,2,3,4,5,6]}[n];
+  for(let i=0;i<7;i++)document.getElementById('p'+i).classList.toggle('on', on.includes(i));
+  const msg=document.getElementById('msg');
+  const target = n===4||n>=6 ? nodes[0] : nodes[3];
+  msg.setAttribute('cx',String(target[0])); msg.setAttribute('cy',String(target[1]));
+  msg.style.opacity = n===2? '.35' : '1';
+  for(let i=1;i<=5;i++){const el=document.getElementById('t'+i); if(el)el.style.fontWeight = n===(i-1)?'700':'400';}
+  document.getElementById('t6').textContent = n===5?'21':(n>=6?'36':'21');
+  document.getElementById('t7').textContent = n>=6?'канал при девяти людях':'канал при семи людях';
+}
+</script></body></html>

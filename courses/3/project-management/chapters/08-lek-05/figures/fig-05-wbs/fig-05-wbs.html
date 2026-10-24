@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Дерево работ и сеть</title><style>
+:root{--paper:#f7f3e8;--ink:#24303a;--muted:#65717c;--line:#c3bca9;--accent:#9a7300;--card:#fffdf7;--red:#b23a2f;--green:#2f7d54;--blue:#2f5d8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:16px}
+.plate{position:relative;border:1px solid var(--line);background:linear-gradient(150deg,#fffdf7,#f0ead9);border-radius:10px;padding:30px 14px 54px}
+.head{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stage{display:block;width:100%;height:auto;touch-action:pan-y;outline:none}
+.stage:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.node{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3;transition:stroke .2s,fill .2s}
+.node.on{stroke:#9a7300;stroke-width:2.4;fill:#fff8e6}
+.box{fill:#fffdf7;stroke:#b7ae99;stroke-width:1.3}
+.lbl{font-size:12px;fill:#24303a}
+svg text{stroke:none;stroke-width:0;paint-order:fill}
+.small{font-size:10px;fill:#65717c}
+.tiny{font-size:9px;fill:#8a8272}
+.mid{font-size:11px;font-weight:600;fill:#24303a}
+.big{font-size:13px;font-weight:700;fill:#24303a}
+.axis{stroke:#b9c1c6;stroke-width:1}
+.grid{stroke:#e3dccb;stroke-width:.8}
+.dim{opacity:.22}
+.readout{position:absolute;right:14px;bottom:28px;font-size:11px;letter-spacing:.03em;background:var(--paper);border:1px solid #ddd4c2;border-radius:4px;padding:2px 6px;max-width:78%}
+.hint{position:absolute;left:14px;bottom:8px;right:150px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:6px 0;padding:0;font-size:12px;color:var(--muted)}
+.keys li::before{content:"◇";color:#a8823d;margin-right:5px}
+@media (max-width:560px){.wrap{padding:8px}.plate{padding:26px 4px 58px}.readout{right:6px;font-size:10px}.hint{left:6px;right:6px;bottom:8px;font-size:9px}}
+@media (prefers-reduced-motion:reduce){.node{transition:none}}
+</style></head>
+<body><div class="wrap"><figure class="fig"><div class="plate">
+<div class="head"><span>Fig 05</span><span>Дерево работ и сеть</span></div>
+<svg class="stage" viewBox="0 0 760 420" role="slider" tabindex="0" aria-label="Дерево работ и сеть" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<rect x="6" y="6" width="748" height="408" rx="10" fill="#f8f3e6" stroke="#d8cfba"/>
+<text class="small" x="230" y="44" text-anchor="middle">ДЕРЕВО РАБОТ</text>
+<text class="small" x="550" y="44" text-anchor="middle">СЕТЬ РАБОТ</text>
+<g id="root" class="node"><rect class="" x="140" y="58" width="120" height="32" rx="6"/><text class="mid" x="200" y="79" text-anchor="middle">ИС Заявки</text></g>
+<line x1="200" y1="90" x2="70" y2="118" stroke="#b7ae99"/>
+<g id="br0" class="node"><rect class="" x="30" y="118" width="80" height="30" rx="6"/><text class="small" x="70" y="138" text-anchor="middle">требования</text></g>
+<line x1="200" y1="90" x2="160" y2="118" stroke="#b7ae99"/>
+<g id="br1" class="node"><rect class="" x="120" y="118" width="80" height="30" rx="6"/><text class="small" x="160" y="138" text-anchor="middle">проектирование</text></g>
+<line x1="200" y1="90" x2="250" y2="118" stroke="#b7ae99"/>
+<g id="br2" class="node"><rect class="" x="210" y="118" width="80" height="30" rx="6"/><text class="small" x="250" y="138" text-anchor="middle">разработка</text></g>
+<line x1="200" y1="90" x2="340" y2="118" stroke="#b7ae99"/>
+<g id="br3" class="node"><rect class="" x="300" y="118" width="80" height="30" rx="6"/><text class="small" x="340" y="138" text-anchor="middle">внедрение</text></g>
+<line x1="70" y1="148" x2="70" y2="175" stroke="#ded4bd"/>
+<rect id="lf0" x="38" y="175" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc0" class="tiny" x="70" y="190" text-anchor="middle">1.1</text>
+<line x1="70" y1="148" x2="70" y2="209" stroke="#ded4bd"/>
+<rect id="lf1" x="38" y="209" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc1" class="tiny" x="70" y="224" text-anchor="middle">1.2</text>
+<line x1="70" y1="148" x2="70" y2="243" stroke="#ded4bd"/>
+<rect id="lf2" x="38" y="243" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc2" class="tiny" x="70" y="258" text-anchor="middle">1.3</text>
+<line x1="160" y1="148" x2="160" y2="175" stroke="#ded4bd"/>
+<rect id="lf3" x="128" y="175" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc3" class="tiny" x="160" y="190" text-anchor="middle">2.1</text>
+<line x1="160" y1="148" x2="160" y2="209" stroke="#ded4bd"/>
+<rect id="lf4" x="128" y="209" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc4" class="tiny" x="160" y="224" text-anchor="middle">2.2</text>
+<line x1="160" y1="148" x2="160" y2="243" stroke="#ded4bd"/>
+<rect id="lf5" x="128" y="243" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc5" class="tiny" x="160" y="258" text-anchor="middle">2.3</text>
+<line x1="250" y1="148" x2="250" y2="175" stroke="#ded4bd"/>
+<rect id="lf6" x="218" y="175" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc6" class="tiny" x="250" y="190" text-anchor="middle">3.1</text>
+<line x1="250" y1="148" x2="250" y2="209" stroke="#ded4bd"/>
+<rect id="lf7" x="218" y="209" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc7" class="tiny" x="250" y="224" text-anchor="middle">3.2</text>
+<line x1="250" y1="148" x2="250" y2="243" stroke="#ded4bd"/>
+<rect id="lf8" x="218" y="243" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc8" class="tiny" x="250" y="258" text-anchor="middle">3.3</text>
+<line x1="250" y1="148" x2="250" y2="277" stroke="#ded4bd"/>
+<rect id="lf9" x="218" y="277" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc9" class="tiny" x="250" y="292" text-anchor="middle">3.4</text>
+<line x1="340" y1="148" x2="340" y2="175" stroke="#ded4bd"/>
+<rect id="lf10" x="308" y="175" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc10" class="tiny" x="340" y="190" text-anchor="middle">4.1</text>
+<line x1="340" y1="148" x2="340" y2="209" stroke="#ded4bd"/>
+<rect id="lf11" x="308" y="209" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc11" class="tiny" x="340" y="224" text-anchor="middle">4.2</text>
+<line x1="340" y1="148" x2="340" y2="243" stroke="#ded4bd"/>
+<rect id="lf12" x="308" y="243" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc12" class="tiny" x="340" y="258" text-anchor="middle">4.3</text>
+<line x1="340" y1="148" x2="340" y2="277" stroke="#ded4bd"/>
+<rect id="lf13" x="308" y="277" width="64" height="22" rx="4" fill="#fffdf7" stroke="#c9bfa8"/>
+<text id="lc13" class="tiny" x="340" y="292" text-anchor="middle">4.4</text>
+<g id="rule" class="dim"><text class="small" x="230" y="342" text-anchor="middle">сумма пакетов = 100% результата</text></g>
+<line id="e0-1" x1="430" y1="140" x2="510" y2="95" stroke="#b7ae99" stroke-width="1.6"/>
+<line x1="430" y1="140" x2="510" y2="215" stroke="#b7ae99" stroke-width="1.6"/>
+<line id="e1-3" x1="510" y1="95" x2="590" y2="140" stroke="#b7ae99" stroke-width="1.6"/>
+<line x1="510" y1="215" x2="590" y2="140" stroke="#b7ae99" stroke-width="1.6"/>
+<line x1="510" y1="215" x2="590" y2="265" stroke="#b7ae99" stroke-width="1.6"/>
+<line id="e3-5" x1="590" y1="140" x2="670" y2="190" stroke="#b7ae99" stroke-width="1.6"/>
+<line x1="590" y1="265" x2="670" y2="190" stroke="#b7ae99" stroke-width="1.6"/>
+<g id="n0" class="node"><circle cx="430" cy="140" r="20"/><text class="small" x="430" y="144" text-anchor="middle">T1</text></g>
+<g id="n1" class="node"><circle cx="510" cy="95" r="20"/><text class="small" x="510" y="99" text-anchor="middle">T2</text></g>
+<g id="n2" class="node"><circle cx="510" cy="215" r="20"/><text class="small" x="510" y="219" text-anchor="middle">T3</text></g>
+<g id="n3" class="node"><circle cx="590" cy="140" r="20"/><text class="small" x="590" y="144" text-anchor="middle">T4</text></g>
+<g id="n4" class="node"><circle cx="590" cy="265" r="20"/><text class="small" x="590" y="269" text-anchor="middle">T5</text></g>
+<g id="n5" class="node"><circle cx="670" cy="190" r="20"/><text class="small" x="670" y="194" text-anchor="middle">T6</text></g>
+<text id="res" class="small" x="550" y="330" text-anchor="middle">цепочка без резерва задаёт срок</text>
+<text id="cp" class="small" x="550" y="352" text-anchor="middle">критический путь: T1 → T2 → T4 → T6 = 34 дня</text>
+</svg>
+<div class="readout" data-readout>результат проекта</div>
+<div class="hint">Разверните ветви, затем перейдите к зависимостям и резерву.</div>
+</div><figcaption class="cap"><ul class="keys"><li>корень результата</li><li>14 пакетов</li><li>сеть работ</li><li>критический путь</li></ul>Дерево заканчивается пакетами с измеримым результатом. Из пакетов и зависимостей собирается сеть, а самая длинная цепочка задаёт срок и не имеет резерва.</figcaption></figure></div>
+<script>
+const STEPS=["результат проекта", "уровень 1: четыре ветви", "уровень 2: четырнадцать пакетов", "правило 100 процентов", "зависимости FS", "сеть из шести работ", "критический путь 34 дня", "резерв 5 дней"];
+const N=STEPS.length;
+let step=0,timer=0;
+const stage=document.querySelector('.stage');
+const readout=document.querySelector('[data-readout]');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(n){step=((n%N)+N)%N;readout.textContent=STEPS[step];stage.setAttribute('aria-valuenow',String(step));stage.setAttribute('aria-valuetext',STEPS[step]);apply(step);}
+function start(){if(!timer&&!reduce)timer=setInterval(()=>show(step+1),3800);}
+function stop(){clearInterval(timer);timer=0;}
+stage.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight'||e.key==='ArrowUp')n=step+1;if(e.key==='ArrowLeft'||e.key==='ArrowDown')n=step-1;if(e.key==='Home')n=0;if(e.key==='End')n=N-1;if(n!==null){e.preventDefault();stop();show(n);}});
+stage.addEventListener('pointermove',e=>{const b=stage.getBoundingClientRect();const share=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));stop();show(Math.min(N-1,Math.floor(share*N)));});
+stage.addEventListener('pointerleave',start);
+stage.addEventListener('focus',stop);
+function fitLabels(){
+  document.querySelectorAll('svg text').forEach(t=>{
+    t.removeAttribute('textLength');
+    const g=t.closest('g'); if(!g) return;
+    const shape=g.querySelector('rect,circle,ellipse,path,polygon'); if(!shape) return;
+    const tag=shape.tagName.toLowerCase();
+    const sb=shape.getBBox(), tb=t.getBBox();
+    if(!sb.width||!tb.width) return;
+    const avail = tag==='circle'? shape.r.baseVal.value*1.4 : (tag==='ellipse'? shape.rx.baseVal.value*1.4 : sb.width-10);
+    if(tb.width>avail && avail>14){t.setAttribute('textLength',avail.toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+}
+window.addEventListener('resize',fitLabels);
+fitLabels();
+if(!reduce)start();
+show(0);
+
+
+function apply(n){
+  for(let i=0;i<4;i++)document.getElementById('br'+i).classList.toggle('on', n===1||n>=2);
+  document.getElementById('root').classList.toggle('on', n<2||n===0);
+  for(let i=0;i<14;i++){const el=document.getElementById('lf'+i); if(el)el.setAttribute('fill', n>=2?'#f3e3b8':'#fffdf7');}
+  document.getElementById('rule').classList.toggle('dim', n!==3);
+  for(let i=0;i<6;i++)document.getElementById('n'+i).classList.toggle('on', n>=4);
+  const crit = n>=6;
+  [['0-1',0],['1-3',0],['3-5',0]].forEach(([id])=>{
+    const el=document.getElementById('e'+id);
+    if(el){el.setAttribute('stroke', crit?'#b23a2f':'#b7ae99'); el.setAttribute('stroke-width', crit?'3.4':'1.6');}
+  });
+  document.getElementById('cp').classList.toggle('dim', n<6);
+  document.getElementById('res').classList.toggle('dim', n<7);
+}
+</script></body></html>

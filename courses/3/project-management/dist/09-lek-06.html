@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#9A7300;--course-tint:#EDE5D2;--course-accent-dark:#D6A520;--course-tint-dark:#2E2814;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ресурсы и бюджет</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
+.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
+.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление проектами</a><span>/</span><span>Ресурсы и бюджет</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.144">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 10</span><span class="pill">Управление проектами</span></div>
+<div class="hero-panel"><h1>Ресурсы и бюджет</h1><p class="dek">Бюджет проекта это расписание, переведённое в деньги: пять человек на шесть месяцев дают тридцать человеко-месяцев и 900 тысяч рублей труда. Пока загрузка не сверена с календарём, а затраты с освоенным объёмом, отчёт показывает оплату, а не ход работ.</p></div>
+<div class="glyph" aria-hidden="true">Л6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Строить календарь загрузки ресурсов</li><li>Различать постоянные, переменные и накладные затраты</li><li>Собирать бюджет снизу вверх с резервами</li><li>Считать CPI и SPI по освоенному объёму</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#пульт-три-кривые-и-табло">Пульт: три кривые и табло</a></li><li><a href="#ресурсы-люди-техника-доступ">Ресурсы: люди, техника, доступ</a></li><li><a href="#перегрузка-и-выравнивание">Перегрузка и выравнивание</a></li><li><a href="#структура-затрат">Структура затрат</a></li><li><a href="#два-резерва">Два резерва</a></li><li><a href="#сборка-бюджета-снизу-вверх">Сборка бюджета снизу вверх</a></li><li><a href="#освоенный-объём-три-правила-счёта">Освоенный объём: три правила счёта</a></li><li><a href="#индексы-и-прогноз">Индексы и прогноз</a></li><li><a href="#что-делать-при-cpi-меньше-единицы">Что делать при CPI меньше единицы</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>К концу третьего месяца проект ИС «Заявки» выглядел здоровым: 430 тысяч из 1,2 млн, «израсходовано 36 процентов, идём по плану». По плану на этот день было шесть функций из двенадцати, принято пять, одну заказчик вернул на переделку.</p>
+<p>Через день появилась вторая цифра: начислено 540 тысяч. 430 это оплаченные счета, а зарплата за третий месяц, счёт за оборудование и часть накладных ещё висели в обязательствах. Стоимость выполненной работы 540 тысяч, стоимость принятого результата 480 тысяч: только последнее число отвечает на вопрос «сколько сделано».</p>
+<p><strong>Деньги и люди в проекте это один и тот же запас, посчитанный двумя способами.</strong> Пять человек на шесть месяцев дают тридцать человеко-месяцев и 900 тысяч рублей труда: календарь показывает те же тридцать клеток, что и смета. Перегрузка одного месяца и перерасход одной статьи это одно событие, увиденное с двух сторон.</p>
+<p>Отклонение видно по освоенному объёму раньше, чем по отчёту: отчёт отвечает, сколько заплатили, а освоенный объём, сколько сделали и приняли.</p>
+<h2 id="пульт-три-кривые-и-табло"><span class="num">02</span>Пульт: три кривые и табло</h2>
+<p>Смотрите на пульт. Слева экран с тремя кривыми: одна идёт от нуля к 1,2 млн по плану, две другие рисуют фактическую историю. Под экраном панель с четырьмя числами, справа табло с восемью строками. Проведите по месяцам и найдите место, где кривые расходятся: до третьего месяца они идут близко, после него плановая уходит вверх, а фактическая выползает под ней.</p>
+<figure class="figure" data-fig="fig-06-evm" data-one="H4sIAAAAAAAC/6VaW4/byJV+719RpjGW5KHUJHVtsams7XSSARzDGCfGAoYfKLKkZkyRDEmppcgNzDgXD3YGO8kCi9x2N5vswwK7D+uZjBPPZKbzF6i/sL8k36kidetWuz2Boaaq6pzvfHXOqVNVlA+vuaGTziLOjtOR39s7pAfz7WBoKfFY6R0ec9vtHY54ajPn2I4TnlrKOB1UO0reG9gjbikTj59EYZwqzAmDlAeQOvHc9Nhy+cRzeFU0VC/wUs/2q4lj+9zSFdhLvdTnvex3ix9nf1l8tHjGsrPF+9mn2Vn2MvsK/86yP2Zn6Mw+WfzT4hfZl9mLw32pc5ikMzz2unEYpvNqNbIjHnevD9qDOu+Y1aoXPOleNxp1rW6jNRqn3O1ebzXbettB2/cC3r3u1PuOfYCm7Tgg3b1+YLfrmoYOx44hPhgM3EEbzZiU+0bdNgZoDWPOA4AP2m6zgXbfH3NqNt2Ofbp3c94Pp9XE+5EXDLv9MHZ5XEXP6V4/dGfzkR0PvaCrmX3beTKMw3Hgdid2XM4nUDGd0A/jvAtzqJgDeLSrN6Lpvl5rMuUBH4acff8dRU1mScpH1bGnJnaQVBMee4PTvdpJbEcwM5VO77Y7WjQ1C7PMHqehGdmuS+z0VgRetci3Uz6PwgThCYNuzNH2JtyU5Lt6NGVJ6Hsuk6zId5V1/tRhx3CL7XpwY1lvai4fqrn78NSQRQeVHK9KYuOkqxOvgkkdDUaTZM2G4ESJN3e9BNxm3YHPp+YPxknqDWbVPMO6SWQjs/o8PUE0zKEddXUDiOQu8j7v6iBu+jxNYZOEyU5N5yMz5dO0msZw2iCMR91xBMc7dsI3fC8yppI7DgFM03DUldyS1B7yJbm+HzpPTOlsXdPeMo+5NzxOu8LTaTh2jpFewrGRHVRnZjhORfYFYcALsO4gdMZJdeIlXt/n80LE2PK8TNNKAVENBwOsyJxVELp8PvB8f5m3SRqHT5CZ/bbNDw7yZp4Weq1uChfImMsxVjMSlSDoSw5ZC4N5AZQvjw0go9Ywl1Y7vAU1ZPsbEYGK3/fna5ETgRQIcgWf7iWTIaO4FVzIe5tAGpLJA4JMWtIm745sfwNZWyLLWgCZ1AtmayIHS4mO3THaBiRGnjvfyivRPJGRbsEnm2xrfW+4rlHf0mif17CnXrJ0dP/A0Z3WlqMgNIzBpBDidddx+ptCtQ6kXG80Dynh01m3ZtAEYqwmJM1qjdt95BUy3IwFH1p5Zp7jRuf1q0irYxntqmDnysZ113UbjrG1/htry58SvSXK1KpsvUVVAAG9gLTPB5uciXI+k6a2SV+7iH7zzaoAmDiiqIoiCmNMY5q5la8Xqj3hs2SzjNGfKtXoLv0RdauR1z7T9xIg0r4m8zs32CKDS19d3TDzvW63zzE9Pi+qpvL/v3yu5CrX7U7HqLtFjZMObFIx+YcRdz2blVfxaLbgyMpc7i4FFXjitNg9ikgSWVHHxWCReBK7dS40pzLEIqCtZRBbm5HdWJunK3ZRzAc8Tmh3HjvcrY7CfP+iJriKirhW5ETFPd073JdHh8N9cbrZO6SNuXfoehPm+HaS4OyCSeKAM/CG45gXnWgpG1Ji4nSIWesjREgh04Let7wh01qwRg3Z9WYHHam4D3gYoQKYGxFbhsLo0HU7nFoKkpG1WxprGJrC4hBnKyXBuuOxwlK77wUuJyGF2bFnV327z31LeRMmuebExjln5AUrLNljA7293hOEJyQD0jF3UobhlsJm4q88FSrtRkdhcp+0lIaGRgwpHbhUFS3l+qCDYxzkZXFDh9txBn1b2aczIxbu0hVU3xUyUafJwwghi6VtB85xGFsKirfrI07Zf2S/z/4Ff/81+3f8+9/s1wyNX2T/k72f/ZvKsj+g6/fZ/2X/nf2KZf+Z/ReGfgvZX+PACTjYpS2XTXXiSab03ObUsJRmg3qMvCfnRhVdED6v2M71ZMfV9YyOVts2mfflyrRDXOKlA0M4yeg0SGfDTzxA5sLSJfM1GheYb3wN840d5o3LzWsXmNe+hnlth/n6peb11nnzed8bmddbO8w3LjdvXGDe+BrmjR3mm2vmo9CfCQpRiPqcCBpqnawxvdVRRc4xo95SRfhZXWuoIhKs3jZU4RTWaGiq4MeaWkeVSSpXN9XhtaUtL05FRzUvEUatJebyWiaNJZNOwURvFUzEqGDSNHImutG5hApd6b4ulXaroFJv5VT0TqegIugJKvqSikzEC6nI2+YuKkPmuZbijGNsNlctL0toeYw/B73scO0Ed/3YpmrKGrB36Hix42MnnOaYzizHjEVVz4t2jgv5/eHOLMTs5WbQ2MpB7Gr0AiHHypOid//hMid34DVaV8MTke0dvRavo10FLw9P79adJZ7Y7HI8XIEEWrMt0eiR+xmrY7X3GXVN7n2dcwsX+5aAaDUlxEFr18b2O+xjv8l+nv0Snz9gy/pt9qvXTLLZaeS1oHPhLHt37r+zCSHSLfKWtQYXHIHU1ls7kOR+oq4Vlddwae7g8uAiLsllXJp/N5eDi6Pfu70W73WIcxTOAeQUjKtSMIwdFI62KZA7uO3sdMd5pB1cCGjCY9dzUuU8sSIPjZaxKxH/mv0le5F9xXCePMOJ8q9ofIbPy8Wz10x6id1p7ML+EthAfg/H1k/w9WX2+RJzH2fjzWN4fu1QmGundjVvLfl12f2HDCfdF2zxAci9v3i2+IjBAH39ePEzYH9anLrXj/ao+bTYFu+Jyb3E1F4tnmUvGWDP1tVfZF92GTDfy16x7At6ZJ8uPoQgvr6AzE+h/xkkn5E8Dp6vQOUz4H2B9ofFwftj+PAr/P1nOqDDwOI5JL5c/LhWMBMPuqLgZkq3m4KmI64uY79o00VQbBI9mnTugcN9tKnv6OHm8f9sOXLrjrT7TLB+vjWK+gDiTCxN6tof+73sN0t/Ag1c15xCjSI7WppG7vlQjDxXtwiwRkdTLzDNcOipMbKrqZ0DRpcUUiL3ijsMqbxE6+W6l7OXKnEkFU14lglYYvgC2mAD778icyKqfxTXnz+zfAqvwP9MfEcgEcIc+ZlMaQb4M6ar9SaTyYnQrMLREw1cH1cXOCf2IqQrbuJJyh587+j+A+uR8gY5qahMWfwEwl8snnUZxecTkKQ73AcyCwUQrmuQ27zTIfs+X7vRsaOHQqbQOBP5uSFx/+G6Nbj4OTHJvoBPYOrP8IMMDsIIJiRLkbFEbKj1oGhp0tKGe1HBMLjmOeWxmbvlniUcU/N5MEyPzT2fpziV8MjS1NQb8djSCklxCbbc0BmPeJDWfjjm8ewB97EHh3G5JF+rliqFdF4Cdso/Wi8Uj9f16F2CdYJLdHhSG9mpc/xdevlQLu16+5CrVEoVKc4Tc28wDsQbYJYchyfloDIXUyqXg7fuVd6+V3nrnplbrlFFu5P/hCI88YhEH5tiOrWEp7fSNPb645SXSxsX7pL6AAPBsEzylcprFMgMNFYGKqYdRf5Mapuna4xp0ylX5t6gfE1E4MaNa/kMZUBg4h3wjYFbLlesnpgiwbytV9R6R9O24MIIaDhM2vFSTQBVzCLAp3uSvO26RxM44q4HuIAjSqhlCENQUrnVm1NqBFYw9n0T5Di98bIsq3QrjsOTd+l0VXr6dLP3+1GpEliS23mdu3xwXuWbZC5Xqm4qfScccRrSNnqPApc670nh4JolGFbmvIZ8odl8kw/ssQ+XmtIXZp4T5ukpsm7XzMWNg8ejcMLl7GV69i2pMOTpbXoRiwS449NvMO8ir8v0Y5JYKjjNc+u7dnqMlJyWNVV+9YKyroK5IzT+sdqv0Wu4yn6/Jk6qlU2GSx1MTQIM/BBLR4DfvFeB+BUmgLjTDERWXSItfg4hsRDZuMqegZfepddXCVJoj7GLF/Mt3y+Xip8LsAoHYXxkO8flFF6DEmNpLebkyLWVQaJ3RcmhpU9C0nNDK4V7woQnabk0xBijdTCsYJGn4zhYF4UfIm4NtwsLXQpUeX1Sue97UcLVCN5T6TI5DIMCU6hfhAsPWWKwhm/37BGe4d3whMd37ISXN9gm/VyS0uF2OC1XVJb2MYVlW0oLe3mUnz69lhYBv8C6PbE9H8WaWCC75URK35CzrcW1Pkg8tP2aqCo39VqDdVk5F86nu5KeXiheMKnq2opfwaknCdy4IZn09EZlnm6VtbXgqUIKHvqWN+VuWUdSbkvLneWWSz8nltRS/pvArcD9tj+LjpMSlSvGKJVP9/Kyfz4/Y06vo0vqMiEpS1fJae6Ri/MymVdQJDstI5rj3iqjZdUNRDpLj0cT65Gm0psFg94u4NPAp4kPzk2PVcbF+AFEcE4yWhBpQMTAp0PDtiPUdYzhU6+jH58mxnF+emwuzYys5YIO1BYSZWrB5tujm63OSsgZx6sdE0l05HP6env2jlsuYVAuFnzZznp6JYGlt+n5qb7cpKaVN9M0rqCZ5+a2rjP9O3RnS926oVWjyaPR45tarZHjSB9FnsVpYL9sO3g8fYp9jyWrXqFFvSudwSi1JlZvskxUo4KaFPm2A6M1ZKUqPbvb95EHsmuHBSzR0TcAW8ZIpVuiq27pUoRkJ0JyRQRcOXcg6MjcfRDZR0ZpAsuQWHL2k905ld8+5expDY0qk40zUemSO6YwgfXHSRPmD/UbNxJ6nMP4TNwbzrI/0WH2lbhs4Ez7p41T9Hm0y2EuUNyW/5QO+KSCY32J6gturvJScLgvf4Pal/8N52+5nWnklyMAAA=="><iframe title="Figure 1: fig-06-evm" scrolling="no"></iframe><figcaption>Проведите по месяцам: три кривые расходятся, индексы объясняют почему.</figcaption></figure>
+
+<p>Три кривые это PV, EV и AC. <strong>PV</strong> это плановая стоимость работ, которые должны быть готовы к этой дате. <strong>EV</strong> это плановая стоимость работ, которые выполнены и приняты. <strong>AC</strong> это начисленная стоимость того, что сделано, независимо от того, оплачен счёт или нет. Панель держит CPI, SPI, BAC и EAC. Табло показывает шаги ровно так:</p>
+<ol>
+<li>«план: PV на шесть месяцев»</li>
+<li>«факт: AC больше плана»</li>
+<li>«освоенный объём EV»</li>
+<li>«плановый объём PV»</li>
+<li>«фактические затраты AC»</li>
+<li>«CPI = 0,89»</li>
+<li>«SPI = 0,80»</li>
+<li>«прогноз EAC = 1,35 млн»</li>
+</ol>
+<p>PV 600 тысяч это стоимость работ, которые по плану должны быть готовы к концу третьего месяца: половина срока при ровном плане по 200 тысяч в месяц. EV 480 тысяч это плановая стоимость пяти принятых функций из двенадцати. AC 540 тысяч это стоимость работы, включая мартовскую зарплату и всё, что уже потреблено.</p>
+<p>Отсюда два отклонения: <code>CV = EV − AC = −60</code> тысяч, за принятый результат заплачено больше, чем он стоит по смете, и <code>SV = EV − PV = −120</code> тысяч, принято меньше, чем планировалось.</p>
+<p>Вторая строка табло сравнивает не с PV, а с освоенным объёмом: 540 против 480. Это и есть перерасход. Сравнение 540 против 600 экономией только кажется: денег ушло меньше, потому что сделано меньше. Каждая тысяча результата обошлась в 1125 рублей вместо 1000, отсюда CPI 0,89.</p>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Хватает ли пяти человек на шесть месяцев, или календарь уже перегружен?</span></button></p>
+<div class="gate-content" hidden><h2 id="ресурсы-люди-техника-доступ"><span class="num">03</span>Ресурсы: люди, техника, доступ</h2>
+<p>Ресурс это то, что конечно. В ИТ-проекте ресурсов четыре вида.</p>
+<p><strong>Трудовой</strong> измеряется не головами, а человеко-месяцами: аналитик на полставки за месяц даёт 0,5. <strong>Технический</strong> это станции, тестовый сервер, стенд с базой. <strong>Финансовый</strong> это деньги, которые стоят за людьми, техникой и лицензиями. <strong>Информационный</strong> это доступ: к кадровой базе, к справочникам, к заказчику, который подписывает макет.</p>
+<p>Узкое место почти никогда не деньги: второго аналитика со знанием предметной области за месяц не найти. Поэтому календарь строят по ролям.</p>
+<table>
+<thead>
+<tr>
+<th>Роль</th>
+<th>М1</th>
+<th>М2</th>
+<th>М3</th>
+<th>М4</th>
+<th>М5</th>
+<th>М6</th>
+<th>Всего</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Руководитель</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>6,0</td>
+</tr>
+<tr>
+<td>Аналитик</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,5</td>
+<td>0,5</td>
+<td>1,0</td>
+<td>6,0</td>
+</tr>
+<tr>
+<td>Разработчик 1</td>
+<td>0,5</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,5</td>
+<td>6,0</td>
+</tr>
+<tr>
+<td>Разработчик 2</td>
+<td>0,5</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,0</td>
+<td>1,5</td>
+<td>6,0</td>
+</tr>
+<tr>
+<td>Тестировщик</td>
+<td>0,0</td>
+<td>0,5</td>
+<td>1,0</td>
+<td>1,5</td>
+<td>1,5</td>
+<td>1,5</td>
+<td>6,0</td>
+</tr>
+<tr>
+<td>Итого</td>
+<td>3,0</td>
+<td>4,5</td>
+<td>5,0</td>
+<td>6,0</td>
+<td>5,0</td>
+<td>6,5</td>
+<td>30,0</td>
+</tr>
+</tbody>
+</table>
+<p>По строке видно, что человек занят все шесть месяцев: сумма 6,0 у каждой роли. Клетка 1,5 означает работу на полтора человека при одном человеке, клетка 0,5 это простой на полмесяца.</p>
+<p>В первом месяце загружено 3,0 из 5,0: два человеко-месяца оплачены и не использованы, это 60 тысяч за простой. В четвёртом и шестом 6,0 и 6,5: приёмка, перенос данных, обучение и регрессия назначены на одни недели.</p>
+<h2 id="перегрузка-и-выравнивание"><span class="num">04</span>Перегрузка и выравнивание</h2>
+<p><strong>Перегрузка</strong> это когда работы больше, чем человек может сделать за месяц. <strong>Выравнивание</strong> это перенос работы в месяцы с простоем без изменения объёма и срока.</p>
+<p>Выравнивают не растягиванием: если растянуть все работы на весь срок, пиков нет, но проект перестаёт заканчиваться. Растягивание меняет длительность, выравнивание порядок.</p>
+<p>Три переноса снимают почти все пики.</p>
+<ol>
+<li><strong>Тестировщик начинает в первом месяце.</strong> Сценарии и тестовые данные пишутся по реестру требований, а не по готовому коду: клетки 0,0 и 0,5 становятся 1,0, клетки 1,5 в четвёртом и пятом падают до 1,0.</li>
+<li><strong>Разработчики готовят среду и скрипты миграции в первом месяце.</strong> Схема базы согласована, значит скрипты пишут против неё: клетки 0,5 становятся 1,0, клетки 1,5 в шестом падают до 1,0.</li>
+<li><strong>Материалы обучения переезжают с четвёртого месяца на пятый.</strong> У аналитика в четвёртом 1,5 из-за приёмки второго релиза и обучения одновременно; часть обучения сдвигается туда, где у него 0,5.</li>
+</ol>
+<p>После переносов все клетки равны 1,0, а итог по месяцам ровно 5,0. Это не совпадение: тридцать человеко-месяцев на шесть месяцев дают среднюю 5,0, и любая клетка 1,5 уже оплачена клеткой 0,5 в другом месяце.</p>
+<p><strong>Выравнивание не меняет бюджет.</strong> Труд стоит 900 тысяч и до переносов, и после: люди наняты на шесть месяцев, и платят им за календарь, а не за загруженность. Меняется риск переработки и число дефектов из-за спешки.</p>
+<div class="callout tradeoff"><span class="label">Выравнивание может удлинить срок, если переносить работу с критического пути. Сначала переносят то, что лежит внутри резерва, и только потом трогают цепочку, задающую дату.</span></div></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Из чего складывается 1,2 млн и где в нём спрятан риск?</span></button></p>
+<div class="gate-content" hidden><h2 id="структура-затрат"><span class="num">05</span>Структура затрат</h2>
+<p>Затраты делят на прямые и накладные, а по поведению на постоянные и переменные. Прямые относят к пакету работ, накладные относятся к проекту целиком.</p>
+<p><strong>Труд</strong> это 30 человеко-месяцев по 30 тысяч рублей с начислениями, то есть 900 тысяч, три четверти бюджета. При двадцати рабочих днях ставка даёт 1500 рублей за человеко-день. <strong>Оборудование</strong> это две станции по 30 тысяч и тестовый сервер за 30 тысяч, всего 90 тысяч, покупка разовая. <strong>Лицензии и хостинг</strong> на шесть месяцев стоят 60 тысяч. <strong>Накладные</strong> это аренда, связь и поддержка рабочих мест: 10 тысяч в месяц, всего 60 тысяч.</p>
+<p>Постоянные затраты не меняются, пока проект идёт: аренда, лицензии на срок, оклады. Переменные растут вместе с работой: оплата за обработанную заявку, почасовая аренда облака.</p>
+<p>В «Заявках» почти всё постоянно: пять человек получают оклад независимо от числа принятых функций, поэтому сэкономить на людях нельзя, не сократив объём или срок. Экономия на ставке тоже не работает, она задана договором и рынком.</p>
+<p>Полная стоимость человеко-месяца: 1,2 млн на 30 человеко-месяцев даёт 40 тысяч, из них 30 тысяч труд, а 10 тысяч оборудование, лицензии, накладные и резервы.</p>
+<table>
+<thead>
+<tr>
+<th>Статья</th>
+<th>Расчёт</th>
+<th>Сумма, руб.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Труд</td>
+<td>30 человеко-месяцев × 30 000</td>
+<td>900 000</td>
+</tr>
+<tr>
+<td>Оборудование</td>
+<td>2 станции по 30 000 и сервер 30 000</td>
+<td>90 000</td>
+</tr>
+<tr>
+<td>Лицензии и хостинг</td>
+<td>6 месяцев</td>
+<td>60 000</td>
+</tr>
+<tr>
+<td>Накладные</td>
+<td>10 000 × 6 месяцев</td>
+<td>60 000</td>
+</tr>
+<tr>
+<td>Резерв на известные риски</td>
+<td>EMV трёх рисков</td>
+<td>60 000</td>
+</tr>
+<tr>
+<td>Резерв управления</td>
+<td>решение спонсора</td>
+<td>30 000</td>
+</tr>
+<tr>
+<td>Итого бюджет, BAC</td>
+<td></td>
+<td>1 200 000</td>
+</tr>
+</tbody>
+</table>
+<h2 id="два-резерва"><span class="num">06</span>Два резерва</h2>
+<p>Резерв нужен потому, что часть событий известна по названию, но не по дате.</p>
+<p><strong>Резерв на известные риски</strong> считают по ожидаемой денежной величине. Доступ к кадровой базе задержат с вероятностью 0,3 при последствии 80 тысяч: <code>0,3 × 80 = 24</code> тысячи. Формат импорта изменится с вероятностью 0,4 при последствии 50 тысяч: 20 тысяч. Тестировщик заболеет на приёмке с вероятностью 0,2 при последствии 80 тысяч: 16 тысяч. Сумма 24 + 20 + 16 = 60 тысяч.</p>
+<p><strong>Резерв управления</strong> это деньги на риски, которые никто не назвал. Их держит спонсор и выдаёт решением, а не руководитель по усмотрению. Здесь 30 тысяч, или 2,5 процента бюджета.</p>
+<p>Резерв на известные риски входит в базу по стоимости, потому что эти риски уже часть плана. Резерв управления в строгой практике держат вне базы. В «Заявках» спонсор утвердил одну цифру 1,2 млн, поэтому обе суммы внутри BAC, но у них разные строки и владельцы.</p>
+<p><strong>Резерв это строка с владельцем и условием выдачи</strong>, а не запас внутри статьи: спрятанный резерв нельзя увидеть, перераспределить и защитить перед спонсором.</p>
+<h2 id="сборка-бюджета-снизу-вверх"><span class="num">07</span>Сборка бюджета снизу вверх</h2>
+<p>Бюджет собирают от пакетов, не от общего числа.</p>
+<ol>
+<li>Взять четырнадцать пакетов WBS с оценками в днях.</li>
+<li>Перевести дни в деньги по ставке 1500 рублей.</li>
+<li>Добавить прямые закупки: станции, сервер, лицензии.</li>
+<li>Свернуть пакеты по ветвям дерева, затем сложить ветви.</li>
+<li>Добавить накладные, резерв на известные риски, резерв управления.</li>
+<li>Сверить сверху вниз с аналогом и с ограничением спонсора.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Пакет</th>
+<th>Труд, человеко-дни</th>
+<th>Стоимость труда, руб.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Реестр требований</td>
+<td>8</td>
+<td>12 000</td>
+</tr>
+<tr>
+<td>Схема базы и миграции</td>
+<td>12</td>
+<td>18 000</td>
+</tr>
+<tr>
+<td>Модуль подачи заявки</td>
+<td>24</td>
+<td>36 000</td>
+</tr>
+<tr>
+<td>Итого три пакета</td>
+<td>44</td>
+<td>66 000</td>
+</tr>
+</tbody>
+</table>
+<p>Модуль подачи заявки это двадцать четыре человеко-дня, потому что двенадцать дней его делают два разработчика. Умножение на 1500 даёт 36 тысяч, и сумма попадает в ветвь разработки без отдельного согласования: она уже следует из оценки и ставки.</p>
+<p>Сверка сверху вниз ловит грубую ошибку: похожий проект стоил 1,1 млн, и 1,2 млн отличается на 9 процентов, что нормально. Если бы снизу вышло 2,4 млн, искали бы ошибку в ставке или в числе дней.</p>
+<p>Бюджет утверждают как базовый план и фиксируют версию.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как из четырёх чисел получаются индексы и прогноз?</span></button></p>
+<div class="gate-content" hidden><h2 id="освоенный-объём-три-правила-счёта"><span class="num">08</span>Освоенный объём: три правила счёта</h2>
+<p>Освоенный объём работает при трёх правилах, и каждое кто-нибудь нарушает.</p>
+<p><strong>EV считают по принятому результату.</strong> Пять принятых функций из двенадцати дают 480 тысяч. Формулировка «форма почти готова» не даёт ни рубля, иначе проект осваивает бюджет быстрее, чем делает работу.</p>
+<p><strong>Все три числа считают в деньгах плана.</strong> PV, EV и AC берут из сметы: функция стоит по плану 100 тысяч и входит в EV сотней, даже если делали её дольше и дороже.</p>
+<p><strong>AC это начисленная стоимость, а не оплата.</strong> Отсюда разница между 430 и 540 тысячами. Оплачено 430: 300 тысяч труда за два месяца, 60 тысяч лицензий, 30 тысяч накладных и 40 тысяч аванса за оборудование. Начислено 540: 450 тысяч труда за три месяца целиком, 60 тысяч лицензий и 30 тысяч накладных. Переход проверяется строкой <code>430 + 150 − 40 = 540</code>: из оплаченного убирают аванс и добавляют начисленную зарплату.</p>
+<p>Отчёт по кассе отвечает, сколько денег ушло со счёта; управление стоимостью спрашивает, сколько ресурса уже потреблено.</p>
+<div class="callout pitfall"><span class="label">Процент готовности, названный исполнителем, это не освоенный объём. Он завышается к концу месяца и не уменьшается, поэтому проект «готов на 90 процентов» три месяца подряд. EV берут из акта приёмки пакета.</span></div>
+
+<h2 id="индексы-и-прогноз"><span class="num">09</span>Индексы и прогноз</h2>
+<p><code>CPI = EV / AC = 480 / 540 = 0,89</code>. На рубль затрат приходится 89 копеек плановой стоимости, то есть каждый рубль результата стоит 1,12 рубля. <code>SPI = EV / PV = 480 / 600 = 0,80</code>. На рубль плана приходится 80 копеек освоенного объёма.</p>
+<p>Индексы не заменяют друг друга: CPI отвечает за деньги, SPI за объём.</p>
+<p><strong>SPI не измеряет календарное опоздание.</strong> Он сравнивает деньги с деньгами, поэтому 0,80 не значит «опоздание на 20 процентов срока». Дату даёт критический путь: часть недоделанного может лежать вне его и не двигать приёмку.</p>
+<p>Прогноз при текущей эффективности: <code>EAC = BAC / CPI = 1 200 000 / 0,89 = 1 350 000</code>, то есть 1,35 млн и на 150 тысяч больше бюджета. Остаток работы <code>ETC = EAC − AC = 810 000</code>, отклонение по завершении <code>VAC = BAC − EAC = −150 000</code>.</p>
+<p>Если отклонение было разовым, формула другая: <code>EAC = AC + (BAC − EV) = 540 000 + 720 000 = 1 260 000</code>. Выбор между 1,26 и 1,35 млн это вопрос о природе отклонения: разовый сбой лечат одной формулой, систематическое отставание другой.</p>
+<p>Уложиться в бюджет помогает проверить индекс производительности до завершения: <code>TCPI = (BAC − EV) / (BAC − AC) = 720 000 / 660 000 = 1,09</code>. Оставшиеся 720 тысяч плановой стоимости надо сделать за 660 тысяч, то есть на 9 процентов дешевле, чем шли до сих пор.</p>
+<p>Календарный расчёт даёт ту же картину: остаток 810 тысяч на три месяца это 270 тысяч в месяц против плановых 200. Чтобы уложиться в 1,2 млн, нужно либо поднять эффективность до TCPI 1,09, либо убрать из объёма около 150 тысяч плановой стоимости.</p>
+<h2 id="что-делать-при-cpi-меньше-единицы"><span class="num">10</span>Что делать при CPI меньше единицы</h2>
+<p>Порядок важнее решительности: сначала проверяют данные, потом ищут причину, затем выбирают ответ.</p>
+<p><strong>Проверить данные.</strong> Все ли счета начислены, нет ли двойного счёта за одну работу, не завышен ли EV, не попал ли аванс в стоимость. Ошибка учёта лечится за день, а сокращение объёма дорого.</p>
+<p><strong>Найти причину.</strong> Их обычно четыре: несогласованное изменение объёма, переделка принятого, неверная ставка, незапланированная работа вроде обучения. Переделку лечат проверкой на входе, а изменение объёма согласованием.</p>
+<p><strong>Выбрать ответ.</strong> Вариантов четыре, и у каждого цена.</p>
+<ul>
+<li>Вернуть эффективность: уложиться в TCPI 1,09, убрав лишние согласования и переделку.</li>
+<li>Сократить объём: убрать работу на 150 тысяч плановой стоимости, срок сохраняется.</li>
+<li>Взять резерв: 30 тысяч резерва управления проблемы в 150 тысяч не закрывают, нужно решение спонсора.</li>
+<li>Сдвинуть срок: принять EAC 1,35 млн и получить ещё месяц.</li>
+</ul>
+<p><strong>Доложить числами.</strong> Спонсору нужны CPI 0,89, SPI 0,80, EAC 1,35 млн и выбранный вариант с ценой. Фраза «есть небольшие сложности» не даёт ему решить.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какие четыре ошибки в бюджете стоят дороже всего?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки"><span class="num">11</span>Типичные ошибки</h2>
+<p><strong>Бюджет процентом от прошлого проекта.</strong> Похожий проект стоил 1,1 млн, значит этот будет 1,21 млн, плюс десять процентов на новизну. Число правдоподобно и ни на чём не основано: двенадцать функций и четырнадцать пакетов с ним не сверяли. Ошибка всплывает на четвёртом месяце, когда деньги кончаются раньше работ.</p>
+<p><strong>Резерв внутри статей.</strong> В каждой строке закладывают «на всякий случай» по десять процентов и называют это осторожностью. Сколько в бюджете резерва, не знает никто. Когда риск срабатывает, две статьи претендуют на одни деньги, а спонсор отказывает, потому что резерва формально нет.</p>
+<p><strong>Отчёт по затратам без освоенного объёма.</strong> 430 тысяч из 1,2 млн выглядят как 36 процентов при 40 процентах готовности, и проект объявляют здоровым. Обязательства в 110 тысяч не видны, отставание по функциям спрятано за оплатой.</p>
+<p><strong>Экономия на тестировании.</strong> Когда CPI падает, первым делом сокращают проверки: они не создают функций и кажутся накладными. Дефекты переезжают к заказчику, исправление после приёмки стоит в разы дороже, и следующий месяц приносит ещё больший перерасход.</p>
+<div class="callout pitfall"><span class="label">Самая дорогая ошибка не завышенная ставка, а отсутствие сверки плана с фактом. Бюджет без освоенного объёма показывает оплату и молчит о работе.</span></div>
+
+<h2 id="проверьте-себя"><span class="num">12</span>Проверьте себя</h2>
+<details class="check"><summary><span>PV 600, EV 480, AC 540. Что говорят CV и SV?</span></summary><div><p><code>CV = −60</code>: перерасход 60 тысяч. <code>SV = −120</code>: отставание по объёму на 120 тысяч. Спонсору нужны оба: при CPI 0,89 перерасход к концу вырастет до 150 тысяч.</p></div></details>
+
+<details class="check"><summary><span>Почему в отчёте 430 тысяч, а в расчёте индексов 540?</span></summary><div><p>430 это оплаченные счета без мартовской зарплаты и с авансом за оборудование, 540 начисленная стоимость работы. Для CPI нужны начисления: ресурс потреблён, даже если счёт не оплачен.</p></div></details>
+
+<details class="check"><summary><span>В четвёртом месяце у аналитика 1,5 загрузки. Два способа выровнять и цена каждого?</span></summary><div><p>Перенести обучение в пятый месяц, где у него 0,5: обучение готово позже, риск сдвига переходит на пятый месяц. Передать часть анализа тестировщику: нужна передача контекста, растёт риск ошибки.</p></div></details>
+
+<details class="check"><summary><span>CPI 0,89, BAC 1,2 млн. Назовите EAC и одно решение в бюджет.</span></summary><div><p><code>EAC = 1,2 / 0,89 = 1,35 млн</code>, перерасход 150 тысяч. В бюджет укладывается сокращение объёма на 150 тысяч плановой стоимости.</p></div></details>
+
+<h2 id="итоги"><span class="num">13</span>Итоги</h2>
+<ul>
+<li>Ресурс это конечный запас: люди в человеко-месяцах, техника, деньги и доступы. Деньги и люди это одно и то же, посчитанное календарём и сметой.</li>
+<li>Календарь загрузки: клетка 1,5 это перегрузка, клетка 0,5 оплаченный простой.</li>
+<li>Выравнивание меняет порядок работ, а не длительность, и не меняет бюджет труда.</li>
+<li>Затраты делят на труд, оборудование, лицензии и накладные; в ИТ-проекте почти всё постоянно, поэтому экономят объёмом и сроком.</li>
+<li>Резерв на известные риски считают по EMV, резерв управления держит спонсор; оба стоят отдельными строками с владельцем.</li>
+<li>Бюджет собирают снизу вверх от пакетов, а сверху вниз только проверяют на грубую ошибку.</li>
+<li><code>CPI = EV / AC</code>, <code>SPI = EV / PV</code>, <code>EAC = BAC / CPI</code>: при CPI 0,89 бюджет 1,2 млн превращается в 1,35 млн.</li>
+</ul>
+<h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что такое освоенный объём?</p><div class="opts"><label class="opt"><input type="radio" name="q147_0" value="0" data-ok><span>Плановая стоимость фактически выполненных и принятых работ</span></label><label class="opt"><input type="radio" name="q147_0" value="1"><span>Сумма оплаченных счетов за период</span></label><label class="opt"><input type="radio" name="q147_0" value="2"><span>Процент готовности, названный исполнителем</span></label><label class="opt"><input type="radio" name="q147_0" value="3"><span>Остаток бюджета на конец месяца</span></label></div><p class="quiz-why" hidden>EV считают в деньгах плана и только по принятому результату.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>EV 480 тысяч, AC 540 тысяч. Чему равен CPI?</p><div class="opts"><label class="opt"><input type="radio" name="q147_1" value="0" data-ok><span>0,89</span></label><label class="opt"><input type="radio" name="q147_1" value="1"><span>1,13</span></label><label class="opt"><input type="radio" name="q147_1" value="2"><span>0,80</span></label><label class="opt"><input type="radio" name="q147_1" value="3"><span>1,25</span></label></div><p class="quiz-why" hidden>CPI = 480 / 540 = 0,89, то есть 89 копеек на рубль затрат.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что означает SPI 0,80?</p><div class="opts"><label class="opt"><input type="radio" name="q147_2" value="0" data-ok><span>Освоено 80 процентов планового объёма на эту дату</span></label><label class="opt"><input type="radio" name="q147_2" value="1"><span>Проект опаздывает ровно на 20 процентов календарного срока</span></label><label class="opt"><input type="radio" name="q147_2" value="2"><span>Затраты на 20 процентов ниже плана</span></label><label class="opt"><input type="radio" name="q147_2" value="3"><span>Осталось выполнить 20 процентов работ</span></label></div><p class="quiz-why" hidden>SPI сравнивает деньги с деньгами, календарное опоздание он не измеряет.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Как прогнозируют EAC при сохранении текущей эффективности?</p><div class="opts"><label class="opt"><input type="radio" name="q147_3" value="0" data-ok><span>BAC делить на CPI, то есть 1,2 млн / 0,89 = 1,35 млн</span></label><label class="opt"><input type="radio" name="q147_3" value="1"><span>BAC умножить на SPI</span></label><label class="opt"><input type="radio" name="q147_3" value="2"><span>AC плюс PV</span></label><label class="opt"><input type="radio" name="q147_3" value="3"><span>EV минус AC</span></label></div><p class="quiz-why" hidden>При систематическом отклонении EAC = BAC / CPI, при разовом сбое EAC = AC + (BAC − EV).</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Клетка 1,5 в календаре загрузки означает, что</p><div class="opts"><label class="opt"><input type="radio" name="q147_4" value="0" data-ok><span>работ в этом месяце на полтора человека при одном человеке</span></label><label class="opt"><input type="radio" name="q147_4" value="1"><span>человек работает полтора месяца подряд</span></label><label class="opt"><input type="radio" name="q147_4" value="2"><span>на проект добавили полтора сотрудника</span></label><label class="opt"><input type="radio" name="q147_4" value="3"><span>стоимость человеко-месяца выросла в полтора раза</span></label></div><p class="quiz-why" hidden>Перегрузка это работа сверх физической возможности человека за месяц.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что происходит с бюджетом труда после выравнивания загрузки?</p><div class="opts"><label class="opt"><input type="radio" name="q147_5" value="0" data-ok><span>Не меняется, потому что люди наняты на весь срок</span></label><label class="opt"><input type="radio" name="q147_5" value="1"><span>Уменьшается на стоимость простоя</span></label><label class="opt"><input type="radio" name="q147_5" value="2"><span>Растёт на стоимость переработки</span></label><label class="opt"><input type="radio" name="q147_5" value="3"><span>Уменьшается вдвое</span></label></div><p class="quiz-why" hidden>Платят за календарь, а не за загруженность, поэтому меняется риск, а не сумма.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Как считают резерв на известные риски?</p><div class="opts"><label class="opt"><input type="radio" name="q147_6" value="0" data-ok><span>Суммой ожидаемых денежных величин идентифицированных рисков</span></label><label class="opt"><input type="radio" name="q147_6" value="1"><span>Процентом от прошлого проекта</span></label><label class="opt"><input type="radio" name="q147_6" value="2"><span>Половиной резерва управления</span></label><label class="opt"><input type="radio" name="q147_6" value="3"><span>Разницей между BAC и EAC</span></label></div><p class="quiz-why" hidden>EMV это вероятность, умноженная на денежное последствие, а резерв это их сумма.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Почему оплаченные 430 тысяч не равны AC 540 тысяч?</p><div class="opts"><label class="opt"><input type="radio" name="q147_7" value="0" data-ok><span>AC учитывает начисленную стоимость работы, включая неоплаченные обязательства</span></label><label class="opt"><input type="radio" name="q147_7" value="1"><span>В AC включён резерв управления</span></label><label class="opt"><input type="radio" name="q147_7" value="2"><span>Оплата всегда меньше начисления на 110 тысяч</span></label><label class="opt"><input type="radio" name="q147_7" value="3"><span>AC считают в ценах будущего года</span></label></div><p class="quiz-why" hidden>Ресурс потреблён, даже если счёт ещё не оплачен; для индексов нужны начисления.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>С чего начинают, когда CPI оказался меньше единицы?</p><div class="opts"><label class="opt"><input type="radio" name="q147_8" value="0" data-ok><span>С проверки данных: начисления, двойной счёт, завышенный EV</span></label><label class="opt"><input type="radio" name="q147_8" value="1"><span>С немедленного сокращения тестирования</span></label><label class="opt"><input type="radio" name="q147_8" value="2"><span>С повышения ставки в смете</span></label><label class="opt"><input type="radio" name="q147_8" value="3"><span>С увеличения резерва управления</span></label></div><p class="quiz-why" hidden>Сначала исключают ошибку учёта, потом ищут причину и выбирают ответ.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие затраты относятся к накладным?</p><div class="opts"><label class="opt"><input type="checkbox" name="q147_9" value="1" data-ok><span>Оплата связи</span></label><label class="opt"><input type="checkbox" name="q147_9" value="4"><span>Тестовый сервер</span></label><label class="opt"><input type="checkbox" name="q147_9" value="3"><span>Оклад разработчика</span></label><label class="opt"><input type="checkbox" name="q147_9" value="0" data-ok><span>Аренда помещения</span></label><label class="opt"><input type="checkbox" name="q147_9" value="5"><span>Лицензия СУБД</span></label><label class="opt"><input type="checkbox" name="q147_9" value="2" data-ok><span>Поддержка рабочих мест</span></label></div><p class="quiz-why" hidden>Накладные относятся к проекту целиком и не разносятся по пакетам напрямую.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какие действия выравнивают загрузку без изменения срока?</p><div class="opts"><label class="opt"><input type="checkbox" name="q147_10" value="2" data-ok><span>Перенести обучение в месяц с загрузкой 0,5</span></label><label class="opt"><input type="checkbox" name="q147_10" value="5"><span>Увеличить резерв управления</span></label><label class="opt"><input type="checkbox" name="q147_10" value="1" data-ok><span>Начать сценарии тестирования раньше</span></label><label class="opt"><input type="checkbox" name="q147_10" value="3"><span>Растянуть все работы на весь срок</span></label><label class="opt"><input type="checkbox" name="q147_10" value="0" data-ok><span>Перенести работу в месяц, где был простой</span></label><label class="opt"><input type="checkbox" name="q147_10" value="4"><span>Попросить всех работать больше</span></label></div><p class="quiz-why" hidden>Выравнивание меняет порядок работ и опирается на уже оплаченный простой.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какие признаки говорят о перерасходе по освоенному объёму?</p><div class="opts"><label class="opt"><input type="checkbox" name="q147_11" value="0" data-ok><span>CPI меньше единицы</span></label><label class="opt"><input type="checkbox" name="q147_11" value="5"><span>BAC больше EAC</span></label><label class="opt"><input type="checkbox" name="q147_11" value="1" data-ok><span>Отрицательный CV</span></label><label class="opt"><input type="checkbox" name="q147_11" value="3"><span>EV больше PV</span></label><label class="opt"><input type="checkbox" name="q147_11" value="2" data-ok><span>AC больше EV</span></label><label class="opt"><input type="checkbox" name="q147_11" value="4"><span>SPI больше единицы</span></label></div><p class="quiz-why" hidden>Перерасход это превышение затрат над стоимостью принятого результата.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется плановая стоимость фактически выполненных и принятых работ?</p><input type="text" class="short-answer" data-answers="[&quot;EV&quot;, &quot;освоенный объём&quot;, &quot;earned value&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется плановая стоимость фактически выполненных и принятых работ?"><p class="quiz-why" hidden>Это освоенный объём, его считают в деньгах плана и только по принятому результату.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Сколько тысяч рублей составит резерв на известные риски, если EMV трёх рисков равны 24, 20 и 16 тысяч?</p><input type="text" class="short-answer" data-answers="[&quot;60&quot;, &quot;60 тысяч&quot;, &quot;шестьдесят&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Сколько тысяч рублей составит резерв на известные риски, если EMV трёх рисков равны 24, 20 и 16 тысяч?"><p class="quiz-why" hidden>24 + 20 + 16 = 60 тысяч рублей.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется перенос работ в месяцы с простоем, который снимает перегрузку?</p><input type="text" class="short-answer" data-answers="[&quot;выравнивание&quot;, &quot;выравнивание ресурсов&quot;, &quot;resource leveling&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется перенос работ в месяцы с простоем, который снимает перегрузку?"><p class="quiz-why" hidden>Выравнивание меняет порядок работ, а не их длительность и не бюджет труда.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="08-lek-05.html"><span>← Предыдущее занятие</span>Лекция 5. WBS и расписание</a><a class="next" style="text-align:right;margin-left:auto" href="10-prakt-04.html"><span>Следующее занятие →</span>Практика 4. Бюджет и риски</a></nav></main>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  var FIX = "<style>html{color-scheme:__T__!important}html,body{background:transparent!important;margin:0!important}.iso-page{margin:6px auto 4px!important}<\/style><script>window.__errs=[];addEventListener('error',function(e){__errs.push(String(e.message))});<\/script>";
+  function size(f){ try{ var d=f.contentDocument; if(!d||!d.body) return;
+    f.style.height = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} }
+  function load(fig){
+    var t='light'; if(fig.dataset.loaded===t) return; fig.dataset.loaded=t;
+    var f=fig.querySelector('iframe'), one=fig.getAttribute('data-one');
+    var b=atob(one || fig.getAttribute('data-light')), bytes=Uint8Array.from(b, function(c){return c.charCodeAt(0)});
+    f.style.colorScheme = 'light';
+    new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text().then(function(html){
+      if (one) html = html.split('data-theme="dark"').join('data-theme="light"');
+      html = html.replace('</head>', FIX.split('__T__').join('light') + '</head>');
+      f.srcdoc = html;
+    });
+    f.onload=function(){ size(f); setTimeout(function(){size(f)},300); setTimeout(function(){size(f)},1200);
+      try{ new ResizeObserver(function(){size(f)}).observe(f.contentDocument.body); }catch(e){} };
+  }
+  var figs=[].slice.call(document.querySelectorAll('figure.figure'));
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(e.target); io.unobserve(e.target);} }); }, {rootMargin:'600px'}) : null;
+  figs.forEach(function(f){ io ? io.observe(f) : load(f); });
+  addEventListener('resize', function(){ figs.forEach(function(f){ var i=f.querySelector('iframe'); if(f.dataset.loaded) size(i); }); });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
+    });
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function showQuestion(i){
+      current = i;
+      qs[i].hidden = false;
+      if(window.__readProgress) window.__readProgress();
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { showQuestion(idx + 1); }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
+    });
+    showQuestion(0);
+  });
+})();
+</script>
+</body>
+</html>
