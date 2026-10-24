@@ -14,8 +14,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, THEME_TOGGLE, ASSETS  # noqa: E402
+from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, rail, ASSETS  # noqa: E402
 from availability import is_open, load_availability, summary  # noqa: E402
+from plan_xlsx import plan_filename, write_plan_xlsx  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
@@ -103,8 +104,11 @@ def build_course(root: Path) -> Path:
     glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
     accent = c.get("accent", "#D04A28")
     seed = (sum(ord(ch) for ch in c.get("slug", "")) % 97) / 97.0
-    body = f"""<main class="page">
-<div class="lesson-tools"><a class="nav-btn" href="#course-list" data-course-list>Все курсы</a><div class="lesson-tools-right">{THEME_TOGGLE}</div></div>
+    for stale in dist.glob("Учебный_план_*.xlsx"):
+        stale.unlink()
+    plan_name = plan_filename(c)
+    write_plan_xlsx(c, dist / plan_name)
+    body = f"""<main class="page">{rail(back="#year", excel=plan_name)}
 <header class="hero hero-course" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
 <div class="badges">{price_pill}</div><div class="meta">{esc(meta)}</div>

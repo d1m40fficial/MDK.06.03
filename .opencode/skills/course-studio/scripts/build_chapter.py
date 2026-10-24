@@ -31,7 +31,7 @@ import yaml
 from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, ASSETS  # noqa: E402
+from _pages import accent_vars, esc, find_course_json, load_course, page, rail, FALLBACK, ASSETS  # noqa: E402
 from availability import is_open, load_availability  # noqa: E402
 
 SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
@@ -202,34 +202,6 @@ QUIZ_NOSCRIPT = ('<noscript><style>.quiz-q[hidden]{display:block!important}'
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-RAIL_PDF_HTML = ('<button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" '
-                 'aria-label="Экспорт в PDF, откроется окно печати">'
-                 '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
-                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-                 '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button>')
-
-RAIL_BACK_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
-                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-                 '<path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>')
-RAIL_HOME_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
-                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-                 '<path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg>')
-RAIL_WARN_HTML = ('<button type="button" class="rail-btn rail-warn" data-warn '
-                  'data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе">'
-                  '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
-                  'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-                  '<path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button>')
-THEME_RAIL_BUTTON = ('<button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" '
-                     'data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true">'
-                     '<svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" '
-                     'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
-                     '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
-                     '<svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" '
-                     'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
-                     '<circle cx="12" cy="12" r="4.5"/>'
-                     '<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2'
-                     'M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
-                     '</span></button>')
 
 READ_SCRIPT = r"""
 (function(){
@@ -314,26 +286,9 @@ REVEAL_SCRIPT = r"""
 })();
 """
 
-def lesson_tools(warn: bool, back: str = "", home: bool = True) -> str:
-    """Fixed left-edge navigation rail with every lesson control.
-
-    Top group: back arrow and home link. Bottom group: PDF export, (on
-    lectures) the progress warning, and the theme toggle. The chapter page has
-    no separate top action bar any more, so the rail is the only control strip.
-    """
-    top = ""
-    if back:
-        top += (f'<a class="rail-btn" href="{esc(back)}" data-tip="Возврат к прошлой странице" '
-                f'aria-label="Назад: предыдущее занятие">{RAIL_BACK_SVG}</a>')
-    if home:
-        top += ('<a class="rail-btn" href="index.html" data-tip="К учебному плану" '
-                'aria-label="К учебному плану">' + RAIL_HOME_SVG + '</a>')
-    bottom = RAIL_PDF_HTML
-    if warn:
-        bottom += RAIL_WARN_HTML
-    bottom += THEME_RAIL_BUTTON
-    return (f'<nav class="edge-rail" aria-label="Навигация по занятию">{top}'
-            f'<span class="rail-grow" aria-hidden="true"></span>{bottom}</nav>')
+def lesson_tools(warn: bool, back: str = "") -> str:
+    """Lesson controls: back to the plan, PDF export and (on lectures) warning."""
+    return rail(back=back, pdf=True, warn=warn)
 
 QUIZ_MODALS_HTML = r"""
 <div class="modal" data-modal="warn" hidden>
@@ -798,13 +753,8 @@ def main():
             prev_ = chapters[k - 1] if k > 0 else None
             next_ = chapters[k + 1] if k + 1 < len(chapters) else None
 
-            # the rail's back arrow points at the nearest previous open lesson
-            back_href = ""
-            for j in range(k - 1, -1, -1):
-                s = slugs[j]
-                if is_open(course, s, availability):
-                    back_href = f"{s}.html"
-                    break
+            # the rail's back arrow returns to the discipline plan
+            back_href = "index.html" if cj else ""
 
             def pager_item(c, s, lab, cls=""):
                 if not c:
@@ -831,7 +781,7 @@ def main():
     modals = QUIZ_MODALS_HTML if has_quiz else ""
     gate_noscript = GATE_NOSCRIPT if has_gate else ""
     quiz_noscript = QUIZ_NOSCRIPT if has_quiz else ""
-    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz, back_href, bool(cj))}{hero}{outcomes}{toc_html}'
+    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz, back_href)}{hero}{outcomes}{toc_html}'
                  f'<article class="prose">{html_body}</article>{pager}</main>{modals}{gate_noscript}{quiz_noscript}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")

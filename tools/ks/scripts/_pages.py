@@ -21,6 +21,29 @@ FONTS = (
 THEME_TOGGLE = ('<button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">'
                 'Тёмная тема</button>')
 
+RAIL_BACK_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>')
+RAIL_PDF_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>')
+RAIL_EXCEL_SVG = ('<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" '
+                  'stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                  '<rect x="3.5" y="4" width="17" height="16" rx="2.5"/>'
+                  '<path d="M3.5 9.5h17"/><path d="M9.5 9.5V20"/><path d="M15 9.5V20"/></svg>')
+RAIL_WARN_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg>')
+RAIL_THEME_SVG = ('<span class="theme-ico" aria-hidden="true">'
+                  '<svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" '
+                  'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+                  '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+                  '<svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" '
+                  'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+                  '<circle cx="12" cy="12" r="4.5"/>'
+                  '<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2'
+                  'M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>')
+
 THEME_BOOT = (
     '<script>(function(){try{var t=localStorage.getItem("mdk-theme");'
     'if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>'
@@ -79,6 +102,34 @@ FALLBACK = {"accent": "#2F6F5E", "tint": "#DDEBE5", "accentDark": "#5CC4A4", "ti
 
 def esc(s) -> str:
     return html.escape("" if s is None else str(s))
+
+
+def rail(back: str = "", pdf: bool = False, excel: str = "", warn: bool = False) -> str:
+    """Fixed left-edge control rail shared by plans, year pages and lessons.
+
+    The back arrow is present on every page except the landing, its label is
+    «Вернуться обратно». PDF export is a lesson control, Excel export belongs to
+    the discipline plan, and the progress warning appears on lectures only.
+    """
+    top = ""
+    if back:
+        top = (f'<a class="rail-btn" href="{esc(back)}" data-tip="Вернуться обратно" '
+               f'aria-label="Вернуться обратно">{RAIL_BACK_SVG}</a>')
+    bottom = ""
+    if pdf:
+        bottom += ('<button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" '
+                   'aria-label="Экспорт в PDF, откроется окно печати">' + RAIL_PDF_SVG + '</button>')
+    if excel:
+        bottom += (f'<a class="rail-btn" href="{esc(excel)}" download data-tip="Скачать план в Excel" '
+                   f'aria-label="Скачать учебный план в Excel">{RAIL_EXCEL_SVG}</a>')
+    if warn:
+        bottom += ('<button type="button" class="rail-btn rail-warn" data-warn '
+                   'data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе">'
+                   + RAIL_WARN_SVG + '</button>')
+    bottom += ('<button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" '
+               'data-tip="Смена темы" aria-label="Смена темы">' + RAIL_THEME_SVG + '</button>')
+    return (f'<nav class="edge-rail" aria-label="Навигация по странице">{top}'
+            f'<span class="rail-grow" aria-hidden="true"></span>{bottom}</nav>')
 
 
 def code_class(code) -> str:

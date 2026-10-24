@@ -33,7 +33,7 @@ KS = HERE / "ks" / "scripts"
 ASSETS = HERE / "ks" / "assets"
 sys.path.insert(0, str(KS))
 
-from _pages import code_class, esc, lesson_slots, load_course, page, plural_lessons  # noqa: E402
+from _pages import code_class, esc, lesson_slots, load_course, page, plural_lessons, rail  # noqa: E402
 
 SITE = ROOT / "docs"
 COURSES = ROOT / "courses"
@@ -187,7 +187,11 @@ def copy_course(year: str, course_dir: Path) -> dict:
         text = page.read_text(encoding="utf-8")
         if 'href="#course-list"' in text:
             rel = os.path.relpath(SITE / "index.html", page.parent).replace("\\", "/")
-            page.write_text(text.replace('href="#course-list"', f'href="{rel}"'), encoding="utf-8")
+            text = text.replace('href="#course-list"', f'href="{rel}"')
+        if 'href="#year"' in text:
+            rel = os.path.relpath(SITE / year / "index.html", page.parent).replace("\\", "/")
+            text = text.replace('href="#year"', f'href="{rel}"')
+        page.write_text(text, encoding="utf-8")
     reports = course_dir / "reports"
     if reports.exists():
         for target in (dst / "reports", src / "reports"):
@@ -243,7 +247,7 @@ def discipline_card(c: dict) -> str:
 
 def year_page(y: dict, courses: list):
     yid = str(y["id"])
-    body = (f'<main class="catalog">'
+    body = (f'<main class="catalog">{rail(back="../index.html")}'
             f'<div class="crumbs"><a href="../index.html">Все курсы</a><span>/</span>'
             f'<span>{esc(y.get("title", yid))}</span></div>'
             f'<header class="hero"><div class="badges"><span class="pill dark">'
@@ -294,7 +298,7 @@ def landing(site: dict, by_year: dict):
             f'<span>{esc(specialty.get("title", specialty.get("id", "")))}</span>'
             f'<span class="spec-count">{len(years)} {plural_courses(len(years))}</span>'
             f'</summary>{body}</details>')
-    body = (f'<main class="catalog"><header class="hero hero-glass">'
+    body = (f'<main class="catalog">{rail()}<header class="hero hero-glass">'
             f'<h1>{esc(site.get("title", "Материалы"))}</h1></header>'
             f'<div class="specialties">{"".join(blocks)}</div></main>')
     (SITE / "index.html").write_text(

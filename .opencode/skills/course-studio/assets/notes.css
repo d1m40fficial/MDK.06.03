@@ -280,6 +280,9 @@ html.quiz-pending .pager { display: none; }
 
 /* ---------- course catalog + syllabus ---------- */
 .catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+/* the rail sits at the viewport edge, so keep catalog content clear of it */
+@media (max-width: 1320px) { main.catalog { padding-left: 56px; } }
+@media (max-width: 640px) { main.catalog { padding-left: 48px; } }
 .catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
 .filters { display: flex; gap: 8px; flex-wrap: wrap; }
 .filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
