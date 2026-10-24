@@ -316,8 +316,8 @@ html.quiz-pending .pager { display: none; }
 .quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
 .quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
 .quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
-.quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-actions button[data-answer] { background: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
 .quiz-actions button:hover { filter: brightness(.96); }
 .quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
 .quiz-note { font-size: 13px; color: var(--bad); }
@@ -401,8 +401,8 @@ html.modal-open { overflow: hidden; }
 .pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
 .pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
 .pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
-.quiz-actions button[data-answer] { background: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
-.quiz-actions button[data-answer]:hover { background: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
 .filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
 .warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
 .warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
@@ -417,8 +417,8 @@ html.modal-open { overflow: hidden; }
   :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
   :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
   :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
-  :root:not([data-theme=light]) .quiz-actions button[data-answer] { background: #121212; color: #fff; border-color: #4A4A4A; }
-  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover { background: #1D1D1D; color: #fff; border-color: #5A5A5A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
   :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
 }
 :root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
@@ -429,8 +429,8 @@ html.modal-open { overflow: hidden; }
 :root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
 :root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
 :root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
-:root[data-theme=dark] .quiz-actions button[data-answer] { background: #121212; color: #fff; border-color: #4A4A4A; }
-:root[data-theme=dark] .quiz-actions button[data-answer]:hover { background: #1D1D1D; color: #fff; border-color: #5A5A5A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
 :root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
 
 /* ---------- scroll reveal in lessons ---------- */
