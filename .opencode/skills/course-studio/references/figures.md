@@ -78,8 +78,8 @@ When a subagent returns, check its deviation notes against the chapter text and 
 ## 6. Fitting it into the chapter
 
 1. Rebuild the chapter (`build_chapter.py`): the pending box becomes the live figure.
-2. `check_pages.py` (default and `--mobile --dark`): no clipped or failed figures, no errors.
-3. Open the figure screenshots in the chapter context: does the figure's tour show what the paragraph before it promises? Does the readout use the chapter's vocabulary? Is the caption consistent with the text's numbers?
+2. `check_pages.py` (default and `--mobile --dark`): no clipped or failed figures, no errors. Read its text report only; screenshots are opt-in (`--shots`) for a human and are never fed to the model.
+3. Confirm from the text and figure metadata that the tour shows what the paragraph before it promises, the readout uses the chapter's vocabulary, and the caption matches the text's numbers.
 4. Update the paragraph after the figure to name what the learner just saw.
 
 ## 7. When Anatomy can't run

@@ -37,7 +37,12 @@ THEME_SCRIPT = r"""
   }
   function label(btn){
     var t = current();
-    btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    var ico = btn.querySelector('.theme-ico');
+    if(ico){
+      btn.setAttribute('aria-label', t === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+    } else {
+      btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    }
     btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
   }
   function refresh(){

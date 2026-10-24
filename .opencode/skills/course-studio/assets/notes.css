@@ -99,6 +99,67 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
 .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+
+/* ---------- left-edge navigation rail ---------- */
+.edge-rail {
+  position: fixed; left: max(8px, calc((100vw - 900px) / 2 - 8px)); top: 50%;
+  transform: translateY(-50%); z-index: 90;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.rail-btn {
+  position: relative; display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0; border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+  border: 1px solid var(--rule); background: color-mix(in srgb, var(--card) 84%, transparent);
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, border-color .15s, color .15s, background .15s;
+}
+.rail-btn svg { display: block; }
+.rail-btn:hover, .rail-btn:focus-visible { border-color: var(--accent); color: var(--accent); transform: scale(1.06); }
+.rail-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rail-warn { background: var(--bad); border-color: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); }
+.rail-warn:hover, .rail-warn:focus-visible { background: color-mix(in srgb, var(--bad) 86%, #000); border-color: var(--bad); color: #fff; transform: scale(1.06); }
+.rail-grow { flex: 1 1 auto; }
+
+/* hover tooltips on the rail icons */
+[data-tip]::before {
+  content: ""; position: absolute; left: calc(100% + 6px); top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: var(--ink); opacity: 0;
+  pointer-events: none; transition: opacity .15s; z-index: 121;
+}
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: calc(100% + 16px); top: 50%;
+  transform: translateY(-50%); white-space: nowrap;
+  background: var(--ink); color: var(--paper); padding: 6px 10px; border-radius: 8px;
+  font: 600 12px/1.35 var(--font-body); letter-spacing: .01em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18); opacity: 0; pointer-events: none;
+  transition: opacity .15s; z-index: 122;
+}
+[data-tip]:hover::before, [data-tip]:focus-visible::before,
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; }
+@media (hover: none) { [data-tip]::before, [data-tip]::after { display: none; } }
+
+/* icon theme button in the rail: moon in light, sun in dark */
+.theme-ico { display: grid; place-items: center; }
+.theme-ico .ico-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .theme-ico .ico-sun { display: block; }
+  :root:not([data-theme=light]) .theme-ico .ico-moon { display: none; }
+}
+:root[data-theme=dark] .theme-ico .ico-sun { display: block; }
+:root[data-theme=dark] .theme-ico .ico-moon { display: none; }
+@media (max-width: 920px) {
+  .edge-rail { left: 8px; }
+  .page { padding-left: 56px; }
+}
+@media (max-width: 640px) {
+  .edge-rail { left: 4px; gap: 6px; }
+  .rail-btn { width: 34px; height: 34px; }
+  .rail-warn { font-size: 17px; }
+  .page { padding-left: 48px; }
+}
 .syllabus > li.locked { opacity: .6; }
 .syllabus > li.locked h3 { color: var(--ink-3); }
 .syllabus > li.locked .mins { color: var(--bad); }
@@ -436,7 +497,7 @@ html.modal-open { overflow: hidden; }
 @page { margin: 16mm; }
 @media print {
   body { background: #fff; color: #000; font-size: 11.5pt; }
-  .read-progress, .lesson-tools, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .read-progress, .lesson-tools, .edge-rail, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
   .page { max-width: none; padding: 0; }
   .hero { padding: 0; border: 0; background: none; }
   .hero h1, .hero .dek { max-width: 100%; }

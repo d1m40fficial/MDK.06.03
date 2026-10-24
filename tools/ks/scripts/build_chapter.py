@@ -31,7 +31,7 @@ import yaml
 from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, THEME_TOGGLE, ASSETS  # noqa: E402
+from _pages import accent_vars, esc, find_course_json, load_course, page, FALLBACK, ASSETS  # noqa: E402
 from availability import is_open, load_availability  # noqa: E402
 
 SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
@@ -202,9 +202,29 @@ QUIZ_NOSCRIPT = ('<noscript><style>.quiz-q[hidden]{display:block!important}'
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-NAV_BUTTON_HTML = '<a class="nav-btn" href="index.html">К учебному плану</a>'
 PDF_BUTTON_HTML = ('<button type="button" class="pdf-btn" data-pdf '
                    'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button>')
+
+RAIL_BACK_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>')
+RAIL_HOME_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg>')
+RAIL_WARN_HTML = ('<button type="button" class="rail-btn rail-warn" data-warn '
+                  'data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе">'
+                  '<span aria-hidden="true">!</span></button>')
+THEME_RAIL_BUTTON = ('<button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" '
+                     'data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true">'
+                     '<svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" '
+                     'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+                     '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+                     '<svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" '
+                     'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+                     '<circle cx="12" cy="12" r="4.5"/>'
+                     '<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2'
+                     'M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+                     '</span></button>')
 
 READ_SCRIPT = r"""
 (function(){
@@ -289,14 +309,24 @@ REVEAL_SCRIPT = r"""
 })();
 """
 
-WARN_BUTTON_HTML = ('<button type="button" class="warn-btn" data-warn '
-                    'aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button>')
+def lesson_tools(warn: bool, back: str = "", home: bool = True) -> str:
+    """Top action bar plus the fixed left-edge navigation rail.
 
-
-def lesson_tools(warn: bool) -> str:
-    warn_html = WARN_BUTTON_HTML if warn else ""
-    return (f'<div class="lesson-tools">{NAV_BUTTON_HTML}'
-            f'<div class="lesson-tools-right">{warn_html}{THEME_TOGGLE}{PDF_BUTTON_HTML}</div></div>')
+    The rail carries the back arrow, the home link and (on lectures) the
+    warning and theme buttons; only the PDF export stays in the top bar.
+    """
+    top = ""
+    if back:
+        top += (f'<a class="rail-btn" href="{esc(back)}" data-tip="Возврат к прошлой странице" '
+                f'aria-label="Назад: предыдущее занятие">{RAIL_BACK_SVG}</a>')
+    if home:
+        top += ('<a class="rail-btn" href="index.html" data-tip="К учебному плану" '
+                'aria-label="К учебному плану">' + RAIL_HOME_SVG + '</a>')
+    bottom = RAIL_WARN_HTML if warn else ""
+    bottom += THEME_RAIL_BUTTON
+    rail = (f'<nav class="edge-rail" aria-label="Навигация по занятию">{top}'
+            f'<span class="rail-grow" aria-hidden="true"></span>{bottom}</nav>')
+    return (f'<div class="lesson-tools"><div class="lesson-tools-right">{PDF_BUTTON_HTML}</div></div>{rail}')
 
 QUIZ_MODALS_HTML = r"""
 <div class="modal" data-modal="warn" hidden>
@@ -349,6 +379,12 @@ QUIZ_SCRIPT = r"""
   function hasAnswer(q){
     if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
     return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintPicked(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+    });
   }
   function paintChoices(q){
     q.querySelectorAll('.opt').forEach(function(o){
@@ -407,7 +443,7 @@ QUIZ_SCRIPT = r"""
     }
     qs.forEach(function(q, idx){
       q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
-      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintChoices(q); } });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintPicked(q); } });
       var answerBtn = q.querySelector('[data-answer]');
       if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
       var short = q.querySelector('.short-answer');
@@ -419,25 +455,30 @@ QUIZ_SCRIPT = r"""
 """
 
 def shuffled_options(opts: list, correct: list, seed_text: str) -> list:
-    """Deterministic order for multiple-choice options.
+    """Deterministic seeded order of answer options for any choice question.
 
-    Correct answers in the source are usually listed together at the top, so the
-    page would give them away. Shuffle with a stable seed and prefer an order
-    where correct options are not neighbours.
+    The source usually lists the correct options together at the top, so the
+    page would give them away. Shuffle with a stable seed and reject orders
+    that still reveal the pattern: a leading run of all correct options, or
+    three or more correct options in a row.
     """
-    indices = list(range(len(opts)))
+    n = len(opts)
+    if n < 2:
+        return list(range(n))
+    indices = list(range(n))
+    good = set(correct)
+    if len(good) == n:
+        return indices  # everything is correct, order hides nothing
     rng = random.Random(sum((i + 1) * ord(ch) for i, ch in enumerate(seed_text)))
-    best = indices[:]
-    best_score = len(correct)
     for _ in range(200):
         rng.shuffle(indices)
-        pos = [i for i, oi in enumerate(indices) if oi in correct]
-        score = sum(1 for a, b in zip(pos, pos[1:]) if b - a == 1)
-        if score < best_score:
-            best, best_score = indices[:], score
-        if score == 0:
-            break
-    return best
+        pos = [i for i, oi in enumerate(indices) if oi in good]
+        if pos == list(range(len(pos))):  # a leading run of all correct options
+            continue
+        if any(c - b == 1 and b - a == 1 for a, b, c in zip(pos, pos[1:], pos[2:])):
+            continue  # three or more correct options in a row
+        return indices
+    return indices
 
 
 def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
@@ -489,8 +530,7 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
                          f'{body}{why}{actions}</div>')
         else:
             input_type = "checkbox" if is_multi else "radio"
-            order = (shuffled_options(q["opts"], q["correct"], q["q"]) if is_multi
-                     else list(range(len(q["opts"]))))
+            order = shuffled_options(q["opts"], q["correct"], q["q"])
             opts = "".join(
                 f'<label class="opt"><input type="{input_type}" name="q{n}_{qi}" value="{oi}"'
                 f'{" data-ok" if oi in q["correct"] else ""}><span>{md(q["opts"][oi])[3:-4]}</span></label>'
@@ -735,6 +775,7 @@ def main():
             f'<li><a href="#{h}">{esc(t)}</a></li>' for h, t in toc) + "</ol></nav>"
 
     pager = ""
+    back_href = ""
     if cj:
         all_chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
         availability = load_availability(cj.parent)
@@ -749,6 +790,14 @@ def main():
             k = slugs.index(base.name)
             prev_ = chapters[k - 1] if k > 0 else None
             next_ = chapters[k + 1] if k + 1 < len(chapters) else None
+
+            # the rail's back arrow points at the nearest previous open lesson
+            back_href = ""
+            for j in range(k - 1, -1, -1):
+                s = slugs[j]
+                if is_open(course, s, availability):
+                    back_href = f"{s}.html"
+                    break
 
             def pager_item(c, s, lab, cls=""):
                 if not c:
@@ -775,7 +824,7 @@ def main():
     modals = QUIZ_MODALS_HTML if has_quiz else ""
     gate_noscript = GATE_NOSCRIPT if has_gate else ""
     quiz_noscript = QUIZ_NOSCRIPT if has_quiz else ""
-    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz)}{hero}{outcomes}{toc_html}'
+    body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz, back_href, bool(cj))}{hero}{outcomes}{toc_html}'
                  f'<article class="prose">{html_body}</article>{pager}</main>{modals}{gate_noscript}{quiz_noscript}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")

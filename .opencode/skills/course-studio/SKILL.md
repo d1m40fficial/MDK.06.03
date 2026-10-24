@@ -177,7 +177,9 @@ written chapter by chapter unless the user asks for a batch.
 6. **Build and check.** `python tools/ks/scripts/build_chapter.py <chapter.md>`, then
    `python tools/build_site.py`. Use `tools/ks/scripts/check_pages.py <dist-dir>` where
    Playwright/Chromium is available, including `--mobile` and `--dark`. The checker opens
-   every gate before inspecting figures and sections.
+   every gate before inspecting figures and sections and reports problems as text. Do not
+   take or read screenshots for verification: PNGs are opt-in (`--shots`) for a human and
+   are never passed back into the model.
 7. **Reconcile text and figure.** The text must name the moments the figure shows with
    the same numbers and words. Update `course.json` and rebuild.
 8. **Deliver** with one line on what was made, what is pending, and the next chapter.
