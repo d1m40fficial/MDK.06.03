@@ -17,6 +17,10 @@
   --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
   --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
   --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
   --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -25,16 +29,22 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
-    --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
-    --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #161512; --card: #1E1C18; --ink: #F1ECE3; --ink-2: #C4BDB0; --ink-3: #8C8577;
-  --rule: #34302A; --rule-2: #2A2722; --code-bg: #24211C; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
-  --accent: var(--course-accent-dark, #F06A45); --tint: var(--course-tint-dark, #3A2219);
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
   color-scheme: dark;
 }
 
@@ -44,19 +54,21 @@ body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 
 a { color: var(--accent); text-underline-offset: 3px; }
 
 /* ---------- scrollbars ---------- */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.2); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
-::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.4); }
-* { scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.2) transparent; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.22); }
-  :root:not([data-theme=light]) ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
-  :root:not([data-theme=light]) * { scrollbar-color: rgba(255, 255, 255, 0.22) transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+  transition: background-color .2s ease;
 }
-:root[data-theme=dark] ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.22); }
-:root[data-theme=dark] ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
-:root[data-theme=dark] * { scrollbar-color: rgba(255, 255, 255, 0.22) transparent; }
+:hover::-webkit-scrollbar-thumb { background-color: rgba(128, 128, 128, 0.35); }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(128, 128, 128, 0.55); }
+/* Firefox */
+* { scrollbar-width: thin; scrollbar-color: rgba(128, 128, 128, 0.35) transparent; }
 
 /* ---------- chapter page ---------- */
 .page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
@@ -98,32 +110,39 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
 .hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
 .hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
-@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: static; margin-top: 10px; } }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
 
 /* shader hero on course and lesson pages */
-.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; }
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
 .hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
-.hero[data-shader] .badges, .hero[data-shader] .hero-panel { position: relative; z-index: 2; }
-.hero[data-shader] .hero-panel { display: inline-block; max-width: 82%; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
-.hero[data-shader] h1 { color: #fff; max-width: 100%; margin: 0 0 8px; }
-.hero[data-shader] .dek { color: rgba(255,255,255,.78); max-width: 100%; margin: 0; }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
 .hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
 .hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
-.hero[data-shader] .meta { position: absolute; top: 24px; right: 24px; color: #fff; background: rgba(8,9,13,.5); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 7px 12px; backdrop-filter: blur(12px); }
 .hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
-@media (max-width: 760px) { .hero[data-shader] .meta { position: static; display: inline-block; margin-top: 10px; } }
-@media (max-width: 640px) { .hero[data-shader] .hero-panel { max-width: 100%; } .hero[data-shader] .meta { position: static; display: inline-block; margin-top: 10px; } }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
 
 /* apple liquid glass hero on the landing */
 .hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
 .hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
 .hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(28,28,34,.62),rgba(28,28,34,.28)); border-color: rgba(255,255,255,.2); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.16); }
-  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#fff,var(--accent) 52%,#fff); -webkit-background-clip: text; background-clip: text; }
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
 }
-:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(28,28,34,.62),rgba(28,28,34,.28)); border-color: rgba(255,255,255,.2); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.16); }
-:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#fff,var(--accent) 52%,#fff); -webkit-background-clip: text; background-clip: text; }
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
 @media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
 
 .outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
@@ -221,14 +240,6 @@ html.quiz-pending .pager { display: none; }
 .syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
 .syllabus .lesson-card-static { cursor: default; }
 .syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.syllabus .lesson-card > * { transition: transform .2s cubic-bezier(.16,1,.3,1); transform-origin: left center; }
-.syllabus .lesson-card .tags span { display: inline-block; transition: transform .2s cubic-bezier(.16,1,.3,1); }
-.syllabus > li:hover .lesson-card .n { transform: scale(1.14); }
-.syllabus > li:hover .lesson-card h3 { transform: scale(1.035); }
-.syllabus > li:hover .lesson-card .mins { transform: scale(1.05); }
-.syllabus > li:hover .lesson-card p { transform: scale(1.012); }
-.syllabus > li:hover .lesson-card .tags { transform: scale(1.02); }
-.syllabus > li:hover .lesson-card .tags span { transform: scale(1.05); }
 .syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
 .syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
 .syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
@@ -256,39 +267,63 @@ html.quiz-pending .pager { display: none; }
 /* ---------- interactive test (::quiz) ---------- */
 .quiz { margin: 24px 0; }
 .quiz-progress { font: 600 11px var(--font-mono); letter-spacing: .04em; color: var(--ink-3); margin: 0 0 10px; }
-.quiz-q { padding: 18px 20px 14px; margin: 14px 0; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
 .quiz-q[hidden] { display: none; }
-.quiz-p { font-weight: 600; margin: 0 0 8px; }
-.quiz-no { display: inline-grid; place-items: center; min-width: 27px; height: 23px; margin-right: 8px; padding: 0 5px; border-radius: 6px; background: var(--paper); color: var(--accent); font: 700 11px/1 var(--font-mono); vertical-align: 2px; }
-.quiz .opts { display: grid; gap: 6px; }
-.quiz .opt { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; padding: 7px 11px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); }
-.quiz .opt:hover { border-color: var(--accent); }
-.quiz .opt input { margin-top: 4px; }
-.quiz-q.ok .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-.quiz-q.bad .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
-.quiz-q.bad .opt.picked:not(.correct) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
-.quiz-q.bad .quiz-p { color: var(--bad); }
-.quiz-why { margin: 8px 0 2px; padding: 9px 13px; border-left: 3px solid var(--bad); border-radius: 0 9px 9px 0; background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
 .quiz-why[hidden] { display: none; }
-.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--bad); }
-.quiz-q.ok .quiz-why { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--card)); }
-.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--ok); }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
 .quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .quiz-actions button { font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
-.quiz-actions button[data-answer] { background: var(--accent); color: #fff; border-color: transparent; }
+.quiz-actions button[data-answer] { background: var(--quiz-accent); color: #1A1A1A; border-color: transparent; }
 .quiz-actions button:hover { filter: brightness(.96); }
-.quiz-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
 .quiz-note { font-size: 13px; color: var(--bad); }
-.quiz .short-answer { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 9px; background: var(--paper); color: var(--ink); }
-.quiz .short-answer:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
-.quiz-q.ok .short-answer { border-color: var(--ok); }
-.quiz-q.bad .short-answer { border-color: var(--bad); }
-.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
 .quiz-result[hidden] { display: none; }
 .quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
 .quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
 .quiz-result .modal-result { margin: 0 0 14px; }
 .quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
 
 /* ---------- test submission and warnings ---------- */
 .warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
@@ -341,6 +376,8 @@ html.modal-open { overflow: hidden; }
 .nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
 .nav-btn::before { color: #fff; opacity: .7; }
 .pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
 .gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
 .gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
 .gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
@@ -348,11 +385,35 @@ html.modal-open { overflow: hidden; }
 .pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
 .pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
 .pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
-.quiz-actions button[data-answer] { background: #5cb8a5; color: #10231f; border-color: #3f9d8a; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
-.quiz-actions button[data-answer]:hover { background: #6cc5b3; color: #10231f; border-color: #3f9d8a; }
+.quiz-actions button[data-answer] { background: var(--quiz-accent); color: #1A1A1A; border-color: color-mix(in srgb,var(--quiz-accent) 78%,#000); box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover { background: color-mix(in srgb,var(--quiz-accent) 88%,#fff); color: #1A1A1A; border-color: color-mix(in srgb,var(--quiz-accent) 78%,#000); }
 .filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
 .warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
 .warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer] { background: #FF6B00; color: #121212; border-color: #E05F00; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer] { background: #FF6B00; color: #121212; border-color: #E05F00; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
 
 /* ---------- scroll reveal in lessons ---------- */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
@@ -635,9 +696,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Интеграция информационных систем</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero" data-shader data-accent="#2F6F5E" data-seed="0.608">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Устройство и функционирование информационной системы</a><span>/</span><span>Интеграция информационных систем</span></nav><div class="lesson-tools"><a class="nav-btn" href="index.html">К учебному плану</a><div class="lesson-tools-right"><button type="button" class="warn-btn" data-warn aria-label="Предупреждение о прогрессе"><span aria-hidden="true">!</span></button><button type="button" class="theme-btn" data-theme-toggle aria-pressed="false">Тёмная тема</button><button type="button" class="pdf-btn" data-pdf title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button></div></div><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.608">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
-<div class="badges"><span class="pill dark">Занятие 21</span><span class="pill">Устройство и функционирование информационной системы</span></div><div class="meta">СПО</div>
+<div class="badges"><span class="pill dark">Занятие 21</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Интеграция информационных систем</h1><p class="dek">Интеграция это договор о данных, их преобразование и доставка. Между двумя системами почти всегда стоит адаптер, и почти всегда нужен арбитр на случай повторной доставки.</p></div>
 <div class="glyph" aria-hidden="true">Л12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выбирать способ интеграции под задачу</li><li>Составлять словарь соответствий полей и проверять его</li><li>Различать синхронный и асинхронный обмен и их требования</li><li>Проверять интеграцию сверкой и находить отказ</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#адаптер-и-словарь-соответствий">Адаптер и словарь соответствий</a></li><li><a href="#способы-интеграции">Способы интеграции</a></li><li><a href="#форматы-данных">Форматы данных</a></li><li><a href="#etl-и-преобразование">ETL и преобразование</a></li><li><a href="#синхронно-или-асинхронно">Синхронно или асинхронно</a></li><li><a href="#контракт-и-проверка">Контракт и проверка</a></li><li><a href="#качество-и-безопасность">Качество и безопасность</a></li><li><a href="#куда-ставить-проверку-три-рубежа">Куда ставить проверку: три рубежа</a></li><li><a href="#куда-смотреть-когда-обмен-не-работает">Куда смотреть, когда обмен не работает</a></li><li><a href="#практический-итог">Практический итог</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
 <p>В двух системах один и тот же студент записан по-разному. В деканате поле <code>fio</code> содержит «Иванов Иван», в бухгалтерии <code>name</code> содержит «Иванов И.И.», а в библиотеке <code>reader_name</code> хранит «Иванов Иван Иванович». Пока системы работают отдельно, это не мешает. Как только нужно передать задолженность или выдать справку, данные перестают совпадать.</p>
@@ -793,7 +854,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Интеграция проверяется через API, Postman и документацию.</li>
 </ul>
 <h2 id="тест-по-лекции"><span class="num">14</span>Тест по лекции</h2>
-<div class="quiz" data-quiz><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что делает адаптер?</p><div class="opts"><label class="opt"><input type="radio" name="q158_0" value="0" data-ok><span>Переписывает данные по словарю соответствий</span></label><label class="opt"><input type="radio" name="q158_0" value="1"><span>Копирует базу источника целиком</span></label><label class="opt"><input type="radio" name="q158_0" value="2"><span>Заменяет API у приёмника</span></label><label class="opt"><input type="radio" name="q158_0" value="3"><span>Ускоряет поиск по таблицам</span></label></div><p class="quiz-why" hidden>Адаптер приводит данные к требованиям приёмника по словарю соответствий.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Что означает ETL?</p><div class="opts"><label class="opt"><input type="radio" name="q158_1" value="0" data-ok><span>Extract, Transform, Load</span></label><label class="opt"><input type="radio" name="q158_1" value="1"><span>Encode, Test, Lock</span></label><label class="opt"><input type="radio" name="q158_1" value="2"><span>Export, Transfer, Log</span></label><label class="opt"><input type="radio" name="q158_1" value="3"><span>Edit, Type, Link</span></label></div><p class="quiz-why" hidden>ETL выгружает, преобразует и загружает данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что такое dead letter queue?</p><div class="opts"><label class="opt"><input type="radio" name="q158_2" value="0" data-ok><span>Очередь необработанных сообщений</span></label><label class="opt"><input type="radio" name="q158_2" value="1"><span>Список пользователей</span></label><label class="opt"><input type="radio" name="q158_2" value="2"><span>Таблица базы данных</span></label><label class="opt"><input type="radio" name="q158_2" value="3"><span>Журнал аудита</span></label></div><p class="quiz-why" hidden>Туда попадают сообщения, которые не удалось обработать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что такое идемпотентность?</p><div class="opts"><label class="opt"><input type="radio" name="q158_3" value="0" data-ok><span>Повторная операция не создаёт новый эффект</span></label><label class="opt"><input type="radio" name="q158_3" value="1"><span>Операция всегда выполняется быстрее</span></label><label class="opt"><input type="radio" name="q158_3" value="2"><span>Данные всегда в JSON</span></label><label class="opt"><input type="radio" name="q158_3" value="3"><span>Система работает без авторизации</span></label></div><p class="quiz-why" hidden>Идемпотентность защищает от дубликатов при повторах.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что используется, чтобы повторная загрузка не создала дубликат?</p><div class="opts"><label class="opt"><input type="radio" name="q158_4" value="0" data-ok><span>Ключ идемпотентности</span></label><label class="opt"><input type="radio" name="q158_4" value="1"><span>Отключение журнала</span></label><label class="opt"><input type="radio" name="q158_4" value="2"><span>Повторный POST без заголовков</span></label><label class="opt"><input type="radio" name="q158_4" value="3"><span>Ручная правка каждой записи</span></label></div><p class="quiz-why" hidden>Ключ идемпотентности делает повторную доставку безопасной.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какой код состояния подтверждает лишь обработку запроса, но не корректность данных?</p><div class="opts"><label class="opt"><input type="radio" name="q158_5" value="0" data-ok><span>200</span></label><label class="opt"><input type="radio" name="q158_5" value="1"><span>400</span></label><label class="opt"><input type="radio" name="q158_5" value="2"><span>404</span></label><label class="opt"><input type="radio" name="q158_5" value="3"><span>500</span></label></div><p class="quiz-why" hidden>200 OK означает «запрос обработан», корректность данных проверяет сверка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какие форматы используются для обмена данными между системами?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_6" value="0" data-ok><span>JSON</span></label><label class="opt"><input type="checkbox" name="q158_6" value="1" data-ok><span>XML</span></label><label class="opt"><input type="checkbox" name="q158_6" value="2" data-ok><span>CSV</span></label><label class="opt"><input type="checkbox" name="q158_6" value="3"><span>PNG</span></label><label class="opt"><input type="checkbox" name="q158_6" value="4"><span>EXE</span></label></div><p class="quiz-why" hidden>JSON, XML и CSV переносят структурированные данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие свойства важны для контракта API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_7" value="0" data-ok><span>Пути</span></label><label class="opt"><input type="checkbox" name="q158_7" value="1" data-ok><span>Методы</span></label><label class="opt"><input type="checkbox" name="q158_7" value="2" data-ok><span>Схемы данных</span></label><label class="opt"><input type="checkbox" name="q158_7" value="3" data-ok><span>Коды ошибок</span></label><label class="opt"><input type="checkbox" name="q158_7" value="4"><span>Цвет кнопки</span></label><label class="opt"><input type="checkbox" name="q158_7" value="5"><span>Модель процессора</span></label></div><p class="quiz-why" hidden>Контракт фиксирует интерфейс и ошибки.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какие проверки ставят на рубежах интеграции?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_8" value="0" data-ok><span>Валидация полей на входе адаптера</span></label><label class="opt"><input type="checkbox" name="q158_8" value="1" data-ok><span>Соответствие схеме на выходе адаптера</span></label><label class="opt"><input type="checkbox" name="q158_8" value="2" data-ok><span>Сверка количества и сумм после загрузки</span></label><label class="opt"><input type="checkbox" name="q158_8" value="3"><span>Проверка цвета интерфейса</span></label><label class="opt"><input type="checkbox" name="q158_8" value="4"><span>Замер температуры сервера</span></label></div><p class="quiz-why" hidden>Три рубежа ловят разные причины отказов, каждая со своим адресом.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие правила обязательно включают в словарь соответствий?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_9" value="0" data-ok><span>Имена и типы полей</span></label><label class="opt"><input type="checkbox" name="q158_9" value="1" data-ok><span>Обязательность значений</span></label><label class="opt"><input type="checkbox" name="q158_9" value="2" data-ok><span>Правило ключа записи (что считать «той же самой записью»)</span></label><label class="opt"><input type="checkbox" name="q158_9" value="3"><span>Цвет кнопки интерфейса</span></label><label class="opt"><input type="checkbox" name="q158_9" value="4"><span>Список имён сотрудников</span></label></div><p class="quiz-why" hidden>Словарь должен однозначно объяснять, что и куда переписать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что характерно для асинхронного обмена?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_10" value="0" data-ok><span>Очередь сообщений</span></label><label class="opt"><input type="checkbox" name="q158_10" value="1" data-ok><span>Повторные попытки с задержкой</span></label><label class="opt"><input type="checkbox" name="q158_10" value="2" data-ok><span>Dead letter queue для разобранных вручную ошибок</span></label><label class="opt"><input type="checkbox" name="q158_10" value="3"><span>Клиент блокируется до прихода ответа</span></label><label class="opt"><input type="checkbox" name="q158_10" value="4"><span>Ответ всегда приходит мгновенно</span></label></div><p class="quiz-why" hidden>Асинхронный обмен развязывает отправителя и получателя через очередь.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что проверять после успешного ответа API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_11" value="0" data-ok><span>Обязательные поля в JSON</span></label><label class="opt"><input type="checkbox" name="q158_11" value="1" data-ok><span>Количество записей</span></label><label class="opt"><input type="checkbox" name="q158_11" value="2" data-ok><span>Контрольные суммы</span></label><label class="opt"><input type="checkbox" name="q158_11" value="3" data-ok><span>Соответствие справочникам</span></label><label class="opt"><input type="checkbox" name="q158_11" value="4"><span>Отсутствие ошибок по статусу 200</span></label><label class="opt"><input type="checkbox" name="q158_11" value="5"><span>Отсутствие журнала операций</span></label></div><p class="quiz-why" hidden>Статус 200 не доказывает корректность данных: сверка идёт отдельно.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется спецификация описания API с путями, методами и схемами?</p><input type="text" class="short-answer" data-answers="[&quot;OpenAPI&quot;, &quot;swagger&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется спецификация описания API с путями, методами и схемами?"><p class="quiz-why" hidden>Это OpenAPI, её первую версию называли Swagger.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какой формат обмена удобнее всего для веб-API?</p><input type="text" class="short-answer" data-answers="[&quot;JSON&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой формат обмена удобнее всего для веб-API?"><p class="quiz-why" hidden>JSON компактен и легко отображается на структуры языка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?</p><input type="text" class="short-answer" data-answers="[&quot;сверка&quot;, &quot;reconciliation&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?"><p class="quiz-why" hidden>Это сверка данных.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+<div class="quiz" data-quiz><div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из 15</div><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Что делает адаптер?</p><div class="opts"><label class="opt"><input type="radio" name="q158_0" value="0" data-ok><span>Переписывает данные по словарю соответствий</span></label><label class="opt"><input type="radio" name="q158_0" value="1"><span>Копирует базу источника целиком</span></label><label class="opt"><input type="radio" name="q158_0" value="2"><span>Заменяет API у приёмника</span></label><label class="opt"><input type="radio" name="q158_0" value="3"><span>Ускоряет поиск по таблицам</span></label></div><p class="quiz-why" hidden>Адаптер приводит данные к требованиям приёмника по словарю соответствий.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Что означает ETL?</p><div class="opts"><label class="opt"><input type="radio" name="q158_1" value="0" data-ok><span>Extract, Transform, Load</span></label><label class="opt"><input type="radio" name="q158_1" value="1"><span>Encode, Test, Lock</span></label><label class="opt"><input type="radio" name="q158_1" value="2"><span>Export, Transfer, Log</span></label><label class="opt"><input type="radio" name="q158_1" value="3"><span>Edit, Type, Link</span></label></div><p class="quiz-why" hidden>ETL выгружает, преобразует и загружает данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что такое dead letter queue?</p><div class="opts"><label class="opt"><input type="radio" name="q158_2" value="0" data-ok><span>Очередь необработанных сообщений</span></label><label class="opt"><input type="radio" name="q158_2" value="1"><span>Список пользователей</span></label><label class="opt"><input type="radio" name="q158_2" value="2"><span>Таблица базы данных</span></label><label class="opt"><input type="radio" name="q158_2" value="3"><span>Журнал аудита</span></label></div><p class="quiz-why" hidden>Туда попадают сообщения, которые не удалось обработать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что такое идемпотентность?</p><div class="opts"><label class="opt"><input type="radio" name="q158_3" value="0" data-ok><span>Повторная операция не создаёт новый эффект</span></label><label class="opt"><input type="radio" name="q158_3" value="1"><span>Операция всегда выполняется быстрее</span></label><label class="opt"><input type="radio" name="q158_3" value="2"><span>Данные всегда в JSON</span></label><label class="opt"><input type="radio" name="q158_3" value="3"><span>Система работает без авторизации</span></label></div><p class="quiz-why" hidden>Идемпотентность защищает от дубликатов при повторах.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что используется, чтобы повторная загрузка не создала дубликат?</p><div class="opts"><label class="opt"><input type="radio" name="q158_4" value="0" data-ok><span>Ключ идемпотентности</span></label><label class="opt"><input type="radio" name="q158_4" value="1"><span>Отключение журнала</span></label><label class="opt"><input type="radio" name="q158_4" value="2"><span>Повторный POST без заголовков</span></label><label class="opt"><input type="radio" name="q158_4" value="3"><span>Ручная правка каждой записи</span></label></div><p class="quiz-why" hidden>Ключ идемпотентности делает повторную доставку безопасной.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какой код состояния подтверждает лишь обработку запроса, но не корректность данных?</p><div class="opts"><label class="opt"><input type="radio" name="q158_5" value="0" data-ok><span>200</span></label><label class="opt"><input type="radio" name="q158_5" value="1"><span>400</span></label><label class="opt"><input type="radio" name="q158_5" value="2"><span>404</span></label><label class="opt"><input type="radio" name="q158_5" value="3"><span>500</span></label></div><p class="quiz-why" hidden>200 OK означает «запрос обработан», корректность данных проверяет сверка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какие форматы используются для обмена данными между системами?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_6" value="0" data-ok><span>JSON</span></label><label class="opt"><input type="checkbox" name="q158_6" value="3"><span>PNG</span></label><label class="opt"><input type="checkbox" name="q158_6" value="2" data-ok><span>CSV</span></label><label class="opt"><input type="checkbox" name="q158_6" value="4"><span>EXE</span></label><label class="opt"><input type="checkbox" name="q158_6" value="1" data-ok><span>XML</span></label></div><p class="quiz-why" hidden>JSON, XML и CSV переносят структурированные данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какие свойства важны для контракта API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_7" value="1" data-ok><span>Методы</span></label><label class="opt"><input type="checkbox" name="q158_7" value="0" data-ok><span>Пути</span></label><label class="opt"><input type="checkbox" name="q158_7" value="4"><span>Цвет кнопки</span></label><label class="opt"><input type="checkbox" name="q158_7" value="2" data-ok><span>Схемы данных</span></label><label class="opt"><input type="checkbox" name="q158_7" value="5"><span>Модель процессора</span></label><label class="opt"><input type="checkbox" name="q158_7" value="3" data-ok><span>Коды ошибок</span></label></div><p class="quiz-why" hidden>Контракт фиксирует интерфейс и ошибки.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какие проверки ставят на рубежах интеграции?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_8" value="1" data-ok><span>Соответствие схеме на выходе адаптера</span></label><label class="opt"><input type="checkbox" name="q158_8" value="4"><span>Замер температуры сервера</span></label><label class="opt"><input type="checkbox" name="q158_8" value="2" data-ok><span>Сверка количества и сумм после загрузки</span></label><label class="opt"><input type="checkbox" name="q158_8" value="3"><span>Проверка цвета интерфейса</span></label><label class="opt"><input type="checkbox" name="q158_8" value="0" data-ok><span>Валидация полей на входе адаптера</span></label></div><p class="quiz-why" hidden>Три рубежа ловят разные причины отказов, каждая со своим адресом.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие правила обязательно включают в словарь соответствий?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_9" value="1" data-ok><span>Обязательность значений</span></label><label class="opt"><input type="checkbox" name="q158_9" value="3"><span>Цвет кнопки интерфейса</span></label><label class="opt"><input type="checkbox" name="q158_9" value="0" data-ok><span>Имена и типы полей</span></label><label class="opt"><input type="checkbox" name="q158_9" value="4"><span>Список имён сотрудников</span></label><label class="opt"><input type="checkbox" name="q158_9" value="2" data-ok><span>Правило ключа записи (что считать «той же самой записью»)</span></label></div><p class="quiz-why" hidden>Словарь должен однозначно объяснять, что и куда переписать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что характерно для асинхронного обмена?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_10" value="1" data-ok><span>Повторные попытки с задержкой</span></label><label class="opt"><input type="checkbox" name="q158_10" value="4"><span>Ответ всегда приходит мгновенно</span></label><label class="opt"><input type="checkbox" name="q158_10" value="0" data-ok><span>Очередь сообщений</span></label><label class="opt"><input type="checkbox" name="q158_10" value="3"><span>Клиент блокируется до прихода ответа</span></label><label class="opt"><input type="checkbox" name="q158_10" value="2" data-ok><span>Dead letter queue для разобранных вручную ошибок</span></label></div><p class="quiz-why" hidden>Асинхронный обмен развязывает отправителя и получателя через очередь.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что проверять после успешного ответа API?</p><div class="opts"><label class="opt"><input type="checkbox" name="q158_11" value="1" data-ok><span>Количество записей</span></label><label class="opt"><input type="checkbox" name="q158_11" value="5"><span>Отсутствие журнала операций</span></label><label class="opt"><input type="checkbox" name="q158_11" value="0" data-ok><span>Обязательные поля в JSON</span></label><label class="opt"><input type="checkbox" name="q158_11" value="4"><span>Отсутствие ошибок по статусу 200</span></label><label class="opt"><input type="checkbox" name="q158_11" value="3" data-ok><span>Соответствие справочникам</span></label><label class="opt"><input type="checkbox" name="q158_11" value="2" data-ok><span>Контрольные суммы</span></label></div><p class="quiz-why" hidden>Статус 200 не доказывает корректность данных: сверка идёт отдельно.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется спецификация описания API с путями, методами и схемами?</p><input type="text" class="short-answer" data-answers="[&quot;OpenAPI&quot;, &quot;swagger&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется спецификация описания API с путями, методами и схемами?"><p class="quiz-why" hidden>Это OpenAPI, её первую версию называли Swagger.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какой формат обмена удобнее всего для веб-API?</p><input type="text" class="short-answer" data-answers="[&quot;JSON&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой формат обмена удобнее всего для веб-API?"><p class="quiz-why" hidden>JSON компактен и легко отображается на структуры языка.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?</p><input type="text" class="short-answer" data-answers="[&quot;сверка&quot;, &quot;reconciliation&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется проверка, которая сравнивает источник и приёмник по числу записей и суммам?"><p class="quiz-why" hidden>Это сверка данных.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
 </div></article><nav class="pager"><a class="" href="20-lek-11.html"><span>← Предыдущее занятие</span>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</a><a class="next" style="text-align:right;margin-left:auto" href="22-prakt-10.html"><span>Следующее занятие →</span>Практика 10. Работа с веб-API информационной системы</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
@@ -883,8 +944,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     return [f(0),f(8),f(4)];
   }
   function palette(hex, seed){
-    var hsl=rgbHsl(hexRgb(hex)), h=(hsl[0]+(seed-.5)*.16+1)%1, s=Math.max(.6,hsl[1]);
-    return [hue(h,s,.6),hue((h+.13)%1,.78,.62),hue((h+.87)%1,.72,.64)];
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
   }
   function shader(gl,type,src){
     var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;

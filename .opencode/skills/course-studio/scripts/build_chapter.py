@@ -21,6 +21,7 @@ import base64
 import html
 import gzip
 import json
+import random
 import re
 import sys
 from pathlib import Path
@@ -421,6 +422,28 @@ QUIZ_SCRIPT = r"""
 })();
 """
 
+def shuffled_options(opts: list, correct: list, seed_text: str) -> list:
+    """Deterministic order for multiple-choice options.
+
+    Correct answers in the source are usually listed together at the top, so the
+    page would give them away. Shuffle with a stable seed and prefer an order
+    where correct options are not neighbours.
+    """
+    indices = list(range(len(opts)))
+    rng = random.Random(sum((i + 1) * ord(ch) for i, ch in enumerate(seed_text)))
+    best = indices[:]
+    best_score = len(correct)
+    for _ in range(200):
+        rng.shuffle(indices)
+        pos = [i for i, oi in enumerate(indices) if oi in correct]
+        score = sum(1 for a, b in zip(pos, pos[1:]) if b - a == 1)
+        if score < best_score:
+            best, best_score = indices[:], score
+        if score == 0:
+            break
+    return best
+
+
 def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
     """Parse Q: / + / - / = lines into an interactive, self-scoring test.
 
@@ -470,10 +493,12 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
                          f'{body}{why}{actions}</div>')
         else:
             input_type = "checkbox" if is_multi else "radio"
+            order = (shuffled_options(q["opts"], q["correct"], q["q"]) if is_multi
+                     else list(range(len(q["opts"]))))
             opts = "".join(
                 f'<label class="opt"><input type="{input_type}" name="q{n}_{qi}" value="{oi}"'
-                f'{" data-ok" if oi in q["correct"] else ""}><span>{md(opt)[3:-4]}</span></label>'
-                for oi, opt in enumerate(q["opts"]))
+                f'{" data-ok" if oi in q["correct"] else ""}><span>{md(q["opts"][oi])[3:-4]}</span></label>'
+                for oi in order)
             qtype = "multi" if is_multi else "single"
             items.append(f'<div class="quiz-q" data-type="{qtype}" data-correct="{len(q["correct"])}" data-q="{qi + 1}"{hidden}>'
                          f'<p class="quiz-p">{number}{md(q["q"])[3:-4]}</p><div class="opts">{opts}</div>{why}{actions}</div>')
@@ -691,13 +716,12 @@ def main():
         pills.append(f'<span class="pill dark">{esc(kind)}</span>')
     if course.get("title"):
         pills.append(f'<span class="pill">{esc(course["title"])}</span>')
-    meta = fm.get("level") or course.get("level") or ""
     glyph = fm.get("glyph") or course.get("code", "")
     accent = course.get("accent", FALLBACK["accent"])
     seed = (sum(ord(ch) for ch in course.get("slug", base.name)) % 97) / 97.0
-    hero = f"""<header class="hero" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
+    hero = f"""<header class="hero hero-lesson" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
-<div class="badges">{''.join(pills)}</div><div class="meta">{esc(meta)}</div>
+<div class="badges">{''.join(pills)}</div>
 <div class="hero-panel"><h1>{esc(fm.get('title', src_path.stem))}</h1><p class="dek">{esc(fm.get('dek', ''))}</p></div>
 <div class="glyph" aria-hidden="true">{esc(glyph)}</div></header>"""
 
@@ -717,23 +741,29 @@ def main():
 
     pager = ""
     if cj:
-        chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
+        all_chapters = json.loads(cj.read_text(encoding="utf-8")).get("chapters", [])
         availability = load_availability(cj.parent)
-        # only open chapters that exist on disk get links, so planned and closed chapters never produce dead links
+        # every written chapter gets a pager slot, so a closed next lesson can show as unavailable
         chapters = [
             c
-            for c in chapters
-            if (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')
-            and (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()
-            and is_open(course, c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}', availability)
+            for c in all_chapters
+            if (cj.parent / "chapters" / (c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}')).joinpath("chapter.md").exists()
         ]
         slugs = [c.get("dir") or f'{int(c["n"]):02d}-{c["slug"]}' for c in chapters]
         if base.name in slugs:
             k = slugs.index(base.name)
             prev_ = chapters[k - 1] if k > 0 else None
             next_ = chapters[k + 1] if k + 1 < len(chapters) else None
-            a = lambda c, s, lab, cls="": (f'<a class="{cls}" href="{s}.html"><span>{lab}</span>{esc(c["title"])}</a>' if c else "<span></span>")
-            pager = f'<nav class="pager">{a(prev_, slugs[k-1] if prev_ else "", "← Предыдущее занятие")}{a(next_, slugs[k+1] if next_ else "", "Следующее занятие →", "next")}</nav>'
+
+            def pager_item(c, s, lab, cls=""):
+                if not c:
+                    return "<span></span>"
+                if is_open(course, s, availability):
+                    return f'<a class="{cls}" href="{s}.html"><span>{lab}</span>{esc(c["title"])}</a>'
+                return f'<span class="pager-off {cls}" aria-disabled="true"><span>{lab}</span>Пока недоступно</span>'
+
+            pager = (f'<nav class="pager">{pager_item(prev_, slugs[k-1] if prev_ else "", "← Предыдущее занятие")}'
+                     f'{pager_item(next_, slugs[k+1] if next_ else "", "Следующее занятие →", "next")}</nav>')
             pager = pager.replace('class="next"', 'class="next" style="text-align:right;margin-left:auto"')
 
     dark_fmt = HtmlFormatter(style="github-dark")

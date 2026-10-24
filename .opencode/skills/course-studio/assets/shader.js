@@ -43,8 +43,9 @@
     return [f(0),f(8),f(4)];
   }
   function palette(hex, seed){
-    var hsl=rgbHsl(hexRgb(hex)), h=(hsl[0]+(seed-.5)*.16+1)%1, s=Math.max(.6,hsl[1]);
-    return [hue(h,s,.6),hue((h+.13)%1,.78,.62),hue((h+.87)%1,.72,.64)];
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
   }
   function shader(gl,type,src){
     var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
