@@ -202,8 +202,11 @@ QUIZ_NOSCRIPT = ('<noscript><style>.quiz-q[hidden]{display:block!important}'
 
 READ_PROGRESS_HTML = ('<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" '
                       'aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>')
-PDF_BUTTON_HTML = ('<button type="button" class="pdf-btn" data-pdf '
-                   'title="Откроется окно печати, выберите «Сохранить как PDF»">Экспорт в PDF</button>')
+RAIL_PDF_HTML = ('<button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" '
+                 'aria-label="Экспорт в PDF, откроется окно печати">'
+                 '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                 'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button>')
 
 RAIL_BACK_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
                  'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
@@ -213,7 +216,9 @@ RAIL_HOME_SVG = ('<svg viewBox="0 0 24 24" width="19" height="19" fill="none" st
                  '<path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg>')
 RAIL_WARN_HTML = ('<button type="button" class="rail-btn rail-warn" data-warn '
                   'data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе">'
-                  '<span aria-hidden="true">!</span></button>')
+                  '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" '
+                  'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                  '<path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button>')
 THEME_RAIL_BUTTON = ('<button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" '
                      'data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true">'
                      '<svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" '
@@ -310,10 +315,11 @@ REVEAL_SCRIPT = r"""
 """
 
 def lesson_tools(warn: bool, back: str = "", home: bool = True) -> str:
-    """Top action bar plus the fixed left-edge navigation rail.
+    """Fixed left-edge navigation rail with every lesson control.
 
-    The rail carries the back arrow, the home link and (on lectures) the
-    warning and theme buttons; only the PDF export stays in the top bar.
+    Top group: back arrow and home link. Bottom group: PDF export, (on
+    lectures) the progress warning, and the theme toggle. The chapter page has
+    no separate top action bar any more, so the rail is the only control strip.
     """
     top = ""
     if back:
@@ -322,11 +328,12 @@ def lesson_tools(warn: bool, back: str = "", home: bool = True) -> str:
     if home:
         top += ('<a class="rail-btn" href="index.html" data-tip="К учебному плану" '
                 'aria-label="К учебному плану">' + RAIL_HOME_SVG + '</a>')
-    bottom = RAIL_WARN_HTML if warn else ""
+    bottom = RAIL_PDF_HTML
+    if warn:
+        bottom += RAIL_WARN_HTML
     bottom += THEME_RAIL_BUTTON
-    rail = (f'<nav class="edge-rail" aria-label="Навигация по занятию">{top}'
+    return (f'<nav class="edge-rail" aria-label="Навигация по занятию">{top}'
             f'<span class="rail-grow" aria-hidden="true"></span>{bottom}</nav>')
-    return (f'<div class="lesson-tools"><div class="lesson-tools-right">{PDF_BUTTON_HTML}</div></div>{rail}')
 
 QUIZ_MODALS_HTML = r"""
 <div class="modal" data-modal="warn" hidden>

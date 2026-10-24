@@ -271,9 +271,10 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   explanation after every answer (right or wrong), and immediately reveals the next
   question without a button. After the last answer it shows an inline result card with
   the student name, score, test time and lecture view time, with no action button. The
-  lesson pager stays hidden until that result card appears. PDF button, reading
-  progress, warning button and dark-theme toggle also come from the shared builder; do
-  not rebuild these elements inside a chapter.
+  lesson pager stays hidden until that result card appears. PDF export, reading
+  progress, the progress warning and the dark-theme toggle also come from the shared
+  builder; they sit in the fixed left-edge rail, and you must not rebuild these
+  elements inside a chapter.
 - The figure is an Anatomy figure that passes Anatomy's own verification, not a diagram
   of boxes, and it shows exactly the moments the text refers to with the same numbers.
 - Visualise diagrams follow the design system and stay readable at 390 px.
