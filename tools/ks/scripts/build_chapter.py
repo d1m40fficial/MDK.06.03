@@ -366,13 +366,10 @@ QUIZ_SCRIPT = r"""
     if(!qs.length) return;
     document.documentElement.classList.add('quiz-pending');
     var current = 0, right = 0, firstAt = null, lastAt = null;
-    var progress = quiz.querySelector('[data-quiz-progress]');
     function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
-    function setProgress(text){ if(progress) progress.textContent = text; }
     function showQuestion(i){
       current = i;
       qs[i].hidden = false;
-      setProgress('Вопрос ' + (i + 1) + ' из ' + qs.length);
       if(window.__readProgress) window.__readProgress();
     }
     function finish(){
@@ -387,7 +384,6 @@ QUIZ_SCRIPT = r"""
       document.documentElement.classList.remove('quiz-pending');
       if(window.__readProgress) window.__readProgress();
       window.dispatchEvent(new Event('resize'));
-      setProgress('Тест завершён');
     }
     function answer(q, idx){
       if(q.dataset.answered === '1') return;
@@ -526,7 +522,6 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
               '<div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div>'
               '</dl></div>')
     html_block = (f'\n<div class="quiz" data-quiz>'
-                  f'<div class="quiz-progress" data-quiz-progress aria-live="polite">Вопрос 1 из {len(questions)}</div>'
                   f'{"".join(items)}{result}</div>\n')
     return html_block, True
 

@@ -8,7 +8,7 @@ Contents: 1. Kinds of output · 2. The chapter arc · 3. Per-course must-haves �
 
 | Ask | `kind` | Length | Figures | Shape |
 |---|---|---|---|---|
-| "chapter on X", "lesson", "module" | `chapter` | 2,000–4,500 words, 25–45 min | 1 signature figure (2–3 for long chapters, on request) | full arc below |
+| "chapter on X", "lesson", "module" | `chapter` | 3,000–5,000 words, 35–60 min | 1 signature figure (2–3 for long chapters, on request) | full arc below |
 | "notes on X", "explain X" | `notes` | 800–1,800 words | 0–1, prefer reusing a chapter figure | idea → mechanism → pitfalls → check |
 | "cheat sheet", "revision notes", "quick reference" | `cheatsheet` | 1–2 screens | none new; link chapter figures | tables, patterns, complexity, one-liners |
 | "interview prep for X" | `notes` | 1,000–2,000 words | 0–1 | patterns → canonical problems → what interviewers probe |
