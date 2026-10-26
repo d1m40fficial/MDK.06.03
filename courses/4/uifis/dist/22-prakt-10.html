@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,12 +794,24 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 22</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Работа с веб-API информационной системы</h1><p class="dek">Прочитайте контракт, поднимите учебный сервис, проверьте его в Postman и клиентом на Python, затем сверьте ответы и разберите отказы.</p></div>
-<div class="glyph" aria-hidden="true">П10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Читать контракт API и отличать успешный статус от корректных данных</li><li>Поднять учебный сервис на стандартной библиотеке Python</li><li>Собрать Postman-коллекцию с тестами статуса, схемы и времени ответа</li><li>Написать клиент на urllib с пагинацией, повтором и понятными ошибками</li><li>Сверить ответы двух клиентов и объяснить причину отказа</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-контракт-api">Задание 1. Контракт API</a></li><li><a href="#задание-2-учебный-сервис">Задание 2. Учебный сервис</a></li><li><a href="#задание-3-postman">Задание 3. Postman</a></li><li><a href="#задание-4-python-клиент">Задание 4. Python-клиент</a></li><li><a href="#задание-5-сверка-и-отказы">Задание 5. Сверка и отказы</a></li><li><a href="#задание-6-отчёт">Задание 6. Отчёт</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>Деканату нужен список студентов группы для рассылки. Портал отдаёт JSON, код ответа <code>200</code>, тело не пустое. Через неделю выясняется, что половина списка потерялась, один студент попал в файл дважды, а письмо ушло на адрес, которого нет в базе. База здесь ни при чём: ответ читали глазами, а не проверяли.</p>
-<p>Работа идёт на трёх уровнях. Сначала фиксируется контракт: какие пути, коды, поля и ограничения у сервиса. Потом запросы проверяются в Postman, где видно статус, заголовки, тело и время. Затем те же операции выполняет клиент на Python: он читает страницы по ссылке <code>next</code>, повторяет временно неудачный запрос, разбирает JSON и сохраняет результат в файл. Совпадение двух результатов и есть доказательство, что данные прочитаны правильно.</p>
-<p>Результат работы: учебный сервис на <code>http://127.0.0.1:8090</code>, Postman-коллекция с девятью запросами и тестами, клиент <code>api_client.py</code>, файл <code>students.json</code>, таблица сверки, разбор отказов и отчёт.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Сервис отвечает на все endpoint контракта, коллекция проходит в Postman без красных тестов, клиент сохраняет 12 студентов и переживает один отказ, таблица сверки совпадает по числу записей и ключам, в отчёте есть скриншоты и объяснение причин отказов.</p></div>
-
+<div class="glyph" aria-hidden="true">П10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Читать контракт API и отличать успешный статус от корректных данных</li><li>Поднять учебный сервис на стандартной библиотеке Python</li><li>Собрать Postman-коллекцию с тестами статуса, схемы и времени ответа</li><li>Написать клиент на urllib с пагинацией, повтором и понятными ошибками</li><li>Сверить ответы двух клиентов и объяснить причину отказа</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Научиться работать с веб-API информационной системы: читать контракт, проверять ответы в Postman и клиентом на Python, сверять два независимых чтения и разбирать отказы.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>читаете контракт API и отличаете успешный статус от корректных данных;</li>
+<li>поднимаете учебный сервис на стандартной библиотеке Python;</li>
+<li>собираете Postman-коллекцию с тестами статуса, схемы и времени ответа;</li>
+<li>пишете клиент на <code>urllib</code> с пагинацией, повтором и понятными ошибками;</li>
+<li>сверяете ответы двух клиентов и объясняете причину отказа.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.9 или новее, VS Code.</li>
+<li>Postman, установленный как обычное приложение.</li>
+<li>Браузер для чтения материалов.</li>
+</ul>
+<p>Права администратора, интернет, Docker и сервер базы данных не требуются: сервис хранит данные в памяти процесса.</p>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-10_report-template.docx" download>Шаблон отчёта в DOCX</a>
 <a href="reports/UIFIS_practice-10_mock_api.py" download>Учебный сервис mock_api.py</a>
@@ -794,30 +820,36 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Скачайте файлы в папку практики. Код сервиса ниже совпадает с файлом, поэтому файл можно запускать сразу, а код читать как объяснение каждой строки.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Нужны Windows 10 или 11, Python 3.9 или новее и Postman. Права администратора, интернет, Docker и сервер базы данных не требуются: сервис хранит данные в памяти процесса.</p>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>Деканату нужен список студентов группы для рассылки. Портал отдаёт JSON, код ответа <code>200</code>, тело не пустое. Через неделю выясняется, что половина списка потерялась, один студент попал в файл дважды, а письмо ушло на адрес, которого нет в базе. База здесь ни при чём: ответ читали глазами, а не проверяли.</p>
+<p>Работа идёт на трёх уровнях. Сначала фиксируется контракт: какие пути, коды, поля и ограничения у сервиса. Потом запросы проверяются в Postman, где видно статус, заголовки, тело и время. Затем те же операции выполняет клиент на Python: он читает страницы по ссылке <code>next</code>, повторяет временно неудачный запрос, разбирает JSON и сохраняет результат в файл. Совпадение двух результатов и есть доказательство, что данные прочитаны правильно.</p>
+<p>Результат работы: учебный сервис на <code>http://127.0.0.1:8090</code>, Postman-коллекция с девятью запросами и тестами, клиент <code>api_client.py</code>, файл <code>students.json</code>, таблица сверки, разбор отказов и отчёт.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Сервис отвечает на все endpoint контракта, коллекция проходит в Postman без красных тестов, клиент сохраняет 12 студентов и переживает один отказ, таблица сверки совпадает по числу записей и ключам, в отчёте есть скриншоты и объяснение причин отказов.</p></div>
+
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Проверьте Python в PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
 
 <p>Если команда открывает Microsoft Store или отвечает ошибкой, используйте загрузчик <code>py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">py</span> <span class="p">-</span><span class="n">3</span> <span class="p">-</span><span class="n">-version</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">py</span> <span class="p">-</span><span class="n">3</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
 
 <p>Дальше в командах вместо <code>python</code> пишите <code>py -3</code>. Создайте рабочую папку и перейдите в неё:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">10</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">10</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">10</span>
 </code></pre></div>
 
 <p>Проверьте, что порт <code>8090</code> свободен:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8090</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8090</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
 </code></pre></div>
 
 <p>Пустой вывод означает, что порт никто не слушает. Сохраните <code>UIFIS_practice-10_mock_api.py</code> из материалов в эту папку и переименуйте в <code>mock_api.py</code>. Включите в Проводнике показ расширений: браузер иногда сохраняет файл как <code>mock_api.py.txt</code>, и Python такой файл не запустит.</p>
 <p>Postman установите как обычное приложение. Если при первом запуске предлагают вход, можно работать локально: коллекция и окружение хранятся на компьютере и не требуют облачной синхронизации.</p>
 <div class="callout pitfall"><span class="label">Ошибка 10048: порт уже занят</span><p>Если при запуске появилось <code>OSError: [WinError 10048]</code>, порт <code>8090</code> держит другая копия сервиса или посторонняя программа. Найдите владельца порта командой <code>Get-NetTCPConnection -LocalPort 8090 -State Listen | Select-Object OwningProcess</code>, затем закройте свою прошлую копию. Если порт занят чужим приложением, запустите сервис с ключом <code>--port 8091</code> и поменяйте <code>baseUrl</code> во всех запросах, иначе проверки будут обращаться не туда.</p></div>
 
-<h2 id="задание-1-контракт-api"><span class="num">03</span>Задание 1. Контракт API</h2>
+<h3>Шаг 2. Контракт API</h3>
 <p>Контракт это таблица, по которой одновременно пишут сервер, тесты и клиент. Пока таблицы нет, каждый понимает поля по-своему, и первый же разбор инцидента превращается в спор о том, что считалось правильным ответом.</p>
 <table>
 <thead>
@@ -941,10 +973,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <div class="callout pitfall"><span class="label">Статус не равен корректным данным</span><p><code>200 OK</code> подтверждает, что запрос обработан. Он не подтверждает, что <code>items</code> не пуст, что <code>count</code> равен шести, что в каждой записи есть <code>email</code> и что в теле нет секрета. Проверка ответа состоит из четырёх вопросов: тот ли код, тот ли <code>Content-Type</code>, те ли поля, те ли значения. Для списка добавляется пятый: сходится ли <code>count</code> с длиной страницы и со ссылкой <code>next</code>.</p></div>
 
-<h2 id="задание-2-учебный-сервис"><span class="num">04</span>Задание 2. Учебный сервис</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица контракта переносится в отчёт текстом. Скриншот таблицы ничего не доказывает.</p></div>
+
+<h3>Шаг 3. Учебный сервис</h3>
 <p>Сервис ниже это тренажёр, а не промышленная система: данные лежат в списке, базы и авторизации нет. Зато поведение настоящее. Он проверяет вход до записи, возвращает разные коды, отдаёт <code>Location</code> при создании и не хранит паролей, которые можно случайно выдать наружу.</p>
 <p>Создайте в папке практики файл <code>mock_api.py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;UIFIS practice 10: a small students API with no external dependencies.</span>
 
 <span class="sd">Run:</span>
@@ -1118,18 +1152,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Запустите сервис в первом окне PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">mock_api</span><span class="p">.</span><span class="n">py</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">mock_api</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 
 <p>В строке запуска появятся адрес и порт. Окно не закрывайте: это и есть сервер. Во втором окне проверьте здоровье, фильтр и отсутствующего студента:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-G</span> <span class="p">-</span><span class="n">-data-urlencode</span> <span class="s2">&quot;group=ИС-42&quot;</span> <span class="p">-</span><span class="n">-data-urlencode</span> <span class="s2">&quot;limit=2&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">students</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-o</span> <span class="n">NUL</span> <span class="n">-w</span> <span class="s2">&quot;%{http_code}&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">students</span><span class="p">/</span><span class="n">999</span>
 </code></pre></div>
 
 <p>Первая команда возвращает <code>{"service": "uifis-students", "status": "ok", "students": 12}</code>. Вторая возвращает студентов с id 2 и 4, <code>"count": 6</code> и <code>"next": "/api/students?group=ИС-42&amp;limit=2&amp;offset=2"</code>. Третья печатает <code>404</code>.</p>
 <p>Создание проверяется телом из файла. Создайте в VS Code файл <code>new_student.json</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;full_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Соколов Пётр Ильич&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sokolov@example.ru&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ИС-42&quot;</span>
@@ -1137,7 +1171,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Отправьте его:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">students</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_student.json&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8090</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">students</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_student.json&quot;</span>
 </code></pre></div>
 
 <p>Ответ начинается с <code>HTTP/1.1 201 Created</code>, содержит <code>Location: /api/students/13</code> и запись с <code>"status": "active"</code>. Повторите ту же команду: теперь сервер отвечает <code>400</code>, <code>"error": "validation_error"</code> и <code>"field": "email"</code>, потому что адрес уже занят.</p>
@@ -1149,8 +1183,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 1</span><p>Консоль сервиса со строкой запуска и ответы <code>curl.exe</code> на <code>/health.json</code>, фильтр по группе и карточку с кодом <code>404</code>.</p></div>
 
-<h2 id="задание-3-postman"><span class="num">05</span>Задание 3. Postman</h2>
-<p>Сначала перезапустите сервис: в задании 2 вы создали <code>sokolov@example.ru</code>, а коллекция создаёт того же студента. После перезапуска снова 12 записей, и запрос создания вернёт <code>201</code>, а не <code>400</code>.</p>
+<h3>Шаг 4. Проверка в Postman</h3>
+<p>Сначала перезапустите сервис: на шаге 3 вы создали <code>sokolov@example.ru</code>, а коллекция создаёт того же студента. После перезапуска снова 12 записей, и запрос создания вернёт <code>201</code>, а не <code>400</code>.</p>
 <p>Импортируйте коллекцию: <strong>File → Import → Files</strong>, выберите <code>UIFIS_practice-10_postman-collection.json</code>. Затем создайте окружение: <strong>Environments → +</strong>, имя <code>UIFIS practice 10</code>, переменная <code>baseUrl</code> со значением <code>http://127.0.0.1:8090</code>. Сохраните окружение и выберите его в правом верхнем углу. В коллекции уже есть переменная <code>baseUrl</code> со значением по умолчанию, но окружение перекрывает её и позволяет менять порт в одном месте. Если окружение не выбрано, строка <code>{{baseUrl}}/api/students</code> уйдёт как есть и Postman покажет ошибку отправки.</p>
 <p>В коллекции девять запросов. Порядок важен: список проверяется до создания, иначе <code>count</code> изменится.</p>
 <table>
@@ -1220,7 +1254,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Тело запроса 7:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;full_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Соколов Пётр Ильич&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sokolov@example.ru&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ИС-42&quot;</span>
@@ -1228,7 +1262,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Тело запроса 8:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;full_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ошибка&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not-an-email&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ИС-42&quot;</span>
@@ -1236,7 +1270,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Тесты пишутся на JavaScript в панели <strong>Tests</strong> и выполняются после ответа. В коллекции проверки распределены по запросам. Для здоровья проверяются статус, формат и время:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;JSON content type&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span><span class="w"> </span><span class="sr">/application\/json/</span><span class="p">));</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;service is healthy&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">status</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">));</span>
@@ -1244,7 +1278,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Для списка проверяются массив, число, обязательные поля и отсутствие пароля:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;items is array&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">items</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">an</span><span class="p">(</span><span class="s1">&#39;array&#39;</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;count is number&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">count</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">a</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">));</span>
@@ -1258,7 +1292,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Для фильтра, страницы и карточки:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">// 03 Filter by group</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="c1">// 03 Filter by group</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;only IS-41&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">filtered</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">group</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="s1">&#39;ИС-41&#39;</span><span class="p">)));</span>
@@ -1276,7 +1310,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Для отсутствующего студента, создания и ошибок:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">// 06 Missing student</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="c1">// 06 Missing student</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;404 Not Found&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">404</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;error field&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">));</span>
 
@@ -1296,7 +1330,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Чтобы время и отсутствие секретов проверялись на каждом запросе, добавьте общий тест на уровень коллекции: выберите коллекцию в левой панели, откройте <strong>Tests</strong> и вставьте:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Ответ быстрее 1000 мс&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Ответ быстрее 1000 мс&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseTime</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">below</span><span class="p">(</span><span class="mf">1000</span><span class="p">);</span>
 <span class="p">});</span>
 
@@ -1312,10 +1346,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Вкладка Test Results для списка с зелёными тестами и для создания с кодом <code>201</code>. Отдельный скриншот с красным тестом после повторной отправки того же email.</p></div>
 
-<h2 id="задание-4-python-клиент"><span class="num">06</span>Задание 4. Python-клиент</h2>
+<h3>Шаг 5. Python-клиент</h3>
 <p>Postman доказывает, что endpoint работает при ручной проверке. Клиент доказывает, что те же правила можно повторить кодом и получить тот же результат. Ниже клиент на <code>urllib.request</code> без сторонних пакетов: он читает страницы по ссылке <code>next</code>, собирает все записи, создаёт студента и сохраняет список в файл.</p>
 <p>Создайте <code>api_client.py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;Клиент учебного API студентов. Только стандартная библиотека.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
@@ -1512,18 +1546,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Перед проверкой перезапустите сервис, чтобы вернуть 12 студентов после создания в Postman. Затем проверьте службу и страницу:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">health</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">health</span>
 <span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">list</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">41</span> <span class="p">-</span><span class="n">-limit</span> <span class="n">2</span>
 </code></pre></div>
 
 <p>Ожидаемый вывод: строка <code>200 {"service": "uifis-students", "status": "ok", "students": 12}</code>, затем две записи с id 1 и 3 и строка <code>Всего: 6, next: /api/students?group=ИС-41&amp;limit=2&amp;offset=2</code>.</p>
 <p>Соберите все страницы группы и сохраните файл:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">all</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">41</span> <span class="p">-</span><span class="n">-limit</span> <span class="n">2</span> <span class="p">-</span><span class="n">-out</span> <span class="n">students</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">all</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">41</span> <span class="p">-</span><span class="n">-limit</span> <span class="n">2</span> <span class="p">-</span><span class="n">-out</span> <span class="n">students</span><span class="p">.</span><span class="n">json</span>
 </code></pre></div>
 
 <p>Клиент делает три запроса и получает шесть записей, затем печатает <code>Получено 6 записей, файл ...\students.json</code>. Откройте файл: это массив из шести объектов с теми же полями, что в контракте.</p>
 <p>Создайте студента и проверьте отказ:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">add</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">&quot;Соколов Пётр Ильич&quot;</span> <span class="p">-</span><span class="n">-email</span> <span class="s2">&quot;sokolov@example.ru&quot;</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">42</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">add</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">&quot;Соколов Пётр Ильич&quot;</span> <span class="p">-</span><span class="n">-email</span> <span class="s2">&quot;sokolov@example.ru&quot;</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">42</span>
 <span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">add</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">&quot;Соколов Пётр Ильич&quot;</span> <span class="p">-</span><span class="n">-email</span> <span class="s2">&quot;sokolov@example.ru&quot;</span> <span class="p">-</span><span class="n">-group</span> <span class="n">ИС</span><span class="p">-</span><span class="n">42</span>
 <span class="n">python</span> <span class="n">api_client</span><span class="p">.</span><span class="n">py</span> <span class="n">error</span>
 </code></pre></div>
@@ -1532,9 +1566,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Четыре решения в коде стоит проговорить. Ссылка <code>next</code> приходит с кириллицей в параметре группы, а <code>urlopen</code> передаёт строку запроса в ASCII, поэтому клиент вызывает <code>quote</code> перед сборкой абсолютного адреса: без этого Python падает с <code>UnicodeEncodeError</code> на второй странице. Повтор разрешён только для <code>GET</code> и <code>HEAD</code>, потому что <code>POST</code> не является безопасным: если сервер уже создал запись, а ответ потерялся, повтор создаст вторую. Повторяются только коды <code>500</code> и <code>503</code> и сетевые ошибки, потому что <code>400</code> и <code>404</code> от повтора не изменятся. Таймаут <code>5</code> секунд не даёт клиенту зависнуть навсегда, а ограничение <code>max_pages</code> и набор уже посещённых ссылок защищают от бесконечной пагинации.</p>
 <div class="callout pitfall"><span class="label">Повтор POST без ключа создаёт дубликат</span><p>Учебный сервис спасает проверка уникальности email. В реальной системе без такого ограничения повторная отправка создаст второго студента с тем же адресом и другим <code>id</code>. Если повтор нужен, сервер и клиент договариваются о ключе идемпотентности, и повтор с тем же ключом возвращает первый результат, а не создаёт новую запись.</p></div>
 
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Вывод <code>python api_client.py list --group ИС-41 --limit 2</code>, вывод <code>all</code> с числом записей и первые строки файла <code>students.json</code>.</p></div>
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Вывод <code>python api_client.py list --group ИС-41 --limit 2</code>, вывод <code>all</code> с числом записей и первые строки файла <code>students.json</code>. Покажите в скриншоте путь к папке практики и имя файла.</p></div>
 
-<h2 id="задание-5-сверка-и-отказы"><span class="num">07</span>Задание 5. Сверка и отказы</h2>
+<h3>Шаг 6. Сверка и отказы</h3>
 <p>Сверка сравнивает два независимых чтения одних данных. Перезапустите сервис, чтобы после созданий в Postman и Python снова было 12 студентов, затем выполните фильтр в Postman и тот же фильтр клиентом.</p>
 <table>
 <thead>
@@ -1580,7 +1614,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Сравнивайте <code>count</code>, а не длину одной страницы. В запросе 03 коллекция не задаёт <code>limit</code>, поэтому сервер отдаёт 5 записей при <code>count</code> 6. Клиент с <code>--limit 2</code> отдаёт 2 записи при том же <code>count</code> 6. Оба ответа верны, потому что число страниц и число записей под фильтр это разные величины.</p>
 <p>Проверить сохранённый файл можно отдельной командой:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import json; data=json.load(open(&#39;students.json&#39;,encoding=&#39;utf-8&#39;)); print(len(data), [item[&#39;id&#39;] for item in data])&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import json; data=json.load(open(&#39;students.json&#39;,encoding=&#39;utf-8&#39;)); print(len(data), [item[&#39;id&#39;] for item in data])&quot;</span>
 </code></pre></div>
 
 <p>Ожидается <code>6 [1, 3, 5, 7, 9, 11]</code>. Если чисел меньше, смотрите <code>next</code> и <code>count</code> на каждой странице: клиент остановился раньше времени или сервер вернул не ту ссылку.</p>
@@ -1636,36 +1670,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Выполните четыре отказа руками. Первый: запросите карточку <code>/api/students/999</code> и объясните, почему это не ошибка клиента. Второй: отправьте того же студента второй раз и найдите в теле поле <code>field</code>. Третий: запустите клиент с <code>--base-url http://127.0.0.1:8091</code>, когда сервис слушает <code>8090</code>, и посмотрите, сколько попыток он сделает и что напечатает. Четвёртый: вызовите <code>error</code> и сравните поведение Postman и Python. Postman покажет один ответ <code>500</code>, Python сделает три попытки.</p>
 <div class="callout note"><span class="label">Повтор не лечит ошибку клиента</span><p>Если сервер отвечает <code>400</code> или <code>404</code>, повтор вернёт тот же код и тот же текст. Повторяют только временные отказы: <code>500</code>, <code>503</code>, обрыв соединения, таймаут. Различать эти случаи обязательно, иначе клиент будет тратить время на запросы, которые не могут стать успешными.</p></div>
 
-<h2 id="задание-6-отчёт"><span class="num">08</span>Задание 6. Отчёт</h2>
+<h3>Шаг 7. Отчёт</h3>
 <p>В отчёт приложите:</p>
 <ol>
-<li>Таблицу контракта из задания 1 с фактическими кодами и форматами.</li>
+<li>Таблицу контракта из шага 2 с фактическими кодами и форматами.</li>
 <li>Файл <code>mock_api.py</code> или его распечатку. Если меняли порт, укажите это в отчёте.</li>
 <li>Экспорт коллекции и окружения Postman в JSON. В окружении должен быть только <code>baseUrl</code>, без паролей и токенов.</li>
-<li>Скриншоты: запуск сервиса и <code>/health.json</code>, коллекция с окружением, успешные тесты, тесты <code>404</code> и <code>400</code>, вывод клиента и файл <code>students.json</code>, таблица сверки.</li>
+<li>Скриншоты: запуск сервиса и <code>/health.json</code>, коллекция с окружением, успешные тесты, тесты <code>404</code> и <code>400</code>, вывод клиента и файл <code>students.json</code>. Таблицу сверки и таблицу отказов перенесите в отчёт текстом, скриншот для них не нужен.</li>
 <li>Заполненный чек-лист <code>UIFIS_practice-10_checklist.csv</code>.</li>
 <li>Таблицу сверки Postman и Python с фактическими числами и временем.</li>
 <li>Таблицу отказов с причинами и исправлениями.</li>
 <li>Вывод, который отвечает на вопросы шаблона: почему код <code>200</code> не доказывает корректность данных, как проверялись поля и количество записей, что изменится при страницах по 5 записей и какая ошибка оказалась самой трудной.</li>
 </ol>
-<p>В выводе опирайтесь на факты из таблиц, а не пересказывайте задания. Например: «расхождение поймала проверка <code>count</code> против длины массива, потому что фильтр по группе был потерян в URL». Такой вывод проверяющий может сверить с таблицей.</p>
-<div class="callout shot"><span class="label">Скриншот 4</span><p>Страница отчёта с таблицей сверки и таблицей отказов, заполненными фактическими числами.</p></div>
-
-<h3>Контрольные вопросы</h3>
+<p>В выводе опирайтесь на факты из таблиц, а не пересказывайте шаги. Например: «расхождение поймала проверка <code>count</code> против длины массива, потому что фильтр по группе был потерян в URL». Такой вывод проверяющий может сверить с таблицей.</p>
+<p>Скриншот для этого шага не нужен: сам отчёт сдаётся файлом.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-10_report-template.docx</code> с таблицами контракта, сверки и отказов.</li>
+<li>Файл <code>mock_api.py</code>.</li>
+<li>Файл <code>api_client.py</code>.</li>
+<li>Файл <code>students.json</code>.</li>
+<li>Экспорт коллекции и окружения Postman в JSON.</li>
+<li>Заполненный чек-лист <code>UIFIS_practice-10_checklist.csv</code>.</li>
+<li>Скриншоты запуска сервиса, тестов Postman и вывода клиента.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: сервис работает, все девять запросов коллекции проходят, клиент читает страницы по <code>next</code>, повторяет <code>500</code> и сохраняет файл, сверка совпадает по числам и ключам, разобраны минимум три отказа, отчёт и чек-лист заполнены.</li>
+<li><strong>4</strong>: сервис и клиент работают, но один-два теста слабые, один отказ объяснён поверхностно или в отчёте не хватает скриншота.</li>
+<li><strong>3</strong>: запросы проверены вручную без тестов или клиент не умеет пагинацию и повтор, сверка выполнена формально, отказы перечислены без причин.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Чем API отличается от прямого доступа к базе данных?</li>
 <li>Зачем нужны коды <code>400</code>, <code>404</code> и <code>500</code> и чем они различаются?</li>
 <li>Что такое пагинация и почему клиент должен её поддерживать?</li>
 <li>Почему повтор запроса на создание требует ключа идемпотентности?</li>
-<li>Какие поля ответа нельзя писать в журнал?</li>
 <li>Чем проверка в Postman отличается от проверки в коде клиента?</li>
 </ol>
-<h3>Критерии оценки</h3>
-<ul>
-<li><strong>5</strong>: сервис работает, все девять запросов коллекции проходят, клиент читает страницы по <code>next</code>, повторяет <code>500</code> и сохраняет файл, сверка совпадает по числам и ключам, разобраны минимум три отказа, отчёт и чек-лист заполнены.</li>
-<li><strong>4</strong>: сервис и клиент работают, но один-два теста слабые, один отказ объяснён поверхностно или в отчёте не хватает скриншота.</li>
-<li><strong>3</strong>: запросы проверены вручную без тестов или клиент не умеет пагинацию и повтор, сверка выполнена формально, отказы перечислены без причин.</li>
-</ul></article><nav class="pager"><a class="" href="21-lek-12.html"><span>← Предыдущее занятие</span>Лекция 12. Интеграция информационных систем</a><a class="next" style="text-align:right;margin-left:auto" href="23-lek-13.html"><span>Следующее занятие →</span>Лекция 13. Жизненный цикл информационной системы</a></nav></main>
+</div></article><nav class="pager"><a class="" href="21-lek-12.html"><span>← Предыдущее занятие</span>Лекция 12. Интеграция информационных систем</a><a class="next" style="text-align:right;margin-left:auto" href="23-lek-13.html"><span>Следующее занятие →</span>Лекция 13. Жизненный цикл информационной системы</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

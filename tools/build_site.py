@@ -92,6 +92,13 @@ CARD_CSS = r"""
 .years-grid.bento .year-card .art{background:var(--c-tint)}
 .years-grid.bento .year-card:nth-child(3n) .body{padding-bottom:26px}
 
+/* landing introduction and the toolkit used in practical work */
+.materials-about{border:1px solid var(--rule);border-radius:var(--radius);background:var(--card);padding:22px 24px;margin:0 0 18px}
+.materials-about h2{margin:0 0 8px;font:800 26px/1.15 var(--font-display);letter-spacing:-.02em}
+.materials-about p{margin:0;color:var(--ink-2);max-width:78ch;line-height:1.6}
+.materials-about h3{margin:18px 0 10px;font:700 15px/1.3 var(--font-display)}
+.tool-list{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.tool-list li{font:600 12px/1 var(--font-mono);letter-spacing:.02em;color:var(--ink-2);background:var(--paper);border:1px solid var(--rule);border-radius:999px;padding:8px 11px}
 .specialty{border:1px solid var(--rule);border-radius:var(--radius);background:var(--card);margin:0 0 14px;overflow:hidden}
 .specialty summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 20px;font:700 18px/1.3 var(--font-display)}
 .specialty summary::-webkit-details-marker{display:none}
@@ -284,6 +291,18 @@ def year_card(y: dict, courses: list) -> str:
         f'<p>{esc(y.get("tagline", ""))}</p><div class="spec">{esc(spec)}</div></div></a>')
 
 
+def materials_intro(site: dict) -> str:
+    description = site.get("description")
+    tools = site.get("tools") or []
+    if not description and not tools:
+        return ""
+    chips = "".join(f"<li>{esc(tool)}</li>" for tool in tools)
+    body = f'<h2>О материалах</h2><p>{esc(description)}</p>' if description else ""
+    if chips:
+        body += f'<h3>Что понадобится на практических работах</h3><ul class="tool-list">{chips}</ul>'
+    return f'<section class="materials-about">{body}</section>'
+
+
 def landing(site: dict, by_year: dict):
     blocks = []
     specialties = site.get("specialties", [])
@@ -300,6 +319,7 @@ def landing(site: dict, by_year: dict):
             f'</summary>{body}</details>')
     body = (f'<main class="catalog">{rail()}<header class="hero hero-glass">'
             f'<h1>{esc(site.get("title", "Материалы"))}</h1></header>'
+            f'{materials_intro(site)}'
             f'<div class="specialties">{"".join(blocks)}</div></main>')
     (SITE / "index.html").write_text(
         page(site.get("title", "Материалы"), body, "", CARD_CSS), encoding="utf-8")

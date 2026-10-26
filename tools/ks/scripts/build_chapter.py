@@ -443,6 +443,49 @@ def shuffled_options(opts: list, correct: list, seed_text: str) -> list:
     return indices
 
 
+def shuffled_questions(questions: list) -> list:
+    """Deterministic order that mixes single, multiple and short-answer questions.
+
+    The source usually groups all single-choice questions first, then all
+    multiple-choice and finally all short answers, so the test telegraphs its
+    shape. Spread every type evenly through the test with a stable seed, then
+    swap neighbours to avoid three questions of the same type in a row where a
+    different type is still available.
+    """
+    if len(questions) < 3:
+        return list(questions)
+
+    def kind(q):
+        if q["short"]:
+            return "short"
+        return "multi" if len(q["correct"]) > 1 else "single"
+
+    groups = {}
+    for q in questions:
+        groups.setdefault(kind(q), []).append(q)
+    if len(groups) < 2:
+        return list(questions)
+    seed = sum((i + 1) * ord(ch) for i, q in enumerate(questions) for ch in q["q"])
+    rng = random.Random(seed)
+    for group in groups.values():
+        rng.shuffle(group)
+    scored = []
+    for group in groups.values():
+        for i, q in enumerate(group):
+            scored.append(((i + 0.5) / len(group), rng.random(), q))
+    scored.sort(key=lambda item: (item[0], item[1]))
+    order = [q for _, _, q in scored]
+    kinds = [kind(q) for q in order]
+    for i in range(2, len(order)):
+        if kinds[i] == kinds[i - 1] == kinds[i - 2]:
+            for j in range(i + 1, len(order)):
+                if kinds[j] != kinds[i]:
+                    order[i], order[j] = order[j], order[i]
+                    kinds[i], kinds[j] = kinds[j], kinds[i]
+                    break
+    return order
+
+
 def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
     """Parse Q: / + / - / = lines into an interactive, self-scoring test.
 
@@ -469,6 +512,7 @@ def render_quiz(block: list, n: int, kind: str = "chapter") -> tuple:
             cur["opts"].append(t[1:].strip())
     if not questions:
         return "", False
+    questions = shuffled_questions(questions)
     items = []
     for qi, q in enumerate(questions):
         is_short = bool(q["short"])
@@ -675,6 +719,43 @@ def lesson_label(cj, dirname: str):
     return None
 
 
+def fence_languages(source: str) -> list:
+    """Languages of fenced code blocks in source order (empty fence means text)."""
+    langs, inside = [], False
+    for line in source.splitlines():
+        match = re.match(r"^\s*```([^\s`]*)", line)
+        if not match:
+            continue
+        if inside:
+            inside = False
+        else:
+            langs.append(match.group(1) or "text")
+            inside = True
+    return langs
+
+
+CODE_LANG_ALIASES = {
+    "py": "python", "js": "javascript", "ts": "typescript",
+    "sh": "bash", "shell": "bash", "ps1": "powershell", "ps": "powershell",
+    "yml": "yaml", "htm": "html",
+}
+
+
+def label_code_blocks(source: str, html: str) -> str:
+    """Add the fence language to every highlighted block as data-lang."""
+    langs = fence_languages(source)
+    index = 0
+
+    def repl(match):
+        nonlocal index
+        lang = langs[index] if index < len(langs) else "text"
+        index += 1
+        lang = CODE_LANG_ALIASES.get(lang.lower(), lang.lower() or "text")
+        return f'<div class="codehilite" data-lang="{esc(lang)}">'
+
+    return re.sub(r'<div class="codehilite">', repl, html)
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
@@ -700,6 +781,7 @@ def main():
     kind = fm.get("kind", "chapter")  # chapter | notes | cheatsheet
     pre, has_quiz, has_gate = preprocess(body, base, figures, kind)
     html_body, toc = number_headings(md(pre))
+    html_body = label_code_blocks(pre, html_body)
 
     ch = fm.get("chapter")
     label = lesson_label(cj, base.name)

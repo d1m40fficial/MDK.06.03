@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,35 +794,54 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 28</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Проектирование моделей данных ИС</h1><p class="dek">Библиотека выдаёт экземпляры книг, считает просрочку и штрафы. Соберите для неё ER-модель, докажите 3НФ, получите рабочую схему SQLite с ограничениями и проверьте её на данных, которые специально нарушают правила.</p></div>
-<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выделять сущности, атрибуты и ключи библиотечной ИС и обосновывать выбор суррогатного ключа</li><li>Строить ER-модель с кардинальностью, обязательностью связей и таблицей-связкой</li><li>Приводить широкую таблицу к 1НФ, 2НФ и 3НФ и называть аномалии, которые при этом уходят</li><li>Создавать схему SQLite с PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK и частичным уникальным индексом</li><li>Проверять ограничения на тестовых данных и собирать запрос с JOIN и агрегацией</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-сущности-и-ключи">Задание 1. Сущности и ключи</a></li><li><a href="#задание-2-er-модель">Задание 2. ER-модель</a></li><li><a href="#задание-3-нормализация">Задание 3. Нормализация</a></li><li><a href="#задание-4-физическая-схема">Задание 4. Физическая схема</a></li><li><a href="#задание-5-тестовые-данные-и-проверки">Задание 5. Тестовые данные и проверки</a></li><li><a href="#задание-6-запрос">Задание 6. Запрос</a></li><li><a href="#задание-7-отчёт-и-защита">Задание 7. Отчёт и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В библиотеке колледжа 2 400 экземпляров и один файл Excel. В марте выяснилось, что экземпляр <code>INV-0142</code> выдан двум читателям сразу: в журнале одна строка, а на полке книги нет. В апреле читательница сменила фамилию, её данные правили в 37 строках и в трёх пропустили. В мае два сотрудника посчитали штраф за одну и ту же просрочку по-разному, 70 и 90 рублей. Формулы были верные. Ошибка сидела глубже: факты хранились там, где их удобно печатать, а не там, где их можно проверить.</p>
-<p>Модель данных решает, какие факты существуют по отдельности. Читатель, книга, физический экземпляр, выдача и штраф это пять разных фактов, и каждый должен жить в своей таблице. Тогда «одна книга у двух читателей» ловится ограничением, а не глазами заведующей.</p>
-<p>Работа идёт по шагам. Сначала выделяем сущности и ключи, затем рисуем ER-модель со связями, приводим широкую таблицу к третьей нормальной форме, описываем физическую схему для SQLite, наполняем её тестовыми данными и ломаем ограничения по очереди. В конце собираем запрос, который показывает, кто что держит и сколько задолжал.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Пять сущностей с ключами, ER-модель с подписанной кардинальностью, разбор 1НФ, 2НФ и 3НФ на одной и той же таблице, выполняющийся скрипт SQLite с пятью таблицами и ограничениями, пять проверок с настоящими ошибками базы, запрос с JOIN и агрегацией и заполненный отчёт.</p></div>
-
+<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выделять сущности, атрибуты и ключи библиотечной ИС и обосновывать выбор суррогатного ключа</li><li>Строить ER-модель с кардинальностью, обязательностью связей и таблицей-связкой</li><li>Приводить широкую таблицу к 1НФ, 2НФ и 3НФ и называть аномалии, которые при этом уходят</li><li>Создавать схему SQLite с PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK и частичным уникальным индексом</li><li>Проверять ограничения на тестовых данных и собирать запрос с JOIN и агрегацией</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Спроектировать модель данных библиотечной информационной системы, привести её к третьей нормальной форме, собрать рабочую схему SQLite с ограничениями и проверить её на данных, которые специально нарушают правила.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>выделяете сущности, атрибуты и ключи и обосновываете выбор суррогатного ключа;</li>
+<li>строите ER-модель с кардинальностью, обязательностью связей и таблицей-связкой;</li>
+<li>приводите широкую таблицу к 1НФ, 2НФ и 3НФ и называете аномалии, которые при этом уходят;</li>
+<li>создаёте схему SQLite с <code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>UNIQUE</code>, <code>CHECK</code> и частичным уникальным индексом;</li>
+<li>проверяете ограничения на тестовых данных и собираете запрос с <code>JOIN</code> и агрегацией.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.8 или новее с модулем <code>sqlite3</code> либо браузер с sqliteonline.com.</li>
+<li>VS Code, Word для отчёта, Excel для чек-листа.</li>
+<li>Браузер с draw.io для ER-диаграммы или лист бумаги.</li>
+</ul>
+<p>MySQL, PostgreSQL, Docker, платные сервисы и права администратора не требуются.</p>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-12_report-template.docx" download>Шаблон отчёта в DOCX</a>
 <a href="reports/UIFIS_practice-12_er-checklist.csv" download>Чек-лист ER-модели в CSV</a>
 <p>В шаблоне уже есть таблицы сущностей, нормализации, физической модели и проверок. В чек-листе 10 пунктов: отмечайте «да» только после того, как увидели результат своими глазами. Шаблоны не переписывайте с нуля, дополняйте их.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>В библиотеке колледжа 2 400 экземпляров и один файл Excel. В марте выяснилось, что экземпляр <code>INV-0142</code> выдан двум читателям сразу: в журнале одна строка, а на полке книги нет. В апреле читательница сменила фамилию, её данные правили в 37 строках и в трёх пропустили. В мае два сотрудника посчитали штраф за одну и ту же просрочку по-разному, 70 и 90 рублей. Формулы были верные. Ошибка сидела глубже: факты хранились там, где их удобно печатать, а не там, где их можно проверить.</p>
+<p>Модель данных решает, какие факты существуют по отдельности. Читатель, книга, физический экземпляр, выдача и штраф это пять разных фактов, и каждый должен жить в своей таблице. Тогда «одна книга у двух читателей» ловится ограничением, а не глазами заведующей.</p>
+<p>Работа идёт по шагам. Сначала выделяем сущности и ключи, затем рисуем ER-модель со связями, приводим широкую таблицу к третьей нормальной форме, описываем физическую схему для SQLite, наполняем её тестовыми данными и ломаем ограничения по очереди. В конце собираем запрос, который показывает, кто что держит и сколько задолжал.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Пять сущностей с ключами, ER-модель с подписанной кардинальностью, разбор 1НФ, 2НФ и 3НФ на одной и той же таблице, выполняющийся скрипт SQLite с пятью таблицами и ограничениями, пять проверок с настоящими ошибками базы, запрос с JOIN и агрегацией и заполненный отчёт.</p></div>
+
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Создайте папку практики:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">12</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">12</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">12</span>
 </code></pre></div>
 
 <p>Скачайте туда оба файла из блока выше и проверьте расширения: <code>UIFIS_practice-12_report-template.docx</code> и <code>UIFIS_practice-12_er-checklist.csv</code>, а не <code>.docx.docx</code> и не <code>.csv.txt</code>.</p>
 <p>База будет в SQLite. Подойдёт любой из двух вариантов.</p>
 <p><strong>Вариант 1, Python в VS Code.</strong> Проверьте модуль:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; print(sqlite3.sqlite_version)&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; print(sqlite3.sqlite_version)&quot;</span>
 </code></pre></div>
 
 <p>Команда печатает версию, например <code>3.45.3</code>. Подойдёт любая версия не ниже 3.8: частичные индексы появились в 3.8, а больше ничего экзотического в работе не нужно.</p>
 <p><strong>Вариант 2, sqliteonline.com в браузере.</strong> В левом меню выберите именно SQLite, а не MySQL или PostgreSQL: <code>PRAGMA</code> и частичные индексы есть только в SQLite. Скрипт вставляйте в окно запроса и выполняйте по частям, ошибки смотрите в панели сообщений под запросом.</p>
 <p>Диаграмму стройте в draw.io в браузере или на листе бумаги. Хватит прямоугольников, ромбов и линий с подписями <code>1</code>, <code>0..1</code>, <code>1..*</code>, <code>0..*</code>. Отдельная нотация не обязательна, важно, чтобы кардинальность читалась. Платные сервисы, PlantUML, MySQL, PostgreSQL и установка дополнительных программ не требуются, права администратора тоже не нужны.</p>
 <p>Отчёт заполняйте в Word. Скрипт сохраните файлом <code>library.sql</code>, базу <code>library.db</code>, диаграмму в PNG или PDF.</p>
-<h2 id="задание-1-сущности-и-ключи"><span class="num">03</span>Задание 1. Сущности и ключи</h2>
+<h3>Шаг 2. Сущности и ключи</h3>
 <p>Начните с вопроса: о чём библиотека хранит отдельные факты? Не «что удобно показать в одной строке», а что существует само по себе. Читатель существует до того, как взял книгу, и после того, как вернул. Книга существует независимо от того, выдана она или лежит на полке. Физический том существует в единственном числе, и именно его выдают.</p>
 <p>Отсюда пять сущностей:</p>
 <table>
@@ -867,7 +900,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="callout pitfall"><span class="label">Регистр в email</span><p>По умолчанию SQLite сравнивает текст побайтно, поэтому <code>m.ivanova@college.test</code> и <code>M.Ivanova@college.test</code> для неё два разных адреса. Один читатель заводится дважды, и <code>UNIQUE</code> молчит. Лечится collation <code>NOCASE</code> у поля, её мы добавим в схеме. Для писем это безопасно: в адресной части регистр смысла не несёт.</p></div>
 
 <p>Заполните таблицу сущностей в отчёте. В чек-листе отметьте пункты «Сущности» и «Ключи».</p>
-<h2 id="задание-2-er-модель"><span class="num">04</span>Задание 2. ER-модель</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица сущностей и ключей заполняется в отчёте.</p></div>
+
+<h3>Шаг 3. ER-модель</h3>
 <p>Связь отвечает на вопрос, сколько строк одной сущности может быть связано со строкой другой. Кардинальность пишут как правило предметной области, а не как «сколько сейчас в таблице».</p>
 <table>
 <thead>
@@ -913,7 +948,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Читатель и книга связаны <strong>многие ко многим</strong>: один читатель берёт разные книги, одну книгу берут разные читатели. Такую связь нельзя положить в таблицу одним полем. Её разбивают на две связи «один ко многим» через таблицу-связку, и здесь связкой работает <code>loans</code>. В ней хранится пара <code>reader_id</code> и <code>copy_id</code> плюс даты выдачи, срока и возврата.</p>
 <p>Связка получилась не пустой: у неё есть собственные атрибуты, которые зависят от пары, а не от читателя и не от экземпляра. Поэтому <code>loans</code> называют ассоциативной сущностью. Если бы библиотека учитывала соавторов, понадобилась бы ещё одна связка <code>book_authors</code> между книгой и автором, но в этой работе автор остаётся одним полем.</p>
 <p>Текстовый эскиз модели до рисования:</p>
-<div class="codehilite"><pre><span></span><code>ЧИТАТЕЛЬ (reader_id PK, full_name, email UQ, status, registered_at)
+<div class="codehilite" data-lang="text"><pre><span></span><code>ЧИТАТЕЛЬ (reader_id PK, full_name, email UQ, status, registered_at)
     1  -&gt;  0..*   ВЫДАЧА
 
 КНИГА (book_id PK, title, author, isbn UQ)
@@ -936,7 +971,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="callout shot"><span class="label">Скриншот 1</span><p>ER-диаграмма с пятью сущностями, ключами и кардинальностью. Вставьте её в отчёт на место <code>[ Место для ER-диаграммы: читатель, книга, экземпляр, выдача, штраф ]</code>.</p></div>
 
 <p>Отметьте в чек-листе пункт «Связи».</p>
-<h2 id="задание-3-нормализация"><span class="num">05</span>Задание 3. Нормализация</h2>
+<h3>Шаг 4. Нормализация</h3>
 <p>Возьмите широкую таблицу, которая могла бы получиться при переносе Excel в базу. Одна строка описывает выдачу, но вместе с ней тащит читателя и книгу.</p>
 <table>
 <thead>
@@ -1076,11 +1111,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="callout pitfall"><span class="label">Нормализация и «просто добавь название»</span><p>Самая частая правка «для удобства отчёта» это вернуть название книги в выдачу. Отчёт становится проще на один JOIN, а данные расходятся при первом переименовании. Если денормализация действительно нужна, её оформляют представлением или материализованным полем с триггером и честно называют цену.</p></div>
 
 <p>Отметьте в чек-листе пункты «1НФ», «2НФ» и «3НФ».</p>
-<h2 id="задание-4-физическая-схема"><span class="num">06</span>Задание 4. Физическая схема</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Разбор нормализации и таблица зависимостей переносятся в отчёт текстом.</p></div>
+
+<h3>Шаг 5. Физическая схема</h3>
 <p>Логическая модель уже готова: пять таблиц, ключи, связи. Физическая добавляет то, что зависит от СУБД: типы, ограничения, индексы и поведение при удалении.</p>
 <p>В SQLite нет отдельного типа даты, поэтому даты хранятся текстом в формате <code>ГГГГ-ММ-ДД</code>. Такой текст сравнивается и сортируется правильно, а функция <code>date()</code> проверяет, что значение действительно является датой. Деньги хранятся целыми рублями: в учебной библиотеке тариф 10 рублей за день просрочки, копейки не нужны. В реальной системе сумму хранили бы в копейках целым числом, чтобы избежать ошибок округления.</p>
 <p>Сохраните скрипт в файл <code>library.sql</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
 
 <span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">fines</span><span class="p">;</span>
 <span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">loans</span><span class="p">;</span>
@@ -1203,13 +1240,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p><strong><code>PRAGMA foreign_keys = ON</code> обязателен в каждом соединении.</strong> SQLite по умолчанию выключает внешние ключи, и настройка не сохраняется в файле базы. Если открыть базу заново и забыть pragma, схема останется правильной на вид, но ссылки на несуществующие книги будут проходить. В sqliteonline pragma выполняйте первым запросом в новой вкладке, в Python перед работой.</p>
 <p>Проверка <code>CHECK (email LIKE '%_@_%._%')</code> ловит только грубый формат: собаку и точку в домене. Полную проверку адреса делает приложение, база отсекает явный мусор вроде строки без собаки.</p>
 <p><strong>Частичный индекс решает задачу, которую обычный <code>UNIQUE</code> решает неправильно.</strong> Если поставить <code>UNIQUE(copy_id)</code>, том можно выдать только один раз за всю историю: вторая выдача упрётся в ограничение, хотя первая книга уже вернулась. Условие <code>WHERE returned_at IS NULL</code> сужает уникальность до активных выдач. Возвращённые строки в индекс не попадают, и история копится спокойно.</p>
-<p><strong>Каскад выбирают по смыслу, а не по удобству.</strong> Штраф это приложение к выдаче: удалили выдачу, штрафу не к чему относиться, поэтому <code>CASCADE</code>. Книга с экземплярами и читатель с выдачами это история, её удалять нельзя, поэтому <code>RESTRICT</code>. Проверка на удаление книги есть в следующем задании.</p>
+<p><strong>Каскад выбирают по смыслу, а не по удобству.</strong> Штраф это приложение к выдаче: удалили выдачу, штрафу не к чему относиться, поэтому <code>CASCADE</code>. Книга с экземплярами и читатель с выдачами это история, её удалять нельзя, поэтому <code>RESTRICT</code>. Проверка на удаление книги есть на следующем шаге.</p>
 <p><strong>Индексы ставят по внешним ключам.</strong> <code>copies(book_id)</code>, <code>loans(reader_id)</code> и <code>loans(copy_id)</code> нужны для соединений и для проверки ссылочной целостности. Отдельный индекс по <code>fines.loan_id</code> не нужен: <code>UNIQUE</code> на этом поле уже создал индекс. Индекс по <code>due_at</code> с тем же условием <code>WHERE returned_at IS NULL</code> обслуживает ежедневный список просроченных выдач. Индексов «на всякий случай» здесь нет.</p>
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Список таблиц и вывод <code>.schema</code> после выполнения скрипта. В sqliteonline таблицы видны в левой панели, в Python их печатает <code>SELECT name FROM sqlite_master WHERE type = 'table'</code>.</p></div>
 
-<h2 id="задание-5-тестовые-данные-и-проверки"><span class="num">07</span>Задание 5. Тестовые данные и проверки</h2>
+<h3>Шаг 6. Тестовые данные и проверки</h3>
 <p>Наполните базу строками, на которых видны все пять сущностей: три читателя, три книги, четыре экземпляра, три выдачи и два штрафа.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">readers</span><span class="w"> </span><span class="p">(</span><span class="n">reader_id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">registered_at</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">readers</span><span class="w"> </span><span class="p">(</span><span class="n">reader_id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">registered_at</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
 <span class="w">    </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Иванова Мария Сергеевна&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;m.ivanova@college.test&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;active&#39;</span><span class="p">,</span><span class="w">  </span><span class="s1">&#39;2026-02-10&#39;</span><span class="p">),</span>
 <span class="w">    </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Петров Артём Игоревич&#39;</span><span class="p">,</span><span class="w">   </span><span class="s1">&#39;a.petrov@college.test&#39;</span><span class="p">,</span><span class="w">  </span><span class="s1">&#39;active&#39;</span><span class="p">,</span><span class="w">  </span><span class="s1">&#39;2026-02-10&#39;</span><span class="p">),</span>
 <span class="w">    </span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Соколова Дарья Олеговна&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;d.sokolova@college.test&#39;</span><span class="p">,</span><span class="s1">&#39;blocked&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2026-03-02&#39;</span><span class="p">);</span>
@@ -1237,7 +1274,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Срок выдачи 14 дней, штраф 10 рублей за день просрочки. Первая выдача просрочена на 7 дней, отсюда 70 рублей, вторая на 6 дней, отсюда 60. Третья ещё не вернулась, штрафа у неё нет. Четвёртый экземпляр в ремонте и не выдаётся, поэтому у него нет ни одной выдачи.</p>
 <p>Проверьте количество строк:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">readers</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">readers</span><span class="p">,</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">readers</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">readers</span><span class="p">,</span>
 <span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">books</span><span class="p">)</span><span class="w">   </span><span class="k">AS</span><span class="w"> </span><span class="n">books</span><span class="p">,</span>
 <span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">copies</span><span class="p">)</span><span class="w">  </span><span class="k">AS</span><span class="w"> </span><span class="n">copies</span><span class="p">,</span>
 <span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">loans</span><span class="p">)</span><span class="w">   </span><span class="k">AS</span><span class="w"> </span><span class="n">loans</span><span class="p">,</span>
@@ -1291,7 +1328,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Разберите, что было бы без каждого ограничения. Без <code>UNIQUE</code> на email один человек получает два профиля и два счёта штрафов. Без внешнего ключа появляется экземпляр с <code>book_id = 999</code>, и в отчёте о выдачах название книги пустое. Без <code>CHECK</code> библиотека начисляет минус рубль, то есть доплачивает читателю. Без частичного индекса том <code>INV-0003</code> уходит второму читателю, пока первый ещё не вернул. Без <code>RESTRICT</code> удаление книги уносит два экземпляра и обе выдачи, а история исчезает.</p>
 <p>Запросы 1 и 5 завершаются ошибкой целиком, но база после них остаётся рабочей: SQLite откатывает только неудачный запрос, а не всю сессию. Поэтому проверки идут подряд, без перезапуска.</p>
 <p>Каскад проверяется без потери данных, в транзакции:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
 <span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">loans</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">loan_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fines_left</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fines</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">loan_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 <span class="k">ROLLBACK</span><span class="p">;</span>
@@ -1299,7 +1336,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>После удаления выдачи счётчик покажет <code>0</code>: штраф ушёл вместе с ней по <code>ON DELETE CASCADE</code>. После <code>ROLLBACK</code> обе строки штрафов на месте, и база возвращается в исходное состояние. Если забыть <code>ROLLBACK</code>, штраф номер 2 исчезнет по-настоящему.</p>
 <p>Для тех, кто работает в VS Code, те же проверки можно прогнать скриптом:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
 <span class="n">con</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;library.db&quot;</span><span class="p">)</span>
 <span class="n">con</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;library.sql&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
@@ -1314,13 +1351,15 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ожидаемо:&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Файл <code>data.sql</code> создайте из блока <code>INSERT</code> выше, файл <code>library.sql</code> из задания 4. Скрипт печатает <code>ожидаемо: UNIQUE constraint failed: readers.email</code>, и это правильный результат. Остальные четыре проверки добавьте по образцу, меняя только SQL.</p>
-<div class="callout pitfall"><span class="label">Ошибка не значит «база сломалась»</span><p>Пять ошибок в этом задании это успех, а не провал. Если запрос с несуществующей книгой прошёл молча, значит <code>PRAGMA foreign_keys = ON</code> не выполнилась в этом соединении, и все остальные проверки тоже ничего не доказывают. Начните заново с pragma.</p></div>
+<p>Файл <code>data.sql</code> создайте из блока <code>INSERT</code> выше, файл <code>library.sql</code> из шага 5. Скрипт печатает <code>ожидаемо: UNIQUE constraint failed: readers.email</code>, и это правильный результат. Остальные четыре проверки добавьте по образцу, меняя только SQL.</p>
+<div class="callout pitfall"><span class="label">Ошибка не значит «база сломалась»</span><p>Пять ошибок на этом шаге это успех, а не провал. Если запрос с несуществующей книгой прошёл молча, значит <code>PRAGMA foreign_keys = ON</code> не выполнилась в этом соединении, и все остальные проверки тоже ничего не доказывают. Начните заново с pragma.</p></div>
+
+<div class="callout shot"><span class="label">Скриншот 3</span><p>Сообщения об ошибках ограничений: <code>UNIQUE constraint failed</code>, <code>FOREIGN KEY constraint failed</code> и <code>CHECK constraint failed</code>. Покажите в скриншоте путь к папке практики.</p></div>
 
 <p>Отметьте в чек-листе пункты «FK», «CHECK» и «Тестовые данные».</p>
-<h2 id="задание-6-запрос"><span class="num">08</span>Задание 6. Запрос</h2>
+<h3>Шаг 7. Запрос с JOIN и агрегацией</h3>
 <p>Соберите картину по всем таблицам: кто, какую книгу, какой том, когда взял и сколько задолжал.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="w">       </span><span class="k">AS</span><span class="w"> </span><span class="n">reader</span><span class="p">,</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="w">       </span><span class="k">AS</span><span class="w"> </span><span class="n">reader</span><span class="p">,</span>
 <span class="w">       </span><span class="n">b</span><span class="p">.</span><span class="n">title</span><span class="w">           </span><span class="k">AS</span><span class="w"> </span><span class="n">book</span><span class="p">,</span>
 <span class="w">       </span><span class="k">c</span><span class="p">.</span><span class="n">inventory_no</span><span class="w">    </span><span class="k">AS</span><span class="w"> </span><span class="k">copy</span><span class="p">,</span>
 <span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">issued_at</span><span class="p">,</span>
@@ -1387,7 +1426,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><strong><code>GROUP BY l.loan_id</code> собирает штрафы по одной выдаче.</strong> SQLite разрешает не перечислять остальные поля, потому что они зависят от ключа группировки. В строгом SQL их пришлось бы перечислить все.</li>
 </ul>
 <p>Активные выдачи это те, у которых <code>returned_at</code> пуст. Добавьте условие:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">inventory_no</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">issued_at</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">due_at</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">inventory_no</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">issued_at</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">due_at</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">loans</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">l</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">readers</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">reader_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">reader_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">copies</span><span class="w">  </span><span class="k">AS</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">copy_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">copy_id</span>
@@ -1398,7 +1437,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Одна строка: Петров, «Сети и телекоммуникации», <code>INV-0003</code>, срок 2026-10-15. Сравнение с <code>NULL</code> идёт через <code>IS NULL</code>: запись <code>returned_at = NULL</code> не даёт true никогда.</p>
 <p>Долг по читателям считается отдельно, потому что здесь встречаются две ветки связей:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">loan_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loans_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">returned_at</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span>
 <span class="w">                           </span><span class="k">THEN</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">loan_id</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loans_active</span><span class="p">,</span>
@@ -1443,10 +1482,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p><code>COUNT(DISTINCT ...)</code> здесь не украшение. После соединения с штрафами одна выдача может дать несколько строк, и обычный <code>COUNT</code> посчитал бы выдачу дважды. У Соколовой нет ни выдач, ни штрафов, но она осталась в отчёте благодаря <code>LEFT JOIN</code>: библиотеке нужно видеть и тех, кто ничего не брал.</p>
 <p>Иванова заплатила 70 рублей, поэтому её долг равен нулю, хотя штраф в базе есть. Разница между «штраф начислен» и «долг висит» это разница между <code>fines.amount</code> и <code>fines.paid_at IS NULL</code>.</p>
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Результат запроса с JOIN и агрегацией. В отчёте подпишите, сколько строк вернулось и почему именно столько.</p></div>
+<div class="callout shot"><span class="label">Скриншот 4</span><p>Результат запроса с JOIN и агрегацией. В отчёте подпишите, сколько строк вернулось и почему именно столько.</p></div>
 
 <p>Отметьте в чек-листе пункт «Запрос».</p>
-<h2 id="задание-7-отчёт-и-защита"><span class="num">09</span>Задание 7. Отчёт и защита</h2>
+<h3>Шаг 8. Отчёт и защита</h3>
 <p>В отчёт приложите:</p>
 <ol>
 <li>Таблицу сущностей с атрибутами, первичными, внешними и потенциальными ключами.</li>
@@ -1459,23 +1498,32 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Вывод: почему выдача хранится отдельно от читателя и экземпляра и где появился бы дубликат, если хранить название книги в каждой выдаче.</li>
 </ol>
 <p>Заполненный чек-лист приложите отдельным файлом или перенесите таблицу в отчёт. Из десяти пунктов не заполненных быть не должно.</p>
-<p>Контрольные вопросы:</p>
-<ol>
-<li>Чем логическая модель данных отличается от физической и где в вашей работе проходит граница между ними?</li>
-<li>Почему <code>email</code> получил <code>UNIQUE</code>, но не стал первичным ключом?</li>
-<li>Что произойдёт с повторной регистрацией, если убрать <code>COLLATE NOCASE</code> у поля <code>email</code>?</li>
-<li>Зачем нужна отдельная сущность «Экземпляр», если есть «Книга»? Покажите на своих данных, где это видно.</li>
-<li>Какую аномалию убирает 2НФ в вашей широкой таблице? Назовите поле и покажите строку.</li>
-<li>Зачем частичный уникальный индекс, если <code>UNIQUE</code> на <code>copy_id</code> уже запрещает дубликаты?</li>
-<li>Почему у <code>fines.loan_id</code> стоит <code>ON DELETE CASCADE</code>, а у <code>copies.book_id</code> стоит <code>RESTRICT</code>?</li>
-<li>Что изменится в результате запроса, если <code>LEFT JOIN fines</code> заменить на <code>JOIN fines</code>?</li>
-</ol>
-<p>Критерии оценки:</p>
+<p>Скриншот страницы отчёта для этого шага не нужен: отчёт сдаётся файлом, а доказательства работы уже собраны на предыдущих шагах.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-12_report-template.docx</code>.</li>
+<li>Скрипт <code>library.sql</code> целиком.</li>
+<li>Файл базы <code>library.db</code> с тестовыми данными.</li>
+<li>ER-диаграмму в PNG или PDF и исходник <code>.drawio</code>.</li>
+<li>Заполненный чек-лист <code>UIFIS_practice-12_er-checklist.csv</code>.</li>
+<li>Скриншоты схемы базы, сообщений об ошибках ограничений и результата запроса.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <ul>
 <li><strong>5</strong>: пять сущностей с обоснованными ключами, ER-модель с корректной кардинальностью, нормализация показана на одной таблице с названными аномалиями, скрипт выполняется, все пять ограничений реально срабатывают, запрос с JOIN и агрегацией объяснён, отчёт и чек-лист заполнены.</li>
 <li><strong>4</strong>: модель и схема рабочие, но одна связь подписана неверно, одна проверка ограничения не выполнена или запрос возвращает верные строки без объяснения.</li>
 <li><strong>3</strong>: таблицы созданы, но ключи или ограничения частичные, нормализация описана общими словами, проверки ограничений не проводились, запрос собран с ошибкой в соединении.</li>
-</ul></article><nav class="pager"><a class="" href="27-lek-16.html"><span>← Предыдущее занятие</span>Лекция 16. Моделирование данных и проектирование базы данных</a><a class="next" style="text-align:right;margin-left:auto" href="29-lek-17.html"><span>Следующее занятие →</span>Лекция 17. Пользовательский интерфейс информационной системы</a></nav></main>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
+<ol>
+<li>Чем логическая модель данных отличается от физической и где в вашей работе проходит граница между ними?</li>
+<li>Почему <code>email</code> получил <code>UNIQUE</code>, но не стал первичным ключом?</li>
+<li>Зачем нужна отдельная сущность «Экземпляр», если есть «Книга»? Покажите на своих данных, где это видно.</li>
+<li>Зачем частичный уникальный индекс, если <code>UNIQUE</code> на <code>copy_id</code> уже запрещает дубликаты?</li>
+<li>Что изменится в результате запроса, если <code>LEFT JOIN fines</code> заменить на <code>JOIN fines</code>?</li>
+</ol>
+</div></article><nav class="pager"><a class="" href="27-lek-16.html"><span>← Предыдущее занятие</span>Лекция 16. Моделирование данных и проектирование базы данных</a><a class="next" style="text-align:right;margin-left:auto" href="29-lek-17.html"><span>Следующее занятие →</span>Лекция 17. Пользовательский интерфейс информационной системы</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

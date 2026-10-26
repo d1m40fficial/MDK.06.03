@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,8 +794,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 19</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Развёртывание базовой сетевой службы</h1><p class="dek">Соберите учебную HTTP-службу в Ubuntu Server: код, отдельный пользователь, systemd, firewall, проброс порта и проверка отказов.</p></div>
-<div class="glyph" aria-hidden="true">П9</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Развернуть HTTP-службу с несколькими endpoint</li><li>Оформить запуск через systemd</li><li>Настроить пользователя, права и firewall</li><li>Проверить службу с хоста через проброс порта</li><li>Найти и устранить отказ службы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-контракт-службы">Задание 1. Контракт службы</a></li><li><a href="#задание-2-код-службы">Задание 2. Код службы</a></li><li><a href="#задание-3-ручная-проверка">Задание 3. Ручная проверка</a></li><li><a href="#задание-4-systemd-юнит">Задание 4. Systemd-юнит</a></li><li><a href="#задание-5-firewall">Задание 5. Firewall</a></li><li><a href="#задание-6-проброс-порта-в-virtualbox">Задание 6. Проброс порта в VirtualBox</a></li><li><a href="#задание-7-отказы-и-восстановление">Задание 7. Отказы и восстановление</a></li><li><a href="#задание-8-чек-лист-и-отчёт">Задание 8. Чек-лист и отчёт</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В лекции 10 мы разобрали сетевые службы: DNS, DHCP, HTTP, файловые, почтовые, каталог и NTP. Теперь развернём свою службу, которая отдаёт данные по HTTP. Это не одностраничная заглушка, а небольшой каталог сетевых служб с проверкой состояния и JSON API.</p>
+<div class="glyph" aria-hidden="true">П9</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Развернуть HTTP-службу с несколькими endpoint</li><li>Оформить запуск через systemd</li><li>Настроить пользователя, права и firewall</li><li>Проверить службу с хоста через проброс порта</li><li>Найти и устранить отказ службы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Развернуть свою службу, которая отдаёт данные по HTTP. В лекции 10 мы разобрали сетевые службы: DNS, DHCP, HTTP, файловые, почтовые, каталог и NTP. Это не одностраничная заглушка, а небольшой каталог сетевых служб с проверкой состояния и JSON API.</p>
 <p>Результат работы: служба <code>uifis-web</code> запускается через systemd, слушает порт <code>8080</code>, отдаёт главную страницу, <code>/health.json</code> и <code>/api/services</code>, переживает перезапуск, проверяется с рабочего компьютера через проброс порта в VirtualBox и восстанавливается после трёх разных отказов.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>Служба <code>uifis-web</code> активна, включена в автозапуск, отвечает на <code>http://127.0.0.1:8080/</code> и <code>/health.json</code>, отдаёт JSON на <code>/api/services</code>, пишет журнал, а в отчёте есть схема стенда, проверки, разбор отказов и вывод.</p></div>
 
@@ -791,31 +805,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Заполняйте шаблон по ходу работы. В чек-лист вносите фактические результаты проверок.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Используйте виртуальную машину <code>uifis-srv01</code> из практики 6. В ней уже есть Ubuntu Server, пользователь <code>student</code>, SSH на порту <code>2222</code> и проброс порта в VirtualBox.</p>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Виртуальная машина <code>uifis-srv01</code> из практики 6 с Ubuntu Server, пользователем <code>student</code>, SSH на порту <code>2222</code> и пробросом порта в VirtualBox.</li>
+<li>Рабочий компьютер с PowerShell и командой <code>ssh</code>.</li>
+<li>Шаблон отчёта и чек-лист службы, скачанные в начале занятия.</li>
+<li>VirtualBox с доступом к настройкам проброса портов.</li>
+</ul>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p><strong>Сетевая служба</strong> принимает запросы на определённом порту и отвечает по правилам протокола. HTTP-служба получает метод и путь, выполняет обработку и возвращает код состояния, заголовки и тело ответа. Код <code>200</code> означает успех, <code>404</code> неизвестный путь, <code>500</code> внутреннюю ошибку.</p>
+<p><strong>Контракт службы</strong> это список методов, путей, кодов и форматов ответа. По контракту пишут проверки и принимают работу: видно, что служба вернула нужные поля, а не пустую страницу.</p>
+<p><strong>systemd</strong> запускает службу как процесс с заданным пользователем, рабочим каталогом и переменными окружения. <code>systemctl enable</code> включает автозапуск, <code>restart</code> перезапускает процесс, <code>status</code> показывает состояние, а <code>journalctl</code> хранит журнал. Состояние <code>active</code> означает, что процесс запущен, но не доказывает, что приложение отвечает правильно.</p>
+<p><strong>Адрес прослушивания.</strong> <code>0.0.0.0:8080</code> принимает соединения на всех адресах машины, <code>127.0.0.1:8080</code> только на loopback. Для доступа с хоста через проброс нужен первый вариант.</p>
+<p><strong>Firewall</strong> проверяет входящие пакеты по правилам. Сначала разрешают SSH, затем порт службы, и только после этого включают firewall. Порт открывают для конкретной сети, а не для всего интернета.</p>
+<p><strong>Проброс порта в VirtualBox</strong> связывает порт хоста с портом гостя. Хост обращается к <code>127.0.0.1:8080</code>, гипервизор передаёт соединение в гостя. Поэтому проверка с хоста проверяет сразу службу, адрес прослушивания, firewall и правило проброса.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<p>Работа идёт в виртуальной машине <code>uifis-srv01</code>. Сначала подготовьте стенд и код, затем оформите службу через systemd, настройте firewall и проброс, после чего разберите отказы.</p>
+<h3>Шаг 1. Подготовьте стенд</h3>
 <p>Проверьте подключение с рабочего компьютера в PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
 </code></pre></div>
 
 <p>Внутри машины проверьте Python, systemd и состояние firewall:</p>
-<div class="codehilite"><pre><span></span><code>python3<span class="w"> </span>--version
+<div class="codehilite" data-lang="bash"><pre><span></span><code>python3<span class="w"> </span>--version
 systemctl<span class="w"> </span>--version
 sudo<span class="w"> </span>ufw<span class="w"> </span>status
 </code></pre></div>
 
 <p>Если пользователь <code>uifis</code> не создан в практике 6, создайте его:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
 </code></pre></div>
 
 <p>Создайте каталог службы и выдайте минимальные права:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-o<span class="w"> </span>uifis<span class="w"> </span>-g<span class="w"> </span>uifis<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>/srv/uifis-web
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-o<span class="w"> </span>uifis<span class="w"> </span>-g<span class="w"> </span>uifis<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>/srv/uifis-web
 ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis-web
 </code></pre></div>
 
 <p>Права <code>0750</code> означают: владелец читает, пишет и заходит; группа читает и заходит; остальные не имеют доступа. Служба будет работать от <code>uifis</code>, поэтому ей не нужны права <code>root</code>.</p>
 <div class="callout pitfall"><span class="label">Не закройте себе SSH</span><p>Если вы включите UFW, не разрешив SSH, текущая сессия может закрыться, а новая не откроется. Сначала разрешите <code>22/tcp</code>, затем остальные правила, и только после этого включайте firewall. Проверяйте вход во втором окне, не закрывая первое.</p></div>
 
-<h2 id="задание-1-контракт-службы"><span class="num">03</span>Задание 1. Контракт службы</h2>
+<h3>Шаг 2. Зафиксируйте контракт службы</h3>
 <p>До написания кода зафиксируйте, что служба должна отдавать. Контракт это не формальность: по нему проверяют работу и пишут тесты.</p>
 <table>
 <thead>
@@ -866,9 +895,9 @@ ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis-web
 </tbody>
 </table>
 <p>JSON здоровья должен содержать поля <code>service</code>, <code>status</code>, <code>host</code>, <code>uptime_s</code> и <code>time_utc</code>. JSON каталога должен содержать <code>service</code>, <code>count</code> и <code>items</code>. Эти поля нужны, чтобы проверка была однозначной: глазом видно, что служба не просто вернула пустую страницу.</p>
-<h2 id="задание-2-код-службы"><span class="num">04</span>Задание 2. Код службы</h2>
+<h3>Шаг 3. Напишите код службы</h3>
 <p>Создайте файл <code>/srv/uifis-web/app.py</code>:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-web/app.py<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;PY&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-web/app.py<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;PY&#39;</span>
 <span class="s">#!/usr/bin/env python3</span>
 <span class="s">&quot;&quot;&quot;UIFIS training service catalog.&quot;&quot;&quot;</span>
 
@@ -1005,23 +1034,23 @@ ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis-web
 </code></pre></div>
 
 <p>Выдайте владельцу каталог и файл:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>uifis:uifis<span class="w"> </span>/srv/uifis-web
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>uifis:uifis<span class="w"> </span>/srv/uifis-web
 sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0640</span><span class="w"> </span>/srv/uifis-web/app.py
 ls<span class="w"> </span>-l<span class="w"> </span>/srv/uifis-web
 </code></pre></div>
 
 <p>Проверьте синтаксис до запуска:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>py_compile<span class="w"> </span>/srv/uifis-web/app.py
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>py_compile<span class="w"> </span>/srv/uifis-web/app.py
 </code></pre></div>
 
 <p>Команда не должна выводить ошибок. Если появился traceback, исправьте строку, на которую он указывает, и повторите проверку.</p>
-<h2 id="задание-3-ручная-проверка"><span class="num">05</span>Задание 3. Ручная проверка</h2>
+<h3>Шаг 4. Проверьте службу вручную</h3>
 <p>Сначала запустите службу вручную на loopback, чтобы увидеть её до оформления unit:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>env<span class="w"> </span><span class="nv">UIFIS_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1<span class="w"> </span><span class="nv">UIFIS_PORT</span><span class="o">=</span><span class="m">8080</span><span class="w"> </span>python3<span class="w"> </span>/srv/uifis-web/app.py
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>env<span class="w"> </span><span class="nv">UIFIS_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1<span class="w"> </span><span class="nv">UIFIS_PORT</span><span class="o">=</span><span class="m">8080</span><span class="w"> </span>python3<span class="w"> </span>/srv/uifis-web/app.py
 </code></pre></div>
 
 <p>В другом окне SSH проверьте ответы:</p>
-<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/
+<div class="codehilite" data-lang="bash"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/health.json
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/api/services
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/missing
@@ -1029,19 +1058,19 @@ curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/miss
 
 <p>Ожидаемые результаты: <code>200 OK</code> и HTML для главной, <code>200 OK</code> и JSON для здоровья и каталога, <code>404 Not Found</code> и JSON ошибки для неизвестного пути. Остановите ручной сервер сочетанием <code>Ctrl+C</code>.</p>
 <p>Проверьте, кто слушает порт, пока служба запущена:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
 </code></pre></div>
 
 <p>В ручном режиме вы увидите <code>127.0.0.1:8080</code>. Это нормально для локальной проверки, но с хоста такой сокет недоступен. Для проброса нужен адрес <code>0.0.0.0:8080</code> или адрес гостевого интерфейса.</p>
 <div class="callout pitfall"><span class="label">Локальная проверка не равна внешней</span><p><code>curl</code> на <code>127.0.0.1</code> проверяет только сам гость. Если служба слушает loopback, запрос с хоста не дойдёт даже при правильном пробросе. Адрес прослушивания и проброс проверяют отдельно.</p></div>
 
-<h2 id="задание-4-systemd-юнит"><span class="num">06</span>Задание 4. Systemd-юнит</h2>
+<h3>Шаг 5. Оформите systemd-юнит</h3>
 <p>Создайте файл службы:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/systemd/system/uifis-web.service
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/systemd/system/uifis-web.service
 </code></pre></div>
 
 <p>Содержимое:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">[Unit]</span>
+<div class="codehilite" data-lang="ini"><pre><span></span><code><span class="k">[Unit]</span>
 <span class="na">Description</span><span class="o">=</span><span class="s">UIFIS training service catalog</span>
 <span class="na">After</span><span class="o">=</span><span class="s">network-online.target</span>
 <span class="na">Wants</span><span class="o">=</span><span class="s">network-online.target</span>
@@ -1064,37 +1093,36 @@ curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/miss
 </code></pre></div>
 
 <p>Проверьте и запустите:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
 sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>uifis-web
 systemctl<span class="w"> </span>status<span class="w"> </span>uifis-web<span class="w"> </span>--no-pager
 </code></pre></div>
 
 <p>Ожидаемый результат: <code>active (running)</code> и <code>enabled</code>. Проверьте ответы снова:</p>
-<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/health.json
+<div class="codehilite" data-lang="bash"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/health.json
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/api/services
 sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
 </code></pre></div>
 
 <p>Теперь в <code>ss</code> должен быть <code>0.0.0.0:8080</code>. Посмотрите журнал:</p>
-<div class="codehilite"><pre><span></span><code>journalctl<span class="w"> </span>-u<span class="w"> </span>uifis-web<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span>--no-pager
+<div class="codehilite" data-lang="bash"><pre><span></span><code>journalctl<span class="w"> </span>-u<span class="w"> </span>uifis-web<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span>--no-pager
 </code></pre></div>
 
 <p>В журнале видно строку запуска и записи о запросах. Перезапустите службу и убедитесь, что она поднимается сама:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>uifis-web
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>uifis-web
 systemctl<span class="w"> </span>is-active<span class="w"> </span>uifis-web
 curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:8080/health.json
 </code></pre></div>
 
 <p>Поле <code>uptime_s</code> после перезапуска начинается заново. Это простой признак того, что вы смотрите на новый процесс, а не на старый ответ из кэша.</p>
-<div class="callout shot"><span class="label">Скриншот 1</span><p>Вывод <code>systemctl status uifis-web</code> и <code>ss -tulpn</code> с адресом <code>0.0.0.0:8080</code>.</p></div>
-
-<h2 id="задание-5-firewall"><span class="num">07</span>Задание 5. Firewall</h2>
+<p>Перед проверкой выведите фамилию и группу командой <code>echo "Фамилия И.О., группа"</code> в том же окне. Приложите скриншот, на котором видны эта строка, вывод <code>systemctl status uifis-web</code> и <code>ss -tulpn</code> с адресом <code>0.0.0.0:8080</code>.</p>
+<h3>Шаг 6. Настройте firewall</h3>
 <p>Сначала посмотрите текущее состояние:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>verbose
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>verbose
 </code></pre></div>
 
 <p>Если firewall неактивен, разрешите SSH, затем порт службы только для сети NAT:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">22</span>/tcp
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">22</span>/tcp
 sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.0.2.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
 sudo<span class="w"> </span>ufw<span class="w"> </span><span class="nb">enable</span>
 sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>verbose
@@ -1102,11 +1130,11 @@ sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </
 
 <p>Если firewall уже активен, добавьте только правило для <code>8080</code>. Не открывайте порт всему миру: в учебном стенде достаточно сети <code>10.0.2.0/24</code>, из которой приходит проброс VirtualBox.</p>
 <p>Проверьте, что SSH не потерян. Не закрывая текущую сессию, откройте второе окно и подключитесь снова:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
 </code></pre></div>
 
 <p>Только после успешного входа продолжайте. Если SSH не открывается, вернитесь в текущую сессию и проверьте <code>sudo ufw status verbose</code>.</p>
-<h2 id="задание-6-проброс-порта-в-virtualbox"><span class="num">08</span>Задание 6. Проброс порта в VirtualBox</h2>
+<h3>Шаг 7. Настройте проброс порта в VirtualBox</h3>
 <p>Выключите виртуальную машину. В VirtualBox откройте <strong>Настройки → Сеть → Адаптер 1 → Дополнительно → Проброс портов</strong> и добавьте правило:</p>
 <table>
 <thead>
@@ -1131,7 +1159,7 @@ sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </
 </tbody>
 </table>
 <p>Правило SSH на порт <code>2222</code> должно остаться. Запустите машину и проверьте службу с рабочего компьютера в PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-i</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8080</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-i</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8080</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-i</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8080</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">services</span>
 <span class="nb">Invoke-RestMethod</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8080</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
 </code></pre></div>
@@ -1145,77 +1173,75 @@ sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </
 <li>Порт <code>8080</code> на хосте не занят другим приложением.</li>
 </ol>
 <p>Проверить занятость порта на хосте можно так:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8080</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8080</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
 </code></pre></div>
 
-<div class="callout shot"><span class="label">Скриншот 2</span><p>Ответ <code>curl.exe</code> с рабочего компьютера и правило проброса портов в VirtualBox.</p></div>
-
-<h2 id="задание-7-отказы-и-восстановление"><span class="num">09</span>Задание 7. Отказы и восстановление</h2>
+<p>Приложите скриншот ответа <code>curl.exe</code> с рабочего компьютера и правила проброса портов в VirtualBox.</p>
+<h3>Шаг 8. Разберите отказы и восстановление</h3>
 <p>Проверьте не только успешный запуск, но и то, как служба выглядит при поломке. Для каждого отказа фиксируйте симптом, проверку, причину и восстановление.</p>
-<h3>Отказ 1. Служба остановлена</h3>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>uifis-web
+<h4>Отказ 1. Служба остановлена</h4>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>uifis-web
 </code></pre></div>
 
 <p>С хоста запросите <code>/health.json</code>. Зафиксируйте результат: отказ соединения или тайм-аут. Затем запустите службу:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>uifis-web
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>uifis-web
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/health.json
 journalctl<span class="w"> </span>-u<span class="w"> </span>uifis-web<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--no-pager
 </code></pre></div>
 
-<h3>Отказ 2. Служба слушает только loopback</h3>
+<h4>Отказ 2. Служба слушает только loopback</h4>
 <p>Измените адрес в unit:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/systemd/system/uifis-web.service
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/systemd/system/uifis-web.service
 </code></pre></div>
 
 <p>Замените строку:</p>
-<div class="codehilite"><pre><span></span><code><span class="na">Environment</span><span class="o">=</span><span class="s">UIFIS_HOST=0.0.0.0</span>
+<div class="codehilite" data-lang="ini"><pre><span></span><code><span class="na">Environment</span><span class="o">=</span><span class="s">UIFIS_HOST=0.0.0.0</span>
 </code></pre></div>
 
 <p>на:</p>
-<div class="codehilite"><pre><span></span><code><span class="na">Environment</span><span class="o">=</span><span class="s">UIFIS_HOST=127.0.0.1</span>
+<div class="codehilite" data-lang="ini"><pre><span></span><code><span class="na">Environment</span><span class="o">=</span><span class="s">UIFIS_HOST=127.0.0.1</span>
 </code></pre></div>
 
 <p>Примените изменения:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
 sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>uifis-web
 sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
 curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8080/health.json
 </code></pre></div>
 
 <p>Локально служба отвечает, а с хоста соединение не открывается. Верните <code>0.0.0.0</code>, перезапустите службу и проверьте с хоста снова.</p>
-<h3>Отказ 3. Порт закрыт firewall</h3>
+<h4>Отказ 3. Порт закрыт firewall</h4>
 <p>Посмотрите правила:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>numbered
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>numbered
 </code></pre></div>
 
 <p>Удалите правило для <code>8080</code> по его номеру. В примере удаляется правило 3, подставьте номер из своего вывода:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span><span class="m">3</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 
 <p>Локальная проверка продолжает работать, а с хоста соединение зависает или отклоняется. Верните правило:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.0.2.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.0.2.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
 sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>verbose
 </code></pre></div>
 
-<h3>Отказ 4. Проброс ведёт на другой порт</h3>
+<h4>Отказ 4. Проброс ведёт на другой порт</h4>
 <p>Выключите машину и измените порт гостя в правиле проброса с <code>8080</code> на <code>8081</code>. Запустите машину и проверьте <code>http://127.0.0.1:8080/health.json</code>. Хост получает отказ, хотя внутри гостя служба работает. Верните порт <code>8080</code> и проверьте снова.</p>
-<h3>Отказ 5. Файл службы недоступен</h3>
+<h4>Отказ 5. Файл службы недоступен</h4>
 <p>Временно переименуйте файл:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>mv<span class="w"> </span>/srv/uifis-web/app.py<span class="w"> </span>/srv/uifis-web/app.py.bak
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>mv<span class="w"> </span>/srv/uifis-web/app.py<span class="w"> </span>/srv/uifis-web/app.py.bak
 sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>uifis-web
 systemctl<span class="w"> </span>status<span class="w"> </span>uifis-web<span class="w"> </span>--no-pager
 journalctl<span class="w"> </span>-u<span class="w"> </span>uifis-web<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span>--no-pager
 </code></pre></div>
 
 <p>Служба завершится с ошибкой, в журнале будет traceback о том, что файл не найден. Верните файл:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>mv<span class="w"> </span>/srv/uifis-web/app.py.bak<span class="w"> </span>/srv/uifis-web/app.py
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>mv<span class="w"> </span>/srv/uifis-web/app.py.bak<span class="w"> </span>/srv/uifis-web/app.py
 sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>uifis-web
 </code></pre></div>
 
 <div class="callout note"><span class="label">Состояние `active` не всегда значит «работает»</span><p>Если процесс запущен, но приложение не может открыть файл, подключиться к базе или ответить на нужный endpoint, systemd может показывать <code>active</code>. Поэтому проверяют не только статус unit, но и прикладной ответ.</p></div>
 
-<h2 id="задание-8-чек-лист-и-отчёт"><span class="num">10</span>Задание 8. Чек-лист и отчёт</h2>
-<p>Заполните чек-лист:</p>
+<h3>Шаг 9. Заполните чек-лист</h3>
 <table>
 <thead>
 <tr>
@@ -1324,33 +1350,42 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class=
 </tr>
 </tbody>
 </table>
+<h3>Шаг 10. Оформите отчёт</h3>
 <p>В отчёт включите:</p>
 <ol>
 <li>Схему стенда: виртуальная машина, NAT, проброс порта, служба.</li>
-<li>Контракт службы из задания 1.</li>
+<li>Контракт службы из шага 2.</li>
 <li>Файл <code>uifis-web.service</code> или его содержимое.</li>
 <li>Скриншоты: статус службы, вывод <code>ss</code>, ответы <code>curl</code>, ответ с хоста.</li>
 <li>Таблицу отказов: симптом, проверка, причина, восстановление.</li>
 <li>Вывод: какая зависимость оказалась критичной для доступа к службе.</li>
 </ol>
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Ответы <code>/</code>, <code>/health.json</code> и <code>/api/services</code> из гостя и с хоста.</p></div>
-
-<h2 id="контрольные-вопросы"><span class="num">11</span>Контрольные вопросы</h2>
-<ol>
-<li>Почему ручной запуск <code>python3 app.py</code> не считается полноценным развёртыванием?</li>
-<li>Зачем службе отдельный пользователь <code>uifis</code> и права <code>0640</code> на файл?</li>
-<li>Что проверять, если служба активна, но с хоста не открывается?</li>
-<li>Почему недостаточно открыть порт в приложении, не проверив firewall?</li>
-<li>Чем <code>0.0.0.0:8080</code> отличается от <code>127.0.0.1:8080</code>?</li>
-<li>Почему <code>systemctl status</code> не заменяет проверку <code>/health.json</code>?</li>
-<li>Чем проброс порта в VirtualBox удобнее изменения настроек хоста?</li>
-</ol>
-<h2 id="критерии-оценки"><span class="num">12</span>Критерии оценки</h2>
+<p>Приложите скриншот ответов <code>/</code>, <code>/health.json</code> и <code>/api/services</code> из гостя и с хоста. Скриншот контракта или текста unit не нужен: они переносятся в отчёт текстом. Скриншот самого документа тоже не нужен: отчёт сдаётся файлом DOCX.</p>
+<h3>Шаг 11. Сохраните и сдайте работу</h3>
+<p>Проверьте, что служба активна и включена в автозапуск, а после перезапуска отвечает на все endpoint. Сохраните отчёт в DOCX.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>файл отчёта в DOCX со схемой стенда, контрактом, чек-листом и таблицей отказов;</li>
+<li>заполненный чек-лист службы в CSV или в таблице отчёта;</li>
+<li>скриншоты статуса службы, порта, ответов <code>curl</code> и ответа с хоста;</li>
+<li>краткий устный ответ на один контрольный вопрос по выбору преподавателя.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <ul>
 <li><strong>5</strong>: служба работает через systemd, включена в автозапуск, все endpoint отвечают, проверены локальный доступ и доступ с хоста, разобраны минимум три отказа, отчёт и чек-лист заполнены.</li>
 <li><strong>4</strong>: служба работает, но есть неточности в правах, firewall, пробросе или объяснении одного отказа.</li>
 <li><strong>3</strong>: служба запущена вручную, systemd или проверка с хоста выполнены частично, отказы описаны поверхностно.</li>
-</ul></article><nav class="pager"><a class="" href="18-lek-10.html"><span>← Предыдущее занятие</span>Лекция 10. Сетевые службы информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="20-lek-11.html"><span>Следующее занятие →</span>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</a></nav></main>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
+<ol>
+<li>Почему ручной запуск <code>python3 app.py</code> не считается полноценным развёртыванием?</li>
+<li>Зачем службе отдельный пользователь <code>uifis</code> и права <code>0640</code> на файл?</li>
+<li>Что проверять, если служба активна, но с хоста не открывается?</li>
+<li>Чем <code>0.0.0.0:8080</code> отличается от <code>127.0.0.1:8080</code>?</li>
+<li>Почему <code>systemctl status</code> не заменяет проверку <code>/health.json</code>?</li>
+</ol>
+</div></article><nav class="pager"><a class="" href="18-lek-10.html"><span>← Предыдущее занятие</span>Лекция 10. Сетевые службы информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="20-lek-11.html"><span>Следующее занятие →</span>Лекция 11. Клиент-серверное взаимодействие и веб-архитектура</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

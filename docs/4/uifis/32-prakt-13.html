@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,43 +794,62 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 32</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Резервное копирование и разграничение доступа</h1><p class="dek">Составьте план копирования, снимите согласованную копию базы SQLite и конфигурации, восстановите её в отдельный каталог, раздайте права четырём ролям и подтвердите отказы журналом аудита.</p></div>
-<div class="glyph" aria-hidden="true">П13</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Составлять план резервного копирования с RTO, RPO и ответственным</li><li>Создавать согласованную копию базы SQLite и конфигурации с контрольной суммой</li><li>Восстанавливать копию в отдельный каталог и доказывать целостность данных</li><li>Настраивать группы, права каталогов и sudo-правило по ролям</li><li>Читать журнал аудита и подтверждать отказ в доступе</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-план-копирования">Задание 1. План копирования</a></li><li><a href="#задание-2-копия-базы-и-конфигурации">Задание 2. Копия базы и конфигурации</a></li><li><a href="#задание-3-восстановление-в-отдельный-каталог">Задание 3. Восстановление в отдельный каталог</a></li><li><a href="#задание-4-пользователи-группы-и-права">Задание 4. Пользователи, группы и права</a></li><li><a href="#задание-5-аудит">Задание 5. Аудит</a></li><li><a href="#задание-6-отчёт-и-защита">Задание 6. Отчёт и защита</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<div class="glyph" aria-hidden="true">П13</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Составлять план резервного копирования с RTO, RPO и ответственным</li><li>Создавать согласованную копию базы SQLite и конфигурации с контрольной суммой</li><li>Восстанавливать копию в отдельный каталог и доказывать целостность данных</li><li>Настраивать группы, права каталогов и sudo-правило по ролям</li><li>Читать журнал аудита и подтверждать отказ в доступе</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Составить план резервного копирования, снять согласованную копию базы SQLite и конфигурации, восстановить её в отдельный каталог, раздать права четырём ролям и подтвердить отказы журналом аудита.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>составляете план копирования с RTO, RPO и ответственным;</li>
+<li>создаёте согласованную копию базы SQLite и конфигурации с контрольной суммой;</li>
+<li>восстанавливаете копию в отдельный каталог и доказываете целостность данных;</li>
+<li>настраиваете группы, права каталогов и правило <code>sudo</code> по ролям;</li>
+<li>читаете журнал аудита и подтверждаете отказ в доступе.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell с клиентом <code>ssh</code>.</li>
+<li>VirtualBox с учебной машиной <code>uifis-srv01</code>: Ubuntu Server 24.04, пользователь <code>student</code> с <code>sudo</code>, SSH на порту <code>2222</code>, сеть NAT.</li>
+<li>Пакеты <code>sqlite3</code> и <code>cron</code> внутри виртуальной машины.</li>
+<li>Word для отчёта и Excel для плана копирования.</li>
+</ul>
+<p>Настройки рабочего компьютера и права администратора Windows не нужны.</p>
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-13_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-13_backup-plan.csv" download>План резервного копирования в CSV</a>
+<p>В шаблоне отчёта уже есть таблицы плана, ролей и проверок, а также места под скриншоты проверок. В CSV заполнены четыре объекта, строку «Итог» допишите сами. Шаблоны не переписывайте с нуля: дополняйте их.</p>
+</div>
+
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p>На учебном стенде крутится информационная система колледжа: 12 студентов, 20 заявок, файл базы <code>uifis.db</code>, конфигурация и журналы. В четверг студент чистил каталог и выполнил <code>rm</code> не в той папке. Файл базы исчез. Копия была, но её ни разу не открывали: в архиве лежала база недельной давности, а три последних заявки пропали. Формально резервное копирование было настроено. Фактически данных не было.</p>
 <p>Отсюда главная мысль работы: <strong>резервная копия это не файл, а проверенная процедура</strong>. В неё входят план с допустимым временем восстановления, согласованный снимок данных, контрольная сумма, восстановление в отдельный каталог и запись о том, кто и когда это делал. Отдельно стоит вторая половина задачи: к базе, конфигурации и журналам должны иметь доступ только те, кому он нужен по роли.</p>
 <p>Работа идёт по шагам. Сначала вы фиксируете, что и как часто копировать. Затем создаёте копию базы и конфигурации, считаете контрольную сумму и ставите задание в расписание. После этого восстанавливаете копию в отдельный каталог и сравниваете число строк с исходной базой. Дальше появляются группы <code>uifis_read</code>, <code>uifis_write</code>, <code>uifis_admin</code>, <code>uifis_guest</code>, права <code>750</code> и <code>640</code>, правило <code>sudo</code> и проверки чтения и записи. В конце вы читаете журнал аудита и доказываете, что гость получил отказ, а действие оператора записано.</p>
 <p>Результат работы: заполненный план копирования, файл копии базы с контрольной суммой, восстановленная в отдельном каталоге база с совпавшим числом строк, четыре группы с пользователями, таблица прав, журнал копий и журнал аудита с записями об успехе и отказе.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>План в CSV заполнен для четырёх объектов и содержит RTO, RPO и ответственного. Копия базы открывается, <code>PRAGMA integrity_check</code> возвращает <code>ok</code>, контрольная сумма совпадает с записью в журнале. Восстановленная копия лежит вне каталога <code>data</code>, число строк в ней совпадает с исходным, а контрольная сумма исходной базы после восстановления не изменилась. Права каталогов и файлов соответствуют таблице ролей, гость не читает базу, оператор пишет только через разрешённую команду, оба события видны в журналах.</p></div>
 
-<div class="files"><b class="label">Материалы к работе</b>
-<a href="reports/UIFIS_practice-13_report-template.docx" download>Шаблон отчёта в DOCX</a>
-<a href="reports/UIFIS_practice-13_backup-plan.csv" download>План резервного копирования в CSV</a>
-<p>В шаблоне отчёта уже есть таблицы плана, ролей и проверок, а также места под шесть скриншотов. В CSV заполнены четыре объекта, строку «Итог» допишите сами. Шаблоны не переписывайте с нуля: дополняйте их.</p>
-</div>
-
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Работайте в виртуальной машине <code>uifis-srv01</code> из практики 6: Ubuntu Server 24.04, пользователь <code>student</code> с <code>sudo</code>, SSH на порту <code>2222</code>, сеть NAT. Настройки рабочего компьютера и права администратора Windows не нужны. Если машины нет, создайте её по практике 6 и не меняйте сетевые настройки хоста.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка учебного стенда</h3>
+<p>Работайте в виртуальной машине <code>uifis-srv01</code> из практики 6: Ubuntu Server 24.04, пользователь <code>student</code> с <code>sudo</code>, SSH на порту <code>2222</code>, сеть NAT. Если машины нет, создайте её по практике 6 и не меняйте сетевые настройки хоста.</p>
 <p>Подключитесь к машине:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
 </code></pre></div>
 
 <p>Установите клиент SQLite и службу cron, затем проверьте SQLite:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
 sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>sqlite3<span class="w"> </span>cron
 sqlite3<span class="w"> </span>--version
 </code></pre></div>
 
 <p>Служебный пользователь <code>uifis</code> уже создан в практике 6. Проверьте его и при необходимости создайте заново:</p>
-<div class="codehilite"><pre><span></span><code>id<span class="w"> </span>uifis<span class="w"> </span><span class="o">||</span><span class="w"> </span>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
+<div class="codehilite" data-lang="bash"><pre><span></span><code>id<span class="w"> </span>uifis<span class="w"> </span><span class="o">||</span><span class="w"> </span>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
 </code></pre></div>
 
 <p>Создайте каталоги стенда. Пока они принадлежат <code>student</code>: права ролей вы настроите позже, когда появятся группы.</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>-o<span class="w"> </span>student<span class="w"> </span>-g<span class="w"> </span>student<span class="w"> </span>/srv/uifis-app
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>-o<span class="w"> </span>student<span class="w"> </span>-g<span class="w"> </span>student<span class="w"> </span>/srv/uifis-app
 sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>-o<span class="w"> </span>student<span class="w"> </span>-g<span class="w"> </span>student<span class="w"> </span>/srv/uifis-app/<span class="o">{</span>data,config,logs,bin,backup,restore<span class="o">}</span>
 ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis-app<span class="w"> </span>/srv/uifis-app/*
 </code></pre></div>
 
 <p>Создайте базу с двумя таблицами и заполните её данными:</p>
-<div class="codehilite"><pre><span></span><code>sqlite3<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s">&lt;&lt;&#39;SQL&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sqlite3<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s">&lt;&lt;&#39;SQL&#39;</span>
 <span class="s">CREATE TABLE students (</span>
 <span class="s">  id INTEGER PRIMARY KEY,</span>
 <span class="s">  full_name TEXT NOT NULL,</span>
@@ -871,16 +904,16 @@ ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis-app<span class="
 </code></pre></div>
 
 <p>Закройте базу от остальных пользователей узла:</p>
-<div class="codehilite"><pre><span></span><code>chmod<span class="w"> </span><span class="m">0640</span><span class="w"> </span>/srv/uifis-app/data/uifis.db
+<div class="codehilite" data-lang="bash"><pre><span></span><code>chmod<span class="w"> </span><span class="m">0640</span><span class="w"> </span>/srv/uifis-app/data/uifis.db
 </code></pre></div>
 
 <p>Проверьте данные:</p>
-<div class="codehilite"><pre><span></span><code>sqlite3<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM requests;&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sqlite3<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM requests;&quot;</span>
 </code></pre></div>
 
 <p>Ожидаемый результат: <code>12</code> и <code>20</code>. Если число другое, база заполнилась не полностью: удалите файл и повторите блок целиком.</p>
 <p>Создайте конфигурацию, учебный секрет и пустые журналы:</p>
-<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>/srv/uifis-app/config/app.env<span class="w"> </span><span class="s">&lt;&lt;&#39;ENV&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>/srv/uifis-app/config/app.env<span class="w"> </span><span class="s">&lt;&lt;&#39;ENV&#39;</span>
 <span class="s">DB_PATH=/srv/uifis-app/data/uifis.db</span>
 <span class="s">LOG_PATH=/srv/uifis-app/logs/audit.log</span>
 <span class="s">RETENTION_DAYS=7</span>
@@ -895,7 +928,7 @@ chmod<span class="w"> </span><span class="m">0640</span><span class="w"> </span>
 </code></pre></div>
 
 <p>Файл <code>secrets.env</code> существует для одной цели: позже вы проверите, что токен не попал ни в архив конфигурации, ни в журнал. Пароли и настоящие токены на учебном стенде не храните.</p>
-<h2 id="задание-1-план-копирования"><span class="num">03</span>Задание 1. План копирования</h2>
+<h3>Шаг 2. План копирования</h3>
 <p>План отвечает на шесть вопросов: что копируем, как часто, куда кладём, сколько храним, как проверяем и кто отвечает. Два числа задают требования ко всей схеме.</p>
 <p><strong>RTO</strong> (recovery time objective) это допустимое время восстановления: сколько система может лежать после отказа. <strong>RPO</strong> (recovery point objective) это допустимая потеря данных по времени: на какой момент назад мы согласны откатиться. Ежедневная копия в 02:00 даёт RPO до 24 часов: всё, что записано после ночи, при откате потеряется.</p>
 <p>Для учебного стенда примем RTO 4 часа для базы и RPO 24 часа. Этого достаточно, потому что одна ночная копия покрывает сутки работы. Если бы заявки нужно было терять не больше часа, пришлось бы копировать базу каждый час, а не искать «умный» способ сделать суточную копию точнее.</p>
@@ -961,10 +994,12 @@ chmod<span class="w"> </span><span class="m">0640</span><span class="w"> </span>
 <p>Откройте CSV и сверьте его со своим стендом. В колонке «Проверка» замените общие слова на конкретную команду, которой вы действительно проверяли объект. В строку «Итог» впишите дату проверки и фамилию: план без ответственного и даты не считается планом.</p>
 <div class="callout pitfall"><span class="label">Копия на том же диске не защищает от отказа диска</span><p>Каталог <code>backup</code> на том же виртуальном диске спасает от <code>rm</code> и ошибки в базе, но не от потери диска. В плане указывайте отдельный носитель или узел. Снимок виртуальной машины тоже не заменяет копию: он восстанавливает всю машину целиком и не даёт вернуть одну таблицу.</p></div>
 
-<h2 id="задание-2-копия-базы-и-конфигурации"><span class="num">04</span>Задание 2. Копия базы и конфигурации</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>План копирования заполняется в CSV и переносится в отчёт таблицей.</p></div>
+
+<h3>Шаг 3. Копия базы и конфигурации</h3>
 <p>Копировать файл базы командой <code>cp</code> на работающей системе нельзя. SQLite держит изменения в журнале и в страницах, которые ещё не записаны на диск; <code>cp</code> может поймать файл в середине записи и получить битую базу. Команда <code>.backup</code> внутри <code>sqlite3</code> использует API резервного копирования: она читает согласованный снимок и складывает его в новый файл.</p>
 <p>Создайте скрипт копирования:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/bin/backup_db.sh<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SH&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/bin/backup_db.sh<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SH&#39;</span>
 <span class="s">#!/usr/bin/env bash</span>
 <span class="s">set -euo pipefail</span>
 <span class="s">umask 027</span>
@@ -1012,23 +1047,23 @@ sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0750</s
 <li><code>find</code> с <code>-mtime +7</code> удаляет копии старше семи дней. Срок хранения из плана выполняется автоматически, а не «когда руки дойдут».</li>
 </ul>
 <p>Запустите скрипт и посмотрите результат:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>/srv/uifis-app/bin/backup_db.sh
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>/srv/uifis-app/bin/backup_db.sh
 sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/srv/uifis-app/backup
 sudo<span class="w"> </span>cat<span class="w"> </span>/srv/uifis-app/logs/backup.log
 </code></pre></div>
 
 <p>В каталоге появятся три файла: копия базы, её контрольная сумма и архив конфигурации. В журнале будет две строки с временем, именем файла и размером, а у строки базы ещё и контрольная сумма. Проверьте сумму отдельно:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>/srv/uifis-app/backup/uifis-*.sqlite.sha256
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>/srv/uifis-app/backup/uifis-*.sqlite.sha256
 </code></pre></div>
 
 <p>Ожидаемый ответ: <code>OK</code>. Пока копия одна, шаблон подходит. Если файлов несколько, передайте <code>-c</code> конкретный файл суммы.</p>
 <p>Проверьте, что в архиве нет секрета:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tar<span class="w"> </span>-tzf<span class="w"> </span>/srv/uifis-app/backup/config-*.tar.gz
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>tar<span class="w"> </span>-tzf<span class="w"> </span>/srv/uifis-app/backup/config-*.tar.gz
 </code></pre></div>
 
 <p>В списке должен быть только <code>config/app.env</code>. Если появился <code>config/secrets.env</code>, вы архивировали каталог целиком, а не отдельный файл.</p>
 <p>Поставьте копирование в расписание через cron:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;0 2 * * * root /srv/uifis-app/bin/backup_db.sh&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/cron.d/uifis-backup<span class="w"> </span>&gt;/dev/null
+<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;0 2 * * * root /srv/uifis-app/bin/backup_db.sh&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/cron.d/uifis-backup<span class="w"> </span>&gt;/dev/null
 sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0644</span><span class="w"> </span>/etc/cron.d/uifis-backup
 cat<span class="w"> </span>/etc/cron.d/uifis-backup
 systemctl<span class="w"> </span>is-active<span class="w"> </span>cron
@@ -1039,10 +1074,10 @@ systemctl<span class="w"> </span>is-active<span class="w"> </span>cron
 
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Проверка контрольной суммы и строки журнала копирования.</p></div>
 
-<h2 id="задание-3-восстановление-в-отдельный-каталог"><span class="num">05</span>Задание 3. Восстановление в отдельный каталог</h2>
+<h3>Шаг 4. Восстановление в отдельный каталог</h3>
 <p>Копия, которую ни разу не восстанавливали, это надежда, а не резерв. Восстановление проверяют на том же стенде, но всегда в отдельный каталог: если распаковать копию поверх рабочей базы, проверка изменит то, что вы проверяете, и заметить ошибку будет нечем.</p>
 <p>Создайте каталог восстановления и скопируйте туда последнюю копию:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-v
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-v
 sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>-o<span class="w"> </span>student<span class="w"> </span>-g<span class="w"> </span>student<span class="w"> </span>/srv/uifis-app/restore/check-01
 <span class="nv">COPY</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>ls<span class="w"> </span>-1t<span class="w"> </span>/srv/uifis-app/backup/uifis-*.sqlite<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n1<span class="k">)</span><span class="s2">&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COPY</span><span class="s2">&quot;</span>
@@ -1053,41 +1088,41 @@ sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0640</s
 
 <p><code>sudo -v</code> обновляет отметку времени, чтобы следующие команды не ждали пароль. Переменная <code>COPY</code> хранит путь к самой свежей копии: <code>ls -1t</code> сортирует файлы по времени изменения, <code>head -n1</code> берёт первый.</p>
 <p>Сравните копию и восстановленный файл побайтно и по сумме:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COPY</span><span class="s2">&quot;</span><span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COPY</span><span class="s2">&quot;</span><span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite
 sudo<span class="w"> </span>cmp<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COPY</span><span class="s2">&quot;</span><span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite
 </code></pre></div>
 
 <p><code>cmp</code> не выводит ничего, если файлы совпадают. Любая строка вывода означает различие, и тогда восстановление нельзя считать успешным.</p>
 <p>Откройте восстановленную базу и проверьте её отдельно от рабочей:</p>
-<div class="codehilite"><pre><span></span><code>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite<span class="w"> </span><span class="se">\</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="s2">&quot;PRAGMA integrity_check; SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM requests;&quot;</span>
 </code></pre></div>
 
 <p>Ожидаемый результат: <code>ok</code>, <code>12</code>, <code>20</code>. База открывается из каталога <code>restore</code>, а не из <code>data</code>: это и есть доказательство, что копия самодостаточна.</p>
 <p>Теперь докажите, что исходная база не изменилась. Снимите сумму до восстановления и проверьте её после:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/logs/source.sha256
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>sha256sum<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/logs/source.sha256
 sudo<span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>/srv/uifis-app/logs/source.sha256
 </code></pre></div>
 
 <p>Вторая команда должна ответить <code>OK</code>. Восстановление только читало исходный файл, поэтому его сумма осталась прежней. Если сумма изменилась, значит, какая-то команда писала в рабочую базу, и проверку нужно повторить на чистом стенде.</p>
 <p>Сравните число строк в обеих базах ещё раз, уже одной командой:</p>
-<div class="codehilite"><pre><span></span><code>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
 sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/restore/check-01/uifis.sqlite<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
 </code></pre></div>
 
 <p>Оба ответа равны <code>20</code>. Зафиксируйте в отчёте время начала и конца восстановления: это фактический RTO, который вы сравниваете с планом.</p>
 <div class="callout pitfall"><span class="label">Восстановление поверх рабочей базы</span><p>Соблазн распаковать копию прямо в <code>data</code> велик, но тогда вы проверите не копию, а свою способность затереть данные. Восстановление всегда идёт в новый каталог. Перенос в рабочую базу делают отдельным решением, после проверки и с остановленной системой.</p></div>
 
-<h2 id="задание-4-пользователи-группы-и-права"><span class="num">06</span>Задание 4. Пользователи, группы и права</h2>
+<h3>Шаг 5. Пользователи, группы и права</h3>
 <p>Роли удобно описывать группами, а не отдельными записями в <code>sudoers</code>. Создайте четыре группы:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>groupadd<span class="w"> </span>uifis_read
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>groupadd<span class="w"> </span>uifis_read
 sudo<span class="w"> </span>groupadd<span class="w"> </span>uifis_write
 sudo<span class="w"> </span>groupadd<span class="w"> </span>uifis_admin
 sudo<span class="w"> </span>groupadd<span class="w"> </span>uifis_guest
 </code></pre></div>
 
 <p>Создайте по одному пользователю на роль. Пароли не задавайте: учётные записи заблокированы для входа, а проверки идут через <code>sudo -u</code>, то есть от имени нужного пользователя.</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>-G<span class="w"> </span>uifis_read<span class="w"> </span>analyst
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>-G<span class="w"> </span>uifis_read<span class="w"> </span>analyst
 sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>-G<span class="w"> </span>uifis_read,uifis_write<span class="w"> </span>operator
 sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>-G<span class="w"> </span>uifis_read,uifis_admin<span class="w"> </span>sysadmin
 sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>-G<span class="w"> </span>uifis_guest<span class="w"> </span>guest
@@ -1098,7 +1133,7 @@ id<span class="w"> </span>guest
 </code></pre></div>
 
 <p>Наблюдатель читает данные, оператор читает и пишет через разрешённую команду, администратор читает всё и запускает копирование. Гость видит только отчёт. Права на файлы:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chown<span class="w"> </span>uifis:uifis_read<span class="w"> </span>/srv/uifis-app
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>chown<span class="w"> </span>uifis:uifis_read<span class="w"> </span>/srv/uifis-app
 sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>uifis:uifis_read<span class="w"> </span>/srv/uifis-app/data<span class="w"> </span>/srv/uifis-app/config
 sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>uifis:uifis_admin<span class="w"> </span>/srv/uifis-app/logs
 sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0750</span><span class="w"> </span>/srv/uifis-app<span class="w"> </span>/srv/uifis-app/data<span class="w"> </span>/srv/uifis-app/config
@@ -1132,7 +1167,7 @@ sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0750</s
 </ul>
 <p>Почему каталог данных не <code>770</code>, хотя оператор должен писать: оператор не получает права на файл базы напрямую. Он вызывает узкую команду, которая выполняется от имени владельца <code>uifis</code>. Это и есть минимальные права: человеку разрешено одно действие, а не запись во весь каталог.</p>
 <p>Создайте команду добавления заявки:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/bin/request-add<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SH&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-app/bin/request-add<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SH&#39;</span>
 <span class="s">#!/usr/bin/env bash</span>
 <span class="s">set -euo pipefail</span>
 <span class="s">DB=/srv/uifis-app/data/uifis.db</span>
@@ -1152,7 +1187,7 @@ sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0755</s
 
 <p>Скрипт должен быть исполняемым для <code>uifis</code>, но не должен быть ему доступен на запись. Иначе <code>uifis</code> сможет подменить содержимое и через <code>sudo</code> получить другие права. Поэтому владелец <code>root</code>, права <code>755</code>, а каталог <code>bin</code> принадлежит <code>root</code>.</p>
 <p>Добавьте правило <code>sudo</code>: оператор запускает только эту команду и только от <code>uifis</code>, администратор запускает только скрипт копирования.</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sudoers.d/uifis-roles<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SUDO&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sudoers.d/uifis-roles<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;&#39;SUDO&#39;</span>
 <span class="s">%uifis_write ALL=(uifis) NOPASSWD: /srv/uifis-app/bin/request-add</span>
 <span class="s">%uifis_admin ALL=(root) NOPASSWD: /srv/uifis-app/bin/backup_db.sh</span>
 <span class="s">SUDO</span>
@@ -1162,27 +1197,27 @@ sudo<span class="w"> </span>visudo<span class="w"> </span>-c
 
 <p><code>visudo -c</code> должен разобрать оба файла без ошибок. Если в правиле опечатка, <code>sudo</code> может перестать работать для всех, поэтому файл проверяют до выхода из сессии.</p>
 <p>Проверьте чтение и запись по ролям. Наблюдатель читает базу, но не может её изменить:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>analyst<span class="w"> </span>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>analyst<span class="w"> </span>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
 sudo<span class="w"> </span>-u<span class="w"> </span>analyst<span class="w"> </span>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="s2">&quot;INSERT INTO requests (student_id, kind, status, created_at) VALUES (2, &#39;справка&#39;, &#39;новая&#39;, datetime(&#39;now&#39;));&quot;</span>
 </code></pre></div>
 
 <p>Первая команда вернёт <code>20</code>, вторая завершится ошибкой <code>attempt to write a readonly database</code>. Это ожидаемый отказ: флаг <code>-readonly</code> запрещает запись, а права <code>640</code> не дают обойти запрет.</p>
 <p>Оператор добавляет заявку через разрешённую команду:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>operator<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>/srv/uifis-app/bin/request-add
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>operator<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>/srv/uifis-app/bin/request-add
 sudo<span class="w"> </span>-u<span class="w"> </span>analyst<span class="w"> </span>sqlite3<span class="w"> </span>-readonly<span class="w"> </span>/srv/uifis-app/data/uifis.db<span class="w"> </span><span class="s2">&quot;SELECT COUNT(*) FROM requests;&quot;</span>
 </code></pre></div>
 
 <p>Ожидаемый результат: сообщение <code>добавлена заявка 21</code>, затем <code>21</code>. Оператор не писал в файл сам: он запустил команду от <code>uifis</code>, и только она открыла базу на запись.</p>
 <p>Администратор читает копии и запускает копирование:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/srv/uifis-app/backup
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/srv/uifis-app/backup
 sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span>/srv/uifis-app/bin/backup_db.sh
 sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/srv/uifis-app/backup
 </code></pre></div>
 
 <p>После запуска появится новая копия с владельцем <code>root</code> и группой <code>uifis_admin</code>. Каталог <code>backup</code> имеет режим <code>2750</code>: бит setgid заставляет новые файлы наследовать группу каталога, поэтому администратор читает копии без дополнительных команд.</p>
 <p>Гость не должен видеть ни базу, ни конфигурацию. Единственное, что ему разрешено, это учебный отчёт:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span>/srv/uifis-report
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span>/srv/uifis-report
 <span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;Учебный отчёт по практике 13&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/srv/uifis-report/summary.txt<span class="w"> </span>&gt;/dev/null
 sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0644</span><span class="w"> </span>/srv/uifis-report/summary.txt
 sudo<span class="w"> </span>-u<span class="w"> </span>guest<span class="w"> </span>cat<span class="w"> </span>/srv/uifis-report/summary.txt
@@ -1191,7 +1226,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>guest<span class="w"> </sp
 
 <p>Первая команда <code>cat</code> печатает строку отчёта, вторая завершается <code>Permission denied</code>. Отчёт лежит вне <code>/srv/uifis-app</code>, поэтому гость не получает доступа к каталогу системы.</p>
 <p>Проверьте <code>umask</code>. Служебный процесс создаёт файлы с <code>027</code>, а не с <code>022</code>:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;umask 027; umask; touch /srv/uifis-app/logs/umask-test; ls -l /srv/uifis-app/logs/umask-test&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;umask 027; umask; touch /srv/uifis-app/logs/umask-test; ls -l /srv/uifis-app/logs/umask-test&#39;</span>
 sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>rm<span class="w"> </span>/srv/uifis-app/logs/umask-test
 </code></pre></div>
 
@@ -1289,55 +1324,53 @@ sudo<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </sp
 
 <div class="callout shot"><span class="label">Скриншот 4</span><p>Отказ гостю при чтении базы и успешная запись оператора через <code>request-add</code>.</p></div>
 
-<h2 id="задание-5-аудит"><span class="num">07</span>Задание 5. Аудит</h2>
+<h3>Шаг 6. Аудит</h3>
 <p>Права ограничивают доступ, аудит показывает, что происходило на самом деле. Проверять нужно три источника: вход в систему, действия с базой и отказы.</p>
 <p>Посмотрите входы:</p>
-<div class="codehilite"><pre><span></span><code>last<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>last<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span>
 sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>ssh<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>--no-pager
 </code></pre></div>
 
 <p><code>last</code> читает журнал входов и показывает пользователя, терминал и время. <code>journalctl</code> по службе <code>ssh</code> показывает подключения и отказы аутентификации. Эти записи создаёт система, приложение их не пишет.</p>
 <p>Посмотрите журнал действий приложения:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/srv/uifis-app/logs/audit.log
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/srv/uifis-app/logs/audit.log
 </code></pre></div>
 
 <p>Там должна быть строка вида <code>who=operator action=request-add id=21 result=ok</code>. В ней есть кто, что, над каким объектом и с каким результатом. Время в формате ISO однозначно читается и сортируется.</p>
 <p>Проверьте, что журнал копий отвечает на вопрос «когда была последняя копия»:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/srv/uifis-app/logs/backup.log
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/srv/uifis-app/logs/backup.log
 </code></pre></div>
 
 <p>Теперь создайте отказ и найдите его в системном журнале. Гость пытается выполнить команду, которой у него нет права:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>guest<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>/srv/uifis-app/bin/request-add
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>guest<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span>-u<span class="w"> </span>uifis<span class="w"> </span>/srv/uifis-app/bin/request-add
 sudo<span class="w"> </span>journalctl<span class="w"> </span>-t<span class="w"> </span>sudo<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--no-pager
 </code></pre></div>
 
 <p>Гость получит сообщение, что его нет в файле <code>sudoers</code>. Запись об этом появится в журнале с меткой <code>sudo</code>. Если <code>journalctl -t sudo</code> ничего не находит, посмотрите файл аутентификации:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;NOT in sudoers&#39;</span><span class="w"> </span>/var/log/auth.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;NOT in sudoers&#39;</span><span class="w"> </span>/var/log/auth.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 
 <p>Убедитесь, что журнал нельзя подделать из-под оператора:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>operator<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo fake &gt;&gt; /srv/uifis-app/logs/audit.log&#39;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>operator<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo fake &gt;&gt; /srv/uifis-app/logs/audit.log&#39;</span>
 </code></pre></div>
 
 <p>Команда завершится <code>Permission denied</code>: каталог <code>logs</code> закрыт группой <code>uifis_admin</code>, а файл доступен только владельцу на запись. Оператор не может ни дописать, ни удалить свои записи.</p>
 <p>Проверьте, что в журналах нет секретов:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>grep<span class="w"> </span>-R<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;password|token|secret&#39;</span><span class="w"> </span>/srv/uifis-app/logs
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>grep<span class="w"> </span>-R<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;password|token|secret&#39;</span><span class="w"> </span>/srv/uifis-app/logs
 </code></pre></div>
 
 <p>Команда не должна ничего найти. Если токен нашёлся, вы пишете в журнал значения из конфигурации, и это дефект, а не мелочь: журнал читают шире, чем файл секретов.</p>
 <p>Отдельно проверьте архив конфигурации:</p>
-<div class="codehilite"><pre><span></span><code><span class="nv">CFG</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>sudo<span class="w"> </span>ls<span class="w"> </span>-1t<span class="w"> </span>/srv/uifis-app/backup/config-*.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n1<span class="k">)</span><span class="s2">&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nv">CFG</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>sudo<span class="w"> </span>ls<span class="w"> </span>-1t<span class="w"> </span>/srv/uifis-app/backup/config-*.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n1<span class="k">)</span><span class="s2">&quot;</span>
 sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> </span>tar<span class="w"> </span>-tzf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CFG</span><span class="s2">&quot;</span>
 </code></pre></div>
 
 <p>В списке только <code>config/app.env</code>. Секрет не попал в копию, потому что архивировался один файл, а не весь каталог.</p>
 <div class="callout note"><span class="label">Аудит без секретов</span><p>Журнал отвечает на вопросы «кто», «когда», «что» и «чем закончилось». Значение пароля или токена в нём не нужно: для разбора достаточно идентификатора пользователя и результата. Если значение нужно сохранить, его хранят в защищённом хранилище, а в журнал пишут только факт обращения.</p></div>
 
-<div class="callout shot"><span class="label">Скриншот 5</span><p>Отказ гостю при чтении базы и при запуске команды через <code>sudo</code>.</p></div>
+<div class="callout shot"><span class="label">Скриншот 5</span><p>Строки <code>audit.log</code> с действием оператора и отказом, а также пустой вывод поиска секретов в журналах.</p></div>
 
-<div class="callout shot"><span class="label">Скриншот 6</span><p>Строки <code>audit.log</code> с действием оператора и отказом, поиск секретов в журналах.</p></div>
-
-<h2 id="задание-6-отчёт-и-защита"><span class="num">08</span>Задание 6. Отчёт и защита</h2>
+<h3>Шаг 7. Отчёт и защита</h3>
 <p>Соберите отчёт в шаблоне. В нём уже есть таблицы плана, ролей и проверок, добавьте свои строки, если проверок больше.</p>
 <p>Приложите скриншоты:</p>
 <ol>
@@ -1416,23 +1449,31 @@ sudo<span class="w"> </span>-u<span class="w"> </span>sysadmin<span class="w"> <
 </tbody>
 </table>
 <p>В выводе ответьте на три вопроса: почему копия без проверки восстановления считается ненадёжной, как вы доказали, что восстановление работает, и что изменится в плане, если RPO уменьшить до одного часа.</p>
-<h2 id="контрольные-вопросы"><span class="num">09</span>Контрольные вопросы</h2>
+<p>Скриншот страницы отчёта не нужен: отчёт сдаётся файлом.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-13_report-template.docx</code>.</li>
+<li>Заполненный план <code>UIFIS_practice-13_backup-plan.csv</code> со строкой «Итог».</li>
+<li>Скрипт <code>/srv/uifis-app/bin/backup_db.sh</code> и файл <code>/etc/cron.d/uifis-backup</code>.</li>
+<li>Таблицу прав и заполненную таблицу проверок в отчёте.</li>
+<li>Скриншоты копий, контрольной суммы, восстановления, прав и журналов аудита.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: план заполнен для четырёх объектов с RTO, RPO и ответственным, копия создаётся по расписанию, сумма и <code>integrity_check</code> подтверждены, восстановление выполнено в отдельный каталог с совпадением числа строк и неизменной исходной базой, группы и права настроены, отказ гостю и запись оператора проверены, аудит чист от секретов, отчёт и защита полные.</li>
+<li><strong>4</strong>: копия и восстановление работают, но есть одна неточность в плане, правах или объяснении аудита, например не проверена контрольная сумма исходной базы.</li>
+<li><strong>3</strong>: копия создана вручную без расписания, восстановление выполнено поверх рабочей базы или не проверено, права выданы группам без проверки отказа, журнал аудита не прочитан.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Чем RTO отличается от RPO? Какие значения вы приняли для базы и почему?</li>
 <li>Почему <code>cp</code> работающей базы SQLite опаснее, чем команда <code>.backup</code>?</li>
 <li>Зачем восстанавливать копию в отдельный каталог и как доказать, что исходная база не изменилась?</li>
 <li>Что означают права <code>750</code> на каталоге и <code>640</code> на файле? Кому они закрывают доступ?</li>
-<li>Почему оператор не получает запись в каталог данных напрямую, а вызывает команду от <code>uifis</code>?</li>
-<li>Почему скрипт, запускаемый через <code>sudo</code>, не должен быть доступен на запись тому, кто его запускает?</li>
 <li>Почему пароли и токены не попадают в журнал аудита и как вы это проверили?</li>
-<li>Что произойдёт с планом копирования, если каталог <code>backup</code> оставить на том же виртуальном диске?</li>
 </ol>
-<h2 id="критерии-оценки"><span class="num">10</span>Критерии оценки</h2>
-<ul>
-<li><strong>5</strong>: план заполнен для четырёх объектов с RTO, RPO и ответственным, копия создаётся по расписанию, сумма и <code>integrity_check</code> подтверждены, восстановление выполнено в отдельный каталог с совпадением числа строк и неизменной исходной базой, группы и права настроены, отказ гостю и запись оператора проверены, аудит чист от секретов, отчёт и защита полные.</li>
-<li><strong>4</strong>: копия и восстановление работают, но есть одна неточность в плане, правах или объяснении аудита, например не проверена контрольная сумма исходной базы.</li>
-<li><strong>3</strong>: копия создана вручную без расписания, восстановление выполнено поверх рабочей базы или не проверено, права выданы группам без проверки отказа, журнал аудита не прочитан.</li>
-</ul></article><nav class="pager"><a class="" href="31-lek-19.html"><span>← Предыдущее занятие</span>Лекция 19. Надёжность, отказоустойчивость и резервное копирование</a><a class="next" style="text-align:right;margin-left:auto" href="33-lek-20.html"><span>Следующее занятие →</span>Лекция 20. Информационная безопасность информационной системы</a></nav></main>
+</div></article><nav class="pager"><a class="" href="31-lek-19.html"><span>← Предыдущее занятие</span>Лекция 19. Надёжность, отказоустойчивость и резервное копирование</a><a class="next" style="text-align:right;margin-left:auto" href="33-lek-20.html"><span>Следующее занятие →</span>Лекция 20. Информационная безопасность информационной системы</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

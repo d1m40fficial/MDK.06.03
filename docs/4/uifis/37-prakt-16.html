@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,13 +794,23 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 38</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>SQL-запрос с JOIN и агрегацией</h1><p class="dek">Соберите базу заказов мебельного цеха, посчитайте стоимость пяти заказов и потребность в материалах, затем докажите каждую цифру ручным расчётом, подсчётом строк и планом запроса.</p></div>
-<div class="glyph" aria-hidden="true">П16</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Соединять таблицы по внешним ключам и объяснять, откуда в результате берутся лишние строки</li><li>Считать стоимость заказа и потребность в материалах через GROUP BY и SUM</li><li>Отбирать топ продуктов и заказы выше среднего через ORDER BY, HAVING и подзапрос</li><li>Находить пропуски через LEFT JOIN и IS NULL, не теряя нужные строки</li><li>Проверять агрегаты ручным расчётом, COUNT DISTINCT и EXPLAIN QUERY PLAN</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-схема-и-данные">Задание 1. Схема и данные</a></li><li><a href="#задание-2-стоимость-заказа">Задание 2. Стоимость заказа</a></li><li><a href="#задание-3-потребность-в-материалах">Задание 3. Потребность в материалах</a></li><li><a href="#задание-4-топ-продуктов-и-заказы-выше-среднего">Задание 4. Топ продуктов и заказы выше среднего</a></li><li><a href="#задание-5-пропуски">Задание 5. Пропуски</a></li><li><a href="#задание-6-проверка">Задание 6. Проверка</a></li><li><a href="#задание-7-отчёт-и-защита">Задание 7. Отчёт и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>Мебельный цех за неделю принял пять заказов: стеллажи и столы для ООО «Альфа», шкаф и полки для ООО «Бета», мебель для колледжа и для ИП Волкова. Бухгалтер считает выручку в Excel и получает то 249 000 рублей, то 579 000. Арифметика тут ни при чём. Во втором случае к заказам присоединили таблицу норм расхода, у стеллажа оказалось три материала, и каждая позиция заказа размножилась на три строки.</p>
-<p><code>JOIN</code> не склеивает таблицы в одну длинную, он составляет все допустимые пары строк по условию. Пять заказов и девять позиций дают девять пар, а те же девять позиций с нормами расхода дают двадцать две пары. Поэтому главный навык этой работы не в синтаксисе, а в умении заранее ответить, сколько строк появится после каждого соединения.</p>
-<p>Соберём учебную базу из пяти таблиц и напишем шесть запросов. Стоимость заказов, потребность в материалах, топ продуктов, заказы выше среднего, продукты без норм и доля каждого материала в затратах. Каждый результат сверим с ручным расчётом и с планом выполнения.</p>
-<p>Результат работы: файл базы <code>orders.db</code>, скрипт с шестью запросами, таблица ожиданий и фактов, скриншоты и заполненный отчёт. Числа, которые должны получиться: пять заказов на 249 000 рублей, 382 единицы крепежа, 96 единиц дерева, 30 единиц металла, три заказа дороже среднего чека 49 800.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Все шесть запросов выполняются без ошибок и дают осмысленные числа. Сумма по заказам совпадает с ручным расчётом, в запросе потребности нет задвоенных строк, пропуск в данных найден через LEFT JOIN, план запроса до и после индекса отличается, отчёт содержит скриншоты и вывод.</p></div>
-
+<div class="glyph" aria-hidden="true">П16</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Соединять таблицы по внешним ключам и объяснять, откуда в результате берутся лишние строки</li><li>Считать стоимость заказа и потребность в материалах через GROUP BY и SUM</li><li>Отбирать топ продуктов и заказы выше среднего через ORDER BY, HAVING и подзапрос</li><li>Находить пропуски через LEFT JOIN и IS NULL, не теряя нужные строки</li><li>Проверять агрегаты ручным расчётом, COUNT DISTINCT и EXPLAIN QUERY PLAN</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Собрать базу заказов мебельного цеха, посчитать стоимость пяти заказов и потребность в материалах, затем доказать каждую цифру ручным расчётом, подсчётом строк и планом запроса.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>соединяете таблицы по внешним ключам и объясняете, откуда в результате берутся лишние строки;</li>
+<li>считаете стоимость заказа и потребность в материалах через <code>GROUP BY</code> и <code>SUM</code>;</li>
+<li>отбираете топ продуктов и заказы выше среднего через <code>ORDER BY</code>, <code>HAVING</code> и подзапрос;</li>
+<li>находите пропуски через <code>LEFT JOIN</code> и <code>IS NULL</code>, не теряя нужные строки;</li>
+<li>проверяете агрегаты ручным расчётом, <code>COUNT DISTINCT</code> и <code>EXPLAIN QUERY PLAN</code>.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.9 или новее с модулем <code>sqlite3</code> либо браузер с sqliteonline.com.</li>
+<li>VS Code, Word для отчёта.</li>
+</ul>
+<p>MySQL, PostgreSQL, права администратора и установка дополнительных программ не требуются.</p>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-16_report-template.docx" download>Шаблон отчёта в DOCX</a>
 <a href="reports/UIFIS_practice-16_data.sql" download>Скрипт базы и учебные данные</a>
@@ -794,9 +818,17 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Скачайте три файла в одну папку. В скрипте данных уже есть схема, ограничения и строки для загрузки. В шаблоне запросов пять заготовок, шестой запрос вы напишете сами: он разобран в разделе проверки. Шаблоны не переписывайте с нуля, дополняйте их.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>Мебельный цех за неделю принял пять заказов: стеллажи и столы для ООО «Альфа», шкаф и полки для ООО «Бета», мебель для колледжа и для ИП Волкова. Бухгалтер считает выручку в Excel и получает то 249 000 рублей, то 579 000. Арифметика тут ни при чём. Во втором случае к заказам присоединили таблицу норм расхода, у стеллажа оказалось три материала, и каждая позиция заказа размножилась на три строки.</p>
+<p><code>JOIN</code> не склеивает таблицы в одну длинную, он составляет все допустимые пары строк по условию. Пять заказов и девять позиций дают девять пар, а те же девять позиций с нормами расхода дают двадцать две пары. Поэтому главный навык этой работы не в синтаксисе, а в умении заранее ответить, сколько строк появится после каждого соединения.</p>
+<p>Соберём учебную базу из пяти таблиц и напишем шесть запросов. Стоимость заказов, потребность в материалах, топ продуктов, заказы выше среднего, продукты без норм и доля каждого материала в затратах. Каждый результат сверим с ручным расчётом и с планом выполнения.</p>
+<p>Результат работы: файл базы <code>orders.db</code>, скрипт с шестью запросами, таблица ожиданий и фактов, скриншоты и заполненный отчёт. Числа, которые должны получиться: пять заказов на 249 000 рублей, 382 единицы крепежа, 96 единиц дерева, 30 единиц металла, три заказа дороже среднего чека 49 800.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Все шесть запросов выполняются без ошибок и дают осмысленные числа. Сумма по заказам совпадает с ручным расчётом, в запросе потребности нет задвоенных строк, пропуск в данных найден через LEFT JOIN, план запроса до и после индекса отличается, отчёт содержит скриншоты и вывод.</p></div>
+
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Создайте папку практики:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">16</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">16</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">16</span>
 </code></pre></div>
 
@@ -808,7 +840,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </ul>
 <p>Установка MySQL, PostgreSQL и права администратора не требуются. Отчёт заполняйте в Word.</p>
 <p>Загрузите базу из скрипта:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">sql</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;UIFIS_practice-16_data.sql&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -820,7 +852,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Скрипт начинается с <code>PRAGMA foreign_keys = ON</code> и удаляет старые таблицы перед созданием новых, поэтому его можно запускать повторно. Помните, что при этом стираются все строки, которые вы добавили руками.</p>
 <p>Цены в схеме объявлены как <code>REAL</code>, поэтому SQLite покажет сумму как <code>65000.0</code>. Это то же число, что 65 000 рублей: <code>.0</code> означает вещественный тип, а не копейки.</p>
-<h2 id="задание-1-схема-и-данные"><span class="num">03</span>Задание 1. Схема и данные</h2>
+<h3>Шаг 2. Схема и данные</h3>
 <p>В скрипте пять таблиц. Разберитесь в связях до первого запроса: от схемы зависит, какие соединения вообще допустимы.</p>
 <table>
 <thead>
@@ -860,7 +892,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Два составных ключа решают главную проблему будущих запросов. В <code>norms</code> пара «продукт и материал» встречается один раз, поэтому у стеллажа не может быть двух строк с металлом. В <code>order_items</code> пара «заказ и продукт» тоже единственная: нельзя добавить стеллаж в заказ двумя отдельными строками. Пока это ограничение действует, число строк в соединении предсказуемо.</p>
 <p>Проверьте, что данные загрузились полностью:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span>
 <span class="w">  </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="p">)</span><span class="w">    </span><span class="k">AS</span><span class="w"> </span><span class="n">products</span><span class="p">,</span>
 <span class="w">  </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">materials</span><span class="p">)</span><span class="w">   </span><span class="k">AS</span><span class="w"> </span><span class="n">materials</span><span class="p">,</span>
 <span class="w">  </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">norms</span><span class="p">)</span><span class="w">       </span><span class="k">AS</span><span class="w"> </span><span class="n">norms</span><span class="p">,</span>
@@ -871,9 +903,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Должно получиться <code>4, 4, 10, 5, 9</code>. Если число позиций меньше девяти, скрипт выполнился не до конца. Если таблиц вообще нет, вы смотрите на другой файл базы: проверьте, что подключение открывает <code>orders.db</code> из папки практики.</p>
 <div class="callout shot"><span class="label">Скриншот 1</span><p>Список таблиц и количество строк в каждой после загрузки данных.</p></div>
 
-<h2 id="задание-2-стоимость-заказа"><span class="num">04</span>Задание 2. Стоимость заказа</h2>
+<h3>Шаг 3. Стоимость заказа</h3>
 <p>Стоимость заказа это сумма произведений цены продукта на количество в позиции. Цена лежит в <code>products</code>, количество в <code>order_items</code>, номер заказа в <code>orders</code>. Значит, нужны все три таблицы и соединение по внешним ключам.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">o</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">order_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span>
@@ -924,9 +956,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Правило звучит так: прежде чем добавить таблицу в запрос с <code>GROUP BY</code>, ответьте, добавляет она к группе одну строку или много. Справочник по внешнему ключу, у которого ключ уникален, даёт одну строку. Таблица-детализация даёт столько строк, сколько у неё записей на этот ключ, и любая сумма после неё считается по размноженным данным.</p>
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Результат запроса 1 с пятью заказами и итоговой суммой 249 000.</p></div>
 
-<h2 id="задание-3-потребность-в-материалах"><span class="num">05</span>Задание 3. Потребность в материалах</h2>
+<h3>Шаг 4. Потребность в материалах</h3>
 <p>Теперь обратная задача: сколько материала уйдёт на все заказы. Норма расхода задана на единицу продукта, значит, для каждой позиции нужно умножить норму на количество и сложить по материалу.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">qty</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">required</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">qty</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">required</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">norms</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">materials</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">material_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">material_id</span>
@@ -961,7 +993,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Строк три, а материалов в справочнике четыре. Краска не попала в результат, потому что её нет ни в одной норме: <code>JOIN</code> выбрасывает материал, для которого не нашлось пары. Иногда это правильно, но здесь нужно увидеть весь склад, поэтому запрос переписывают от <code>materials</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">qty</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">required</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">qty</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">required</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">materials</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">m</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">norms</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">material_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">material_id</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">product_id</span>
@@ -973,9 +1005,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="callout pitfall"><span class="label">Умножать агрегаты нельзя</span><p>Соблазн записать <code>SUM(n.qty) * SUM(oi.qty)</code> выглядит логично, но считает не то. Для крепежа в заказе 1 правильный ответ 88: две единицы стеллажа по 20 креплений плюс четыре стола по 12, то есть <code>2*20 + 4*12</code>. Через произведение сумм получается 192: <code>(20+12) * (2+4)</code>. Умножать нужно построчно, внутри <code>SUM</code>, иначе суммы разных строк перемножаются между собой.</p></div>
 
 <p>Задвоений здесь нет, и это можно доказать по ключам. Пара <code>(order_id, product_id)</code> встречается в <code>order_items</code> один раз, пара <code>(product_id, material_id)</code> в <code>norms</code> тоже один раз, поэтому каждая позиция встречается с каждой своей нормой ровно один раз. Если бы в <code>norms</code> не было составного ключа, сумма выросла бы, и никакая проверка этого бы не заметила.</p>
-<h2 id="задание-4-топ-продуктов-и-заказы-выше-среднего"><span class="num">06</span>Задание 4. Топ продуктов и заказы выше среднего</h2>
+<h3>Шаг 5. Топ продуктов и заказы выше среднего</h3>
 <p>Выручка продукта считается так же, как стоимость заказа, только группировка идёт по продукту. Топ задаётся сортировкой и ограничением числа строк.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">revenue</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">revenue</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span>
 <span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">name</span>
@@ -1012,7 +1044,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Стол на первом месте не из-за цены, а из-за количества: 14 единиц против 3 стеллажей. Полка с ценой 3 500 обогнала стеллаж за 12 000 по той же причине, её заказали в количестве 16 единиц. Выручка всегда зависит от объёма, поэтому «дорогой» и «прибыльный» это разные слова.</p>
 <p>Второй ключ сортировки <code>p.code</code> нужен для устойчивости: при равной выручке без него порядок строк не определён, и два запуска могут дать разные тройки.</p>
 <p>Заказ выше среднего ищут через подзапрос, который считает средний чек, и <code>HAVING</code>, который фильтрует уже готовые группы:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">o</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">order_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span>
@@ -1030,9 +1062,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Средний чек равен 49 800, выше него оказались три заказа: 65 000, 64 000 и 56 000. Заказ на 36 000 и заказ на 28 000 остались за чертой.</p>
 <p><code>WHERE</code> здесь не подошёл бы: он выполняется до группировки, когда суммы ещё не существует. <code>HAVING</code> работает после <code>GROUP BY</code> и видит агрегат. SQLite разрешает написать <code>HAVING total &gt; ...</code> по псевдониму, но стандарт SQL этого не гарантирует, поэтому в шаблоне использован повтор суммы: запрос переносится в другую СУБД без правок.</p>
-<h2 id="задание-5-пропуски"><span class="num">07</span>Задание 5. Пропуски</h2>
+<h3>Шаг 6. Пропуски в данных</h3>
 <p><code>LEFT JOIN</code> сохраняет все строки левой таблицы, даже если пары в правой не нашлось. Проверим, у каждого ли продукта есть нормы расхода:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">name</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">name</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">p</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">norms</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span>
 <span class="k">WHERE</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
@@ -1040,27 +1072,27 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Запрос вернёт пустой результат, и это правильный ответ: нормы есть у всех четырёх продуктов. Пустая таблица не означает, что запрос сломан, она означает, что пропусков нет. Проверить это утверждение можно, только создав пропуск.</p>
 <p>Добавьте продукт без норм и повторите запрос:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="p">(</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">price</span><span class="p">)</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="p">(</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">price</span><span class="p">)</span>
 <span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;P-05&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Табурет&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2500</span><span class="p">);</span>
 </code></pre></div>
 
 <p>Теперь результат содержит одну строку <code>P-05, Табурет</code>, а количество продуктов стало пять. После проверки удалите тестовую строку, чтобы база вернулась в исходное состояние:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Условие <code>IS NULL</code> проверяет столбец правой таблицы. Если написать <code>WHERE p.product_id IS NULL</code>, результат всегда будет пустым: слева строки есть по определению, иначе они не попали бы в соединение. Вторая частая ошибка это условие на правую таблицу в <code>WHERE</code>, например <code>WHERE n.qty = 8</code>. Оно отбрасывает строки с <code>NULL</code> и превращает <code>LEFT JOIN</code> обратно в <code>INNER JOIN</code>, только менее заметно.</p>
 <p>Та же логика у заказов. Запрос 1 начинает с <code>orders</code> и соединяется с позициями через <code>JOIN</code>, поэтому заказ без единой позиции в результат не попадёт. Проверьте, есть ли такие:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">empty_orders</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">empty_orders</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">o</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">order_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">order_id</span>
 <span class="k">WHERE</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">order_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Сейчас ответ 0, и это ожидаемо. Если менеджер создаст заказ и ещё не добавит в него позиции, при <code>INNER JOIN</code> заказ исчезнет из отчёта, а при <code>LEFT JOIN</code> останется с нулевой стоимостью.</p>
-<h2 id="задание-6-проверка"><span class="num">08</span>Задание 6. Проверка</h2>
+<h3>Шаг 7. Проверка расчётов</h3>
 <p>Первую цифру проверим руками. Заказ 1 это два стеллажа по 12 000 и четыре стола по 8 000: <code>2*12000 + 4*8000 = 56 000</code>. Совпало. Крепёж по всем заказам: <code>2*20 + 4*12 + 1*30 + 6*4 + 1*20 + 2*12 + 8*12 + 2*30 + 10*4 = 382</code>. Тоже совпало, значит, соединение не размножило позиции.</p>
 <p>Второй инструмент это подсчёт разных значений. Если строки задвоились, <code>COUNT(*)</code> вырастет, а <code>COUNT(DISTINCT ...)</code> нет:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_total</span><span class="p">,</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">order_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">orders</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">product_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">products</span><span class="p">,</span>
 <span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">units</span>
@@ -1069,7 +1101,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Получится <code>9, 5, 4, 36</code>: девять позиций, пять заказов, четыре разных продукта, тридцать шесть единиц товара. Девять позиций на четыре продукта это нормально, один продукт может стоять в нескольких заказах. А вот если <code>COUNT(DISTINCT order_id)</code> окажется больше пяти, соединение точно что-то размножило.</p>
 <p>Третий инструмент это проверочный запрос на долю материала в затратах. Он собирается в два шага: сначала потребность, потом её стоимость.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">WITH</span><span class="w"> </span><span class="n">need</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="p">(</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">WITH</span><span class="w"> </span><span class="n">need</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">material_id</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">qty</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">qty</span>
 <span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">oi</span>
 <span class="w">  </span><span class="k">JOIN</span><span class="w"> </span><span class="n">norms</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">product_id</span>
@@ -1129,12 +1161,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Сумма затрат 126 540, сумма долей 100.0. Если доли не дают в сумме сотню, ошибка в знаменателе: в него попали не все материалы или попали дважды.</p>
 <p>Четвёртый инструмент это план выполнения. Он показывает, как SQLite собирается читать таблицы, и ничего не выполняет:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="n">QUERY</span><span class="w"> </span><span class="n">PLAN</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="n">QUERY</span><span class="w"> </span><span class="n">PLAN</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 
 <p>До индекса план состоит из одной строки <code>SCAN order_items</code>: база читает таблицу целиком. Создайте индекс и повторите:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_order_items_product</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">order_items</span><span class="p">(</span><span class="n">product_id</span><span class="p">);</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_order_items_product</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">order_items</span><span class="p">(</span><span class="n">product_id</span><span class="p">);</span>
 
 <span class="k">EXPLAIN</span><span class="w"> </span><span class="n">QUERY</span><span class="w"> </span><span class="n">PLAN</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
@@ -1203,9 +1235,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 4</span><p>Планы <code>EXPLAIN QUERY PLAN</code> до и после создания индекса.</p></div>
 
-<div class="callout shot"><span class="label">Скриншот 5</span><p>Заполненная таблица ожиданий и фактов.</p></div>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица ожиданий и фактов переносится в отчёт текстом. Снимок таблицы ничего не доказывает.</p></div>
 
-<h2 id="задание-7-отчёт-и-защита"><span class="num">09</span>Задание 7. Отчёт и защита</h2>
+<h3>Шаг 8. Отчёт и защита</h3>
 <p>Заполните шаблон <code>UIFIS_practice-16_report-template.docx</code> и приложите:</p>
 <ol>
 <li>Схему данных с пятью таблицами, ключами и ограничениями.</li>
@@ -1216,23 +1248,31 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Ручной расчёт одного заказа и одной потребности в материале.</li>
 <li>Вывод: где появился <code>NULL</code>, какая цифра сошлась не сразу и почему.</li>
 </ol>
-<p>Контрольные вопросы:</p>
+<p>Скриншот страницы отчёта для этого шага не нужен.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-16_report-template.docx</code>.</li>
+<li>Файл базы <code>orders.db</code>.</li>
+<li>Скрипт с шестью запросами.</li>
+<li>Таблицу ожиданий и фактов без пустых клеток.</li>
+<li>Скриншоты количества строк, результатов запросов и планов до и после индекса.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: все шесть запросов работают, числа совпадают с ручным расчётом, пропуск найден через <code>LEFT JOIN</code>, планы до и после индекса объяснены, таблица ожиданий заполнена, отчёт и защита полные.</li>
+<li><strong>4</strong>: запросы работают, но одно число не сверено с ручным расчётом, план запроса приведён без объяснения или в таблице осталась одна пустая клетка.</li>
+<li><strong>3</strong>: часть запросов собрана с лишними таблицами и задвоенными суммами, <code>LEFT JOIN</code> заменён на <code>INNER JOIN</code>, проверки выполнены формально.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Чем <code>INNER JOIN</code> отличается от <code>LEFT JOIN</code> и когда нужен второй?</li>
 <li>Почему соединение с таблицей норм завысило стоимость заказа, хотя ошибки в формуле не было?</li>
 <li>Зачем в <code>GROUP BY</code> перечисляют все неагрегированные столбцы?</li>
 <li>Чем <code>WHERE</code> отличается от <code>HAVING</code> и почему условие на сумму пишут во втором?</li>
-<li>Почему <code>SUM(n.qty) * SUM(oi.qty)</code> даёт неверный результат?</li>
-<li>Чем <code>COUNT(*)</code> отличается от <code>COUNT(DISTINCT product_id)</code> и что доказывает второй?</li>
 <li>Что показывает <code>EXPLAIN QUERY PLAN</code> и почему <code>SEARCH</code> лучше <code>SCAN</code>?</li>
-<li>Почему пустой результат запроса о продуктах без норм не был ошибкой?</li>
 </ol>
-<p>Критерии оценки:</p>
-<ul>
-<li><strong>5</strong>: все шесть запросов работают, числа совпадают с ручным расчётом, пропуск найден через <code>LEFT JOIN</code>, планы до и после индекса объяснены, таблица ожиданий заполнена, отчёт и защита полные.</li>
-<li><strong>4</strong>: запросы работают, но одно число не сверено с ручным расчётом, план запроса приведён без объяснения или в таблице осталась одна пустая клетка.</li>
-<li><strong>3</strong>: часть запросов собрана с лишними таблицами и задвоенными суммами, <code>LEFT JOIN</code> заменён на <code>INNER JOIN</code>, проверки выполнены формально.</li>
-</ul></article><nav class="pager"><a class="" href="36-prakt-15.html"><span>← Предыдущее занятие</span>Практика 15. ER-модель и 3НФ; База данных и импорт JSON</a><a class="next" style="text-align:right;margin-left:auto" href="38-prakt-17.html"><span>Следующее занятие →</span>Практика 17. Модули ИС и безопасность; API и Postman</a></nav></main>
+</div></article><nav class="pager"><a class="" href="36-prakt-15.html"><span>← Предыдущее занятие</span>Практика 15. ER-модель и 3НФ; База данных и импорт JSON</a><a class="next" style="text-align:right;margin-left:auto" href="38-prakt-17.html"><span>Следующее занятие →</span>Практика 17. Модули ИС и безопасность; API и Postman</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,7 +794,32 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 41-42</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Документация API и комплексный практикум</h1><p class="dek">Опишите учебный API так, чтобы запросы повторил чужой разработчик: OpenAPI, примеры curl и Postman, коллекция с тестами и сквозная проверка модулей информационной системы.</p></div>
-<div class="glyph" aria-hidden="true">П18</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>{&lsquo;Описывать контракт API в OpenAPI 3.0&rsquo;: &lsquo;пути, операции, схемы, безопасность и коды ответов&rsquo;}</li><li>Проверять примеры запросов и ответов на работающем сервисе</li><li>Собирать коллекцию Postman с тестами статуса, формата, полей и заголовков</li><li>Проверять авторизацию, роли, CRUD, уникальность и аудит по таблице ожиданий</li><li>Оформлять документ с версией, журналом изменений и известными ограничениями</li><li>Защищать контракт перед группой и отвечать на вопросы по поведению API</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-контракт-в-openapi">Задание 1. Контракт в OpenAPI</a></li><li><a href="#задание-2-примеры-запросов-и-ошибок">Задание 2. Примеры запросов и ошибок</a></li><li><a href="#задание-3-коллекция-postman">Задание 3. Коллекция Postman</a></li><li><a href="#задание-4-комплексная-проверка-модулей">Задание 4. Комплексная проверка модулей</a></li><li><a href="#задание-5-документ-и-защита">Задание 5. Документ и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
+<div class="glyph" aria-hidden="true">П18</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>{&lsquo;Описывать контракт API в OpenAPI 3.0&rsquo;: &lsquo;пути, операции, схемы, безопасность и коды ответов&rsquo;}</li><li>Проверять примеры запросов и ответов на работающем сервисе</li><li>Собирать коллекцию Postman с тестами статуса, формата, полей и заголовков</li><li>Проверять авторизацию, роли, CRUD, уникальность и аудит по таблице ожиданий</li><li>Оформлять документ с версией, журналом изменений и известными ограничениями</li><li>Защищать контракт перед группой и отвечать на вопросы по поведению API</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Описать учебный API так, чтобы запросы повторил чужой разработчик: собрать спецификацию OpenAPI, проверить примеры на работающем сервисе, подготовить коллекцию Postman с тестами и пройти сквозную проверку модулей информационной системы.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>описываете контракт API в OpenAPI 3.0: пути, операции, схемы, безопасность и коды ответов;</li>
+<li>проверяете примеры запросов и ответов на работающем сервисе;</li>
+<li>собираете коллекцию Postman с тестами статуса, формата, полей и заголовков;</li>
+<li>проверяете авторизацию, роли, CRUD, уникальность и аудит по таблице ожиданий;</li>
+<li>оформляете документ с версией, журналом изменений и известными ограничениями.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.9 или новее, VS Code.</li>
+<li>Postman и браузер.</li>
+<li>Word для отчёта, Excel для чек-листа.</li>
+</ul>
+<p>Платные сервисы, Docker, права администратора и сервер базы данных не требуются: сервис учебный и работает на вашем компьютере.</p>
+<div class="files"><b class="label">Материалы к работе</b>
+<a href="reports/UIFIS_practice-18_report-template.docx" download>Шаблон отчёта в DOCX</a>
+<a href="reports/UIFIS_practice-18_openapi-template.yaml" download>Шаблон OpenAPI в YAML</a>
+<a href="reports/UIFIS_practice-18_api-checklist.csv" download>Чек-лист проверки API в CSV</a>
+<p>В шаблоне OpenAPI уже описаны три пути, три схемы и четыре общих ответа. Ответ `500` в нём отсутствует, его добавляете вы. Чек-лист содержит восемь строк проверок.</p>
+</div>
+
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p>Разработчик приходит на проект, получает ссылку на репозиторий и выясняет, почему создание пользователя отвечает <code>400</code>. Причина в трёх мелочах: поле называется <code>login</code>, а не <code>username</code>; токен идёт в заголовке <code>Authorization</code>, а не в адресе; создавать может только роль <code>admin</code>. Всё это лежало в коде. В документации не было ничего.</p>
 <p>Документация это обещание перед другим человеком. Оно звучит так: возьми этот файл, повтори запрос и получи тот же ответ, не открывая исходники. Обещание проверяемо: каждый пример либо выполняется, либо нет. Отсюда главное правило работы: <strong>пример, который никто не запускал, это не документация, а литература</strong>.</p>
 <p>OpenAPI переводит обещание в формат, который читают и человек, и инструменты. Из одного файла получается описание полей, список кодов ошибок, схема авторизации и заготовка клиента. Поэтому спецификация живёт рядом с кодом и меняется вместе с ним, а не через месяц после релиза.</p>
@@ -789,27 +828,20 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Результат работы: файл <code>openapi.yaml</code> с тремя путями и четырьмя операциями, восемь примеров запросов в документе, коллекция Postman из девяти запросов с тестами, заполненная таблица проверки модулей, чек-лист и защита документа перед группой.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>Спецификация проходит проверку скриптом, описывает все коды <code>200</code>, <code>201</code>, <code>400</code>, <code>401</code>, <code>403</code>, <code>404</code> и <code>500</code>, содержит три схемы. Каждый пример из документа выполнен и совпадает с ответом сервиса. Коллекция проходит целиком без красных тестов на свежей базе. В таблице проверки у каждого модуля есть ожидание, факт и вывод. В отчёте указаны версия, журнал изменений и известные ограничения.</p></div>
 
-<div class="files"><b class="label">Материалы к работе</b>
-<a href="reports/UIFIS_practice-18_report-template.docx" download>Шаблон отчёта в DOCX</a>
-<a href="reports/UIFIS_practice-18_openapi-template.yaml" download>Шаблон OpenAPI в YAML</a>
-<a href="reports/UIFIS_practice-18_api-checklist.csv" download>Чек-лист проверки API в CSV</a>
-<p>В шаблоне OpenAPI уже описаны три пути, три схемы и четыре общих ответа. Ответ `500` в нём отсутствует, его добавляете вы. Чек-лист содержит восемь строк проверок.</p>
-</div>
-
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Нужны Python 3.9 или новее, Postman, VS Code и браузер. Платные сервисы, Docker, права администратора и сервер базы данных не требуются: сервис учебный и работает на вашем компьютере.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Создайте папку практики и перейдите в неё:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">18</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">18</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">18</span>
 </code></pre></div>
 
 <p>Скачайте в неё три файла из блока выше и проверьте расширения. Браузер иногда сохраняет YAML как <code>openapi-template.yaml.txt</code>, и тогда ни редактор, ни скрипт проверки его не увидят.</p>
 <p>Запустите сервис практики 17 из папки, где лежит <code>users_api.py</code>, и проверьте, что он слушает порт:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 
 <p>Во втором окне PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8091</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8091</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
 </code></pre></div>
 
@@ -845,7 +877,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Имя <code>student-token</code> у администратора не должно сбивать: в практике 17 так вышло из коллекции Postman, и это хороший пример того, что имя токена ничего не значит. Сервер ищет строку в таблице <code>users</code> и берёт роль из строки, а не из названия. Есть ещё <code>manager-token</code>: менеджер читает пользователей и меняет статус, но создавать не может.</p>
 <div class="callout pitfall"><span class="label">Адрес стенда живёт в трёх местах</span><p><code>servers.url</code> в спецификации, переменная <code>baseUrl</code> в Postman и команды <code>curl</code> в документе указывают на один и тот же сервис. Поменяли порт, поменяйте все три места. Иначе половина примеров будет проверять чужой процесс, а расхождение вы спишете на ошибку API.</p></div>
 
-<h2 id="задание-1-контракт-в-openapi"><span class="num">03</span>Задание 1. Контракт в OpenAPI</h2>
+<h3>Шаг 2. Контракт в OpenAPI</h3>
 <p>Спецификация описывает четыре вещи: куда идти, что прислать, что получить и кто имеет право. Пока этих четырёх ответов нет, клиент угадывает, а тесты проверяют догадки.</p>
 <p>Опишите четыре операции на трёх путях:</p>
 <table>
@@ -888,7 +920,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Схемы в шаблоне три. В <code>User</code> пять обязательных полей из шаблона: <code>id</code>, <code>login</code>, <code>email</code>, <code>role</code> и <code>status</code>, где <code>role</code> принимает <code>admin</code>, <code>manager</code> или <code>user</code>, а <code>status</code> принимает <code>active</code> или <code>blocked</code>. Сервис отдаёт ещё поле <code>created_at</code> с датой создания, в шаблоне его нет: добавьте, иначе схема будет беднее настоящего ответа. В <code>UserInput</code> обязательны <code>login</code>, <code>email</code> и <code>role</code>, поля <code>id</code> и <code>status</code> клиент не присылает. Сверьте эти списки с кодом сервиса: лишнее обязательное поле ломает клиента, пропущенное обязательное поле ломает проверку.</p>
 <p>Отдельного пути <code>roles</code> у сервиса нет: роль это поле <code>User.role</code> с тремя значениями, а права роли лежат в таблице <code>roles</code> базы. Опишите роль перечислением и таблицей токенов, а не выдуманным маршрутом <code>/api/roles</code>.</p>
 <p>Начните с шапки. Здесь фиксируются версия контракта и адрес стенда:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">openapi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0.3</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="nt">openapi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0.3</span>
 <span class="nt">info</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UIFIS Users API</span>
 <span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
@@ -901,7 +933,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Дальше опишите список пользователей. Этот блок задаёт образец для остальных операций: отличие будет только в <code>summary</code>, кодах и схеме ответа. Если ваш сервис не фильтрует по роли, параметр <code>role</code> из спецификации уберите: описанный параметр, который сервис молча игнорирует, хуже отсутствующего.</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">/api/users</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">get</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Список пользователей</span>
@@ -947,7 +979,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Создание отличается телом и заголовком <code>Location</code>. Клиент читает этот заголовок, чтобы сразу открыть карточку новой записи, поэтому он входит в контракт, а не в украшения. Блок встаёт на тот же уровень, что и <code>get:</code>, внутри <code>/api/users:</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="nt">post</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="w">    </span><span class="nt">post</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Создать пользователя</span>
 <span class="w">      </span><span class="nt">security</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bearerAuth</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
@@ -975,7 +1007,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Ответ <code>500</code> в шаблоне не описан. Добавьте его сами в раздел <code>components</code>, иначе спецификация будет утверждать, что сервис всегда отвечает корректно:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">components</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="nt">components</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">responses</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">ServerError</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Внутренняя ошибка обработчика</span>
@@ -989,7 +1021,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>В схеме <code>Error</code> три поля: <code>error</code>, <code>message</code> и необязательное <code>field</code>. Поле <code>field</code> заполняется только у ошибки валидации, и именно по нему клиент понимает, какое поле исправлять. Добавьте пример в ответ <code>BadRequest</code> в том же разделе <code>components</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="w">  </span><span class="nt">responses</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="w">  </span><span class="nt">responses</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">BadRequest</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ошибка валидации</span>
 <span class="w">      </span><span class="nt">content</span><span class="p">:</span>
@@ -1005,7 +1037,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Схема <code>UserInput</code> описывает только то, что клиент присылает. Сервис принимает необязательный <code>password</code> не короче 8 символов: без него он выдаёт временный пароль сам. Опишите поле как <code>writeOnly: true</code> и не добавляйте его в <code>User</code>: всё, что попало в схему ответа, рано или поздно попадёт в пример, в скриншот и в отчёт.</p>
 <p>Карточка пользователя в шаблоне описана с ответом <code>404</code>. Добавьте к ней <code>401</code> и <code>403</code> так же, как у списка: без токена клиент получит <code>401</code>, с токеном обычного пользователя <code>403</code>. Если оставить только <code>404</code>, документ будет утверждать, что карточку может открыть кто угодно.</p>
 <p>Проверьте файл скриптом. Он находит битые ссылки <code>$ref</code>, операции без ответов, неизвестные схемы безопасности и отсутствующие коды:</p>
-<div class="codehilite"><pre><span></span><code><span class="sd">&quot;&quot;&quot;Проверка контракта: ссылки, коды ответов, схема безопасности.&quot;&quot;&quot;</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="sd">&quot;&quot;&quot;Проверка контракта: ссылки, коды ответов, схема безопасности.&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
@@ -1062,7 +1094,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Сохраните его рядом как <code>check_contract.py</code> и запустите:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">check_contract</span><span class="p">.</span><span class="n">py</span> <span class="n">openapi</span><span class="p">.</span><span class="n">yaml</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">check_contract</span><span class="p">.</span><span class="n">py</span> <span class="n">openapi</span><span class="p">.</span><span class="n">yaml</span>
 </code></pre></div>
 
 <p>Ожидаемый вывод: <code>путей 3, кодов 7</code>. Если скрипт печатает <code>битая ссылка #/components/responses/ServerError</code>, значит вы сослались на ответ, который ещё не добавили. Если он печатает <code>не описаны коды: 500</code>, спецификация врёт о поведении сервиса.</p>
@@ -1071,10 +1103,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout pitfall"><span class="label">Схема без `required`</span><p>Если в <code>User</code> не перечислены обязательные поля, спецификация разрешает ответ из одного <code>id</code>. Клиент начнёт проверять наличие <code>email</code> сам и напишет проверку, которой нет в контракте. Обязательные поля перечисляйте явно: <code>required: [id, login, email, role, status, created_at]</code>.</p></div>
 
-<h2 id="задание-2-примеры-запросов-и-ошибок"><span class="num">04</span>Задание 2. Примеры запросов и ошибок</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Спецификация сдаётся файлом <code>openapi.yaml</code>. Снимок файла не нужен, а вывод <code>check_contract.py</code> приложите текстом.</p></div>
+
+<h3>Шаг 3. Примеры запросов и ошибок</h3>
 <p>Схема описывает форму, пример показывает значение. Читателю нужны оба: по схеме он пишет код, по примеру проверяет, что понял схему правильно.</p>
 <p>В документ войдут восемь примеров: здоровье службы, список с админским токеном, создание, карточка, ошибка <code>401</code> без токена, ошибка <code>403</code> с токеном обычного пользователя, ошибка <code>400</code> с полем и ошибка <code>404</code> на неизвестном <code>id</code>. Ниже команды для проверки. Подставьте свой токен и адрес:</p>
-<div class="codehilite"><pre><span></span><code><span class="nv">$base</span> <span class="p">=</span> <span class="s2">&quot;http://127.0.0.1:8091&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nv">$base</span> <span class="p">=</span> <span class="s2">&quot;http://127.0.0.1:8091&quot;</span>
 <span class="nv">$token</span> <span class="p">=</span> <span class="s2">&quot;student-token&quot;</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="s2">&quot;$base/api/users/1&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
@@ -1083,14 +1117,14 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Создание проверяется телом из файла. Файл <code>new_user.json</code> создайте в VS Code, а не через <code>Out-File -Encoding utf8</code>: PowerShell 5.1 добавляет в начало байты BOM, и строгий разбор JSON отвечает <code>400 invalid_json</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc.user&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc.user@example.ru&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
 
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_user.json&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="s2">&quot;$base/api/users&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_user.json&quot;</span>
 </code></pre></div>
 
 <p>Сверьте ответы с ожиданием. Таблица ниже это и есть содержание раздела «Примеры» в вашем документе:</p>
@@ -1153,7 +1187,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 1</span><p>Терминал с четырьмя ответами: список <code>200</code>, карточка <code>200</code>, запрос без токена <code>401</code>, запрос с токеном обычного пользователя <code>403</code>.</p></div>
 
-<h2 id="задание-3-коллекция-postman"><span class="num">05</span>Задание 3. Коллекция Postman</h2>
+<h3>Шаг 4. Коллекция Postman</h3>
 <p>Документ утверждает, что API работает. Коллекция это доказывает: девять запросов выполняются одной кнопкой, и каждый несёт проверку. Разница принципиальна: пример в тексте стареет молча, а красный тест в Postman виден сразу.</p>
 <p>Создайте коллекцию <code>UIFIS practice 18</code> и добавьте три переменные коллекции:</p>
 <table>
@@ -1251,7 +1285,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Запрос <code>09</code> стоит вне контракта: учебный маршрут для проверки обработчика. В OpenAPI его не описывают, а в отчёте указывают как известное ограничение стенда.</p>
 <p>Тесты пишутся на вкладке <strong>Tests</strong>. Для списка:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ в JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span><span class="w"> </span><span class="sr">/application\/json/</span><span class="p">));</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;items не пуст&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">above</span><span class="p">(</span><span class="mf">0</span><span class="p">));</span>
@@ -1266,7 +1300,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Для создания, карточки и ошибок:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">// 04 Карточка</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="c1">// 04 Карточка</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;id из списка&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">id</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">collectionVariables</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;userId&#39;</span><span class="p">));</span>
@@ -1297,7 +1331,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Общий тест на коллекцию добавляет проверки, которые нужны везде. Выберите коллекцию в левой панели, откройте <strong>Tests</strong> и вставьте:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ в JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ в JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
 <span class="p">});</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ответ быстрее 1000 мс&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseTime</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">below</span><span class="p">(</span><span class="mf">1000</span><span class="p">));</span>
@@ -1309,7 +1343,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Окно Run с девятью запросами и зелёной сводкой, а также вкладка Test Results запроса создания с заголовком <code>Location</code>.</p></div>
 
-<h2 id="задание-4-комплексная-проверка-модулей"><span class="num">06</span>Задание 4. Комплексная проверка модулей</h2>
+<h3>Шаг 5. Комплексная проверка модулей</h3>
 <p>Теперь проверяется не API, а система целиком: вход, права, данные, журнал и восстановление. Ожидание берётся из вашего документа. Если документ говорит <code>401</code>, а сервис отвечает <code>403</code>, это расхождение, и оно идёт в отчёт, а не в разряд мелочей.</p>
 <p>Заполните таблицу. В колонку «Факт» пишите код, имя поля и значение, а не слово «работает»: факт должен быть проверяемым.</p>
 <table>
@@ -1395,18 +1429,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Аудит сервис пишет в таблицу <code>audit</code> базы <code>users.db</code>, а администратору отдаёт её через <code>GET /api/audit</code>. Проверьте, что после входа, отказа и создания в журнале появились записи и что секретов в них нет. <code>$token</code> из задания 2 оставьте в этой же сессии PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=50&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
+<p>Аудит сервис пишет в таблицу <code>audit</code> базы <code>users.db</code>, а администратору отдаёт её через <code>GET /api/audit</code>. Проверьте, что после входа, отказа и создания в журнале появились записи и что секретов в них нет. <code>$token</code> из шага 3 оставьте в этой же сессии PowerShell:</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=50&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=50&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer $token&quot;</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="n">-Pattern</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="s2">&quot;student-token&quot;</span><span class="p">,</span> <span class="s2">&quot;user-token&quot;</span>
 </code></pre></div>
 
 <p>Первая команда печатает <code>items</code> с полями <code>at</code>, <code>actor</code>, <code>action</code>, <code>target</code>, <code>result</code> и <code>detail</code>. Вторая должна ничего не найти: пустой вывод это хороший результат. Непустой означает дефект, который надо описать: что именно попало, в какой записи и чем это опасно. Отдельно проверьте, что отказ без токена и отказ по роли тоже попали в журнал, а не только удачные запросы.</p>
 <p>Восстановление проверяется копией файла базы. Копию снимают на остановленном сервисе, иначе часть данных останется в журнале SQLite и копия будет неполной:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span>
 </code></pre></div>
 
 <p>Запустите сервис, создайте пользователя и убедитесь, что записей стало четыре. Остановите сервис, верните копию и запустите снова:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="n">-Force</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">backup</span><span class="p">.</span><span class="n">db</span> <span class="p">.\</span><span class="n">users</span><span class="p">.</span><span class="n">db</span> <span class="n">-Force</span>
 <span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 
@@ -1414,11 +1448,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Заполните чек-лист <code>UIFIS_practice-18_api-checklist.csv</code>: восемь строк, по одной на проверку. В колонке «Факт» указывайте наблюдение, в колонке «Вывод» решение: соответствует, дефект документа, дефект сервиса, ограничение стенда. В строке «Версия» запишите <code>1.0.0</code> и правило, по которому появится <code>/api/v2</code>: сокращение <code>v1</code> в чек-листе означает первую версию контракта, а не префикс в адресе.</p>
 <div class="callout pitfall"><span class="label">Документ и сервис правы одновременно</span><p>Бывает, что пример верен, но сервис отвечает иначе из-за режима запуска: включён другой набор токенов, данные не сброшены, порт занят прошлой копией. Прежде чем писать «дефект сервиса», перезапустите его и повторите запрос. Расхождение, которое исчезает после перезапуска, это дефект порядка проверки, а не API.</p></div>
 
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Заполненная таблица проверки модулей с фактическими кодами и полями, а также чек-лист CSV с восемью заполненными строками.</p></div>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица проверки модулей переносится в отчёт текстом, а чек-лист сдаётся файлом CSV. Скриншот таблицы ничего не доказывает.</p></div>
 
-<h2 id="задание-5-документ-и-защита"><span class="num">07</span>Задание 5. Документ и защита</h2>
+<h3>Шаг 6. Документ и защита</h3>
 <p>Документ собирает всё, что вы проверили. Читатель не должен ходить по папкам: откройте отчёт и <code>openapi.yaml</code>, и этого достаточно, чтобы повторить любой запрос.</p>
-<p>Заполните шаблон отчёта: шапку, цель, таблицу состава документации, таблицу комплексной проверки, шесть мест под скриншоты и вывод. Шесть вопросов в конце шаблона обязательны, ещё четыре задаются на защите. Спецификацию приложите файлом <code>openapi.yaml</code>, а не скриншотом: файл можно проверить, картинку нельзя.</p>
+<p>Заполните шаблон отчёта: шапку, цель, таблицу состава документации, таблицу комплексной проверки и вывод. Вопросы в конце шаблона обязательны, часть из них разбирается на защите. Спецификацию приложите файлом <code>openapi.yaml</code>, а не скриншотом: файл можно проверить, картинку нельзя.</p>
 <p>Структура документа:</p>
 <table>
 <thead>
@@ -1515,25 +1549,32 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Правило короткое: <strong>изменение, которое ломает существующего клиента, получает новый путь</strong>. Старый путь работает, пока клиентов не перевели. Молча переименовать <code>login</code> в <code>username</code> нельзя: у половины клиентов отвалится разбор ответа.</p>
 <p>В раздел ограничений запишите то, что действительно не вошло в контракт: учебный маршрут <code>/api/error</code>, изменение статуса и роли через <code>PATCH /api/users/{id}</code>, журнал <code>/api/audit</code>, отсутствие пагинации и отсутствие удаления пользователя. У каждого ограничения должна быть причина: например, изменение статуса требует отдельной матрицы прав и отдельной проверки, поэтому оно уходит в следующую версию контракта. Ограничение с причиной это честный документ. Пустое место читатель заполнит своим предположением, обычно неверным.</p>
-<p>Контрольные вопросы для защиты:</p>
+<p>Скриншот страницы документа для этого шага не нужен: спецификация и отчёт сдаются файлами.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Файл <code>openapi.yaml</code> со спецификацией контракта.</li>
+<li>Скрипт <code>check_contract.py</code> и вывод его проверки.</li>
+<li>Отчёт по шаблону <code>UIFIS_practice-18_report-template.docx</code> с версией, журналом изменений и ограничениями.</li>
+<li>Коллекцию Postman в JSON с тестами.</li>
+<li>Заполненный чек-лист <code>UIFIS_practice-18_api-checklist.csv</code>.</li>
+<li>Скриншоты ответов <code>curl.exe</code> и прогона коллекции.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: спецификация проходит проверку, все семь кодов описаны, примеры совпадают с ответами, коллекция из девяти запросов проходит на свежей базе, таблица проверки заполнена фактами, расхождения объяснены, документ содержит версию, журнал изменений и ограничения, защита отвечает на вопросы по своему контракту.</li>
+<li><strong>4</strong>: спецификация и коллекция работают, но один код или одна схема описаны неполно, в таблице проверки не хватает двух фактов, на защите не объяснено одно расхождение.</li>
+<li><strong>3</strong>: спецификация собрана частично, примеры не проверены на сервисе, коллекция проходит не полностью, таблица заполнена словами «работает» без кодов и полей.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Зачем нужен OpenAPI, если код и так открыт?</li>
 <li>Чем <code>401</code> отличается от <code>403</code> и почему клиент обрабатывает их по-разному?</li>
 <li>Почему пример ошибки не должен содержать стек вызовов и путь к файлу?</li>
 <li>Как проверить, что документация не устарела, не читая её целиком?</li>
 <li>Что обязательно должно быть в коллекции Postman, кроме набора запросов?</li>
-<li>Почему версия API указывается явно и когда появляется новый путь?</li>
-<li>Чем пример ответа отличается от схемы ответа и зачем нужны оба?</li>
-<li>Что вы сделаете, если пример из документа перестал совпадать с ответом сервиса?</li>
-<li>Какие поля не должны появляться в ответах и в журнале?</li>
-<li>Как вы проверяли восстановление данных и что показала проверка?</li>
 </ol>
-<p>Критерии оценки:</p>
-<ul>
-<li><strong>5</strong>: спецификация проходит проверку, все семь кодов описаны, примеры совпадают с ответами, коллекция из девяти запросов проходит на свежей базе, таблица проверки заполнена фактами, расхождения объяснены, документ содержит версию, журнал изменений и ограничения, защита отвечает на вопросы по своему контракту.</li>
-<li><strong>4</strong>: спецификация и коллекция работают, но один код или одна схема описаны неполно, в таблице проверки не хватает двух фактов, на защите не объяснено одно расхождение.</li>
-<li><strong>3</strong>: спецификация собрана частично, примеры не проверены на сервисе, коллекция проходит не полностью, таблица заполнена словами «работает» без кодов и полей.</li>
-</ul></article><nav class="pager"><a class="" href="38-prakt-17.html"><span>← Предыдущее занятие</span>Практика 17. Модули ИС и безопасность; API и Postman</a><span></span></nav></main>
+</div></article><nav class="pager"><a class="" href="38-prakt-17.html"><span>← Предыдущее занятие</span>Практика 17. Модули ИС и безопасность; API и Postman</a><span></span></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

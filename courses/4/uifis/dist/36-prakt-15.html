@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,13 +794,24 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 36-37</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>ER-модель и 3НФ; база данных и импорт JSON</h1><p class="dek">Спроектируйте модель заявок на обслуживание, докажите, что она в третьей нормальной форме, соберите базу SQLite с ограничениями и загрузите шесть заявок из JSON так, чтобы повторный импорт не оставил дублей.</p></div>
-<div class="glyph" aria-hidden="true">П15</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Отличать логическую модель от физической и выбирать ключи для каждой сущности</li><li>Доказывать соответствие схемы первой, второй и третьей нормальной форме</li><li>Писать DDL для SQLite с первичными, внешними ключами, UNIQUE, CHECK, ON DELETE и индексами</li><li>Импортировать JSON в транзакции с проверкой полей и повторяемым результатом по request_id</li><li>Проверять целостность базы запросами COUNT, JOIN и намеренными нарушениями ограничений</li><li>Оформлять отчёт с ER-диаграммой, схемой, итогами импорта и выводами</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-er-модель-и-третья-нормальная-форма">Задание 1. ER-модель и третья нормальная форма</a></li><li><a href="#задание-2-схема-sqlite">Задание 2. Схема SQLite</a></li><li><a href="#задание-3-импорт-json">Задание 3. Импорт JSON</a></li><li><a href="#задание-4-проверки">Задание 4. Проверки</a></li><li><a href="#задание-5-отчёт-и-защита">Задание 5. Отчёт и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В сервисной компании заявки живут в трёх местах. Диспетчер пишет их в CSV, инженер отмечает выполненные работы в блокноте, кладовщик списывает запчасти в тетрадь. Пока заявок двадцать, это работает. На сотне выясняется, что «ООО Ромашка» записана четырьмя способами, у одного принтера два серийных номера, а половина работ не привязана ни к какой заявке. Программа здесь ни при чём: причина в таблице, где в одной строке лежат и клиент, и оборудование, и список запчастей.</p>
-<p>Хорошая модель делает одну вещь: <strong>одна строка хранит один факт</strong>. Клиент живёт в одном месте, оборудование в другом, заявка ссылается на оборудование по номеру. Тогда переименование компании это один <code>UPDATE</code> на одну строку, а не поиск по сотне заявок.</p>
-<p>Дальше работа идёт по шагам. Сначала рисуем ER-модель из шести сущностей и доказываем, что она в третьей нормальной форме. Потом переносим модель в SQLite: таблицы, ключи, ограничения, индексы. Затем пишем импортёр, который читает JSON с шестью заявками, проверяет поля и загружает данные в транзакции. В конце ломаем базу специально: неверный статус, чужое оборудование, повторный импорт. Если ограничения работают, база их не пропустит.</p>
-<p>Результат работы: ER-диаграмма в 3НФ, файл <code>schema.sql</code>, скрипт <code>import.py</code>, база <code>service.db</code> с шестью заявками, протокол проверок и заполненный отчёт.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>На диаграмме шесть сущностей с ключами и подписанной кардинальностью. Схема создаётся без ошибок и включает <code>PRAGMA foreign_keys = ON</code>, первичные и внешние ключи, <code>UNIQUE</code>, <code>CHECK</code>, правила <code>ON DELETE</code> и индексы по внешним ключам. Импорт из JSON даёт 6 заявок, 4 клиентов и 4 единицы оборудования. Повторный запуск даёт 0 новых заявок. Нарушения <code>CHECK</code>, <code>FOREIGN KEY</code> и <code>UNIQUE</code> отклоняются с понятным сообщением. В отчёте пять скриншотов и заполненные разделы шаблона.</p></div>
-
+<div class="glyph" aria-hidden="true">П15</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Отличать логическую модель от физической и выбирать ключи для каждой сущности</li><li>Доказывать соответствие схемы первой, второй и третьей нормальной форме</li><li>Писать DDL для SQLite с первичными, внешними ключами, UNIQUE, CHECK, ON DELETE и индексами</li><li>Импортировать JSON в транзакции с проверкой полей и повторяемым результатом по request_id</li><li>Проверять целостность базы запросами COUNT, JOIN и намеренными нарушениями ограничений</li><li>Оформлять отчёт с ER-диаграммой, схемой, итогами импорта и выводами</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Спроектировать модель заявок на обслуживание, доказать, что она в третьей нормальной форме, собрать базу SQLite с ограничениями и загрузить шесть заявок из JSON так, чтобы повторный импорт не оставил дублей.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>отличаете логическую модель от физической и выбираете ключи для каждой сущности;</li>
+<li>доказываете соответствие схемы первой, второй и третьей нормальной форме;</li>
+<li>пишете DDL для SQLite с первичными, внешними ключами, <code>UNIQUE</code>, <code>CHECK</code>, <code>ON DELETE</code> и индексами;</li>
+<li>импортируете JSON в транзакции с проверкой полей и повторяемым результатом по <code>request_id</code>;</li>
+<li>проверяете целостность базы запросами <code>COUNT</code>, <code>JOIN</code> и намеренными нарушениями ограничений.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.10 или новее с модулем <code>sqlite3</code>, VS Code.</li>
+<li>Word для отчёта, Excel для чек-листа.</li>
+<li>Браузер с draw.io для ER-диаграммы или лист бумаги.</li>
+</ul>
+<p>MySQL, PostgreSQL, Docker, платные сервисы и права администратора не требуются: база это файл <code>service.db</code> в вашей папке.</p>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-15_report-template.docx" download>Шаблон отчёта в DOCX</a>
 <a href="reports/UIFIS_practice-15_schema-template.sql" download>Шаблон схемы SQLite</a>
@@ -795,9 +820,17 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Схема в шаблоне уже рабочая: её нужно прочитать, объяснить каждое ограничение и применить к базе. В JSON шесть заявок, четыре клиента и четыре единицы оборудования, часть клиентов повторяется. Чек-лист заполняйте по ходу работы: десять строк, в каждой ожидание, факт и вывод.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>В сервисной компании заявки живут в трёх местах. Диспетчер пишет их в CSV, инженер отмечает выполненные работы в блокноте, кладовщик списывает запчасти в тетрадь. Пока заявок двадцать, это работает. На сотне выясняется, что «ООО Ромашка» записана четырьмя способами, у одного принтера два серийных номера, а половина работ не привязана ни к какой заявке. Программа здесь ни при чём: причина в таблице, где в одной строке лежат и клиент, и оборудование, и список запчастей.</p>
+<p>Хорошая модель делает одну вещь: <strong>одна строка хранит один факт</strong>. Клиент живёт в одном месте, оборудование в другом, заявка ссылается на оборудование по номеру. Тогда переименование компании это один <code>UPDATE</code> на одну строку, а не поиск по сотне заявок.</p>
+<p>Дальше работа идёт по шагам. Сначала рисуем ER-модель из шести сущностей и доказываем, что она в третьей нормальной форме. Потом переносим модель в SQLite: таблицы, ключи, ограничения, индексы. Затем пишем импортёр, который читает JSON с шестью заявками, проверяет поля и загружает данные в транзакции. В конце ломаем базу специально: неверный статус, чужое оборудование, повторный импорт. Если ограничения работают, база их не пропустит.</p>
+<p>Результат работы: ER-диаграмма в 3НФ, файл <code>schema.sql</code>, скрипт <code>import.py</code>, база <code>service.db</code> с шестью заявками, протокол проверок и заполненный отчёт.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>На диаграмме шесть сущностей с ключами и подписанной кардинальностью. Схема создаётся без ошибок и включает <code>PRAGMA foreign_keys = ON</code>, первичные и внешние ключи, <code>UNIQUE</code>, <code>CHECK</code>, правила <code>ON DELETE</code> и индексы по внешним ключам. Импорт из JSON даёт 6 заявок, 4 клиентов и 4 единицы оборудования. Повторный запуск даёт 0 новых заявок. Нарушения <code>CHECK</code>, <code>FOREIGN KEY</code> и <code>UNIQUE</code> отклоняются с понятным сообщением. В отчёте есть скриншоты и заполненные разделы шаблона.</p></div>
+
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Создайте папку практики и положите в неё все четыре файла:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">15</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">15</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">15</span>
 <span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
@@ -805,13 +838,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Нужен Python 3.10 или новее и модуль <code>sqlite3</code>, который входит в стандартную поставку. Отдельный сервер баз данных не нужен: SQLite это файл <code>service.db</code> в вашей папке. MySQL, PostgreSQL, Docker и платные сервисы не требуются. Права администратора не нужны: всё пишется в личный каталог <code>C:\UIFIS</code>.</p>
 <p>Проверьте имена скачанных файлов. Скрипт ищет ровно <code>UIFIS_practice-15_import.json</code> и <code>schema.sql</code> рядом с собой. Если браузер добавил <code>.txt</code> или задвоил расширение, переименуйте файл, а не правьте константы в коде: так меньше шансов запутаться при защите.</p>
 <p>Включите UTF-8 в консоли, иначе русские буквы в выводе превратятся в мусор:</p>
-<div class="codehilite"><pre><span></span><code><span class="nv">$env:PYTHONUTF8</span><span class="p">=</span><span class="n">1</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nv">$env:PYTHONUTF8</span><span class="p">=</span><span class="n">1</span>
 </code></pre></div>
 
 <p>ER-диаграмму рисуйте в draw.io в браузере: хватит прямоугольников, линий и подписей <code>1</code> и <code>N</code>. Готовый файл сохраните как <code>.drawio</code> и выгрузите в PNG. Лист бумаги с аккуратной схемой тоже принимается, его достаточно сфотографировать. Отчёт заполняйте в Word, чек-лист открывайте в Excel через <strong>Данные → Из текста</strong> с разделителем «точка с запятой» и кодировкой UTF-8.</p>
-<h2 id="задание-1-er-модель-и-третья-нормальная-форма"><span class="num">03</span>Задание 1. ER-модель и третья нормальная форма</h2>
-<h3>Шесть сущностей</h3>
-<p>Сервисная компания ведёт клиентов, их оборудование, заявки, работы по заявкам, склад запчастей и расход запчастей на работу. Отсюда шесть сущностей. Ниже готовый каркас: сверьте его со своим пониманием процесса и меняйте только осознанно, потому что схема в задании 2 повторяет эту таблицу один в один.</p>
+<h3>Шаг 2. ER-модель и третья нормальная форма</h3>
+<h4>Шесть сущностей</h4>
+<p>Сервисная компания ведёт клиентов, их оборудование, заявки, работы по заявкам, склад запчастей и расход запчастей на работу. Отсюда шесть сущностей. Ниже готовый каркас: сверьте его со своим пониманием процесса и меняйте только осознанно, потому что схема на шаге 3 повторяет эту таблицу один в один.</p>
 <table>
 <thead>
 <tr>
@@ -871,11 +904,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Типы полей выбираются по смыслу. Названия, адреса и даты это <code>TEXT</code>, счётчики и ключи это <code>INTEGER</code>, часы и деньги это <code>REAL</code>. Дата хранится строкой в формате ISO 8601, например <code>2026-09-01T09:15:00</code>, потому что такие строки сравниваются и сортируются как обычный текст: <code>2026-09</code> всегда раньше <code>2026-10</code>.</p>
 <div class="callout pitfall"><span class="label">Деньги в REAL</span><p><code>REAL</code> это число с плавающей точкой, и <code>0.1 + 0.2</code> в нём не равно <code>0.3</code>. Для учебной базы это допустимо, в расчётах с клиентами суммы хранят в копейках целым числом или в типе <code>DECIMAL</code>. Запишите этот компромисс в отчёт, чтобы на защите он не выглядел недосмотром.</p></div>
 
-<h3>Связи и кардинальность</h3>
+<h4>Связи и кардинальность</h4>
 <p>Кардинальность читается от вопроса «сколько строк с одной стороны и сколько с другой». Один клиент владеет многим оборудованием, но каждая единица оборудования принадлежит одному клиенту: <code>1:N</code>. Одна заявка описывает одно оборудование, у оборудования за время обслуживания бывает много заявок: тоже <code>1:N</code>. Дальше так же: заявка и работы, работа и строки расхода.</p>
 <p>Отдельно стоит пара «работа и запчасть». Одна запчасть встречается в разных работах, а в одной работе может понадобиться несколько разных запчастей. Это <code>M:N</code>, и в реляционной базе такая связь не рисуется напрямую: её разбивают на две связи <code>1:N</code> через промежуточную таблицу <code>usage</code>, где каждая строка означает «в этой работе израсходовано столько-то этой запчасти». Поле <code>qty</code> принадлежит самой связи, а не работе и не запчасти, поэтому его место именно в промежуточной таблице.</p>
 <p>Есть решение, которое стоит проговорить заранее: в <code>requests</code> нет <code>client_id</code>. Клиент заявки восстанавливается цепочкой <code>requests → equipment → clients</code>. Это правильно, пока оборудование не переходит к другому владельцу. Если клиент продаёт принтер вместе с историей обслуживания, заявка должна помнить владельца на момент обращения, и тогда в <code>requests</code> добавляют <code>client_id</code> как снимок. Решите, как у вас, и напишите одним предложением в отчёте.</p>
-<h3>Черновик, который не проходит проверку</h3>
+<h4>Черновик, который не проходит проверку</h4>
 <p>Прежде чем рисовать, посмотрите, как выглядит таблица, собранная «как удобно диспетчеру»:</p>
 <table>
 <thead>
@@ -911,7 +944,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Здесь четыре беды сразу. Название и адрес клиента повторяются в каждой его заявке, поэтому при переименовании компании придётся править все строки и надеяться, что ни одну не пропустили. Список работ и список запчастей лежат в одной ячейке, значит по ним нельзя ни посчитать, ни отфильтровать. Серийный номер и модель дублируются у каждой заявки на это оборудование. Цена запчасти, если её добавить, будет зависеть от запчасти, а не от заявки. Это и есть три аномалии: обновления, вставки и удаления.</p>
-<h3>1НФ, 2НФ, 3НФ</h3>
+<h4>1НФ, 2НФ, 3НФ</h4>
 <p>Нормальные формы проверяют по очереди, и каждая следующая имеет смысл только после выполнения предыдущей.</p>
 <table>
 <thead>
@@ -950,9 +983,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Теперь нарисуйте диаграмму. Прямоугольник на сущность, внутри имя таблицы и список полей, ключ подчёркнут, рядом с линией подписаны <code>1</code> и <code>N</code>. Линии идут от клиента к оборудованию, от оборудования к заявке, от заявки к работе, от работы к расходу, от запчасти к расходу. Подпишите связь <code>usage</code> словами «расход запчасти на работу»: через год вы забудете, зачем нужна шестая таблица, а подпись объяснит.</p>
 <div class="callout shot"><span class="label">Скриншот 1</span><p>ER-диаграмма: шесть сущностей, ключи, кардинальность на каждой линии.</p></div>
 
-<h2 id="задание-2-схема-sqlite"><span class="num">04</span>Задание 2. Схема SQLite</h2>
+<h3>Шаг 3. Схема SQLite</h3>
 <p>Откройте шаблон <code>UIFIS_practice-15_schema-template.sql</code>, сохраните его копию как <code>schema.sql</code> и прочитайте целиком. Это уже рабочая схема, ваша задача понять каждую строку и уметь её защитить.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
 
 <span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">clients</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">client_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
@@ -1013,20 +1046,20 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p><strong><code>UNIQUE (work_id, part_id)</code></strong> не даёт записать одну и ту же запчасть в работу двумя строками. Количество уже есть в <code>qty</code>, и две строки с одним и тем же смыслом пришлось бы складывать вручную.</p>
 <p><strong>Индексы по внешним ключам</strong> нужны потому, что SQLite не индексирует их автоматически. Без <code>idx_requests_equipment</code> поиск заявок по оборудованию читает всю таблицу. Индекс по <code>UNIQUE</code>-полю создаётся сам, поэтому <code>email</code> и <code>serial_no</code> в списке нет ни разу.</p>
 <p>Примените схему к базе:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3, pathlib; conn = sqlite3.connect(&#39;service.db&#39;); conn.executescript(pathlib.Path(&#39;schema.sql&#39;).read_text(encoding=&#39;utf-8&#39;)); conn.commit(); print(&#39;ok&#39;)&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3, pathlib; conn = sqlite3.connect(&#39;service.db&#39;); conn.executescript(pathlib.Path(&#39;schema.sql&#39;).read_text(encoding=&#39;utf-8&#39;)); conn.commit(); print(&#39;ok&#39;)&quot;</span>
 </code></pre></div>
 
 <p>Ответ <code>ok</code> означает, что файл <code>service.db</code> создан и все шесть таблиц на месте. Если база уже существует, команда вернёт <code>table clients already exists</code>. Это не поломка схемы: удалите <code>service.db</code> и примените файл заново. Посмотрите, что запомнила база:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; rows=sqlite3.connect(&#39;service.db&#39;).execute(&#39;SELECT sql FROM sqlite_master WHERE sql IS NOT NULL ORDER BY name&#39;); [print(r[0], chr(10)) for r in rows if r[0]]&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; rows=sqlite3.connect(&#39;service.db&#39;).execute(&#39;SELECT sql FROM sqlite_master WHERE sql IS NOT NULL ORDER BY name&#39;); [print(r[0], chr(10)) for r in rows if r[0]]&quot;</span>
 </code></pre></div>
 
 <p>На экране будет ровно тот текст, который вы применили, плюс строки индексов. Если установлен клиент <code>sqlite3</code>, те же сведения даёт команда <code>.schema</code> внутри него.</p>
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Список таблиц и вывод схемы из <code>sqlite_master</code>.</p></div>
 
-<h2 id="задание-3-импорт-json"><span class="num">05</span>Задание 3. Импорт JSON</h2>
-<h3>Что в файле</h3>
+<h3>Шаг 4. Импорт JSON</h3>
+<h4>Что в файле</h4>
 <p>В <code>UIFIS_practice-15_import.json</code> лежит массив из шести объектов. Один объект выглядит так:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ООО Ромашка&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;romashka@example.ru&quot;</span><span class="p">,</span>
@@ -1040,9 +1073,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Файл плоский: в каждой строке и клиент, и оборудование, и заявка. Клиент повторяется, оборудование повторяется, и это нормально: JSON это выгрузка из старой программы, а не модель. Работа импортёра в том, чтобы разложить плоские строки по шести таблицам и не создать дублей.</p>
 <p>Заявок шесть, а клиентов четыре: «ООО Ромашка» встречается дважды, «ИП Соколов» тоже. Оборудования тоже четыре. Значит, после импорта ожидаем <code>clients = 4</code>, <code>equipment = 4</code>, <code>requests = 6</code>. Запомните эти числа, они понадобятся в проверках.</p>
-<h3>Скрипт</h3>
+<h4>Скрипт импорта</h4>
 <p>Сохраните код как <code>import.py</code> в папке практики.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
@@ -1194,18 +1227,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
 
-<h3>Как он устроен</h3>
+<h4>Как он устроен</h4>
 <p>Проверка полей идёт <strong>до</strong> открытия транзакции. Это осознанное разделение: плохая строка в файле не должна мешать загрузить остальные пять. Скрипт собирает две пачки, <code>good</code> и <code>bad</code>, и печатает причины отказа. Ошибка базы, наоборот, означает, что данные противоречат схеме или друг другу, и тогда отменяется всё.</p>
 <p><code>ensure_client</code> ищет клиента по email и обновляет имя, если нашёл. Email приведён к нижнему регистру, поэтому <code>Sokolov@Example.ru</code> и <code>sokolov@example.ru</code> дадут одного клиента, а не двух. Ограничение <code>UNIQUE</code> на <code>email</code> это второй барьер: если логика когда-нибудь ошибётся, база не даст создать дубль.</p>
 <p><code>ensure_equipment</code> ищет оборудование по серийному номеру. Если номер уже есть, но закреплён за другим клиентом, скрипт поднимает <code>ValueError</code> и откатывает всю транзакцию. Молча переписать владельца было бы хуже: вы бы не узнали, что в выгрузке перепутаны клиенты.</p>
 <p>Заявка проверяется по <code>request_id</code>: есть такая строка, значит <code>UPDATE</code>, нет, значит <code>INSERT</code>. Отсюда идемпотентность: импорт можно запускать сколько угодно раз, число заявок не вырастет. Счётчики <code>inserted</code> и <code>updated</code> печатаются отдельно, чтобы это было видно.</p>
 <p><code>PRAGMA foreign_keys = ON</code> стоит и в <code>import_rows</code>, хотя такая же строка есть в начале схемы. Настройка внешних ключей действует только внутри соединения: схема могла быть применена раньше, другой командой и другим соединением, а импортёр должен проверять ключи в своём. Поэтому он включает проверку сам и не зависит от того, что было до него.</p>
 <p><code>ensure_schema</code> применяет <code>schema.sql</code>, если таблицы <code>clients</code> ещё нет. Так скрипт запускается на чистой папке одной командой, а на уже созданной базе ничего не меняет и не пытается создать таблицы второй раз.</p>
-<h3>Первый запуск</h3>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">import</span><span class="p">.</span><span class="n">py</span>
+<h4>Первый запуск</h4>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">import</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 
-<div class="codehilite"><pre><span></span><code>Схема применена из schema.sql
+<div class="codehilite" data-lang="text"><pre><span></span><code>Схема применена из schema.sql
 Строк в файле: 6
 Импортировано: 6
 Обновлено: 0
@@ -1214,16 +1247,16 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Второй запуск той же команды должен показать <code>Импортировано: 0</code>, <code>Обновлено: 6</code>, <code>Заявок в базе: 6</code>. Это и есть проверка повторяемости: файл тот же, база та же, дублей нет.</p>
-<p>Если схему вы уже применили в задании 2, первой строки <code>Схема применена из schema.sql</code> не будет: импортёр увидит готовые таблицы и не станет создавать их заново. Остальные числа совпадут.</p>
+<p>Если схему вы уже применили на шаге 3, первой строки <code>Схема применена из schema.sql</code> не будет: импортёр увидит готовые таблицы и не станет создавать их заново. Остальные числа совпадут.</p>
 <div class="callout pitfall"><span class="label">Почему не INSERT OR REPLACE</span><p>Соблазн заменить всю логику одной строкой <code>INSERT OR REPLACE INTO requests</code> понятен, но опасен. <code>REPLACE</code> при конфликте ключа удаляет старую строку и вставляет новую, а значит срабатывает <code>ON DELETE CASCADE</code> и вместе с заявкой исчезают её работы и расход. Импорт «обновил» бы статус ценой потери истории ремонта.</p></div>
 
 <div class="callout note"><span class="label">Кто главнее: файл или база</span><p>Сейчас JSON считается источником правды, поэтому повторный импорт перезаписывает статус заявки, даже если его поменяли в базе вручную. Это удобно для регулярной выгрузки из внешней системы и плохо, если заявки живут в базе. Второй вариант: при совпадении <code>request_id</code> строку пропускать. Выберите правило, напишите его в отчёте и не меняйте по ходу.</p></div>
 
 <div class="callout shot"><span class="label">Скриншот 3</span><p>Вывод <code>python import.py</code> с итогами импорта и сообщением о применении схемы.</p></div>
 
-<h2 id="задание-4-проверки"><span class="num">06</span>Задание 4. Проверки</h2>
+<h3>Шаг 5. Проверки</h3>
 <p>Проверка это не «выполнилось без ошибок», а сравнение ожидаемого числа с фактическим. Сохраните код ниже как <code>checks.py</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
 <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;service.db&quot;</span><span class="p">)</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys = ON&quot;</span><span class="p">)</span>
@@ -1274,7 +1307,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Запустите его на загруженной базе:</p>
-<div class="codehilite"><pre><span></span><code>Заявок: 6
+<div class="codehilite" data-lang="text"><pre><span></span><code>Заявок: 6
 Клиентов: 4
 Оборудования: 4
 Строк в файле JSON: 6
@@ -1296,7 +1329,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Совпадение чисел ещё не доказывает модель. Те же шесть строк получились бы, если два клиента ошибочно склеены в одного или у части заявок потерялось оборудование: <code>COUNT</code> этого не видит. Поэтому JOIN идёт отдельно: он показывает, что у каждой заявки нашлись и клиент, и оборудование. Если хотя бы одна строка в этом выводе потерялась, значит где-то остался <code>NULL</code> или битая ссылка.</p>
 <p>Полезно посчитать заявки по клиентам, чтобы убедиться, что группировка работает по правильной связи:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">request_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">requests</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">request_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">requests</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">clients</span><span class="w"> </span><span class="k">c</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">equipment</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">client_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">client_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">equipment_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">equipment_id</span>
@@ -1306,11 +1339,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Получится: «ИП Соколов» 2, «ООО Ромашка» 2, «Колледж» 1, «ООО Вектор» 1. Сумма 6 совпадает с числом заявок, значит ни одна не потерялась и ни одна не посчитана дважды.</p>
 <p>Отдельно проверьте импорт на испорченных данных. Скопируйте файл:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span>
 </code></pre></div>
 
 <p>Откройте <code>import_bad.json</code> в VS Code, замените в нём <code>sokolov@example.ru</code> на <code>sokolov@example</code> и сохраните. Теперь подмените рабочий файл испорченной копией, запустите скрипт и верните всё как было:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Move-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_good</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Move-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_good</span><span class="p">.</span><span class="n">json</span>
 <span class="nb">Move-Item</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span>
 <span class="n">python</span> <span class="n">import</span><span class="p">.</span><span class="n">py</span>
 <span class="nb">Move-Item</span> <span class="n">UIFIS_practice</span><span class="p">-</span><span class="n">15_import</span><span class="p">.</span><span class="n">json</span> <span class="n">import_bad</span><span class="p">.</span><span class="n">json</span>
@@ -1389,7 +1422,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 5</span><p>Результат JOIN-запроса: заявки с клиентом, оборудованием и статусом.</p></div>
 
-<h2 id="задание-5-отчёт-и-защита"><span class="num">07</span>Задание 5. Отчёт и защита</h2>
+<h3>Шаг 6. Отчёт и защита</h3>
 <p>В отчёт приложите:</p>
 <ol>
 <li>ER-диаграмму в PNG и исходный файл <code>.drawio</code>.</li>
@@ -1397,30 +1430,38 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Таблицу нормализации с тремя формами и тем, что именно исправлено.</li>
 <li>Схему <code>schema.sql</code> и объяснение каждого ограничения: почему <code>RESTRICT</code> здесь, а <code>CASCADE</code> там.</li>
 <li>Таблицу проверок с ожиданием и фактом.</li>
-<li>Пять скриншотов из заданий.</li>
+<li>Пять скриншотов из шагов работы.</li>
 <li>Заполненный чек-лист из CSV: десять строк, в каждой факт и вывод.</li>
 <li>Вывод по трём вопросам из шаблона: почему заявка не хранит имя клиента, что будет при повторном импорте без ключа, как вы проверяли соответствие базы модели.</li>
 </ol>
 <p>Файлы называйте по шаблону <code>Фамилия_П15_schema.sql</code>, <code>Фамилия_П15_import.py</code>, <code>Фамилия_П15_отчёт.docx</code>. Папку <code>C:\UIFIS\practice-15</code> сохраните до защиты: на ней проще показать повторный запуск, чем на скриншоте.</p>
-<p>Контрольные вопросы:</p>
+<p>Скриншот страницы отчёта не нужен: отчёт сдаётся файлом, а вывод импорта и проверок уже снят на предыдущих шагах.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-15_report-template.docx</code>.</li>
+<li>Файл <code>schema.sql</code>.</li>
+<li>Скрипт <code>import.py</code>.</li>
+<li>Файл базы <code>service.db</code> с шестью заявками.</li>
+<li>ER-диаграмму в PNG и исходник <code>.drawio</code>.</li>
+<li>Заполненный чек-лист <code>UIFIS_practice-15_er-checklist.csv</code>.</li>
+<li>Скриншоты схемы, импорта, ошибок ограничений и <code>JOIN</code>-запроса.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: шесть сущностей и связи описаны верно, все три формы доказаны на своём черновике, схема применяется без ошибок, импорт идемпотентен, все проверки выполнены с совпавшим ожиданием, отчёт полный, на вопросы отвечаете по своей базе.</li>
+<li><strong>4</strong>: модель верна, но одно ограничение не объяснено или одна проверка пропущена; повторный импорт даёт верные числа, однако причина идемпотентности объясняется путано.</li>
+<li><strong>3</strong>: таблицы созданы, импорт работает однократно, связи описаны частично, нормализация показана формально, проверки ограничений выполнены не все.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Чем логическая модель отличается от физической? Что в вашей работе относится к каждой из них?</li>
 <li>Почему заявка ссылается на оборудование, а не на клиента? В каком случае в <code>requests</code> всё-таки появится <code>client_id</code>?</li>
 <li>Что произойдёт при повторном импорте, если не проверять <code>request_id</code>? Покажите на числах.</li>
 <li>Зачем <code>PRAGMA foreign_keys = ON</code> повторяется в каждом скрипте, если она уже есть в схеме?</li>
-<li>Почему импорт выполняется одной транзакцией? Что случится с базой, если отключить её и упасть на пятой строке?</li>
 <li>Чем <code>ON DELETE RESTRICT</code> отличается от <code>ON DELETE CASCADE</code> и почему для работ выбран второй вариант?</li>
-<li>Почему <code>email</code> объявлен <code>UNIQUE</code>, а <code>phone</code> нет?</li>
-<li>Где в вашей схеме вторая нормальная форма, если все ключи суррогатные?</li>
-<li>Что будет с заявками и работами, если клиент продал оборудование другому клиенту? Какие данные исказятся?</li>
-<li>Когда денормализация оправдана и какую цену вы за неё заплатите?</li>
 </ol>
-<p>Критерии оценки:</p>
-<ul>
-<li><strong>5</strong>: шесть сущностей и связи описаны верно, все три формы доказаны на своём черновике, схема применяется без ошибок, импорт идемпотентен, все проверки выполнены с совпавшим ожиданием, отчёт полный, на вопросы отвечаете по своей базе.</li>
-<li><strong>4</strong>: модель верна, но одно ограничение не объяснено или одна проверка пропущена; повторный импорт даёт верные числа, однако причина идемпотентности объясняется путано.</li>
-<li><strong>3</strong>: таблицы созданы, импорт работает однократно, связи описаны частично, нормализация показана формально, проверки ограничений выполнены не все.</li>
-</ul></article><nav class="pager"><a class="" href="35-prakt-14.html"><span>← Предыдущее занятие</span>Практика 14. Комплексное задание: паспорт информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="37-prakt-16.html"><span>Следующее занятие →</span>Практика 16. SQL-запрос с JOIN и агрегацией</a></nav></main>
+</div></article><nav class="pager"><a class="" href="35-prakt-14.html"><span>← Предыдущее занятие</span>Практика 14. Комплексное задание: паспорт информационной системы</a><a class="next" style="text-align:right;margin-left:auto" href="37-prakt-16.html"><span>Следующее занятие →</span>Практика 16. SQL-запрос с JOIN и агрегацией</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

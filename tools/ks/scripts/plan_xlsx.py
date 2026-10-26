@@ -180,7 +180,7 @@ def sheet_xml(course: dict) -> str:
     out.append('<row r="4" ht="8" customHeight="1"/>')
     out.append(row_xml(5, [
         inline("A5", "№", 4), inline("B5", "Тип", 4), inline("C5", "Тема занятия", 4),
-        inline("D5", "Минуты", 4), inline("E5", "Содержание", 4),
+        inline("D5", "Часы", 4), inline("E5", "Содержание", 4),
         inline("F5", "Ключевые понятия", 4),
     ], 32))
     for i, item in enumerate(rows, start=6):
@@ -190,11 +190,11 @@ def sheet_xml(course: dict) -> str:
             inline(f"A{i}", item["number"], 6),
             inline(f"B{i}", item["kind"], 6),
             inline(f"C{i}", item["title"], 5),
-            number(f"D{i}", item["minutes"], 6),
+            number(f"D{i}", item["minutes"] // 45, 6),
             inline(f"E{i}", item["summary"], 5),
             inline(f"F{i}", item["topics"], 5),
         ], height))
-    total = sum(item["minutes"] for item in rows)
+    total = sum(item["minutes"] // 45 for item in rows)
     out.append(row_xml(total_row, [
         inline(f"A{total_row}", "Итого", 7),
         inline(f"B{total_row}", "", 7),

@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,8 +794,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 15</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Создание базы данных информационной системы</h1><p class="dek">Соберите учебный журнал в SQLite: спроектируйте четыре таблицы в третьей нормальной форме, задайте ограничения, наполните данными, импортируйте JSON и проверьте пять запросов.</p></div>
-<div class="glyph" aria-hidden="true">П7</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Спроектировать реляционную схему в третьей нормальной форме</li><li>Создать таблицы с первичными, внешними ключами и ограничениями</li><li>Наполнить базу данными и импортировать JSON</li><li>Проверить выборки с соединением и агрегацией</li><li>Оформить отчёт с доказательствами работы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#шаг-1-проектирование-схемы">Шаг 1. Проектирование схемы</a></li><li><a href="#шаг-2-создание-базы">Шаг 2. Создание базы</a></li><li><a href="#шаг-3-проверка-ограничений">Шаг 3. Проверка ограничений</a></li><li><a href="#шаг-4-пять-запросов">Шаг 4. Пять запросов</a></li><li><a href="#шаг-5-импорт-json">Шаг 5. Импорт JSON</a></li><li><a href="#шаг-6-отчёт">Шаг 6. Отчёт</a></li><li><a href="#чек-лист">Чек-лист</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#что-сдать">Что сдать</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В лекции 8 мы разобрали таблицы, ключи, нормализацию, транзакции и ограничения. Теперь соберём рабочую базу учебного журнала в SQLite.</p>
+<div class="glyph" aria-hidden="true">П7</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Спроектировать реляционную схему в третьей нормальной форме</li><li>Создать таблицы с первичными, внешними ключами и ограничениями</li><li>Наполнить базу данными и импортировать JSON</li><li>Проверить выборки с соединением и агрегацией</li><li>Оформить отчёт с доказательствами работы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Собрать рабочую базу учебного журнала в SQLite. В лекции 8 мы разобрали таблицы, ключи, нормализацию, транзакции и ограничения.</p>
 <p>Результат работы это файл базы <code>uifis.db</code>, SQL-скрипт создания схемы, файл импорта JSON и отчёт с ER-схемой, результатами запросов и проверками ограничений. В отчёт войдут ER-диаграмма, скрипт базы и SQL-запрос с соединением и агрегацией.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>База создаётся с нуля одним скриптом, содержит четыре таблицы, проходит проверки ограничений, принимает JSON и возвращает осмысленные результаты пяти запросов. В отчёте есть ER-схема, скриншоты и выводы.</p></div>
 
@@ -792,23 +806,30 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Скачайте три файла в одну папку практики. Шаблон SQL можно менять, но структуру таблиц и ограничения сохраните.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Для работы нужны:</p>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
 <li>VS Code с расширением Python;</li>
 <li>Python 3.10 или новее;</li>
 <li>встроенный модуль <code>sqlite3</code>, отдельная СУБД не требуется;</li>
 <li>браузер с draw.io для ER-схемы;</li>
-<li>Word или LibreOffice для отчёта.</li>
+<li>Word или LibreOffice для отчёта;</li>
+<li>шаблон отчёта, шаблон SQL и файл JSON, скачанные в начале занятия.</li>
 </ul>
 <p>Создайте папку <code>uifis-practice-7</code> и положите в неё скачанные файлы. Все команды выполняйте из этой папки. Права администратора не нужны: SQLite работает с обычным файлом.</p>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p><strong>Третья нормальная форма</strong> требует, чтобы в таблицах не было повторяющихся групп, каждый неключевой атрибут зависел от всего первичного ключа и не зависел от других неключевых атрибутов. Поэтому журнал раскладывают на сущности: студент, курс, запись на курс и оценка.</p>
+<p><strong>Первичный ключ</strong> однозначно определяет строку. <strong>Внешний ключ</strong> связывает строку с родительской таблицей и не даёт появиться записи на несуществующий курс. <strong>UNIQUE</strong> запрещает повтор значения, <strong>CHECK</strong> задаёт допустимый диапазон, а правило <code>ON DELETE</code> решает, что делать с дочерними строками при удалении родительской.</p>
+<p><strong>Транзакция</strong> объединяет несколько команд в одну единицу работы: либо выполняются все, либо ни одна. Поэтому схему и учебные данные выполняют между <code>BEGIN</code> и <code>COMMIT</code>, а импорт JSON при ошибке откатывается целиком.</p>
+<p><strong>Соединение и агрегация.</strong> <code>LEFT JOIN</code> сохраняет строки левой таблицы, даже если справа нет совпадений. <code>GROUP BY</code> собирает строки в группы, агрегатные функции считают итог, <code>HAVING</code> фильтрует уже сгруппированные строки, а <code>ORDER BY</code> задаёт порядок вывода.</p>
+<p><strong>Импорт JSON</strong> это чтение массива объектов и вставка каждого объекта параметрами <code>?</code>. Параметры защищают от подстановки SQL и не требуют собирать строку запроса вручную.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <p>Проверьте Python:</p>
-<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>--version
+<div class="codehilite" data-lang="bash"><pre><span></span><code>python<span class="w"> </span>--version
 python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import sqlite3; print(sqlite3.sqlite_version)&quot;</span>
 </code></pre></div>
 
 <p>Если команда <code>python</code> не найдена, используйте <code>py</code> в Windows. Дальше в примерах оставлен <code>python</code>, замените его при необходимости.</p>
-<h2 id="шаг-1-проектирование-схемы"><span class="num">03</span>Шаг 1. Проектирование схемы</h2>
+<h3>Шаг 1. Спроектируйте схему</h3>
 <p>Схема должна быть в <strong>третьей нормальной форме</strong>. Разложим журнал на четыре сущности:</p>
 <table>
 <thead>
@@ -857,11 +878,10 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 <li>Подпишите внешние ключи <code>FK</code>.</li>
 <li>Экспортируйте схему в PDF или PNG и вставьте в отчёт.</li>
 </ol>
-<div class="callout shot"><span class="label">Скриншот 1</span><p>ER-схема с четырьмя таблицами, ключами и связями.</p></div>
-
-<h2 id="шаг-2-создание-базы"><span class="num">04</span>Шаг 2. Создание базы</h2>
+<p>Скриншот ER-схемы не нужен: схема сдаётся отдельным файлом PDF или PNG и вставляется в отчёт.</p>
+<h3>Шаг 2. Создайте базу</h3>
 <p>Откройте шаблон <code>UIFIS_practice-7_sql-template.sql</code>. В нём уже есть схема, индексы и учебные данные. Обратите внимание на начало файла:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">PRAGMA</span><span class="w"> </span><span class="n">foreign_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
 
 <span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">grades</span><span class="p">;</span>
 <span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">enrollments</span><span class="p">;</span>
@@ -872,7 +892,7 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 <p>Порядок удаления обратный порядку создания: сначала дочерние таблицы, потом родительские. Если удалить <code>students</code> первой, внешний ключ может запретить операцию.</p>
 <p>Скрипт выполняет схему и учебные данные в одной транзакции <code>BEGIN</code> и <code>COMMIT</code>. Если хотя бы одна команда завершится ошибкой, база не останется в полусобранном состоянии.</p>
 <p>Создайте базу скриптом:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">sql</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;UIFIS_practice-7_sql-template.sql&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -884,7 +904,9 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 
 <p><code>executescript</code> выполняет несколько команд за один вызов. Не передавайте в него пользовательский ввод: для данных используйте параметры <code>?</code>.</p>
 <p>Проверьте список таблиц:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Фамилия И.О., группа&quot;</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;uifis.db&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -896,13 +918,12 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
         <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Ожидаемые числа: 6 студентов, 4 курса, 8 записей, 7 оценок. Если числа другие, проверьте, что скрипт выполнен полностью и что вы не запускали его дважды без удаления старых таблиц.</p>
-<div class="callout shot"><span class="label">Скриншот 2</span><p>Список таблиц и количество строк после создания базы.</p></div>
-
-<h2 id="шаг-3-проверка-ограничений"><span class="num">05</span>Шаг 3. Проверка ограничений</h2>
+<p>Вместо строки с фамилией подставьте свои данные: она нужна как доказательство авторства на скриншоте. Ожидаемые числа: 6 студентов, 4 курса, 8 записей, 7 оценок. Если числа другие, проверьте, что скрипт выполнен полностью и что вы не запускали его дважды без удаления старых таблиц.</p>
+<p>Приложите скриншот вывода, в первой строке которого видны фамилия и группа, а ниже список таблиц и количество строк.</p>
+<h3>Шаг 3. Проверьте ограничения</h3>
 <p>Ограничения нужно не только объявить, но и доказать. Проверьте пять ситуаций.</p>
-<h3>Оценка вне диапазона</h3>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<h4>Оценка вне диапазона</h4>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
 <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;uifis.db&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys = ON&quot;</span><span class="p">)</span>
@@ -916,9 +937,9 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CHECK сработал:&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Ожидается сообщение <code>CHECK constraint failed</code>. Строка не должна появиться.</p>
-<h3>Повтор email</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+<p>Ожидается сообщение <code>CHECK constraint failed</code>. Строка не должна появиться. Приложите скриншот вывода с этим сообщением.</p>
+<h4>Повтор email</h4>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
         <span class="s2">&quot;INSERT INTO students (full_name, email, group_code) VALUES (?, ?, ?)&quot;</span><span class="p">,</span>
         <span class="p">(</span><span class="s2">&quot;Тестовый Студент&quot;</span><span class="p">,</span> <span class="s2">&quot;anna@example.ru&quot;</span><span class="p">,</span> <span class="s2">&quot;ИС-41&quot;</span><span class="p">),</span>
@@ -927,19 +948,19 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNIQUE сработал:&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
 </code></pre></div>
 
-<h3>Повтор записи на курс</h3>
+<h4>Повтор записи на курс</h4>
 <p>Попробуйте вставить пару <code>student_id = 1</code>, <code>course_id = 1</code> ещё раз. Ожидается ошибка уникальности пары.</p>
-<h3>Удаление курса с записями</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+<h4>Удаление курса с записями</h4>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM courses WHERE id = 1&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RESTRICT сработал:&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Курс 1 используется в записях, поэтому удаление запрещено. Это защита от потери связи.</p>
-<h3>Каскадное удаление</h3>
+<h4>Каскадное удаление</h4>
 <p>Каскад проверяйте на копии базы, потому что он действительно удаляет данные:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
 <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="s2">&quot;uifis.db&quot;</span><span class="p">,</span> <span class="s2">&quot;uifis-test.db&quot;</span><span class="p">)</span>
@@ -952,13 +973,11 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;записей было&quot;</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="s2">&quot;стало&quot;</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="s2">&quot;оценок осталось&quot;</span><span class="p">,</span> <span class="n">grades</span><span class="p">)</span>
 </code></pre></div>
 
-<p>У студента 1 две записи и две оценки. После удаления записей должно стать на две меньше, а оценки этих записей тоже должны исчезнуть.</p>
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Ошибка CHECK при попытке вставить оценку 101.</p></div>
-
-<h2 id="шаг-4-пять-запросов"><span class="num">06</span>Шаг 4. Пять запросов</h2>
+<p>У студента 1 две записи и две оценки. После удаления записей должно стать на две меньше, а оценки этих записей тоже должны исчезнуть. Приложите скриншот вывода: в нём видно, сколько записей и оценок осталось после каскада.</p>
+<h3>Шаг 4. Выполните пять запросов</h3>
 <p>Все запросы уже есть в конце SQL-шаблона. Выполните их по одному и сохраните результаты.</p>
-<h3>Запрос 1. Число курсов у каждого студента</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">course_count</span>
+<h4>Запрос 1. Число курсов у каждого студента</h4>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">course_count</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">s</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
 <span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span>
@@ -966,8 +985,8 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p><code>LEFT JOIN</code> сохраняет студентов без записей. У Егора Волкова будет <code>0</code>, а не пропущенная строка.</p>
-<h3>Запрос 2. Средний балл по курсам</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">average_score</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">grades_count</span>
+<h4>Запрос 2. Средний балл по курсам</h4>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">average_score</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">grades_count</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">c</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">grades</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">enrollment_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span>
@@ -976,16 +995,16 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p>Курс без оценок останется в результате со значением <code>NULL</code> и <code>grades_count = 0</code>. Это правильнее, чем терять курс из отчёта.</p>
-<h3>Запрос 3. Студенты без записей</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_code</span>
+<h4>Запрос 3. Студенты без записей</h4>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_code</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">s</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
 <span class="k">WHERE</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">;</span>
 </code></pre></div>
 
-<h3>Запрос 4. Три лучших студента</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">average_score</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">grades_count</span>
+<h4>Запрос 4. Три лучших студента</h4>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">score</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">average_score</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">grades_count</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">s</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">grades</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">enrollment_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span>
@@ -996,8 +1015,8 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p><code>HAVING</code> фильтрует уже сгруппированные строки. <code>WHERE</code> здесь не подошёл бы, потому что условие использует результат агрегата.</p>
-<h3>Запрос 5. Курсы без оценок</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span>
+<h4>Запрос 5. Курсы без оценок</h4>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">c</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">grades</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">enrollment_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span>
@@ -1007,11 +1026,10 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p>В учебных данных должен появиться курс <code>ИС-104</code>: на него есть запись, но оценка ещё не выставлена.</p>
-<div class="callout shot"><span class="label">Скриншот 4</span><p>Результат запроса 2 со средним баллом и числом оценок.</p></div>
-
-<h2 id="шаг-5-импорт-json"><span class="num">07</span>Шаг 5. Импорт JSON</h2>
+<p>Приложите скриншот результата запроса 2 со средним баллом и числом оценок, а также результата запроса 5 с курсом без оценок.</p>
+<h3>Шаг 5. Импортируйте JSON</h3>
 <p>Файл <code>UIFIS_practice-7_students.json</code> содержит три новых студента. Формат простой: массив объектов с полями <code>full_name</code>, <code>email</code>, <code>group_code</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">[</span>
 <span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;full_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Иванова Мария Сергеевна&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ivanova@example.ru&quot;</span><span class="p">,</span>
@@ -1021,7 +1039,7 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p>Импорт выполняйте одной транзакцией:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -1045,28 +1063,15 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </code></pre></div>
 
 <p>Проверьте результат:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;uifis.db&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;uifis.db&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
     <span class="n">total</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM students&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Всего студентов:&quot;</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Было 6, стало 9. Если запустить импорт второй раз, сработает ограничение <code>UNIQUE</code> по email, и вся транзакция откатится. Это правильное поведение: база не должна получить частично импортированный файл.</p>
 <p>Проверьте, что новые студенты видны в запросе 1 и что у них пока нет записей на курсы. Это нормально: импорт добавляет только студентов, а записи создаются отдельно.</p>
-<h2 id="шаг-6-отчёт"><span class="num">08</span>Шаг 6. Отчёт</h2>
-<p>Заполните шаблон <code>UIFIS_practice-7_report-template.docx</code>.</p>
-<p>В отчёте должны быть:</p>
-<ol>
-<li>Цель работы и исходные файлы.</li>
-<li>ER-схема в третьей нормальной форме.</li>
-<li>Таблица сущностей с ключами и ограничениями.</li>
-<li>Скриншот списка таблиц и числом строк.</li>
-<li>Проверки <code>CHECK</code>, <code>UNIQUE</code>, <code>RESTRICT</code>, <code>CASCADE</code>.</li>
-<li>Результаты пяти запросов.</li>
-<li>Таблица импорта JSON.</li>
-<li>Вывод и ответы на контрольные вопросы.</li>
-</ol>
-<p>В выводах ответьте не только «что сделано», но и «почему так». Например: почему оценка не хранится в <code>enrollments</code>, почему внешний ключ включён отдельной командой и что произойдёт, если его выключить.</p>
-<h2 id="чек-лист"><span class="num">09</span>Чек-лист</h2>
+<p>Приложите скриншот вывода <code>Импортировано: 3</code> и <code>Всего студентов: 9</code>, а также повторного запуска с сообщением об откате.</p>
+<h3>Шаг 6. Заполните чек-лист</h3>
 <table>
 <thead>
 <tr>
@@ -1138,7 +1143,40 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </tr>
 </tbody>
 </table>
-<h2 id="контрольные-вопросы"><span class="num">10</span>Контрольные вопросы</h2>
+<h3>Шаг 7. Оформите отчёт</h3>
+<p>Заполните шаблон <code>UIFIS_practice-7_report-template.docx</code>.</p>
+<p>В отчёте должны быть:</p>
+<ol>
+<li>Цель работы и исходные файлы.</li>
+<li>ER-схема в третьей нормальной форме.</li>
+<li>Таблица сущностей с ключами и ограничениями.</li>
+<li>Скриншот списка таблиц и числом строк.</li>
+<li>Проверки <code>CHECK</code>, <code>UNIQUE</code>, <code>RESTRICT</code>, <code>CASCADE</code>.</li>
+<li>Результаты пяти запросов.</li>
+<li>Таблица импорта JSON.</li>
+<li>Вывод и ответы на контрольные вопросы.</li>
+</ol>
+<p>В выводах ответьте не только «что сделано», но и «почему так». Например: почему оценка не хранится в <code>enrollments</code>, почему внешний ключ включён отдельной командой и что произойдёт, если его выключить.</p>
+<p>Скриншот самого документа не нужен: отчёт сдаётся файлом DOCX.</p>
+<h3>Шаг 8. Сохраните и сдайте работу</h3>
+<p>Перед сдачей откройте базу заново и выполните запрос 2. Если он работает на новой копии, значит схема и данные сохранены правильно.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>файл базы <code>uifis.db</code>;</li>
+<li>SQL-скрипт создания схемы и данных;</li>
+<li>файл <code>UIFIS_practice-7_students.json</code>;</li>
+<li>ER-схему в PDF или PNG;</li>
+<li>заполненный отчёт в DOCX;</li>
+<li>скриншоты проверок и результатов запросов.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: схема в третьей нормальной форме, все ключи и ограничения заданы, база создаётся одним скриптом, пять ограничений проверены на практике, пять запросов дают верные результаты, JSON импортирован в транзакции.</li>
+<li><strong>4</strong>: схема и запросы верные, но одна проверка ограничения не выполнена, импорт без обработки ошибки или в отчёте нет части скриншотов.</li>
+<li><strong>3</strong>: таблицы созданы, но ограничения проверены частично, запросы с соединением или агрегацией работают с ошибками, импорт JSON не выполнен.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Почему таблица <code>grades</code> отделена от <code>enrollments</code>?</li>
 <li>Что произойдёт при удалении студента, у которого есть оценки?</li>
@@ -1146,15 +1184,7 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 <li>Чем <code>UNIQUE</code> отличается от <code>PRIMARY KEY</code>?</li>
 <li>Почему импорт JSON выполняют в одной транзакции?</li>
 </ol>
-<h2 id="что-сдать"><span class="num">11</span>Что сдать</h2>
-<ul>
-<li>файл базы <code>uifis.db</code>;</li>
-<li>SQL-скрипт создания схемы и данных;</li>
-<li>файл <code>UIFIS_practice-7_students.json</code>;</li>
-<li>ER-схему в PDF или PNG;</li>
-<li>заполненный отчёт в DOCX.</li>
-</ul>
-<p>Перед сдачей откройте базу заново и выполните запрос 2. Если он работает на новой копии, значит схема и данные сохранены правильно.</p></article><nav class="pager"><a class="" href="14-lek-08.html"><span>← Предыдущее занятие</span>Лекция 8. Системы управления базами данных в составе ИС</a><a class="next" style="text-align:right;margin-left:auto" href="16-lek-09.html"><span>Следующее занятие →</span>Лекция 9. Сетевые основы функционирования ИС</a></nav></main>
+</div></article><nav class="pager"><a class="" href="14-lek-08.html"><span>← Предыдущее занятие</span>Лекция 8. Системы управления базами данных в составе ИС</a><a class="next" style="text-align:right;margin-left:auto" href="16-lek-09.html"><span>Следующее занятие →</span>Лекция 9. Сетевые основы функционирования ИС</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

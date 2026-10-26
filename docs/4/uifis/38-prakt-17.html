@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,14 +794,24 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 39-40</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Модули ИС и безопасность, API и Postman</h1><p class="dek">Соберите модуль пользователей с ролями, поднимите его как API, проверьте отказы в Postman и докажите журналом, что доступ закрыт, а секреты не утекли.</p></div>
-<div class="glyph" aria-hidden="true">П17</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Разделить модуль на роли и операции и назначить минимальные права</li><li>Спроектировать таблицы пользователей, ролей и журнала с ограничениями целостности</li><li>Поднять API с проверкой Bearer-токена и разделить ответы 401 и 403</li><li>Проверить в Postman успешные ответы и отказы 400, 401, 403, 404 и 500</li><li>Настроить журнал аудита так, чтобы в нём не было паролей и токенов</li><li>Заполнить отчёт фактами и защитить принятые решения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#задание-1-модули-и-роли">Задание 1. Модули и роли</a></li><li><a href="#задание-2-схема-и-api">Задание 2. Схема и API</a></li><li><a href="#задание-3-postman">Задание 3. Postman</a></li><li><a href="#задание-4-аудит">Задание 4. Аудит</a></li><li><a href="#задание-5-проверки">Задание 5. Проверки</a></li><li><a href="#задание-6-отчёт-и-защита">Задание 6. Отчёт и защита</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>Кнопку «Удалить» на экране видел только администратор, поэтому удалять мог любой. Обработчик получал запрос и выполнял его, а роль проверял интерфейс, который кнопку просто не показывал. Запрос собирается в Postman за минуту, и скрытая кнопка не останавливает никого.</p>
-<p>Интерфейс это удобство, а не защита. Защита стоит на сервере: он проверяет каждый запрос сам, независимо от того, пришёл тот из браузера, из Postman или из чужого скрипта.</p>
-<p>Сервер задаёт себе три вопроса по порядку. Кто вы? Ответ даёт аутентификация: заголовок <code>Authorization: Bearer &lt;token&gt;</code> и строка в таблице пользователей. Что вам можно? Это авторизация: роль и её права на конкретную операцию. Что вы сделали? Это аудит: запись о входе, отказе и изменении, которую потом читает администратор.</p>
-<p>Работа идёт в три слоя. Сначала модуль: какие объекты есть, кто и что с ними делает, какие права минимальны. Потом схема и API: таблицы <code>users</code>, <code>roles</code>, <code>audit</code> и обработчики, которые спрашивают права у базы, а не у интерфейса. Затем проверка: Postman присылает и правильные, и неправильные запросы, а журнал показывает, что сервер заметил каждый отказ и записал его.</p>
-<p>Результат работы: файл <code>users.db</code> с тремя таблицами и тремя учётными записями, сервис <code>users_api.py</code> на порту <code>8091</code>, коллекция Postman из тринадцати запросов с зелёными тестами, журнал аудита не короче десяти записей, заполненный чек-лист безопасности и отчёт.</p>
-<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Без токена API отвечает <code>401</code>, с токеном роли <code>user</code> на список пользователей <code>403</code>. Менеджер меняет статус, но не роль. Пароль и токен не встречаются ни в одном ответе и ни в одной строке журнала. Коллекция проходит целиком на свежей базе, а таблица проверок заполнена фактическими кодами, а не ожидаемыми.</p></div>
-
+<div class="glyph" aria-hidden="true">П17</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Разделить модуль на роли и операции и назначить минимальные права</li><li>Спроектировать таблицы пользователей, ролей и журнала с ограничениями целостности</li><li>Поднять API с проверкой Bearer-токена и разделить ответы 401 и 403</li><li>Проверить в Postman успешные ответы и отказы 400, 401, 403, 404 и 500</li><li>Настроить журнал аудита так, чтобы в нём не было паролей и токенов</li><li>Заполнить отчёт фактами и защитить принятые решения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Собрать модуль пользователей с ролями, поднять его как API, проверить отказы в Postman и доказать журналом, что доступ закрыт, а секреты не утекли.</p>
+<p>В результате работы вы:</p>
+<ul>
+<li>разделяете модуль на роли и операции и назначаете минимальные права;</li>
+<li>проектируете таблицы пользователей, ролей и журнала с ограничениями целостности;</li>
+<li>поднимаете API с проверкой Bearer-токена и разделяете ответы <code>401</code> и <code>403</code>;</li>
+<li>проверяете в Postman успешные ответы и отказы <code>400</code>, <code>401</code>, <code>403</code>, <code>404</code> и <code>500</code>;</li>
+<li>настраиваете журнал аудита так, чтобы в нём не было паролей и токенов.</li>
+</ul>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Windows 10 или 11 и PowerShell.</li>
+<li>Python 3.9 или новее с модулем <code>sqlite3</code>, VS Code.</li>
+<li>Postman, установленный как обычное приложение.</li>
+<li>Word для отчёта, Excel для чек-листа.</li>
+</ul>
+<p>Права администратора, Docker, интернет и сервер базы данных не требуются: база это файл <code>users.db</code>.</p>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/UIFIS_practice-17_report-template.docx" download>Шаблон отчёта в DOCX</a>
 <a href="reports/UIFIS_practice-17_postman-collection.json" download>Коллекция Postman</a>
@@ -795,35 +819,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>В шаблоне уже есть таблица модулей, таблица проверок и таблица тестов. В коллекции семь запросов и две переменные. В чек-листе восемь строк, добавьте девятую про блокировку и десятую про повторный прогон. Коллекцию дополняете шестью запросами: без них не проверить `404`, блокировку, смену роли и журнал.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Нужны Windows 10 или 11, Python 3.9 или новее, VS Code и Postman. SQLite отдельно устанавливать не нужно: модуль <code>sqlite3</code> входит в Python, а база это обычный файл <code>users.db</code>. Права администратора, Docker, интернет и сервер базы данных не требуются.</p>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>Кнопку «Удалить» на экране видел только администратор, поэтому удалять мог любой. Обработчик получал запрос и выполнял его, а роль проверял интерфейс, который кнопку просто не показывал. Запрос собирается в Postman за минуту, и скрытая кнопка не останавливает никого.</p>
+<p>Интерфейс это удобство, а не защита. Защита стоит на сервере: он проверяет каждый запрос сам, независимо от того, пришёл тот из браузера, из Postman или из чужого скрипта.</p>
+<p>Сервер задаёт себе три вопроса по порядку. Кто вы? Ответ даёт аутентификация: заголовок <code>Authorization: Bearer &lt;token&gt;</code> и строка в таблице пользователей. Что вам можно? Это авторизация: роль и её права на конкретную операцию. Что вы сделали? Это аудит: запись о входе, отказе и изменении, которую потом читает администратор.</p>
+<p>Работа идёт в три слоя. Сначала модуль: какие объекты есть, кто и что с ними делает, какие права минимальны. Потом схема и API: таблицы <code>users</code>, <code>roles</code>, <code>audit</code> и обработчики, которые спрашивают права у базы, а не у интерфейса. Затем проверка: Postman присылает и правильные, и неправильные запросы, а журнал показывает, что сервер заметил каждый отказ и записал его.</p>
+<p>Результат работы: файл <code>users.db</code> с тремя таблицами и тремя учётными записями, сервис <code>users_api.py</code> на порту <code>8091</code>, коллекция Postman из тринадцати запросов с зелёными тестами, журнал аудита не короче десяти записей, заполненный чек-лист безопасности и отчёт.</p>
+<div class="callout note"><span class="label">Что считается готовым результатом</span><p>Без токена API отвечает <code>401</code>, с токеном роли <code>user</code> на список пользователей <code>403</code>. Менеджер меняет статус, но не роль. Пароль и токен не встречаются ни в одном ответе и ни в одной строке журнала. Коллекция проходит целиком на свежей базе, а таблица проверок заполнена фактическими кодами, а не ожидаемыми.</p></div>
+
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Подготовка рабочего места</h3>
 <p>Проверьте Python в PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
 
 <p>Если команда открывает Microsoft Store или отвечает ошибкой, используйте загрузчик <code>py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">py</span> <span class="p">-</span><span class="n">3</span> <span class="p">-</span><span class="n">-version</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">py</span> <span class="p">-</span><span class="n">3</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
 
 <p>Дальше вместо <code>python</code> пишите <code>py -3</code>. Создайте папку практики и перейдите в неё:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">17</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">17</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">UIFIS</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">17</span>
 </code></pre></div>
 
 <p>Убедитесь, что SQLite доступен и поддерживает индекс по выражению <code>lower(email)</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; print(sqlite3.sqlite_version)&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import sqlite3; print(sqlite3.sqlite_version)&quot;</span>
 </code></pre></div>
 
 <p>Команда печатает версию, например <code>3.50.4</code>. Python 3.9 и новее поставляется с SQLite, который такой индекс поддерживает.</p>
 <p>Проверьте, что порт <code>8091</code> свободен:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8091</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">8091</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
 </code></pre></div>
 
 <p>Пустой вывод означает, что порт никто не слушает. Скачайте коллекцию, шаблон и чек-лист в папку практики. Включите в Проводнике показ расширений: браузер иногда сохраняет файл как <code>.json.txt</code>, и Postman такой файл не импортирует.</p>
 <p>Postman установите как обычное приложение. Если при первом запуске предлагают вход, можно работать локально: коллекция и окружение хранятся на компьютере и не требуют облачной синхронизации.</p>
 <div class="callout pitfall"><span class="label">Порт уже занят</span><p>Ошибка <code>OSError: [WinError 10048]</code> означает, что <code>8091</code> слушает другая копия сервиса. Найдите владельца командой <code>Get-NetTCPConnection -LocalPort 8091 -State Listen | Select-Object OwningProcess</code> и закройте свою прошлую копию. Если порт занят чужим приложением, запустите сервис с ключом <code>--port 8092</code> и поменяйте <code>baseUrl</code> в окружении Postman, иначе коллекция будет стучаться не туда.</p></div>
 
-<h2 id="задание-1-модули-и-роли"><span class="num">03</span>Задание 1. Модули и роли</h2>
+<h3>Шаг 2. Модули и роли</h3>
 <p>Модуль это часть системы с одной зоной ответственности и своим набором прав. Пользователи, роли и журнал здесь три модуля: первый хранит учётные записи, второй задаёт права, третий фиксирует, кто что сделал. Собрать их можно в одном сервисе, но права всё равно описываются отдельно. Иначе добавление роли <code>auditor</code> превращается в правку условий по всему коду, и одно забытое место открывает доступ.</p>
 <table>
 <thead>
@@ -923,7 +955,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Различать два отказа обязательно. <code>401</code> значит «я не знаю, кто вы»: заголовка нет, токен неизвестен или учётная запись заблокирована. <code>403</code> значит «я знаю, кто вы, но вам нельзя». Клиент по этим кодам принимает разные решения: при <code>401</code> идёт за новым токеном, при <code>403</code> не повторяет запрос, потому что повтор не изменит прав. У ответа <code>401</code> есть заголовок <code>WWW-Authenticate: Bearer</code>: он сообщает клиенту, какой способ входа поддерживает сервер.</p>
 <p>В шаблоне отчёта таблица модулей содержит строки про заказы. Если второго модуля в вашей работе нет, замените эти строки своим модулем: таблица должна описывать то, что вы собрали.</p>
-<h2 id="задание-2-схема-и-api"><span class="num">04</span>Задание 2. Схема и API</h2>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица модулей и матрица прав заполняются в Word.</p></div>
+
+<h3>Шаг 3. Схема и API</h3>
 <p>Схема повторяет матрицу прав, но в виде данных. Права лежат в таблице <code>roles</code> пятью флагами, и код спрашивает флаг, а не сравнивает название роли.</p>
 <table>
 <thead>
@@ -954,7 +988,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Три ограничения делают половину работы за код. Уникальный индекс по <code>lower(email)</code> и <code>lower(login)</code> не даёт создать дубль, даже если регистр букв другой. Уникальный индекс по <code>token</code> гарантирует, что поиск вернёт ровно одну учётную запись. Внешний ключ <code>role</code> на <code>roles.code</code> не даёт вписать роль, которой нет в справочнике.</p>
 <p>Проверка в коде всё равно нужна, но для другого: она возвращает понятное сообщение и поле <code>field</code>, по которому видно, что исправлять. Ограничение в базе нужно для гарантии. Между проверкой и вставкой проходит время, и два одновременных запроса могут пройти проверку оба; уникальный индекс остановит второй.</p>
 <p>Создайте в папке практики файл <code>users_api.py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;UIFIS practice 17: users, roles and audit on the Python standard library.</span>
 
 <span class="sd">Run:</span>
@@ -1376,11 +1410,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Второе: ответ собирается запросом с явным списком полей <code>FIELDS</code>. <code>password_hash</code> и <code>token</code> в выборку не входят, поэтому их нельзя вернуть случайно. Запрет действует на уровне запроса, а не на уровне надежды.</p>
 <p>Третье: <code>_forbid</code> пишет запись в журнал до отправки ответа. Отказ, который нигде не записан, невозможно отличить от сбоя прав.</p>
 <p>Запустите сервис в первом окне PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">python</span> <span class="n">users_api</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 
 <p>В строке запуска появятся адрес и путь к базе. Окно не закрывайте: это и есть сервер. Во втором окне проверьте здоровье, отказ без токена, список и чужую роль:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">health</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer student-token&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-o</span> <span class="n">NUL</span> <span class="n">-w</span> <span class="s2">&quot;%{http_code}&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer user-token&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span>
@@ -1388,13 +1422,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Первая команда возвращает <code>{"service": "uifis-users", "status": "ok", "users": 3}</code>. Вторая печатает <code>HTTP/1.0 401 Unauthorized</code> и тело <code>{"error": "unauthorized", "message": "Нужен заголовок Authorization: Bearer &lt;token&gt;"}</code>. Третья отдаёт три записи с полями <code>id</code>, <code>login</code>, <code>email</code>, <code>role</code>, <code>status</code>, <code>created_at</code> и без <code>password_hash</code>. Четвёртая печатает <code>403</code>.</p>
 <p>Создание проверяется телом из файла. Создайте <code>new_user.json</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="s1">&#39;{&quot;login&quot;: &quot;practic.user&quot;, &quot;email&quot;: &quot;practic@example.ru&quot;, &quot;role&quot;: &quot;user&quot;}&#39;</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">-Encoding</span> <span class="n">ascii</span> <span class="n">new_user</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="s1">&#39;{&quot;login&quot;: &quot;practic.user&quot;, &quot;email&quot;: &quot;practic@example.ru&quot;, &quot;role&quot;: &quot;user&quot;}&#39;</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">-Encoding</span> <span class="n">ascii</span> <span class="n">new_user</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-i</span> <span class="n">-X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer student-token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@new_user.json&quot;</span>
 </code></pre></div>
 
 <p>Ответ начинается с <code>HTTP/1.0 201 Created</code>, содержит <code>Location: /api/users/4</code> (номер зависит от базы) и запись с <code>"status": "active"</code>. Повторите ту же команду: теперь <code>400</code>, <code>"error": "validation_error"</code> и <code>"field": "email"</code>, потому что адрес занят.</p>
 <p>Теперь изменение статуса и запрет на роль. Менеджеру статус разрешён, роль нет:</p>
-<div class="codehilite"><pre><span></span><code><span class="s1">&#39;{&quot;status&quot;: &quot;blocked&quot;}&#39;</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">-Encoding</span> <span class="n">ascii</span> <span class="n">patch_status</span><span class="p">.</span><span class="n">json</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="s1">&#39;{&quot;status&quot;: &quot;blocked&quot;}&#39;</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">-Encoding</span> <span class="n">ascii</span> <span class="n">patch_status</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-X</span> <span class="n">PATCH</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span><span class="p">/</span><span class="n">4</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer manager-token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@patch_status.json&quot;</span>
 <span class="s1">&#39;{&quot;role&quot;: &quot;admin&quot;}&#39;</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">-Encoding</span> <span class="n">ascii</span> <span class="n">patch_role</span><span class="p">.</span><span class="n">json</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-X</span> <span class="n">PATCH</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span><span class="p">/</span><span class="n">4</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer manager-token&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="p">-</span><span class="n">-data-binary</span> <span class="s2">&quot;@patch_role.json&quot;</span>
@@ -1407,7 +1441,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 1</span><p>Окно сервиса и ответы <code>curl.exe</code>: здоровье, <code>401</code> без токена, список с токеном администратора, <code>403</code> для роли <code>user</code>, <code>201</code> на создание и <code>403</code> на смену роли менеджером.</p></div>
 
-<h2 id="задание-3-postman"><span class="num">05</span>Задание 3. Postman</h2>
+<h3>Шаг 4. Проверка в Postman</h3>
 <p>Импортируйте коллекцию: <strong>File → Import → Files</strong>, выберите <code>UIFIS_practice-17_postman-collection.json</code>. Затем создайте окружение: <strong>Environments → +</strong>, имя <code>UIFIS practice 17</code>, переменные <code>baseUrl</code> со значением <code>http://127.0.0.1:8091</code> и <code>token</code> со значением <code>student-token</code>. Сохраните окружение и выберите его в правом верхнем углу.</p>
 <p>В коллекции те же две переменные со значениями по умолчанию, поэтому запросы работают и без окружения: они уйдут на <code>127.0.0.1:8091</code> с токеном администратора. Окружение перекрывает эти значения и позволяет менять порт в одном месте, не правя коллекцию. Если имя переменной написано с ошибкой, Postman подсветит <code>{{...}}</code> красным и отправит строку как есть.</p>
 <p>Запросы <code>06</code>, <code>09</code>, <code>10</code>, <code>11</code> и <code>12</code> подставляют токены других ролей прямо в заголовок. Иначе отказ не проверить: у коллекции один общий <code>{{token}}</code>, и он принадлежит администратору.</p>
@@ -1504,7 +1538,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Порядок обязателен. Запрос <code>04</code> создаёт учётную запись, <code>05</code> проверяет дубль на ней же. Запрос <code>09</code> блокирует студента, <code>10</code> проверяет, что его токен теперь получает <code>401</code>, <code>11</code> возвращает статус. Если поменять <code>10</code> и <code>11</code> местами, тест получит <code>403</code> вместо <code>401</code>: пользователь уже разблокирован.</p>
 <p>У добавленных запросов <code>08</code>…<code>13</code> выберите метод в списке слева и заполните заголовки. Чтению хватит <code>Authorization</code>, изменению нужны ещё <code>Content-Type: application/json</code> и тело в режиме <strong>raw → JSON</strong>. Без <code>Content-Type</code> сервер разберёт тело как мусор и ответит <code>400</code>.</p>
 <p>Тело запроса <code>04</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new.user&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new.user@example.ru&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span>
@@ -1512,7 +1546,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Тело запроса <code>05</code> отличается только логином, почта остаётся той же:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<div class="codehilite" data-lang="json"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dup.user&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new.user@example.ru&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span>
@@ -1520,7 +1554,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Тесты пишутся на JavaScript в панели <strong>Tests</strong>. Для первых семи запросов они уже есть в коллекции. Добавьте общий тест на уровень коллекции: выберите коллекцию в левой панели, откройте <strong>Tests</strong> и вставьте проверку времени и секретов:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Ответ быстрее 1000 мс&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Ответ быстрее 1000 мс&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseTime</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">below</span><span class="p">(</span><span class="mf">1000</span><span class="p">);</span>
 <span class="p">});</span>
 
@@ -1535,7 +1569,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Этот тест работает и на запросе <code>13</code>: если журнал начнёт хранить токен или пароль, проверка покраснеет.</p>
 <p>Тесты для шести добавленных запросов:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">// 08 Missing user</span>
+<div class="codehilite" data-lang="javascript"><pre><span></span><code><span class="c1">// 08 Missing user</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;404 Not Found&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">404</span><span class="p">));</span>
 <span class="nx">pm</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;error field&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">pm</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">pm</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">have</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">));</span>
 
@@ -1567,7 +1601,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 2</span><p>Коллекция с выбранным окружением и сводка <strong>Run</strong>: все тесты зелёные, красных нет. Отдельный скриншот с тестом <code>401</code> без токена и тестом <code>403</code> для роли <code>user</code>.</p></div>
 
-<h2 id="задание-4-аудит"><span class="num">06</span>Задание 4. Аудит</h2>
+<h3>Шаг 5. Аудит</h3>
 <p>Журнал отвечает на вопрос, который не решается чтением кода: кто именно получил отказ, когда и по какой причине. Без журнала администратор видит только текущее состояние: роль, статус и список пользователей. Он не видит, что вчера кто-то пытался сменить роль и получил <code>403</code>.</p>
 <table>
 <thead>
@@ -1627,7 +1661,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </ul>
 <p>Правило короткое: журнал хранит факт, адрес и причину, но не содержимое секрета.</p>
 <p>Прочитайте журнал:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-o</span> <span class="n">NUL</span> <span class="n">-w</span> <span class="s2">&quot;%{http_code}&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer no-such-token&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-o</span> <span class="n">NUL</span> <span class="n">-w</span> <span class="s2">&quot;%{http_code}&quot;</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer no-such-token&quot;</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">8091</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">users</span>
 <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="n">-H</span> <span class="s2">&quot;Authorization: Bearer student-token&quot;</span> <span class="s2">&quot;http://127.0.0.1:8091/api/audit?limit=10&quot;</span>
 </code></pre></div>
 
@@ -1688,7 +1722,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <div class="callout shot"><span class="label">Скриншот 3</span><p>Ответ <code>/api/audit</code>: записи об успешном чтении, об отказе <code>403</code> и об изменении статуса. Видно, что в <code>detail</code> нет пароля и токена.</p></div>
 
-<h2 id="задание-5-проверки"><span class="num">07</span>Задание 5. Проверки</h2>
+<h3>Шаг 6. Проверки</h3>
 <p>Проверка отличается от демонстрации тем, что ожидание записано до запуска. Пока ожидание в голове, любой ответ кажется правильным: код <code>200</code> выглядит успехом, даже если в теле пустой список.</p>
 <p>Заполните таблицу фактическими кодами и полями. Колонку «Факт» пишите после ответа, а не до него.</p>
 <table>
@@ -1837,39 +1871,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Две последние строки добавьте в CSV сами: в файле восемь строк и итог. Пункт 9 проверяется запросами <code>09</code> и <code>10</code>, пункт 10 полным прогоном <strong>Run</strong> после удаления <code>users.db</code>.</p>
-<div class="callout shot"><span class="label">Скриншот 4</span><p>Заполненные таблица проверок и чек-лист с фактическими кодами и полями.</p></div>
+<div class="callout note"><span class="label">Скриншот для этого шага не нужен</span><p>Таблица проверок и чек-лист сдаются файлами и переносятся в отчёт текстом.</p></div>
 
-<h2 id="задание-6-отчёт-и-защита"><span class="num">08</span>Задание 6. Отчёт и защита</h2>
+<h3>Шаг 7. Отчёт и защита</h3>
 <p>В отчёт приложите:</p>
 <ol>
 <li>Таблицу модулей и матрицу прав с ролями <code>admin</code>, <code>manager</code>, <code>user</code>.</li>
 <li>Схему трёх таблиц: SQL из файла или рисунок с полями, ключами и ограничениями.</li>
 <li>Файл <code>users_api.py</code> или его распечатку.</li>
 <li>Экспорт коллекции и окружения Postman в JSON. В окружении только <code>baseUrl</code> и учебный <code>token</code>; в рабочем проекте реальный токен в файл не выгружают.</li>
-<li>Шесть скриншотов: структура модулей и ролей, коллекция с окружением, успешные <code>200</code> и <code>201</code>, <code>401</code> без токена, <code>403</code> для роли <code>user</code>, журнал аудита.</li>
+<li>Скриншоты: вывод <code>curl.exe</code> с кодами, коллекция с окружением, успешные <code>200</code> и <code>201</code>, <code>401</code> без токена, <code>403</code> для роли <code>user</code>, журнал аудита.</li>
 <li>Заполненный чек-лист <code>UIFIS_practice-17_security-checklist.csv</code>.</li>
 <li>Таблицу проверок с фактическими кодами и вывод.</li>
 </ol>
 <p>В выводе опирайтесь на факты из таблиц. Например: «менеджер получил <code>403</code> на смену роли, потому что флаг <code>can_change_role</code> равен нулю в строке роли, а проверка стоит до обновления записи». Такой вывод проверяющий сверит с журналом и матрицей. Ответьте и на три вопроса шаблона: почему проверка роли только на экране не защищает API, как вы доказали, что пароль не попадает в ответ и журнал, что изменится при добавлении роли <code>auditor</code> с правом только читать журнал.</p>
-<div class="callout shot"><span class="label">Скриншот 5</span><p>Страница отчёта с матрицей прав и таблицей проверок, заполненными фактическими значениями.</p></div>
-
-<h3>Контрольные вопросы</h3>
+<p>Скриншот страницы отчёта для этого шага не нужен.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>Отчёт по шаблону <code>UIFIS_practice-17_report-template.docx</code>.</li>
+<li>Файл <code>users_api.py</code> и базу <code>users.db</code>.</li>
+<li>Экспорт коллекции и окружения Postman в JSON.</li>
+<li>Заполненный чек-лист <code>UIFIS_practice-17_security-checklist.csv</code>.</li>
+<li>Таблицу проверок с фактическими кодами.</li>
+<li>Скриншоты вывода <code>curl.exe</code>, прогона коллекции и журнала аудита.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: сервис работает, все тринадцать запросов коллекции проходят, коды <code>400</code>, <code>401</code>, <code>403</code>, <code>404</code> и <code>500</code> проверены и объяснены, пароль и токен не встречаются ни в ответах, ни в журнале, журнал показывает вход, отказ и изменение, чек-лист заполнен фактами, отчёт и защита полные.</li>
+<li><strong>4</strong>: сервис и коллекция работают, но один-два теста слабые, один отказ объяснён поверхностно или в отчёте не хватает скриншота.</li>
+<li><strong>3</strong>: запросы проверены вручную без тестов, права проверяются только на экране или в коде без запроса от чужой роли, журнал заполнен формально, таблица проверок без фактических кодов.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Чем аутентификация отличается от авторизации?</li>
 <li>Что такое минимальные права и почему менеджеру не разрешено создавать учётные записи?</li>
 <li>Почему <code>401</code> и <code>403</code> разные коды и как клиент использует разницу?</li>
 <li>Зачем нужен журнал аудита, если в базе и так видно текущие роли и статусы?</li>
-<li>Почему API должен валидировать вход, если форма уже проверила поля?</li>
-<li>Что проверяет Postman, а что остаётся вне его проверок?</li>
-<li>Что изменится, если добавить роль <code>auditor</code> с правом только читать журнал?</li>
 <li>Почему роль нельзя выводить из текста токена и что случится, если это сделать?</li>
 </ol>
-<h3>Критерии оценки</h3>
-<ul>
-<li><strong>5</strong>: сервис работает, все тринадцать запросов коллекции проходят, коды <code>400</code>, <code>401</code>, <code>403</code>, <code>404</code> и <code>500</code> проверены и объяснены, пароль и токен не встречаются ни в ответах, ни в журнале, журнал показывает вход, отказ и изменение, чек-лист заполнен фактами, отчёт и защита полные.</li>
-<li><strong>4</strong>: сервис и коллекция работают, но один-два теста слабые, один отказ объяснён поверхностно или в отчёте не хватает скриншота.</li>
-<li><strong>3</strong>: запросы проверены вручную без тестов, права проверяются только на экране или в коде без запроса от чужой роли, журнал заполнен формально, таблица проверок без фактических кодов.</li>
-</ul></article><nav class="pager"><a class="" href="37-prakt-16.html"><span>← Предыдущее занятие</span>Практика 16. SQL-запрос с JOIN и агрегацией</a><a class="next" style="text-align:right;margin-left:auto" href="39-prakt-18.html"><span>Следующее занятие →</span>Практика 18. Документация API; Комплексный практикум</a></nav></main>
+</div></article><nav class="pager"><a class="" href="37-prakt-16.html"><span>← Предыдущее занятие</span>Практика 16. SQL-запрос с JOIN и агрегацией</a><a class="next" style="text-align:right;margin-left:auto" href="39-prakt-18.html"><span>Следующее занятие →</span>Практика 18. Документация API; Комплексный практикум</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

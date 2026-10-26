@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,8 +794,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 13</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Установка и базовая настройка серверной операционной системы</h1><p class="dek">Соберите учебный серверный узел: установите Ubuntu Server в виртуальной машине, настройте имя, сеть, время, обновления, SSH и защиту, затем докажите проверками, что узел готов к работе.</p></div>
-<div class="glyph" aria-hidden="true">П6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Установить серверную ОС в виртуальной машине</li><li>Настроить имя, сеть, время и обновления</li><li>Организовать удалённый доступ и базовую защиту</li><li>Проверить узел по чек-листу и оформить отчёт</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#установка">Установка</a></li><li><a href="#базовая-настройка">Базовая настройка</a></li><li><a href="#чек-лист-приёмки">Чек-лист приёмки</a></li><li><a href="#отчёт">Отчёт</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#что-сдать">Что сдать</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В лекции 7 мы разобрали, как ОС управляет процессами, памятью, файлами и службами. Теперь соберём учебный серверный узел целиком. Результат работы это виртуальная машина с установленной серверной ОС, настроенная по чек-листу, и отчёт с доказательствами: скриншотами, командами и результатами проверок.</p>
+<div class="glyph" aria-hidden="true">П6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Установить серверную ОС в виртуальной машине</li><li>Настроить имя, сеть, время и обновления</li><li>Организовать удалённый доступ и базовую защиту</li><li>Проверить узел по чек-листу и оформить отчёт</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Собрать учебный серверный узел целиком. В лекции 7 мы разобрали, как ОС управляет процессами, памятью, файлами и службами. Результат работы это виртуальная машина с установленной серверной ОС, настроенная по чек-листу, и отчёт с доказательствами: скриншотами, командами и результатами проверок.</p>
 <p>Основная часть это установка Ubuntu Server 24.04 LTS, имя узла, обновления, время и проверка SSH. Проброс порта SSH входит в базовую часть. Ключи, firewall и служебный пользователь входят в расширенную часть: её выполняют на занятии при запасе времени или дома в той же виртуальной машине, чтобы собрать полный отчёт.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>Виртуальная машина загружается, принимает вход по SSH, имеет понятное имя, синхронизированное время и установленные обновления. Для полного результата добавьте проброс порта 2222, вход по ключу, firewall и снимок состояния. Все проверки записаны в отчёт.</p></div>
 
@@ -791,18 +805,30 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Скачайте шаблон и заполняйте его по ходу работы. Чек-лист можно вести в таблице, а в отчёт вставить итоговые отметки и скриншоты.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Для работы нужны:</p>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>VirtualBox 7.x на учебном компьютере; настройки хоста не меняем, все действия идут внутри виртуальной машины;</li>
-<li>ISO Ubuntu Server 24.04 LTS amd64: файл <code>ubuntu-24.04-live-server-amd64.iso</code>, страница загрузки https://releases.ubuntu.com/24.04/;</li>
-<li>4096 МБ оперативной памяти, 2 процессорных ядра и 25 ГБ диска для виртуальной машины;</li>
-<li>сеть VirtualBox: адаптер 1 в режиме NAT;</li>
+<li>VirtualBox 7.x на учебном компьютере; настройки хоста не меняем, все действия идут внутри виртуальной машины.</li>
+<li>ISO Ubuntu Server 24.04 LTS amd64: файл <code>ubuntu-24.04-live-server-amd64.iso</code>, страница загрузки https://releases.ubuntu.com/24.04/.</li>
+<li>4096 МБ оперативной памяти, 2 процессорных ядра и 25 ГБ диска для виртуальной машины.</li>
+<li>Сеть VirtualBox: адаптер 1 в режиме NAT.</li>
 <li>PowerShell с командой <code>ssh</code> на рабочем компьютере.</li>
+<li>Шаблон отчёта и чек-лист проверок, скачанные в начале занятия.</li>
 </ul>
 <p>Если ISO уже лежит на учебном компьютере, скачивать его не нужно.</p>
 <div class="callout note"><span class="label">Ограничения учебного компьютера</span><p>Настройки Windows и системные параметры компьютера не меняем: их ограничивает администратор. Все действия выполняются внутри VirtualBox и виртуальной машины.</p></div>
 
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p><strong>Серверная операционная система</strong> управляет процессами, памятью, файлами и службами и обычно работает без графической оболочки. Администрирование идёт через терминал и удалённый вход, поэтому все проверки выполняются командами, а результат виден в их выводе.</p>
+<p><strong>Имя узла</strong> это постоянное имя машины в сети. Его задаёт <code>hostnamectl</code>, а строка <code>127.0.1.1</code> в <code>/etc/hosts</code> позволяет системе быстро разрешать собственное имя, не обращаясь к внешнему DNS.</p>
+<p><strong>Сеть в режиме NAT</strong> выдаёт адрес по DHCP и даёт выход в интернет через хост. Маршрут по умолчанию ведёт через шлюз NAT, а доступ с рабочего компьютера к гостю настраивают пробросом порта: хост слушает свой порт и передаёт соединение на порт гостя.</p>
+<p><strong>Обновления</strong> закрывают уязвимости и исправляют ошибки. Их ставят до настройки служб, чтобы не проверять firewall и SSH на устаревшей системе. После обновления ядра нужна перезагрузка, а <code>systemctl --failed</code> показывает, не осталось ли сбойных юнитов.</p>
+<p><strong>Синхронизация времени</strong> нужна для журналов, сертификатов и протоколов. Служба <code>systemd-timesyncd</code> получает время по NTP, а <code>timedatectl</code> показывает часовой пояс и признак синхронизации.</p>
+<p><strong>SSH</strong> даёт удалённый вход. Вход по ключу безопаснее пароля: закрытый ключ остаётся на рабочем компьютере, а на сервере лежит только открытый. Пароль отключают только после успешной проверки входа по ключу, иначе можно потерять доступ.</p>
+<p><strong>Firewall</strong> по умолчанию закрывает входящие соединения. Сначала разрешают SSH, затем порт службы и только после этого включают firewall, иначе текущая сессия закроется и новая не откроется.</p>
+<p><strong>Служебный пользователь</strong> запускает приложение без прав администратора. Каталог с правами <code>0750</code> доступен владельцу и группе, а остальные пользователи в него не попадают. <strong>Снимок</strong> виртуальной машины возвращает стенд в учебное состояние, но не заменяет резервную копию данных.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<p>Работа идёт в VirtualBox. Сначала создайте машину и установите систему, затем настройте узел и проверьте его по чек-листу. Все действия выполняются внутри виртуальной машины.</p>
+<h3>Шаг 1. Создайте виртуальную машину</h3>
 <p>Создайте виртуальную машину со следующими параметрами:</p>
 <table>
 <thead>
@@ -839,17 +865,14 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Перед установкой сделайте снимок чистой машины с именем <code>before-install</code>. Если установка пойдёт не так, вы вернётесь к чистому состоянию, а не будете устанавливать систему заново.</p>
-<h2 id="установка"><span class="num">03</span>Установка</h2>
-<h3>Шаг 1. Загрузка установщика</h3>
-<p>Запустите виртуальную машину с ISO. Дождитесь меню загрузки и выберите установку Ubuntu Server. Если экран остаётся чёрным, проверьте, что ISO подключён к виртуальному приводу и что в настройках ВМ включена загрузка с него.</p>
-<div class="callout shot"><span class="label">Скриншот 1</span><p>Первый экран установщика с выбранным языком.</p></div>
-
-<h3>Шаг 2. Язык и раскладка</h3>
+<h3>Шаг 2. Запустите установщик</h3>
+<p>Запустите виртуальную машину с ISO. Дождитесь меню загрузки и выберите установку Ubuntu Server. Если экран остаётся чёрным, проверьте, что ISO подключён к виртуальному приводу и что в настройках ВМ включена загрузка с него. Скриншот экрана установщика не нужен: установленную систему доказывают проверки после первой загрузки.</p>
+<h3>Шаг 3. Выберите язык и раскладку</h3>
 <p>Выберите английский язык установки и русскую раскладку клавиатуры. Английский интерфейс удобнее для команд и сообщений об ошибках, а русская раскладка нужна для ввода текста.</p>
-<h3>Шаг 3. Сеть</h3>
+<h3>Шаг 4. Настройте сеть</h3>
 <p>Установщик предложит настроить основной интерфейс. Оставьте DHCP: NAT выдаст адрес, а SSH с хоста будет подключаться через проброс порта 2222. Адрес внутри виртуальной машины записывать не нужно. Если DHCP не выдаёт адрес, проверьте, что виртуальный адаптер подключён и что в гипервизоре выбран режим NAT.</p>
 <p>Не меняйте режим NAT на этом шаге. Сначала получите рабочую сеть и доступ к обновлениям, затем настройте проброс порта.</p>
-<h3>Шаг 4. Диск</h3>
+<h3>Шаг 5. Разметьте диск</h3>
 <p>Выберите автоматическую разметку всего диска. Для учебного узла не нужны отдельные разделы под <code>/home</code> и <code>/var</code>, но запомните схему:</p>
 <ul>
 <li><code>/</code> корневая файловая система;</li>
@@ -858,7 +881,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>swap файл или раздел.</li>
 </ul>
 <p>Автоматическая разметка создаст нужные разделы. Не включайте шифрование диска: для учебного стенда оно не требуется, а потеря ключа означает потерю данных.</p>
-<h3>Шаг 5. Пользователь и SSH</h3>
+<h3>Шаг 6. Создайте пользователя и включите SSH</h3>
 <p>Создайте административного пользователя:</p>
 <table>
 <thead>
@@ -887,71 +910,72 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>В списке дополнительных компонентов отметьте <strong>Install OpenSSH server</strong>. Если пропустили, SSH можно установить позже командой <code>sudo apt install openssh-server</code>.</p>
-<h3>Шаг 6. Завершение установки</h3>
+<h3>Шаг 7. Завершите установку</h3>
 <p>Дождитесь копирования пакетов. После предложения перезагрузиться извлеките ISO или отключите его в настройках ВМ, иначе установщик запустится снова. Войдите в систему под пользователем <code>student</code>.</p>
-<div class="callout shot"><span class="label">Скриншот 2</span><p>Приглашение входа после первой загрузки и вывод <code>hostnamectl</code>.</p></div>
-
-<h3>Шаг 7. Первый вход и проверка</h3>
+<h3>Шаг 8. Войдите и проверьте систему</h3>
 <p>Выполните команды:</p>
-<div class="codehilite"><pre><span></span><code>hostnamectl
+<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Фамилия И.О., группа&quot;</span>
+hostnamectl
 ip<span class="w"> </span>-br<span class="w"> </span>a
 ip<span class="w"> </span>route
 df<span class="w"> </span>-h
 free<span class="w"> </span>-h
 </code></pre></div>
 
-<p>Убедитесь, что имя узла <code>uifis-srv01</code>, интерфейс получил адрес, маршрут по умолчанию существует, корневой раздел смонтирован, память видна. Если имя другое, исправьте его на следующем шаге.</p>
-<h2 id="базовая-настройка"><span class="num">04</span>Базовая настройка</h2>
-<h3>Шаг 8. Имя узла и локальная запись</h3>
+<p>Вместо строки с фамилией подставьте свои данные: она нужна как доказательство авторства на скриншоте. Убедитесь, что имя узла <code>uifis-srv01</code>, интерфейс получил адрес, маршрут по умолчанию существует, корневой раздел смонтирован, память видна. Если имя другое, исправьте его на следующем шаге.</p>
+<p>Приложите скриншот вывода, в первой строке которого видны фамилия и группа, а ниже вывод <code>hostnamectl</code> и <code>ip -br a</code>.</p>
+<h3>Шаг 9. Задайте имя узла и локальную запись</h3>
 <p>Задайте имя и проверьте файл <code>/etc/hosts</code>:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>uifis-srv01
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>uifis-srv01
 sudo<span class="w"> </span>nano<span class="w"> </span>/etc/hosts
 </code></pre></div>
 
 <p>В файле должна быть строка:</p>
-<div class="codehilite"><pre><span></span><code>127.0.1.1 uifis-srv01
+<div class="codehilite" data-lang="text"><pre><span></span><code>127.0.1.1 uifis-srv01
 </code></pre></div>
 
 <p>Она нужна, чтобы система быстро разрешала собственное имя. После изменения проверьте:</p>
-<div class="codehilite"><pre><span></span><code>hostnamectl
+<div class="codehilite" data-lang="bash"><pre><span></span><code>hostnamectl
 hostname
 </code></pre></div>
 
-<h3>Шаг 9. Обновления</h3>
+<h3>Шаг 10. Установите обновления</h3>
 <p>Обновите список пакетов и установите обновления:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
 sudo<span class="w"> </span>apt<span class="w"> </span>full-upgrade<span class="w"> </span>-y
 sudo<span class="w"> </span>apt<span class="w"> </span>autoremove<span class="w"> </span>-y
 </code></pre></div>
 
 <p>Если обновилось ядро, перезагрузите машину:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>reboot
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>reboot
 </code></pre></div>
 
 <p>После перезагрузки снова войдите и проверьте, что система загрузилась:</p>
-<div class="codehilite"><pre><span></span><code>uname<span class="w"> </span>-r
+<div class="codehilite" data-lang="bash"><pre><span></span><code>uname<span class="w"> </span>-r
 systemctl<span class="w"> </span>--failed
 </code></pre></div>
 
 <p><code>systemctl --failed</code> должен показать <code>0 loaded units listed</code>. Если есть сбойный юнит, откройте его журнал:</p>
-<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>&lt;имя-юнита&gt;
+<div class="codehilite" data-lang="bash"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>&lt;имя-юнита&gt;
 journalctl<span class="w"> </span>-u<span class="w"> </span>&lt;имя-юнита&gt;<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
 </code></pre></div>
 
-<h3>Шаг 10. Время и часовой пояс</h3>
+<p>Приложите скриншот вывода <code>uname -r</code> и <code>systemctl --failed</code>.</p>
+<h3>Шаг 11. Настройте время и часовой пояс</h3>
 <p>Для Свердловской области:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>Asia/Yekaterinburg
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>timedatectl<span class="w"> </span>set-timezone<span class="w"> </span>Asia/Yekaterinburg
 sudo<span class="w"> </span>timedatectl<span class="w"> </span>set-ntp<span class="w"> </span><span class="nb">true</span>
 timedatectl
 </code></pre></div>
 
 <p>В выводе должно быть <code>System clock synchronized: yes</code> и правильный часовой пояс. Если синхронизация не работает, проверьте доступ к UDP-порту 123 и службу:</p>
-<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>systemd-timesyncd
+<div class="codehilite" data-lang="bash"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>systemd-timesyncd
 </code></pre></div>
 
-<div class="callout note"><span class="label">Расширенная часть</span><p>Шаг 11 обязателен для SSH. Шаги 12-14 можно выполнить дома или на занятии,. Они нужны для полного отчёта, но не блокируют сдачу установленного и обновлённого узла.</p></div>
+<p>Приложите скриншот вывода <code>timedatectl</code>.</p>
+<div class="callout note"><span class="label">Расширенная часть</span><p>Проброс порта обязателен для SSH. Шаги 13-15 нужны для полного отчёта, но не блокируют сдачу установленного и обновлённого узла.</p></div>
 
-<h3>Шаг 11. Проброс SSH-порта в VirtualBox</h3>
+<h3>Шаг 12. Настройте проброс SSH-порта в VirtualBox</h3>
 <p>Выключите виртуальную машину. В VirtualBox откройте <strong>Настройки → Сеть → Адаптер 1 → Дополнительно → Проброс портов</strong> и добавьте правило:</p>
 <table>
 <thead>
@@ -976,67 +1000,70 @@ timedatectl
 </tbody>
 </table>
 <p>Включите машину и проверьте подключение с рабочего компьютера в PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span>
 </code></pre></div>
 
 <p>Первый вход спросит подтверждение ключа хоста и пароль <code>UifisLab2026!</code>. Если подключение не открывается, проверьте, что виртуальная машина запущена, служба SSH включена, а правило проброса сохранено.</p>
-<h3>Шаг 12. SSH и ключи</h3>
+<p>Приложите скриншот правила проброса в VirtualBox и окна PowerShell с успешным входом: после входа выполните <code>hostname</code> и <code>whoami</code>, чтобы на снимке было видно, куда вы попали.</p>
+<h3>Шаг 13. Настройте SSH и ключи</h3>
 <p>Проверьте, что служба SSH работает:</p>
-<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>ssh
+<div class="codehilite" data-lang="bash"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>ssh
 sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>ssh
 </code></pre></div>
 
 <p>На рабочем компьютере создайте ключ, если его ещё нет:</p>
-<div class="codehilite"><pre><span></span><code>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;uifis-student&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;uifis-student&quot;</span>
 </code></pre></div>
 
 <p>Скопируйте открытый ключ на сервер. В PowerShell выполните одну команду; пароль <code>UifisLab2026!</code> она спросит один раз:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">type </span><span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">ssh</span><span class="p">\</span><span class="n">id_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="p">|</span> <span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="s2">&quot;mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">type </span><span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">ssh</span><span class="p">\</span><span class="n">id_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="p">|</span> <span class="n">ssh</span> <span class="n">-p</span> <span class="n">2222</span> <span class="n">student</span><span class="nv">@127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="s2">&quot;mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;</span>
 </code></pre></div>
 
 <p>Проверьте вход по ключу в новом окне терминала:</p>
-<div class="codehilite"><pre><span></span><code>ssh<span class="w"> </span>-p<span class="w"> </span><span class="m">2222</span><span class="w"> </span>student@127.0.0.1
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ssh<span class="w"> </span>-p<span class="w"> </span><span class="m">2222</span><span class="w"> </span>student@127.0.0.1
 </code></pre></div>
 
 <p>Только после успешного входа отключайте пароль. Создайте отдельный файл настроек:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/ssh/sshd_config.d/99-uifis.conf
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/ssh/sshd_config.d/99-uifis.conf
 </code></pre></div>
 
 <p>Содержимое:</p>
-<div class="codehilite"><pre><span></span><code>PermitRootLogin no
+<div class="codehilite" data-lang="text"><pre><span></span><code>PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
 </code></pre></div>
 
 <p>Проверьте конфигурацию и перезагрузите службу, не закрывая текущую сессию:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>sshd<span class="w"> </span>-t
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>sshd<span class="w"> </span>-t
 sudo<span class="w"> </span>systemctl<span class="w"> </span>reload<span class="w"> </span>ssh
 </code></pre></div>
 
 <p>Если в новом окне вход по ключу не работает, вернитесь в открытую сессию и посмотрите журнал:</p>
-<div class="codehilite"><pre><span></span><code>journalctl<span class="w"> </span>-u<span class="w"> </span>ssh<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>journalctl<span class="w"> </span>-u<span class="w"> </span>ssh<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
 </code></pre></div>
 
-<h3>Шаг 13. Firewall</h3>
+<p>Приложите скриншот входа по ключу без запроса пароля.</p>
+<h3>Шаг 14. Включите firewall</h3>
 <p>Разрешите SSH до включения firewall, иначе можно потерять удалённый доступ:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ufw<span class="w"> </span>-y
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ufw<span class="w"> </span>-y
 sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>OpenSSH
 sudo<span class="w"> </span>ufw<span class="w"> </span><span class="nb">enable</span>
 sudo<span class="w"> </span>ufw<span class="w"> </span>status<span class="w"> </span>verbose
 </code></pre></div>
 
 <p>Для учебного узла достаточно SSH. Если позже появится веб-сервер, отдельно разрешат порт 80 или 443. Не открывайте все порты «на всякий случай».</p>
-<h3>Шаг 14. Служебный пользователь и каталог</h3>
+<p>Приложите скриншот вывода <code>sudo ufw status verbose</code>.</p>
+<h3>Шаг 15. Создайте служебного пользователя и каталог</h3>
 <p>Приложение не должно работать от <code>student</code> или <code>root</code>. Создайте отдельного пользователя без входа в оболочку:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>adduser<span class="w"> </span>--system<span class="w"> </span>--group<span class="w"> </span>--home<span class="w"> </span>/srv/uifis<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>uifis
 sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-o<span class="w"> </span>uifis<span class="w"> </span>-g<span class="w"> </span>uifis<span class="w"> </span>-m<span class="w"> </span><span class="m">0750</span><span class="w"> </span>/srv/uifis
 ls<span class="w"> </span>-ld<span class="w"> </span>/srv/uifis
 </code></pre></div>
 
-<p>Права <code>0750</code> означают: владелец читает, пишет и заходит; группа читает и заходит; остальные не имеют доступа. Это минимальные права для каталога приложения.</p>
-<h3>Шаг 15. Проверка и снимок</h3>
+<p>Права <code>0750</code> означают: владелец читает, пишет и заходит; группа читает и заходит; остальные не имеют доступа. Это минимальные права для каталога приложения. Приложите скриншот вывода <code>ls -ld /srv/uifis</code>.</p>
+<h3>Шаг 16. Выполните итоговые проверки и снимок</h3>
 <p>Выполните итоговые проверки:</p>
-<div class="codehilite"><pre><span></span><code>hostnamectl
+<div class="codehilite" data-lang="bash"><pre><span></span><code>hostnamectl
 timedatectl
 ip<span class="w"> </span>-br<span class="w"> </span>a
 ip<span class="w"> </span>route
@@ -1052,8 +1079,8 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 </code></pre></div>
 
 <p><code>journalctl -p 3 -b</code> показывает сообщения уровня ошибки за текущую загрузку. Отдельные предупреждения допустимы, но повторяющиеся ошибки нужно объяснить.</p>
-<p>Сделайте снимок виртуальной машины с именем <code>after-base-setup</code>. Снимок удобен для возврата стенда в учебное состояние, но он не заменяет резервную копию данных.</p>
-<h2 id="чек-лист-приёмки"><span class="num">05</span>Чек-лист приёмки</h2>
+<p>Приложите скриншоты вывода <code>df -h</code> и <code>free -h</code>, а также <code>journalctl -p 3 -b</code>. Сделайте снимок виртуальной машины с именем <code>after-base-setup</code>. Снимок удобен для возврата стенда в учебное состояние, но он не заменяет резервную копию данных.</p>
+<h3>Шаг 17. Заполните чек-лист приёмки</h3>
 <table>
 <thead>
 <tr>
@@ -1144,18 +1171,35 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 </tr>
 </tbody>
 </table>
-<h2 id="отчёт"><span class="num">06</span>Отчёт</h2>
+<h3>Шаг 18. Оформите отчёт</h3>
 <p>В отчёте должны быть:</p>
 <ol>
 <li>Параметры виртуальной машины: имя, память, процессоры, диск, сеть.</li>
 <li>Схема разделов из вывода <code>lsblk -f</code> или <code>df -h</code>.</li>
 <li>Заполненный чек-лист с фактическими результатами.</li>
-<li>Скриншоты: первый экран установщика, вход после загрузки, вывод <code>ip -br a</code>, <code>systemctl --failed</code>, <code>sudo ufw status verbose</code>, успешный вход по SSH.</li>
+<li>Скриншоты: <code>hostnamectl</code> и <code>ip -br a</code>, <code>uname -r</code> и <code>systemctl --failed</code>, <code>timedatectl</code>, правило проброса и вход по SSH, вход по ключу, <code>sudo ufw status verbose</code>, <code>ls -ld /srv/uifis</code>, <code>df -h</code>, <code>free -h</code>, <code>journalctl -p 3 -b</code>.</li>
 <li>Один абзац о том, какая настройка вызвала трудности и как вы её проверили.</li>
 <li>Ответы на контрольные вопросы.</li>
 </ol>
 <p>Не вставляйте пароли, закрытые ключи и полные серийные номера. Для отчёта достаточно имени пользователя, адреса стенда и версии ОС.</p>
+<p>Скриншот самого документа не нужен: отчёт сдаётся файлом DOCX.</p>
+<h3>Шаг 19. Сохраните и сдайте отчёт</h3>
+<p>Перед сдачей закройте лишние окна, проверьте, что в отчёте нет паролей и что все скриншоты читаются без увеличения. Сохраните файл в DOCX.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<p>Сдайте результат:</p>
+<ul>
+<li>файл отчёта в DOCX с заполненными таблицами и скриншотами;</li>
+<li>заполненный чек-лист в CSV или в таблице отчёта;</li>
+<li>имя виртуальной машины и порт <code>2222</code>, по которому можно проверить стенд.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: система установлена и обновлена, имя, время и сеть настроены, SSH работает через проброс порта, вход по ключу проверен, firewall и служебный пользователь настроены, чек-лист заполнен фактическими результатами.</li>
+<li><strong>4</strong>: узел работает, но одна из проверок расширенной части не выполнена или в чек-листе указан ожидаемый результат вместо фактического.</li>
+<li><strong>3</strong>: система установлена, но имя, время или SSH настроены частично, firewall не проверен, отчёт без скриншотов проверок.</li>
+</ul>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Почему обновления устанавливают до настройки служб, а не после?</li>
 <li>Почему вход по SSH-ключу безопаснее пароля и что нужно проверить до отключения пароля?</li>
@@ -1163,14 +1207,7 @@ journalctl<span class="w"> </span>-p<span class="w"> </span><span class="m">3</s
 <li>Что проверить, если SSH через порт 2222 перестал подключаться?</li>
 <li>Почему снимок виртуальной машины не заменяет резервную копию данных?</li>
 </ol>
-<h2 id="что-сдать"><span class="num">08</span>Что сдать</h2>
-<p>Сдайте результат:</p>
-<ul>
-<li>файл отчёта в DOCX с заполненными таблицами и скриншотами;</li>
-<li>заполненный чек-лист в CSV или в таблице отчёта;</li>
-<li>имя виртуальной машины и порт <code>2222</code>, по которому можно проверить стенд.</li>
-</ul>
-<p>Перед сдачей закройте лишние окна, проверьте, что в отчёте нет паролей и что все скриншоты читаются без увеличения.</p></article><nav class="pager"><a class="" href="12-lek-07.html"><span>← Предыдущее занятие</span>Лекция 7. Системное программное обеспечение и операционные системы</a><a class="next" style="text-align:right;margin-left:auto" href="14-lek-08.html"><span>Следующее занятие →</span>Лекция 8. Системы управления базами данных в составе ИС</a></nav></main>
+</div></article><nav class="pager"><a class="" href="12-lek-07.html"><span>← Предыдущее занятие</span>Лекция 7. Системное программное обеспечение и операционные системы</a><a class="next" style="text-align:right;margin-left:auto" href="14-lek-08.html"><span>Следующее занятие →</span>Лекция 8. Системы управления базами данных в составе ИС</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

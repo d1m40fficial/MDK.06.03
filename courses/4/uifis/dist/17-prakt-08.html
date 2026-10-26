@@ -241,6 +241,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
 .prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
 .prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
 
 .prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
 .prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
@@ -780,8 +794,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 17</span><span class="pill">Устройство и функционирование информационной системы</span></div>
 <div class="hero-panel"><h1>Настройка сети и диагностика соединений</h1><p class="dek">Свяжите две учебные виртуальные машины внутренней сетью, поднимите службу, проверьте её с другой машины и найдите пять типовых неисправностей.</p></div>
-<div class="glyph" aria-hidden="true">П8</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настроить два сетевых адаптера в VirtualBox</li><li>Задать статические адреса во внутренней сети через netplan</li><li>Проверить связность, порт и прикладной ответ</li><li>Найти и исправить ошибки адресации, службы и firewall</li><li>Оформить отчёт с диагностикой</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#что-делаем">Что делаем</a></li><li><a href="#подготовка">Подготовка</a></li><li><a href="#шаг-1-имена-интерфейсов">Шаг 1. Имена интерфейсов</a></li><li><a href="#шаг-2-настройка-сервера">Шаг 2. Настройка сервера</a></li><li><a href="#шаг-3-настройка-клиента">Шаг 3. Настройка клиента</a></li><li><a href="#шаг-4-проверка-связности">Шаг 4. Проверка связности</a></li><li><a href="#шаг-5-http-служба">Шаг 5. HTTP-служба</a></li><li><a href="#шаг-6-пять-неисправностей">Шаг 6. Пять неисправностей</a></li><li><a href="#шаг-7-заполнение-диагностики">Шаг 7. Заполнение диагностики</a></li><li><a href="#шаг-8-отчёт">Шаг 8. Отчёт</a></li><li><a href="#чек-лист">Чек-лист</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li><li><a href="#что-сдать">Что сдать</a></li></ol></nav><article class="prose"><h2 id="что-делаем"><span class="num">01</span>Что делаем</h2>
-<p>В лекции 9 мы прошли путь пакета: адреса, маска, шлюз, порты, TCP и диагностика по слоям. Теперь соберём сеть из двух виртуальных машин и проверим её на практике.</p>
+<div class="glyph" aria-hidden="true">П8</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настроить два сетевых адаптера в VirtualBox</li><li>Задать статические адреса во внутренней сети через netplan</li><li>Проверить связность, порт и прикладной ответ</li><li>Найти и исправить ошибки адресации, службы и firewall</li><li>Оформить отчёт с диагностикой</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Собрать сеть из двух виртуальных машин и проверить её на практике. В лекции 9 мы прошли путь пакета: адреса, маска, шлюз, порты, TCP и диагностика по слоям.</p>
 <p>Схема простая. У каждой машины два адаптера. Первый работает в режиме <strong>NAT</strong> и даёт выход в интернет через хост. Второй подключён к <strong>внутренней сети</strong> VirtualBox с именем <code>uifis-net</code> и связывает машины напрямую. Внутренняя сеть не требует host-only адаптера и не меняет настройки Windows на учебном компьютере.</p>
 <p>Результат работы это работающая связь между двумя машинами, HTTP-служба на сервере, диагностическая таблица и отчёт с пятью найденными неисправностями.</p>
 <div class="callout note"><span class="label">Что считается готовым результатом</span><p>Клиент пингует сервер по адресу <code>10.10.0.10</code>, получает HTTP-ответ с порта 8080 и входит по SSH. В отчёте есть схема сети, вывод проверок и разбор пяти неисправностей.</p></div>
@@ -793,8 +807,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Скачайте файлы в папку практики. Шаблон netplan содержит адрес сервера, для клиента измените последний октет.</p>
 </div>
 
-<h2 id="подготовка"><span class="num">02</span>Подготовка</h2>
-<p>Нужны две виртуальные машины с Ubuntu Server 24.04 LTS:</p>
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<p>Нужны две виртуальные машины Ubuntu Server 24.04 LTS:</p>
 <table>
 <thead>
 <tr>
@@ -819,7 +833,22 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
+<p>Также нужны:</p>
+<ul>
+<li>шаблон отчёта, таблица диагностики и шаблон netplan, скачанные в начале занятия;</li>
+<li>терминал на каждой машине и доступ к настройкам VirtualBox.</li>
+</ul>
 <p>Если машина <code>uifis-srv01</code> уже создана на практике 6, используйте её. Вторую машину можно создать с нуля или клонировать первую, затем сменить имя и MAC-адреса адаптеров.</p>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p><strong>Адрес и маска</strong> задают сеть, в которой работает узел. Два адреса попадают в одну сеть, только если совпадают их сетевые части. При маске <code>/24</code> первые три октета адреса описывают сеть, а последний октет задаёт номер узла.</p>
+<p><strong>Шлюз</strong> нужен для выхода в другие сети. Внутри локальной сети <code>10.10.0.0/24</code> шлюз не требуется: узлы видят друг друга напрямую. Если задать шлюз на обоих интерфейсах, появится два маршрута по умолчанию и непредсказуемая маршрутизация.</p>
+<p><strong>NAT и внутренняя сеть.</strong> Адаптер NAT даёт выход в интернет и адрес по DHCP. Адаптер Internal Network соединяет машины между собой и не выходит наружу. Имя внутренней сети должно совпадать на обеих машинах до символа.</p>
+<p><strong>Порты и службы.</strong> Служба слушает адрес и порт. Запись <code>0.0.0.0:8080</code> означает все адреса машины, <code>127.0.0.1:8080</code> только loopback. Поэтому служба, привязанная к loopback, недоступна с другой машины, даже если ping проходит.</p>
+<p><strong>TCP и прикладной ответ.</strong> <code>curl -I</code> проверяет, что служба отвечает по HTTP. Отказ <code>connection refused</code> означает, что порт закрыт или служба не слушает адрес. Тайм-аут чаще указывает на firewall или потерю маршрута.</p>
+<p><strong>Диагностика по слоям.</strong> Сначала проверяют адрес и маршрут (<code>ip -br a</code>, <code>ip route</code>), затем доступность узла (<code>ping</code>), разрешение MAC (<code>ip neigh</code>), затем порт (<code>ss</code>), приложение (<code>curl</code>), firewall (<code>ufw</code>) и имя (<code>resolvectl</code>, <code>getent</code>). Так ошибка находится на своём слое, а не угадывается.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<p>Работа идёт на двух виртуальных машинах. Настройте адаптеры, задайте адреса, проверьте связность и службу, затем разберите пять неисправностей и верните стенд в рабочее состояние.</p>
+<h3>Шаг 1. Подготовьте две машины</h3>
 <p>На каждой машине должно быть два адаптера:</p>
 <table>
 <thead>
@@ -844,26 +873,26 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>В VirtualBox откройте <code>Настройки -&gt; Сеть</code>. Для второго адаптера включите <code>Enable Network Adapter</code>, выберите <code>Internal Network</code> и введите имя <code>uifis-net</code>. Имя должно совпадать на обеих машинах до символа.</p>
 <p>Не включайте host-only сеть и не меняйте настройки Windows на хосте. Всё, что нужно, находится внутри виртуальных машин.</p>
-<div class="callout shot"><span class="label">Скриншот 1</span><p>Настройки двух адаптеров на сервере и клиенте.</p></div>
-
-<h2 id="шаг-1-имена-интерфейсов"><span class="num">03</span>Шаг 1. Имена интерфейсов</h2>
-<p>Запустите обе машины и войдите под пользователем <code>student</code>. Посмотрите интерфейсы:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
+<p>Приложите скриншот настроек двух адаптеров на сервере и клиенте: на нём видно режим NAT, режим Internal Network и имя <code>uifis-net</code>.</p>
+<h3>Шаг 2. Определите имена интерфейсов</h3>
+<p>Запустите обе машины и войдите под пользователем <code>student</code>. Посмотрите интерфейсы. Первую команду начните с вывода фамилии и группы, чтобы на скриншоте было видно авторство:</p>
+<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Фамилия И.О., группа&quot;</span>
+ip<span class="w"> </span>-br<span class="w"> </span>a
 </code></pre></div>
 
 <p>В типичной установке VirtualBox первый адаптер называется <code>enp0s3</code>, второй <code>enp0s8</code>. Имена могут отличаться. Найдите интерфейс, который появился после добавления второго адаптера и пока не имеет адреса.</p>
 <p>Посмотрите маршруты:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>route
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ip<span class="w"> </span>route
 </code></pre></div>
 
 <p>Через NAT должен быть маршрут <code>default via 10.0.2.2</code>. Внутренний интерфейс пока без адреса, поэтому маршрута <code>10.10.0.0/24</code> ещё нет.</p>
-<h2 id="шаг-2-настройка-сервера"><span class="num">04</span>Шаг 2. Настройка сервера</h2>
+<h3>Шаг 3. Настройте сервер</h3>
 <p>Создайте файл netplan:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/netplan/60-uifis-net.yaml
 </code></pre></div>
 
 <p>Вставьте конфигурацию:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">enp0s3</span><span class="p">:</span>
@@ -879,44 +908,44 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Замените <code>enp0s3</code> и <code>enp0s8</code> на свои имена. Сохраните файл: в nano это <code>Ctrl+O</code>, <code>Enter</code>, затем <code>Ctrl+X</code>.</p>
 <p>Закройте права на файл:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
 </code></pre></div>
 
 <p>Проверьте конфигурацию:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>try
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>try
 </code></pre></div>
 
 <p>Netplan покажет параметры и подождёт подтверждения. Если ошибок нет, нажмите <code>Enter</code>. Если конфигурация неверна, подождите, и прежние настройки вернутся. После успешной проверки примените файл:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 </code></pre></div>
 
 <p>Проверьте результат:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ip<span class="w"> </span>-br<span class="w"> </span>a
 ip<span class="w"> </span>route
 </code></pre></div>
 
 <p>На внутреннем интерфейсе должен появиться адрес <code>10.10.0.10/24</code>. Маршрут по умолчанию должен идти через NAT, а не через внутреннюю сеть.</p>
 <p>Почему на внутреннем интерфейсе нет шлюза? Потому что <code>10.10.0.0/24</code> это локальная сеть. Шлюз нужен только для выхода в другие сети, а выход уже обеспечивает NAT-интерфейс. Если указать шлюз на обоих интерфейсах, появится два default-маршрута и непредсказуемая маршрутизация.</p>
-<h2 id="шаг-3-настройка-клиента"><span class="num">05</span>Шаг 3. Настройка клиента</h2>
+<h3>Шаг 4. Настройте клиент</h3>
 <p>Повторите настройку на <code>uifis-cli01</code>, изменив адрес:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">addresses</span><span class="p">:</span>
+<div class="codehilite" data-lang="yaml"><pre><span></span><code><span class="nt">addresses</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.10.0.20/24</span>
 </code></pre></div>
 
 <p>Имя внутренней сети и имена интерфейсов должны совпадать с сервером. Примените файл так же:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/netplan/60-uifis-net.yaml
 sudo<span class="w"> </span>netplan<span class="w"> </span>try
 sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 </code></pre></div>
 
 <p>Проверьте адрес и маршрут. Теперь у сервера <code>10.10.0.10</code>, у клиента <code>10.10.0.20</code>, маска <code>/24</code>.</p>
-<h2 id="шаг-4-проверка-связности"><span class="num">06</span>Шаг 4. Проверка связности</h2>
+<h3>Шаг 5. Проверьте связность</h3>
 <p>С клиента выполните:</p>
-<div class="codehilite"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.10
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.10
 </code></pre></div>
 
 <p>Ожидается три успешных ответа и нулевые потери. Затем посмотрите таблицу соседей:</p>
-<div class="codehilite"><pre><span></span><code>ip<span class="w"> </span>neigh
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ip<span class="w"> </span>neigh
 </code></pre></div>
 
 <p>Для адреса <code>10.10.0.10</code> должен появиться MAC-адрес сервера. Если ping не проходит, проверьте по порядку:</p>
@@ -928,15 +957,14 @@ sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 <li>Внутренний интерфейс поднят и имеет состояние <code>UP</code>.</li>
 </ol>
 <p>Проверьте обратное направление:</p>
-<div class="codehilite"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.20
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.0.20
 </code></pre></div>
 
 <p>Связь должна работать в обе стороны. Если ping идёт только в одну сторону, ищите асимметричную настройку или firewall.</p>
-<div class="callout shot"><span class="label">Скриншот 2</span><p>Вывод <code>ip -br a</code> на сервере и клиенте, где видны оба адреса.</p></div>
-
-<h2 id="шаг-5-http-служба"><span class="num">07</span>Шаг 5. HTTP-служба</h2>
+<p>Приложите скриншот вывода <code>ip -br a</code> на сервере и клиенте, где видны оба адреса, и вывод <code>ping</code> с нулевыми потерями.</p>
+<h3>Шаг 6. Поднимите HTTP-службу</h3>
 <p>На сервере создайте простую страницу и запустите HTTP-сервер:</p>
-<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/uifis-http
+<div class="codehilite" data-lang="bash"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/uifis-http
 <span class="nb">cd</span><span class="w"> </span>/srv/uifis-http
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;uifis network ok&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>index.html
 nohup<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8080</span><span class="w"> </span>--bind<span class="w"> </span><span class="m">10</span>.10.0.10<span class="w"> </span>&gt;/tmp/uifis-http.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
@@ -944,75 +972,73 @@ nohup<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> <
 
 <p>Команда <code>--bind 10.10.0.10</code> важна. Она заставляет службу слушать внутренний адрес, а не только <code>127.0.0.1</code>. Без этого клиент не подключится.</p>
 <p>Проверьте, что порт слушается:</p>
-<div class="codehilite"><pre><span></span><code>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
 </code></pre></div>
 
 <p>В выводе должен быть адрес <code>10.10.0.10:8080</code>. Теперь с клиента:</p>
-<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-I<span class="w"> </span>http://10.10.0.10:8080/
+<div class="codehilite" data-lang="bash"><pre><span></span><code>curl<span class="w"> </span>-I<span class="w"> </span>http://10.10.0.10:8080/
 </code></pre></div>
 
 <p>Ожидается строка <code>HTTP/1.0 200 OK</code>. Если соединение отклонено, смотрите <code>ss</code> на сервере. Если запрос зависает, проверяйте firewall.</p>
 <p>Если на сервере включён <code>ufw</code>, разрешите порт только для учебной сети:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>status
 sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
 sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">22</span><span class="w"> </span>proto<span class="w"> </span>tcp
 </code></pre></div>
 
 <p>Не открывайте порт всему интернету. NAT-интерфейс не должен принимать HTTP-запросы снаружи.</p>
 <p>Проверьте SSH с клиента:</p>
-<div class="codehilite"><pre><span></span><code>ssh<span class="w"> </span>student@10.10.0.10
+<div class="codehilite" data-lang="bash"><pre><span></span><code>ssh<span class="w"> </span>student@10.10.0.10
 </code></pre></div>
 
 <p>Первый вход попросит подтвердить отпечаток ключа. После входа выполните <code>hostname</code> и убедитесь, что попали на сервер. Выход командой <code>exit</code>.</p>
-<div class="callout shot"><span class="label">Скриншот 3</span><p>Успешный <code>curl -I</code> с клиента и вывод <code>ss -tlnp</code> на сервере.</p></div>
-
-<h2 id="шаг-6-пять-неисправностей"><span class="num">08</span>Шаг 6. Пять неисправностей</h2>
+<p>Приложите скриншот успешного <code>curl -I</code> с клиента и вывода <code>ss -tlnp</code> на сервере.</p>
+<h3>Шаг 7. Разберите пять неисправностей</h3>
 <p>Неисправности выполняйте по одной. После каждой возвращайте рабочее состояние, иначе следующая проверка будет непонятной.</p>
-<h3>Неисправность 1. Неверная подсеть</h3>
+<h4>Неисправность 1. Неверная подсеть</h4>
 <p>На клиенте временно поставьте адрес <code>10.20.0.20/24</code> и примените netplan. Проверьте <code>ping -c 3 10.10.0.10</code>: связь пропадёт, потому что адреса в разных сетях, а маршрута между ними нет.</p>
 <p><strong>Проверка:</strong> <code>ip -br a</code>, <code>ip route</code>.
 <strong>Исправление:</strong> вернуть <code>10.10.0.20/24</code> и выполнить <code>sudo netplan apply</code>.</p>
-<h3>Неисправность 2. Служба на localhost</h3>
+<h4>Неисправность 2. Служба на localhost</h4>
 <p>Остановите HTTP-сервер и запустите его с привязкой к <code>127.0.0.1</code>:</p>
-<div class="codehilite"><pre><span></span><code>pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;http.server 8080&quot;</span>
+<div class="codehilite" data-lang="bash"><pre><span></span><code>pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;http.server 8080&quot;</span>
 python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8080</span><span class="w"> </span>--bind<span class="w"> </span><span class="m">127</span>.0.0.1
 </code></pre></div>
 
 <p>С клиента <code>curl</code> получит <code>connection refused</code>, хотя ping до сервера работает.</p>
 <p><strong>Проверка:</strong> <code>ss -tlnp | grep 8080</code> покажет <code>127.0.0.1:8080</code>.
 <strong>Исправление:</strong> перезапустить службу с <code>--bind 10.10.0.10</code> или <code>0.0.0.0</code>.</p>
-<h3>Неисправность 3. Закрытый порт</h3>
+<h4>Неисправность 3. Закрытый порт</h4>
 <p>Если <code>ufw</code> включён, поставьте запрет выше разрешающего правила:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>insert<span class="w"> </span><span class="m">1</span><span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>insert<span class="w"> </span><span class="m">1</span><span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
 </code></pre></div>
 
 <p>С клиента <code>curl</code> будет ждать и завершится по тайм-ауту. Это отличается от <code>connection refused</code>: служба работает, но пакеты не доходят. Если запрет добавить в конец, разрешающее правило может сработать раньше.</p>
 <p><strong>Проверка:</strong> <code>sudo ufw status verbose</code>.
 <strong>Исправление:</strong> удалить запрет и разрешить порт только из <code>10.10.0.0/24</code>:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span>deny<span class="w"> </span><span class="m">8080</span>/tcp
 sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>from<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>proto<span class="w"> </span>tcp
 </code></pre></div>
 
-<h3>Неисправность 4. Пропал default route</h3>
+<h4>Неисправность 4. Пропал default route</h4>
 <p>На клиенте удалите маршрут по умолчанию:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>del<span class="w"> </span>default
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>del<span class="w"> </span>default
 </code></pre></div>
 
 <p>Локальный ping до <code>10.10.0.10</code> продолжит работать, а <code>curl -I https://example.com</code> перестанет находить путь наружу.</p>
 <p><strong>Проверка:</strong> <code>ip route</code>, <code>ping -c 3 10.10.0.10</code>, <code>curl -I https://example.com</code>.
 <strong>Исправление:</strong> <code>sudo netplan apply</code> вернёт маршрут через NAT.</p>
-<h3>Неисправность 5. Неверный DNS</h3>
+<h4>Неисправность 5. Неверный DNS</h4>
 <p>На клиенте временно подмените DNS:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>resolvectl<span class="w"> </span>dns<span class="w"> </span>enp0s3<span class="w"> </span><span class="m">192</span>.0.2.1
+<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>resolvectl<span class="w"> </span>dns<span class="w"> </span>enp0s3<span class="w"> </span><span class="m">192</span>.0.2.1
 sudo<span class="w"> </span>resolvectl<span class="w"> </span>flush-caches
 </code></pre></div>
 
 <p>Проверьте <code>getent hosts example.com</code>. Имя не разрешится, хотя IP-связность и маршрут остаются рабочими.</p>
 <p><strong>Проверка:</strong> <code>resolvectl status</code>, <code>getent hosts example.com</code>.
 <strong>Исправление:</strong> вернуть DNS от NAT командой <code>sudo resolvectl revert enp0s3</code> или выполнить <code>sudo netplan apply</code>.</p>
-<div class="callout shot"><span class="label">Скриншот 4</span><p>Одна из неисправностей до исправления и та же проверка после.</p></div>
-
-<h2 id="шаг-7-заполнение-диагностики"><span class="num">09</span>Шаг 7. Заполнение диагностики</h2>
+<p>Приложите скриншот одной из неисправностей до исправления и ту же проверку после: по двум снимкам видно, что вы нашли причину и вернули рабочее состояние.</p>
+<h3>Шаг 8. Заполните таблицу диагностики</h3>
 <p>Заполняйте таблицу <code>UIFIS_practice-8_diagnostics.csv</code> по ходу работы. В колонку «Фактический результат» вписывайте короткий вывод команды, а в «Вывод» объясняйте, на каком слое была проблема.</p>
 <table>
 <thead>
@@ -1065,19 +1091,7 @@ sudo<span class="w"> </span>resolvectl<span class="w"> </span>flush-caches
 </tr>
 </tbody>
 </table>
-<h2 id="шаг-8-отчёт"><span class="num">10</span>Шаг 8. Отчёт</h2>
-<p>Заполните шаблон <code>UIFIS_practice-8_report-template.docx</code>.</p>
-<p>В отчёте должны быть:</p>
-<ol>
-<li>Цель и схема сети с двумя адаптерами.</li>
-<li>Параметры внутренней сети.</li>
-<li>Таблица проверок с фактическими результатами.</li>
-<li>Пять неисправностей: признак, проверка, исправление.</li>
-<li>Скриншоты настроек VirtualBox и команд.</li>
-<li>Вывод и ответы на контрольные вопросы.</li>
-</ol>
-<p>В выводах объясните, как вы отличили ошибку маршрута от ошибки firewall и почему внутренняя сеть не должна иметь свой шлюз.</p>
-<h2 id="чек-лист"><span class="num">11</span>Чек-лист</h2>
+<h3>Шаг 9. Заполните чек-лист</h3>
 <table>
 <thead>
 <tr>
@@ -1132,7 +1146,36 @@ sudo<span class="w"> </span>resolvectl<span class="w"> </span>flush-caches
 </tr>
 </tbody>
 </table>
-<h2 id="контрольные-вопросы"><span class="num">12</span>Контрольные вопросы</h2>
+<h3>Шаг 10. Оформите отчёт</h3>
+<p>Заполните шаблон <code>UIFIS_practice-8_report-template.docx</code>.</p>
+<p>В отчёте должны быть:</p>
+<ol>
+<li>Цель и схема сети с двумя адаптерами.</li>
+<li>Параметры внутренней сети.</li>
+<li>Таблица проверок с фактическими результатами.</li>
+<li>Пять неисправностей: признак, проверка, исправление.</li>
+<li>Скриншоты настроек VirtualBox, адресов и службы.</li>
+<li>Вывод и ответы на контрольные вопросы.</li>
+</ol>
+<p>В выводах объясните, как вы отличили ошибку маршрута от ошибки firewall и почему внутренняя сеть не должна иметь свой шлюз.</p>
+<p>Скриншот самого документа не нужен: отчёт сдаётся файлом DOCX.</p>
+<h3>Шаг 11. Верните стенд в рабочее состояние и сдайте работу</h3>
+<p>Перед сдачей верните обе машины в рабочее состояние: ping проходит, HTTP отвечает, SSH работает. Отчёт должен показывать не только успех, но и то, как вы нашли каждую ошибку.</p>
+<h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
+<ul>
+<li>файл netplan для сервера и клиента;</li>
+<li>заполненную таблицу диагностики в CSV;</li>
+<li>заполненный отчёт в DOCX со скриншотами;</li>
+<li>краткое описание пяти неисправностей и способов их исправления.</li>
+</ul>
+<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<ul>
+<li><strong>5</strong>: обе машины связаны внутренней сетью, адреса и маршруты настроены, ping и HTTP работают в обе стороны, SSH выполнен, пять неисправностей найдены и исправлены, диагностика объясняет слой каждой ошибки.</li>
+<li><strong>4</strong>: сеть и служба работают, но одна неисправность описана без проверки или в таблице диагностики указан ожидаемый результат вместо фактического.</li>
+<li><strong>3</strong>: связь между машинами есть, но служба или firewall настроены частично, разобраны меньше трёх неисправностей, отчёт без выводов.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
 <ol>
 <li>Зачем нужны две сети: NAT и internal?</li>
 <li>Почему на внутреннем интерфейсе не задают default gateway?</li>
@@ -1140,14 +1183,7 @@ sudo<span class="w"> </span>resolvectl<span class="w"> </span>flush-caches
 <li>Почему служба на <code>127.0.0.1</code> недоступна с другой виртуальной машины?</li>
 <li>Как отличить ошибку маршрута от ошибки firewall?</li>
 </ol>
-<h2 id="что-сдать"><span class="num">13</span>Что сдать</h2>
-<ul>
-<li>файл netplan для сервера и клиента;</li>
-<li>заполненную таблицу диагностики в CSV;</li>
-<li>заполненный отчёт в DOCX со скриншотами;</li>
-<li>краткое описание пяти неисправностей и способов их исправления.</li>
-</ul>
-<p>Перед сдачей верните обе машины в рабочее состояние: ping проходит, HTTP отвечает, SSH работает. Отчёт должен показывать не только успех, но и то, как вы нашли каждую ошибку.</p></article><nav class="pager"><a class="" href="16-lek-09.html"><span>← Предыдущее занятие</span>Лекция 9. Сетевые основы функционирования ИС</a><a class="next" style="text-align:right;margin-left:auto" href="18-lek-10.html"><span>Следующее занятие →</span>Лекция 10. Сетевые службы информационной системы</a></nav></main>
+</div></article><nav class="pager"><a class="" href="16-lek-09.html"><span>← Предыдущее занятие</span>Лекция 9. Сетевые основы функционирования ИС</a><a class="next" style="text-align:right;margin-left:auto" href="18-lek-10.html"><span>Следующее занятие →</span>Лекция 10. Сетевые службы информационной системы</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;
