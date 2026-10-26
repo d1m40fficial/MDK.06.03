@@ -869,6 +869,126 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><strong>Инспекционный контроль.</strong> Через установленные промежутки орган проверяет, сохранилось ли соответствие. Основание для проверки это не подозрение, а сама схема.</li>
 <li><strong>Приостановка, отзыв, ресертификация.</strong> При нарушениях действие сертификата приостанавливают или прекращают. При истечении срока или существенных изменениях объекта проводят новую процедуру.</li>
 </ol>
+<p>На схеме маршрут разложен на восемь этапов и три дорожки: видно, кто действует на каждом шаге и куда передаётся результат.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 410" role="img" aria-label="Маршрут сертификации: восемь этапов на трёх дорожках участников">
+  <defs><marker id="c1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--rule)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <text x="24" y="22" font-size="12" fill="var(--ink-3)">Этап</text>
+    <text x="253" y="22" text-anchor="middle" font-size="12" fill="var(--ink-2)">Заявитель</text>
+    <text x="421" y="22" text-anchor="middle" font-size="12" fill="var(--ink-2)">Орган по сертификации</text>
+    <text x="588" y="22" text-anchor="middle" font-size="12" fill="var(--ink-2)">Лаборатория</text>
+    <line x1="12" y1="28" x2="668" y2="28" stroke="var(--rule)" stroke-width="1.2"/>
+
+    <rect x="12" y="38" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="55" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="59" text-anchor="middle" font-size="12" fill="var(--accent)">1</text>
+    <text x="46" y="59" font-size="12.5" fill="var(--ink)">Заявка</text>
+    <rect x="172" y="38" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="53" font-size="12" fill="var(--ink-2)">подаёт заявку,</text>
+    <text x="182" y="67" font-size="12" fill="var(--ink-2)">объект и требования</text>
+    <rect x="340" y="38" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="53" font-size="12" fill="var(--ink-2)">регистрирует,</text>
+    <text x="350" y="67" font-size="12" fill="var(--ink-2)">назначает схему</text>
+    <rect x="508" y="38" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="518" y="59" font-size="12" fill="var(--ink-3)">ждёт заявку</text>
+    <line x1="92" y1="72" x2="92" y2="82" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="84" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="101" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="105" text-anchor="middle" font-size="12" fill="var(--accent)">2</text>
+    <text x="46" y="99" font-size="12.5" fill="var(--ink)">Анализ</text>
+    <text x="46" y="113" font-size="12.5" fill="var(--ink)">документов</text>
+    <rect x="172" y="84" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="99" font-size="12" fill="var(--ink-2)">передаёт ТЗ,</text>
+    <text x="182" y="113" font-size="12" fill="var(--ink-2)">конфигурацию</text>
+    <rect x="340" y="84" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="99" font-size="12" fill="var(--ink-2)">проверяет</text>
+    <text x="350" y="113" font-size="12" fill="var(--ink-2)">применимость</text>
+    <line x1="92" y1="118" x2="92" y2="128" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="130" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="147" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="151" text-anchor="middle" font-size="12" fill="var(--accent)">3</text>
+    <text x="46" y="151" font-size="12.5" fill="var(--ink)">Испытания</text>
+    <rect x="172" y="130" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="145" font-size="12" fill="var(--ink-2)">открывает доступ</text>
+    <text x="182" y="159" font-size="12" fill="var(--ink-2)">к версии 2.4</text>
+    <rect x="340" y="130" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="145" font-size="12" fill="var(--ink-2)">организует</text>
+    <text x="350" y="159" font-size="12" fill="var(--ink-2)">испытания</text>
+    <rect x="508" y="130" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="518" y="145" font-size="12" fill="var(--ink-2)">проводит, отдаёт</text>
+    <text x="518" y="159" font-size="12" fill="var(--ink-2)">протокол органу</text>
+    <line x1="92" y1="164" x2="92" y2="174" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="176" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="193" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="197" text-anchor="middle" font-size="12" fill="var(--accent)">4</text>
+    <text x="46" y="197" font-size="12.5" fill="var(--ink)">Инспекция</text>
+    <rect x="172" y="176" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="191" font-size="12" fill="var(--ink-2)">показывает сборку</text>
+    <text x="182" y="205" font-size="12" fill="var(--ink-2)">и процессы</text>
+    <rect x="340" y="176" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="191" font-size="12" fill="var(--ink-2)">оценивает</text>
+    <text x="350" y="205" font-size="12" fill="var(--ink-2)">производство</text>
+    <line x1="92" y1="210" x2="92" y2="220" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="222" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="239" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="243" text-anchor="middle" font-size="12" fill="var(--accent)">5</text>
+    <text x="46" y="243" font-size="12.5" fill="var(--ink)">Решение</text>
+    <rect x="340" y="222" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="237" font-size="12" fill="var(--ink-2)">анализирует</text>
+    <text x="350" y="251" font-size="12" fill="var(--ink-2)">протоколы</text>
+    <line x1="92" y1="256" x2="92" y2="266" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="268" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="285" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="289" text-anchor="middle" font-size="12" fill="var(--accent)">6</text>
+    <text x="46" y="289" font-size="12.5" fill="var(--ink)">Сертификат</text>
+    <rect x="172" y="268" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="283" font-size="12" fill="var(--ink-2)">получает</text>
+    <text x="182" y="297" font-size="12" fill="var(--ink-2)">документ</text>
+    <rect x="340" y="268" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="283" font-size="12" fill="var(--ink-2)">выдаёт, вносит</text>
+    <text x="350" y="297" font-size="12" fill="var(--ink-2)">в реестр</text>
+    <line x1="92" y1="302" x2="92" y2="312" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="314" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="331" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="335" text-anchor="middle" font-size="12" fill="var(--accent)">7</text>
+    <text x="46" y="329" font-size="12.5" fill="var(--ink)">Инспекционный</text>
+    <text x="46" y="343" font-size="12.5" fill="var(--ink)">контроль</text>
+    <rect x="172" y="314" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="329" font-size="12" fill="var(--ink-2)">подтверждает</text>
+    <text x="182" y="343" font-size="12" fill="var(--ink-2)">состояние</text>
+    <rect x="340" y="314" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="329" font-size="12" fill="var(--ink-2)">проверяет</text>
+    <text x="350" y="343" font-size="12" fill="var(--ink-2)">по схеме</text>
+    <rect x="508" y="314" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="518" y="329" font-size="12" fill="var(--ink-2)">может повторить</text>
+    <text x="518" y="343" font-size="12" fill="var(--ink-2)">испытания</text>
+    <line x1="92" y1="348" x2="92" y2="358" stroke="var(--rule)" stroke-width="1.2" marker-end="url(#c1)"/>
+
+    <rect x="12" y="360" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <circle cx="30" cy="377" r="9" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <text x="30" y="381" text-anchor="middle" font-size="12" fill="var(--accent)">8</text>
+    <text x="46" y="381" font-size="12.5" fill="var(--ink)">Ресертификация</text>
+    <rect x="172" y="360" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="182" y="375" font-size="12" fill="var(--ink-2)">подаёт заново</text>
+    <text x="182" y="389" font-size="12" fill="var(--ink-2)">при изменениях</text>
+    <rect x="340" y="360" width="162" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="350" y="375" font-size="12" fill="var(--ink-2)">ведёт новую</text>
+    <text x="350" y="389" font-size="12" fill="var(--ink-2)">процедуру</text>
+    <rect x="508" y="360" width="160" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="518" y="375" font-size="12" fill="var(--ink-2)">даёт новые</text>
+    <text x="518" y="389" font-size="12" fill="var(--ink-2)">протоколы</text>
+  </g>
+</svg>
+<figcaption>Восемь этапов сертификации на трёх дорожках участников. Заявитель подаёт заявку и открывает доступ к версии, орган принимает решения и ведёт контроль, лаборатория проводит испытания и передаёт протокол органу.</figcaption>
+</figure>
+
 <p>Для «Деканата» это выглядит так. Заявка: «ИС &ldquo;Деканат&rdquo;, версия 2.4, модули входа, заявок на справки и отчётов, требования по выбранному стандарту». Испытания: проверка разграничения ролей, журналирования, времени формирования справки. Решение: сертификат с перечнем модулей и версией. Через год инспекционный контроль: настройки не разошлись с заявленными, журнал ведётся, обновления не сломали проверенные функции.</p>
 <p>Если за это время вышла версия 3.0 с новой моделью ролей, старый сертификат её не покрывает. Это не формальность: новая модель ролей может изменить именно то, что проверяли.</p></div>
 </div>

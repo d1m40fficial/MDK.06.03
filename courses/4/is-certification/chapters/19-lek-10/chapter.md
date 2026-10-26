@@ -100,6 +100,65 @@ outcomes:
 
 Опоры удобно записать в карточку метрики: название, определение, единица, источник, периодичность, базовое значение, порог, цель, владелец и правило реакции. Карточка занимает полстраницы и снимает большинство споров о цифрах.
 
+<figure class="diagram">
+<svg viewBox="0 0 680 380" role="img" aria-label="Цепочка измерения от атрибута до решения, карточка метрики и последствия отсутствия порога">
+  <defs>
+    <marker id="oc10a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/></marker>
+  </defs>
+  <g font-family="Inter, sans-serif">
+    <g text-anchor="middle">
+      <rect x="20" y="44" width="116" height="52" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="78" y="68" font-size="13" fill="var(--ink)">атрибут</text>
+      <text x="78" y="86" font-size="12" fill="var(--ink-3)">время ответа</text>
+      <rect x="151" y="44" width="116" height="52" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="209" y="68" font-size="13" fill="var(--ink)">определение</text>
+      <text x="209" y="86" font-size="12" fill="var(--ink-3)">как считаем</text>
+      <rect x="282" y="44" width="116" height="52" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="340" y="68" font-size="13" fill="var(--ink)">значение</text>
+      <text x="340" y="86" font-size="12" fill="var(--ink-3)">840 мс за неделю</text>
+      <rect x="413" y="44" width="116" height="52" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="471" y="68" font-size="13" fill="var(--ink)">порог</text>
+      <text x="471" y="86" font-size="12" fill="var(--ink-3)">900 мс</text>
+      <rect x="544" y="44" width="116" height="52" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+      <text x="602" y="68" font-size="13" fill="var(--ink)">решение</text>
+      <text x="602" y="86" font-size="12" fill="var(--ink-3)">план мер</text>
+    </g>
+    <path d="M136,70 L147,70" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc10a)"/>
+    <path d="M267,70 L278,70" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc10a)"/>
+    <path d="M398,70 L409,70" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc10a)"/>
+    <path d="M529,70 L540,70" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc10a)"/>
+    <rect x="20" y="146" width="360" height="186" rx="12" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="36" y="172" font-size="13" fill="var(--accent)">Карточка метрики</text>
+    <g font-size="12">
+      <text x="36" y="200" fill="var(--ink-3)">Метрика</text>
+      <text x="132" y="200" fill="var(--ink)">время ответа, p95</text>
+      <text x="36" y="226" fill="var(--ink-3)">Владелец</text>
+      <text x="132" y="226" fill="var(--ink)">ведущий разработчик</text>
+      <text x="36" y="252" fill="var(--ink-3)">Источник</text>
+      <text x="132" y="252" fill="var(--ink)">журнал веб-сервера</text>
+      <text x="36" y="278" fill="var(--ink-3)">Периодичность</text>
+      <text x="132" y="278" fill="var(--ink)">каждую неделю</text>
+      <text x="36" y="304" fill="var(--ink-3)">Порог</text>
+      <text x="132" y="304" fill="var(--ink)">900 мс, две недели</text>
+    </g>
+    <rect x="400" y="146" width="260" height="186" rx="12" fill="var(--card)" stroke="var(--bad)" stroke-width="1.4"/>
+    <text x="416" y="172" font-size="13" fill="var(--bad)">Порога нет</text>
+    <g font-size="12">
+      <text x="416" y="200" fill="var(--ink-2)">840 мс обсуждают</text>
+      <text x="416" y="220" fill="var(--ink-2)">как «вроде нормально»</text>
+      <text x="416" y="248" fill="var(--ink-2)">нет правила реакции</text>
+      <text x="416" y="268" fill="var(--ink-2)">решение принимают</text>
+      <text x="416" y="288" fill="var(--ink-2)">по настроению</text>
+      <text x="416" y="316" fill="var(--accent)">метрика не управляет</text>
+    </g>
+    <text x="340" y="358" font-size="12" fill="var(--ink-2)" text-anchor="middle">цепочка замыкается, когда значение сравнивают с порогом и принимают решение</text>
+  </g>
+</svg>
+<figcaption>Сверху цепочка измерения: атрибут, операционное определение, значение, порог, решение. Слева внизу карточка метрики с владельцем, источником и периодичностью, справа последствия: без порога значение обсуждают, но решения оно не запускает.</figcaption>
+</figure>
+
+На схеме видно, что карточка метрики задаёт не только число, но и того, кто отвечает за него, откуда берутся данные и как часто их снимают.
+
 ::/gate
 
 ::gate Что делать, если показатель улучшается, а система работает хуже?

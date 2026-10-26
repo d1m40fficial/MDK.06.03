@@ -66,6 +66,95 @@ outcomes:
 
 Зоны удобно задать так: до 4 низкий риск, наблюдение; от 5 до 12 средний, нужен план обработки и владелец; от 15 и выше высокий, решение принимается на уровне руководителя проекта, работа продолжается только с мерами. Границы зон это договорённость, а не истина, но они должны быть записаны до того, как появятся первые оценки.
 
+<figure class="diagram">
+<svg viewBox="0 0 680 400" role="img" aria-label="Матрица рисков пять на пять с зонами и четырьмя стратегиями обработки">
+  <g font-family="Inter, sans-serif">
+    <g font-size="12">
+      <rect x="80" y="50" width="12" height="12" fill="var(--ok)" fill-opacity="0.5" stroke="var(--ok)" stroke-width="1.2"/>
+      <text x="98" y="62" fill="var(--ink-3)">низкий 1-4</text>
+      <rect x="176" y="50" width="12" height="12" fill="var(--warn)" fill-opacity="0.5" stroke="var(--warn)" stroke-width="1.2"/>
+      <text x="194" y="62" fill="var(--ink-3)">средний 5-12</text>
+      <rect x="276" y="50" width="12" height="12" fill="var(--bad)" fill-opacity="0.5" stroke="var(--bad)" stroke-width="1.2"/>
+      <text x="294" y="62" fill="var(--ink-3)">высокий 15-25</text>
+    </g>
+    <g fill-opacity="0.18" stroke="var(--rule)" stroke-width="1.2">
+      <rect x="80" y="80" width="46" height="46" fill="var(--warn)"/>
+      <rect x="126" y="80" width="46" height="46" fill="var(--warn)"/>
+      <rect x="172" y="80" width="46" height="46" fill="var(--bad)"/>
+      <rect x="218" y="80" width="46" height="46" fill="var(--bad)"/>
+      <rect x="264" y="80" width="46" height="46" fill="var(--bad)"/>
+      <rect x="80" y="126" width="46" height="46" fill="var(--ok)"/>
+      <rect x="126" y="126" width="46" height="46" fill="var(--warn)"/>
+      <rect x="172" y="126" width="46" height="46" fill="var(--warn)"/>
+      <rect x="218" y="126" width="46" height="46" fill="var(--bad)"/>
+      <rect x="264" y="126" width="46" height="46" fill="var(--bad)"/>
+      <rect x="80" y="172" width="46" height="46" fill="var(--ok)"/>
+      <rect x="126" y="172" width="46" height="46" fill="var(--warn)"/>
+      <rect x="172" y="172" width="46" height="46" fill="var(--warn)"/>
+      <rect x="218" y="172" width="46" height="46" fill="var(--warn)"/>
+      <rect x="264" y="172" width="46" height="46" fill="var(--bad)"/>
+      <rect x="80" y="218" width="46" height="46" fill="var(--ok)"/>
+      <rect x="126" y="218" width="46" height="46" fill="var(--ok)"/>
+      <rect x="172" y="218" width="46" height="46" fill="var(--warn)"/>
+      <rect x="218" y="218" width="46" height="46" fill="var(--warn)"/>
+      <rect x="264" y="218" width="46" height="46" fill="var(--warn)"/>
+      <rect x="80" y="264" width="46" height="46" fill="var(--ok)"/>
+      <rect x="126" y="264" width="46" height="46" fill="var(--ok)"/>
+      <rect x="172" y="264" width="46" height="46" fill="var(--ok)"/>
+      <rect x="218" y="264" width="46" height="46" fill="var(--ok)"/>
+      <rect x="264" y="264" width="46" height="46" fill="var(--warn)"/>
+    </g>
+    <g font-size="12" fill="var(--ink-2)" text-anchor="middle">
+      <text x="103" y="107">5</text><text x="149" y="107">10</text><text x="195" y="107">15</text><text x="241" y="107">20</text><text x="287" y="107">25</text>
+      <text x="103" y="153">4</text><text x="149" y="153">8</text><text x="195" y="153">12</text><text x="241" y="153">16</text><text x="287" y="153">20</text>
+      <text x="103" y="199">3</text><text x="149" y="199">6</text><text x="195" y="199">9</text><text x="241" y="199">12</text><text x="287" y="199">15</text>
+      <text x="103" y="245">2</text><text x="149" y="245">4</text><text x="195" y="245">6</text><text x="241" y="245">8</text><text x="287" y="245">10</text>
+      <text x="103" y="291">1</text><text x="149" y="291">2</text><text x="195" y="291">3</text><text x="241" y="291">4</text><text x="287" y="291">5</text>
+    </g>
+    <g font-size="12" fill="var(--ink-3)" text-anchor="end">
+      <text x="72" y="107">5</text>
+      <text x="72" y="153">4</text>
+      <text x="72" y="199">3</text>
+      <text x="72" y="245">2</text>
+      <text x="72" y="291">1</text>
+    </g>
+    <g font-size="12" fill="var(--ink-3)" text-anchor="middle">
+      <text x="103" y="326">1</text>
+      <text x="149" y="326">2</text>
+      <text x="195" y="326">3</text>
+      <text x="241" y="326">4</text>
+      <text x="287" y="326">5</text>
+      <text x="195" y="344">последствие</text>
+    </g>
+    <text x="30" y="195" font-size="12" fill="var(--ink-3)" text-anchor="middle" transform="rotate(-90 30 195)">вероятность</text>
+    <circle cx="195" cy="149" r="17" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <circle cx="195" cy="241" r="17" fill="none" stroke="var(--ok)" stroke-width="1.8"/>
+    <g>
+      <rect x="330" y="80" width="330" height="44" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="346" y="102" font-size="13" fill="var(--ink)">избежать</text>
+      <text x="346" y="118" font-size="12" fill="var(--ink-3)">убрать причину: сменить лабораторию</text>
+      <rect x="330" y="132" width="330" height="44" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="346" y="154" font-size="13" fill="var(--ink)">снизить</text>
+      <text x="346" y="170" font-size="12" fill="var(--ink-3)">уменьшить вероятность или ущерб</text>
+      <rect x="330" y="184" width="330" height="44" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="346" y="206" font-size="13" fill="var(--ink)">передать</text>
+      <text x="346" y="222" font-size="12" fill="var(--ink-3)">перенести последствие по договору</text>
+      <rect x="330" y="236" width="330" height="44" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="346" y="258" font-size="13" fill="var(--ink)">принять</text>
+      <text x="346" y="274" font-size="12" fill="var(--ink-3)">оставить осознанно и письменно</text>
+    </g>
+    <rect x="330" y="292" width="330" height="88" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="346" y="314" font-size="13" fill="var(--accent)">Остаточный риск</text>
+    <text x="346" y="336" font-size="12" fill="var(--ink-2)">R-01: было 4 × 3 = 12</text>
+    <text x="346" y="354" font-size="12" fill="var(--ink-2)">после мер осталось 6</text>
+    <text x="346" y="372" font-size="12" fill="var(--ok)">6 не выше допустимости 10</text>
+  </g>
+</svg>
+<figcaption>Матрица 5 × 5: по вертикали вероятность, по горизонтали последствие, цвет клетки задаёт зону. Справа четыре стратегии обработки, внизу остаточный риск: R-01 снизился с 12 до 6 и укладывается в допустимость 10.</figcaption>
+</figure>
+
+На схеме видно, что остаточный риск это новая точка на той же матрице, а не исчезнувший риск: его снова сравнивают с допустимостью.
+
 Отдельно различают два порога. **Аппетит к риску** это общий уровень, который организация готова принимать ради результата. **Допустимость** это границы для конкретного риска: например, задержка до двух недель допустима, а смена версии после подачи заявки нет. Аппетит отвечает на вопрос «сколько риска мы вообще берём», допустимость на вопрос «какой именно риск мы терпим в этом месте».
 
 ## Реестр рисков

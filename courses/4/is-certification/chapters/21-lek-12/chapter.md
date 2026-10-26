@@ -35,6 +35,68 @@ outcomes:
 
 У маршрута есть свойство, которое важно понять сразу: **этапы не заменяют друг друга**. Хорошие протоколы испытаний не спасают заявку с размытой областью, а идеально оформленные документы не заменяют проверку работающей системы. Каждая точка отвечает на свой вопрос, и орган смотрит на них по очереди.
 
+<figure class="diagram">
+<svg viewBox="0 0 680 360" role="img" aria-label="Полный маршрут сертификации с развилкой решения и петлёй надзора">
+  <defs>
+    <marker id="oc12a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/></marker>
+    <marker id="oc12b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--bad)"/></marker>
+  </defs>
+  <g font-family="Inter, sans-serif">
+    <g text-anchor="middle">
+      <rect x="24" y="56" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="94" y="84" font-size="13" fill="var(--ink)">заявка</text>
+      <rect x="188" y="56" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="258" y="84" font-size="13" fill="var(--ink)">анализ документов</text>
+      <rect x="352" y="56" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="422" y="84" font-size="13" fill="var(--ink)">испытания</text>
+      <rect x="516" y="56" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="586" y="84" font-size="13" fill="var(--ink)">инспекция</text>
+      <rect x="516" y="160" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.8"/>
+      <text x="586" y="186" font-size="13" fill="var(--ink)">решение</text>
+      <rect x="352" y="160" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="422" y="186" font-size="13" fill="var(--ink)">сертификат</text>
+      <rect x="188" y="160" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="258" y="178" font-size="13" fill="var(--ink)">инспекционный</text>
+      <text x="258" y="194" font-size="13" fill="var(--ink)">контроль</text>
+      <rect x="24" y="160" width="140" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="94" y="186" font-size="13" fill="var(--ink)">ресертификация</text>
+      <rect x="366" y="236" width="204" height="26" rx="6" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <rect x="366" y="270" width="204" height="26" rx="6" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <rect x="366" y="304" width="204" height="26" rx="6" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    </g>
+    <circle cx="382" cy="249" r="4" fill="var(--ok)"/>
+    <circle cx="382" cy="283" r="4" fill="var(--warn)"/>
+    <circle cx="382" cy="317" r="4" fill="var(--bad)"/>
+    <g font-size="12" fill="var(--ink-2)">
+      <text x="392" y="253">соответствует</text>
+      <text x="392" y="287">соответствует с условиями</text>
+      <text x="392" y="321">не соответствует</text>
+    </g>
+    <path d="M164,78 L184,78" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M328,78 L348,78" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M492,78 L512,78" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M586,100 L586,156" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M516,182 L496,182" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M352,182 L332,182" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M188,182 L168,182" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <path d="M94,160 L94,104" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc12a)"/>
+    <text x="104" y="136" font-size="12" fill="var(--ink-3)">новый цикл</text>
+    <path d="M258,160 L258,128 L422,128 L422,158" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#oc12a)"/>
+    <text x="340" y="120" font-size="12" fill="var(--ink-3)" text-anchor="middle">подтверждение</text>
+    <path d="M258,204 L258,216" fill="none" stroke="var(--bad)" stroke-width="1.5" marker-end="url(#oc12b)"/>
+    <text x="258" y="232" font-size="12" fill="var(--bad)" text-anchor="middle">приостановка и отзыв</text>
+    <path d="M596,204 L596,317" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+    <path d="M596,249 L574,249" fill="none" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#oc12a)"/>
+    <path d="M596,283 L574,283" fill="none" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#oc12a)"/>
+    <path d="M596,317 L574,317" fill="none" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#oc12a)"/>
+    <text x="366" y="228" font-size="12" fill="var(--ink-3)">развилка решения</text>
+  </g>
+</svg>
+<figcaption>Маршрут сертификации двумя рядами: заявка, анализ, испытания и инспекция, затем решение, сертификат, инспекционный контроль и ресертификация. Развилка решения даёт три исхода, пунктир от надзора к сертификату показывает подтверждение, а стрелка от ресертификации к заявке запускает новый цикл.</figcaption>
+</figure>
+
+На схеме видно, что решение принимается в одной точке, но исходов у неё три, а надзор не завершает маршрут, а возвращает систему к подтверждению или к новой оценке.
+
 ## Подготовка заявителя
 
 До подачи заявки заявитель делает работу, которая определяет весь дальнейший маршрут.

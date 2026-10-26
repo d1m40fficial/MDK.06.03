@@ -57,6 +57,61 @@ outcomes:
 
 Для оценки соответствия особенно важны системный и приёмочный уровни, потому что именно они дают свидетельства о системе в целом. Модульные тесты полезны как доказательство культуры разработки, но заменить ими системные проверки нельзя.
 
+<figure class="diagram">
+<svg viewBox="0 0 680 380" role="img" aria-label="Пирамида уровней тестирования и покрытие, которое даёт каждый уровень">
+  <defs>
+    <marker id="oc9a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/></marker>
+  </defs>
+  <g font-family="Inter, sans-serif">
+    <text x="502" y="28" font-size="12" fill="var(--ink-3)" text-anchor="middle">прослеживаемость</text>
+    <g text-anchor="middle">
+      <rect x="350" y="40" width="84" height="40" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="392" y="65" font-size="13" fill="var(--ink)">требование</text>
+      <rect x="454" y="40" width="60" height="40" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="484" y="65" font-size="13" fill="var(--ink)">тест</text>
+      <rect x="534" y="40" width="120" height="40" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="594" y="65" font-size="13" fill="var(--ink)">свидетельство</text>
+    </g>
+    <path d="M434,60 L450,60" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc9a)"/>
+    <path d="M514,60 L530,60" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc9a)"/>
+    <g text-anchor="middle">
+      <polygon points="150,112 230,112 250,164 130,164" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="190" y="136" font-size="13" fill="var(--ink)">приёмочные</text>
+      <text x="190" y="152" font-size="12" fill="var(--ink-3)">готовность</text>
+      <polygon points="130,164 250,164 280,216 100,216" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="190" y="188" font-size="13" fill="var(--ink)">системные</text>
+      <text x="190" y="204" font-size="12" fill="var(--ink-3)">единицы сценариев</text>
+      <polygon points="100,216 280,216 310,268 70,268" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="190" y="240" font-size="13" fill="var(--ink)">интеграционные</text>
+      <text x="190" y="256" font-size="12" fill="var(--ink-3)">десятки проверок</text>
+      <polygon points="70,268 310,268 340,320 40,320" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="190" y="292" font-size="13" fill="var(--ink)">модульные</text>
+      <text x="190" y="308" font-size="12" fill="var(--ink-3)">сотни быстрых проверок</text>
+    </g>
+    <g stroke="var(--ink-3)" stroke-width="1.2" stroke-dasharray="4 3">
+      <line x1="240" y1="138" x2="344" y2="138"/>
+      <line x1="265" y1="190" x2="344" y2="190"/>
+      <line x1="295" y1="242" x2="344" y2="242"/>
+      <line x1="325" y1="294" x2="344" y2="294"/>
+    </g>
+    <g font-size="12">
+      <text x="350" y="132" fill="var(--ink-2)">готовность принять результат</text>
+      <text x="350" y="148" fill="var(--ink-3)">критерии приёмки, а не код</text>
+      <text x="350" y="184" fill="var(--ink-2)">выполнение требований к системе</text>
+      <text x="350" y="200" fill="var(--ink-3)">покрытие требований</text>
+      <text x="350" y="236" fill="var(--ink-2)">договор между модулями</text>
+      <text x="350" y="252" fill="var(--ink-3)">покрытие стыков и API</text>
+      <text x="350" y="288" fill="var(--ink-2)">логика функции в изоляции</text>
+      <text x="350" y="304" fill="var(--ink-3)">покрытие кода и ветвей</text>
+    </g>
+    <text x="340" y="348" font-size="12" fill="var(--ink-2)" text-anchor="middle">вверх по пирамиде растёт цена ошибки, вниз растёт число проверок</text>
+  </g>
+</svg>
+<figcaption>Пирамида уровней: внизу много дешёвых модульных проверок, наверху мало дорогих приёмочных. Справа от каждого уровня указано, какое свидетельство он даёт и какое покрытие считается, сверху цепочка требование, тест, свидетельство.</figcaption>
+</figure>
+
+На схеме каждый уровень связан с требованием через тест и даёт свой вид покрытия: код, стыки, требования или критерии приёмки.
+
 ::/gate
 
 ::gate Какие виды проверок нужны под разные требования?

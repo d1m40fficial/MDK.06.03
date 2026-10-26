@@ -864,6 +864,65 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><strong>Решение и оформление.</strong> Орган анализирует все свидетельства вместе, принимает решение, оформляет сертификат и вносит запись в реестр. С этого момента заявитель получает право использовать знак соответствия в пределах области действия.</li>
 </ol>
 <p>Обратите внимание на шаг анализа документации. Он выглядит бюрократическим, но именно там отсекается большинство безнадёжных заявок. Если документы противоречат друг другу, испытания не спасут: непонятно, с чем сравнивать результат.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 400" role="img" aria-label="Дорожки заявителя, органа по сертификации и лаборатории на маршруте оценки соответствия">
+  <defs>
+    <marker id="oc7a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/></marker>
+    <marker id="oc7b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--bad)"/></marker>
+  </defs>
+  <g font-family="Inter, sans-serif">
+    <g font-size="12" fill="var(--ink-3)" text-anchor="middle">
+      <text x="146" y="26">1 заявка</text>
+      <text x="250" y="26">2 анализ</text>
+      <text x="354" y="26">3 испытания</text>
+      <text x="452" y="26">4 решение</text>
+      <text x="554" y="26">5 сертификат</text>
+      <text x="636" y="26">6 надзор</text>
+    </g>
+    <rect x="16" y="44" width="648" height="68" rx="10" fill="none" stroke="var(--rule)" stroke-width="1.2"/>
+    <rect x="16" y="120" width="648" height="164" rx="10" fill="none" stroke="var(--rule)" stroke-width="1.2"/>
+    <rect x="16" y="292" width="648" height="58" rx="10" fill="none" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="20" y="82" font-size="12" fill="var(--ink-3)">заявитель</text>
+    <text x="20" y="196" font-size="12" fill="var(--ink-3)">орган по</text>
+    <text x="20" y="212" font-size="12" fill="var(--ink-3)">сертификации</text>
+    <text x="20" y="330" font-size="12" fill="var(--ink-3)">лаборатория</text>
+    <g text-anchor="middle">
+      <rect x="96" y="56" width="96" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="144" y="76" font-size="13" fill="var(--ink)">заявка</text>
+      <text x="144" y="92" font-size="12" fill="var(--ink-3)">объект, версия</text>
+      <rect x="206" y="136" width="88" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="250" y="156" font-size="13" fill="var(--ink)">анализ</text>
+      <text x="250" y="172" font-size="12" fill="var(--ink-3)">документов</text>
+      <rect x="310" y="300" width="88" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="354" y="320" font-size="13" fill="var(--ink)">испытания</text>
+      <text x="354" y="336" font-size="12" fill="var(--ink-3)">протокол</text>
+      <polygon points="408,158 452,126 496,158 452,190" fill="var(--card)" stroke="var(--accent)" stroke-width="1.8"/>
+      <text x="452" y="154" font-size="13" fill="var(--ink)">решение</text>
+      <text x="452" y="170" font-size="12" fill="var(--ink-3)">органа</text>
+      <rect x="510" y="136" width="88" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="554" y="156" font-size="13" fill="var(--ink)">сертификат</text>
+      <text x="554" y="172" font-size="12" fill="var(--ink-3)">и знак</text>
+      <rect x="608" y="136" width="56" height="44" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="636" y="162" font-size="13" fill="var(--ink)">надзор</text>
+      <rect x="512" y="216" width="88" height="36" rx="8" fill="none" stroke="var(--bad)" stroke-width="1.4"/>
+      <text x="556" y="239" font-size="13" fill="var(--bad)">отказ</text>
+    </g>
+    <text x="250" y="208" font-size="12" fill="var(--bad)" text-anchor="middle">возврат заявки</text>
+    <path d="M192,78 L198,78 L198,158 L204,158" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc7a)"/>
+    <path d="M294,158 L300,158 L300,322 L308,322" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc7a)"/>
+    <path d="M398,322 L404,322 L404,158 L406,158" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc7a)"/>
+    <path d="M496,158 L508,158" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc7a)"/>
+    <path d="M598,158 L606,158" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc7a)"/>
+    <path d="M452,190 L452,222 L510,222" fill="none" stroke="var(--bad)" stroke-width="1.5" marker-end="url(#oc7b)"/>
+    <path d="M250,180 L250,196" fill="none" stroke="var(--bad)" stroke-width="1.5" marker-end="url(#oc7b)"/>
+    <path d="M636,180 L636,378 L146,378 L146,106" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#oc7a)"/>
+    <text x="390" y="368" font-size="12" fill="var(--ink-3)" text-anchor="middle">надзор возвращает заявителя к поддержанию соответствия</text>
+  </g>
+</svg>
+<figcaption>Маршрут оценки соответствия по дорожкам: заявитель подаёт заявку и поддерживает соответствие, орган ведёт анализ и принимает решение, лаборатория даёт протокол. Ромб это точка решения, отказ возможен на анализе документов (возврат заявки) и в самом решении органа.</figcaption>
+</figure>
+
+<p>На схеме видно, что этапы идут по трём дорожкам, решение принимает только орган по сертификации, а отказ возможен уже на анализе документов и в самой точке решения.</p>
 <h2 id="схемы-сертификации"><span class="num">05</span>Схемы сертификации</h2>
 <p>Схема это набор операций, который показывает, как именно доказывается соответствие. Один и тот же объект можно оценивать по разным схемам, и результат будет иметь разный вес.</p>
 <table>

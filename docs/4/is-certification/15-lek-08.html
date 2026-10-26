@@ -842,6 +842,55 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li><strong>Мера.</strong> Действие или механизм, который снижает вероятность угрозы или ущерб от неё.</li>
 </ul>
 <p>Связка простая: <strong>угроза использует уязвимость, чтобы воздействовать на актив</strong>. Если убрать любой элемент, сценарий рассыпается. Нет уязвимости, угроза не реализуется. Нет актива, защищать нечего. Нет угрозы, меры становятся ритуалом.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 380" role="img" aria-label="Модель угроз: субъект, угроза, уязвимость, актив, мера и свойства CIA">
+  <defs>
+    <marker id="oc8a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/></marker>
+  </defs>
+  <g font-family="Inter, sans-serif">
+    <g text-anchor="middle">
+      <rect x="30" y="36" width="206" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="133" y="60" font-size="13" fill="var(--ink)">Конфиденциальность</text>
+      <text x="133" y="78" font-size="12" fill="var(--ink-3)">доступ только по праву</text>
+      <rect x="246" y="36" width="206" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="349" y="60" font-size="13" fill="var(--ink)">Целостность</text>
+      <text x="349" y="78" font-size="12" fill="var(--ink-3)">данные не изменены скрытно</text>
+      <rect x="462" y="36" width="188" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="556" y="60" font-size="13" fill="var(--ink)">Доступность</text>
+      <text x="556" y="78" font-size="12" fill="var(--ink-3)">система отвечает вовремя</text>
+      <rect x="26" y="120" width="130" height="84" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="91" y="144" font-size="13" fill="var(--ink)">субъект</text>
+      <text x="91" y="166" font-size="12" fill="var(--ink-3)">студент,</text>
+      <text x="91" y="186" font-size="12" fill="var(--ink-3)">администратор</text>
+      <rect x="186" y="120" width="130" height="84" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="251" y="144" font-size="13" fill="var(--ink)">угроза</text>
+      <text x="251" y="166" font-size="12" fill="var(--ink-3)">чтение чужой заявки</text>
+      <text x="251" y="186" font-size="12" fill="var(--accent)">конфиденциальность</text>
+      <rect x="346" y="120" width="130" height="84" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="411" y="144" font-size="13" fill="var(--ink)">уязвимость</text>
+      <text x="411" y="166" font-size="12" fill="var(--ink-3)">нет проверки</text>
+      <text x="411" y="186" font-size="12" fill="var(--ink-3)">владельца</text>
+      <rect x="506" y="120" width="130" height="84" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+      <text x="571" y="144" font-size="13" fill="var(--ink)">актив</text>
+      <text x="571" y="166" font-size="12" fill="var(--ink-3)">заявки, оценки</text>
+      <text x="571" y="186" font-size="12" fill="var(--ink-3)">журнал действий</text>
+      <rect x="346" y="258" width="130" height="68" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+      <text x="411" y="280" font-size="13" fill="var(--accent)">мера</text>
+      <text x="411" y="300" font-size="12" fill="var(--ink)">проверка владельца</text>
+      <text x="411" y="316" font-size="12" fill="var(--ink)">записи на сервере</text>
+    </g>
+    <path d="M156,162 L182,162" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc8a)"/>
+    <path d="M316,162 L342,162" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc8a)"/>
+    <path d="M476,162 L502,162" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#oc8a)"/>
+    <path d="M411,258 L411,208" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#oc8a)"/>
+    <text x="420" y="234" font-size="12" fill="var(--accent)">закрывает</text>
+    <text x="340" y="356" font-size="12" fill="var(--ink-2)" text-anchor="middle">мера привязана к конкретной уязвимости, а не к безопасности вообще</text>
+  </g>
+</svg>
+<figcaption>Модель угроз для ИС «Деканат»: субъект создаёт угрозу, угроза использует уязвимость и бьёт по активу. Сверху тройка CIA задаёт свойства, которые нужно сохранить, а мера снизу закрывает конкретную уязвимость, а не безопасность вообще.</figcaption>
+</figure>
+
+<p>На схеме видно, что мера стоит не рядом со всей системой, а под конкретной уязвимостью: проверка владельца записи на сервере закрывает путь «чтение чужой заявки» и возвращает конфиденциальность.</p>
 <p>Риск в этой схеме это сочетание вероятности реализации угрозы и размера ущерба. Один и тот же сценарий для разных систем весит по-разному: утечка списка групп в деканате неприятна, утечка медицинских сведений катастрофична. Поэтому меры выбирают не «по лучшим практикам вообще», а под конкретный риск.</p>
 <h2 id="модель-угроз"><span class="num">04</span>Модель угроз</h2>
 <p>Модель угроз это перечень сценариев: кто, что и как может сделать с системой. Хорошая модель отвечает на четыре вопроса для каждого сценария.</p>

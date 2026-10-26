@@ -116,6 +116,75 @@ outcomes:
 
 Прослеживаемость нужна в обе стороны. Прямая показывает, что ни одно требование не осталось без проверки. Обратная показывает, что нет тестов, которые проверяют неизвестно что, и документов, которые никто не использует. Матрица соответствия в отчёте о сертификации это та же цепочка, только свёрнутая до ссылок.
 
+На схеме цепочка показана слева направо вместе с версиями и статусами документов, а внизу виден разрыв: документ, который ни с одним требованием не связан.
+
+<figure class="diagram">
+<svg viewBox="0 0 680 290" role="img" aria-label="Прослеживаемость документации: цепочка от требования до отчёта и разрыв без связи с требованием">
+  <defs><marker id="c5" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <text x="16" y="24" font-size="12" fill="var(--ink-3)">Цепочка прослеживаемости</text>
+
+    <rect x="16" y="36" width="112" height="56" rx="9" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="72" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Требование</text>
+    <text x="72" y="76" text-anchor="middle" font-size="12" fill="var(--ink-3)">FR-02</text>
+    <text x="72" y="108" text-anchor="middle" font-size="12" fill="var(--ink-3)">v1.3</text>
+    <text x="72" y="122" text-anchor="middle" font-size="12" fill="var(--ink-3)">действует</text>
+
+    <line x1="130" y1="64" x2="146" y2="64" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c5)"/>
+
+    <rect x="148" y="36" width="112" height="56" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="204" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Проектное</text>
+    <text x="204" y="76" text-anchor="middle" font-size="12" fill="var(--ink-3)">решение 4.2</text>
+    <text x="204" y="108" text-anchor="middle" font-size="12" fill="var(--ink-3)">v2.0</text>
+    <text x="204" y="122" text-anchor="middle" font-size="12" fill="var(--ink-3)">действует</text>
+
+    <line x1="262" y1="64" x2="278" y2="64" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c5)"/>
+
+    <rect x="280" y="36" width="112" height="56" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="336" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Тест</text>
+    <text x="336" y="76" text-anchor="middle" font-size="12" fill="var(--ink-3)">TC-12</text>
+    <text x="336" y="108" text-anchor="middle" font-size="12" fill="var(--ink-3)">v1.1</text>
+    <text x="336" y="122" text-anchor="middle" font-size="12" fill="var(--ink-3)">действует</text>
+
+    <line x1="394" y1="64" x2="410" y2="64" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c5)"/>
+
+    <rect x="412" y="36" width="112" height="56" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="468" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Свидетельство</text>
+    <text x="468" y="76" text-anchor="middle" font-size="12" fill="var(--ink-3)">ПР-07</text>
+    <text x="468" y="108" text-anchor="middle" font-size="12" fill="var(--ink-3)">v1.0</text>
+    <text x="468" y="122" text-anchor="middle" font-size="12" fill="var(--ink-3)">утверждён</text>
+
+    <line x1="526" y1="64" x2="542" y2="64" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c5)"/>
+
+    <rect x="544" y="36" width="112" height="56" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="600" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Отчёт</text>
+    <text x="600" y="76" text-anchor="middle" font-size="12" fill="var(--ink-3)">вывод</text>
+    <text x="600" y="108" text-anchor="middle" font-size="12" fill="var(--ink-3)">v1.0</text>
+    <text x="600" y="122" text-anchor="middle" font-size="12" fill="var(--ink-3)">утверждён</text>
+
+    <line x1="16" y1="160" x2="664" y2="160" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="16" y="184" font-size="12" fill="var(--ink-3)">Разрыв в цепочке</text>
+
+    <rect x="16" y="196" width="220" height="70" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="126" y="218" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Требование FR-05</text>
+    <text x="126" y="236" text-anchor="middle" font-size="12" fill="var(--ink-3)">выгрузка заявок</text>
+    <text x="126" y="254" text-anchor="middle" font-size="12" fill="var(--bad)">проверки нет</text>
+
+    <line x1="236" y1="231" x2="314" y2="231" stroke="var(--rule)" stroke-width="1.3" stroke-dasharray="5 4"/>
+    <line x1="352" y1="231" x2="430" y2="231" stroke="var(--rule)" stroke-width="1.3" stroke-dasharray="5 4"/>
+    <line x1="325" y1="223" x2="341" y2="239" stroke="var(--bad)" stroke-width="1.8"/>
+    <line x1="341" y1="223" x2="325" y2="239" stroke="var(--bad)" stroke-width="1.8"/>
+    <text x="333" y="212" text-anchor="middle" font-size="12" fill="var(--bad)">связи нет</text>
+
+    <rect x="430" y="196" width="234" height="70" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="547" y="218" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Отчёт о нагрузке</text>
+    <text x="547" y="236" text-anchor="middle" font-size="12" fill="var(--ink-3)">v0.9, черновик</text>
+    <text x="547" y="254" text-anchor="middle" font-size="12" fill="var(--bad)">требования нет</text>
+  </g>
+</svg>
+<figcaption>Прослеживаемость от требования FR-02 до отчёта: у каждого документа видны версия и статус, поэтому ясно, на что можно опираться. Внизу показан разрыв: отчёт о нагрузке существует, но не связан ни с одним требованием, значит, пробел остаётся открытым.</figcaption>
+</figure>
+
 Если требование меняется, матрица сразу показывает, какие проектные разделы, тесты и протоколы устарели. Без неё изменение требования приводит к тому, что обновляют один документ из пяти, а остальные остаются от прошлой версии.
 
 ::/gate

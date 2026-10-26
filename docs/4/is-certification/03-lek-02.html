@@ -841,6 +841,69 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Разницу между этими документами проще всего увидеть через 184-ФЗ. <strong>Технический регламент</strong> устанавливает обязательные требования к продукции или процессам, связанным с безопасностью. <strong>Стандарт</strong> содержит правила, характеристики и методы, которые применяются добровольно, если иное не установлено законом или договором.</p>
 <p>Связь между ними задаёт <strong>презумпция соответствия</strong>. Если стандарт включён в перечень к техническому регламенту и заявитель выполнил его требования, считается, что соответствующие требования регламента соблюдены. Это удобный путь: не нужно каждый раз доказывать одно и то же с нуля. Но презумпция не превращает стандарт в закон. Она лишь говорит, что выбранный способ доказательства признаётся достаточным.</p>
 <p>Для «Деканата» это означает следующее. Технического регламента, который автоматически делает обязательной сертификацию веб-приложения деканата, нет. Но если колледж хочет подтвердить качество, он может выбрать ГОСТ Р или международный стандарт и указать его в договоре. С этого момента стандарт становится обязательным для сторон договора, хотя государство его таковым не делало.</p>
+<p>Схема собирает уровни в одну лестницу: сверху обязательное, ниже добровольное, а внизу показано, как стандарт поддерживает презумпцию соответствия.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 345" role="img" aria-label="Иерархия нормативных документов и презумпция соответствия">
+  <defs><marker id="c2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <rect x="12" y="24" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+    <text x="24" y="45" font-size="13" font-weight="600" fill="var(--ink)">Закон и технический регламент</text>
+    <text x="252" y="45" font-size="12" fill="var(--ink-3)">184-ФЗ, регламенты ЕАЭС</text>
+    <circle cx="446" cy="41" r="4" fill="var(--accent)"/>
+    <text x="458" y="45" font-size="12" fill="var(--ink-2)">обязательно</text>
+
+    <rect x="12" y="63" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="24" y="84" font-size="13" fill="var(--ink)">Международный стандарт</text>
+    <text x="252" y="84" font-size="12" fill="var(--ink-3)">ISO/IEC 25010:2011</text>
+    <circle cx="446" cy="80" r="4" fill="var(--ink-3)"/>
+    <text x="458" y="84" font-size="12" fill="var(--ink-2)">добровольно, через договор</text>
+
+    <rect x="12" y="102" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="24" y="123" font-size="13" fill="var(--ink)">Региональный уровень</text>
+    <text x="252" y="123" font-size="12" fill="var(--ink-3)">стандарты и регламенты ЕАЭС</text>
+    <circle cx="446" cy="119" r="4" fill="var(--accent)"/>
+    <text x="458" y="123" font-size="12" fill="var(--ink-2)">обязательно на территории союза</text>
+
+    <rect x="12" y="141" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="24" y="162" font-size="13" fill="var(--ink)">Национальный стандарт</text>
+    <text x="252" y="162" font-size="12" fill="var(--ink-3)">ГОСТ Р, ГОСТ</text>
+    <circle cx="446" cy="158" r="4" fill="var(--warn)"/>
+    <text x="458" y="162" font-size="12" fill="var(--ink-2)">добровольно, если нет ссылки</text>
+
+    <rect x="12" y="180" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="24" y="201" font-size="13" fill="var(--ink)">Отраслевой стандарт</text>
+    <text x="252" y="201" font-size="12" fill="var(--ink-3)">ведомственные требования</text>
+    <circle cx="446" cy="197" r="4" fill="var(--warn)"/>
+    <text x="458" y="201" font-size="12" fill="var(--ink-2)">в пределах области органа</text>
+
+    <rect x="12" y="219" width="656" height="34" rx="8" fill="var(--card)" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="24" y="240" font-size="13" fill="var(--ink)">Стандарт организации</text>
+    <text x="252" y="240" font-size="12" fill="var(--ink-3)">регламент, инструкция</text>
+    <circle cx="446" cy="236" r="4" fill="var(--ink-3)"/>
+    <text x="458" y="240" font-size="12" fill="var(--ink-2)">внутри организации</text>
+
+    <text x="12" y="276" font-size="12" fill="var(--ink-3)">Как работает презумпция соответствия</text>
+
+    <rect x="12" y="286" width="190" height="46" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="107" y="306" text-anchor="middle" font-size="12.5" fill="var(--ink)">Требование регламента</text>
+    <text x="107" y="322" text-anchor="middle" font-size="12" fill="var(--ink-3)">обязательно</text>
+
+    <line x1="204" y1="309" x2="246" y2="309" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c2)"/>
+
+    <rect x="250" y="286" width="180" height="46" rx="9" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
+    <text x="340" y="306" text-anchor="middle" font-size="12.5" fill="var(--ink)">Стандарт из перечня</text>
+    <text x="340" y="322" text-anchor="middle" font-size="12" fill="var(--ink-3)">выполнен</text>
+
+    <line x1="432" y1="309" x2="468" y2="309" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c2)"/>
+
+    <rect x="470" y="286" width="198" height="46" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="569" y="306" text-anchor="middle" font-size="12.5" fill="var(--ink)">Презумпция</text>
+    <text x="569" y="322" text-anchor="middle" font-size="12" fill="var(--ink-3)">соответствие признано</text>
+  </g>
+</svg>
+<figcaption>Шесть уровней нормативных документов. Обязательны закон и технический регламент, а также регламенты союза; стандарты применяются добровольно, пока на них не сослались. Нижняя цепочка показывает презумпцию: выполненный стандарт из перечня признаётся достаточным доказательством соблюдения требования регламента.</figcaption>
+</figure>
+
 <div class="callout pitfall"><span class="label">«Соответствует ГОСТ 34»</span><p>ГОСТ 34 это не один документ, а комплекс стандартов на автоматизированные системы. Ссылка «соответствует ГОСТ 34» без номера части и пункта ничего не значит. Всегда указывайте полное обозначение, год и раздел.</p></div></div>
 </div>
 

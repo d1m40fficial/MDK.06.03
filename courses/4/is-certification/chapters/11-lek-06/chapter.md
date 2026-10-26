@@ -158,6 +158,83 @@ outcomes:
 
 Для «Деканата» план может выглядеть так. Коррекция: восстановить записи по сохранившимся данным за март. Корректирующее действие: исправить обработчик смены статуса и добавить тест, который проверяет запись в журнале. Проверка результативности: через две недели взять тридцать новых заявок и убедиться, что все изменения статуса отражены. Если проверка не прошла, действие открывают заново.
 
+Схема собирает весь цикл в одно кольцо, а внизу показывает, из каких частей складывается находка.
+
+<figure class="diagram">
+<svg viewBox="0 0 680 418" role="img" aria-label="Цикл аудита от программы до следующего аудита и состав находки">
+  <defs><marker id="c6" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker><marker id="c6b" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--rule)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <rect x="35" y="24" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="110" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Программа</text>
+    <text x="110" y="58" text-anchor="middle" font-size="12" fill="var(--ink-3)">аудитов на год</text>
+
+    <rect x="265" y="24" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="340" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">План</text>
+    <text x="340" y="58" text-anchor="middle" font-size="12" fill="var(--ink-3)">одной проверки</text>
+
+    <rect x="495" y="24" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="570" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Сбор</text>
+    <text x="570" y="58" text-anchor="middle" font-size="12" fill="var(--ink-3)">свидетельств</text>
+
+    <rect x="555" y="138" width="110" height="54" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="610" y="158" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Находки</text>
+    <text x="610" y="174" text-anchor="middle" font-size="12" fill="var(--ink-3)">по критериям</text>
+
+    <rect x="495" y="258" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="570" y="276" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Отчёт</text>
+    <text x="570" y="292" text-anchor="middle" font-size="12" fill="var(--ink-3)">вывод и границы</text>
+
+    <rect x="265" y="258" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="340" y="276" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Корректирующие</text>
+    <text x="340" y="292" text-anchor="middle" font-size="12" fill="var(--ink-3)">действия</text>
+
+    <rect x="35" y="258" width="150" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="110" y="276" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Проверка</text>
+    <text x="110" y="292" text-anchor="middle" font-size="12" fill="var(--ink-3)">результативности</text>
+
+    <rect x="15" y="138" width="110" height="54" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="70" y="158" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Следующий</text>
+    <text x="70" y="174" text-anchor="middle" font-size="12" fill="var(--ink-3)">аудит</text>
+
+    <text x="340" y="162" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">Цикл аудита</text>
+    <text x="340" y="180" text-anchor="middle" font-size="12" fill="var(--ink-3)">ISO 19011:2018</text>
+
+    <line x1="187" y1="46" x2="261" y2="46" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="417" y1="46" x2="491" y2="46" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="600" y1="70" x2="609" y2="134" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="610" y1="194" x2="601" y2="254" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="493" y1="280" x2="419" y2="280" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="263" y1="280" x2="189" y2="280" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="110" y1="256" x2="75" y2="196" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+    <line x1="75" y1="136" x2="105" y2="72" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#c6)"/>
+
+    <line x1="16" y1="318" x2="664" y2="318" stroke="var(--rule)" stroke-width="1.2"/>
+    <text x="16" y="334" font-size="12" fill="var(--ink-3)">Из чего складывается находка</text>
+
+    <rect x="16" y="342" width="170" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="101" y="360" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Критерий</text>
+    <text x="101" y="376" text-anchor="middle" font-size="12" fill="var(--ink-3)">требование или норма</text>
+
+    <line x1="188" y1="364" x2="236" y2="364" stroke="var(--rule)" stroke-width="1.4" marker-end="url(#c6b)"/>
+
+    <rect x="240" y="342" width="200" height="44" rx="9" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="340" y="360" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Свидетельство</text>
+    <text x="340" y="376" text-anchor="middle" font-size="12" fill="var(--ink-3)">запись, интервью, наблюдение</text>
+
+    <line x1="442" y1="364" x2="486" y2="364" stroke="var(--rule)" stroke-width="1.4" marker-end="url(#c6b)"/>
+
+    <rect x="490" y="342" width="174" height="44" rx="9" fill="var(--card)" stroke="var(--rule)" stroke-width="1.3"/>
+    <text x="577" y="360" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Находка</text>
+    <text x="577" y="376" text-anchor="middle" font-size="12" fill="var(--ink-3)">вывод аудитора</text>
+
+    <line x1="168" y1="394" x2="180" y2="406" stroke="var(--bad)" stroke-width="1.6"/>
+    <line x1="180" y1="394" x2="168" y2="406" stroke="var(--bad)" stroke-width="1.6"/>
+    <text x="190" y="404" font-size="12" fill="var(--bad)">Без свидетельства это мнение, а не находка</text>
+  </g>
+</svg>
+<figcaption>Цикл аудита от программы на год до следующего аудита. Находка появляется только там, где критерий сопоставлен со свидетельством: без записи, интервью или наблюдения остаётся мнение аудитора, а не результат проверки.</figcaption>
+</figure>
+
 ## Типичные ошибки
 
 **Аудитор консультирует.** Во время проверки аудитор начинает подсказывать, как исправить систему. Это удобно аудируемому и губительно для аудита: аудитор теряет независимость, а через полгода проверяет собственный совет. Рекомендации допустимы только в рамках отдельно согласованной роли, и тогда они не смешиваются с находками.
