@@ -73,14 +73,7 @@
         "стоимость ошибки",
         "виды моделей"
       ],
-      "figures": [
-        {
-          "id": "fig-01-model-views",
-          "concept": "одна система и три проекции: структура, поведение, данные",
-          "object": "селектор проекций на плите: система и три станции",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "published"
     },
     {
@@ -104,14 +97,7 @@
         "акторы",
         "границы системы"
       ],
-      "figures": [
-        {
-          "id": "fig-01-boundaries",
-          "concept": "граница системы отделяет акторов от функций внутри",
-          "object": "карточки акторов вокруг рамки системы",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "published"
     },
     {
@@ -135,14 +121,7 @@
         "трассируемость",
         "ISO/IEC/IEEE 29148"
       ],
-      "figures": [
-        {
-          "id": "fig-03-requirements-tree",
-          "concept": "иерархия требований от цели до проверяемого критерия",
-          "object": "дерево карточек требований",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -166,14 +145,7 @@
         "метамодель",
         "виды диаграмм"
       ],
-      "figures": [
-        {
-          "id": "fig-05-uml-map",
-          "concept": "карта диаграмм UML по вопросам",
-          "object": "навигационная карта диаграмм",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -205,20 +177,7 @@
         "ассоциация",
         "кратность"
       ],
-      "figures": [
-        {
-          "id": "fig-04-usecase",
-          "concept": "акторы снаружи, прецеденты внутри границы",
-          "object": "схема прецедентов на доске",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-06-class-diagram",
-          "concept": "классы и связи с кратностью",
-          "object": "рамки классов и линии связей",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -242,14 +201,7 @@
         "зацепление",
         "ответственность"
       ],
-      "figures": [
-        {
-          "id": "fig-07-responsibilities",
-          "concept": "ответственности переходят к специализированным классам",
-          "object": "классы с карточками обязанностей",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -273,14 +225,7 @@
         "transition",
         "alt/loop"
       ],
-      "figures": [
-        {
-          "id": "fig-08-behavior",
-          "concept": "сообщения во времени и состояния объекта",
-          "object": "два пульта поведения",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -304,14 +249,7 @@
         "alt",
         "жизненный цикл"
       ],
-      "figures": [
-        {
-          "id": "fig-09-sequence-state",
-          "concept": "сценарий и жизненный цикл одного объекта",
-          "object": "лента сообщений и статусов",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -336,14 +274,7 @@
         "первичный ключ",
         "внешний ключ"
       ],
-      "figures": [
-        {
-          "id": "fig-10-er",
-          "concept": "связь многие ко многим превращается в таблицу связи",
-          "object": "ER-схема и таблицы",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -368,14 +299,7 @@
         "GROUP BY",
         "агрегация"
       ],
-      "figures": [
-        {
-          "id": "fig-12-sql",
-          "concept": "запрос соединяет таблицы и считает итог",
-          "object": "конвейер от таблиц к результату",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -407,20 +331,7 @@
         "JSON",
         "импорт"
       ],
-      "figures": [
-        {
-          "id": "fig-11-er-3nf",
-          "concept": "ER-модель в 3НФ с ключами",
-          "object": "схема в редакторе draw.io",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-13-db-json",
-          "concept": "таблицы с ключами и импорт JSON",
-          "object": "окно БД и файл JSON",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -444,14 +355,7 @@
         "норма расхода",
         "SQL-скрипт"
       ],
-      "figures": [
-        {
-          "id": "fig-14-sql-query",
-          "concept": "стоимость заказа собирается из нескольких таблиц",
-          "object": "кассовый чек и таблицы",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -476,14 +380,7 @@
         "поток данных",
         "дорожки"
       ],
-      "figures": [
-        {
-          "id": "fig-15-functional",
-          "concept": "один процесс в трёх нотациях",
-          "object": "три экрана с одной системой",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -507,14 +404,7 @@
         "OpenAPI",
         "ADR"
       ],
-      "figures": [
-        {
-          "id": "fig-17-c4",
-          "concept": "четыре уровня C4 и контракт API",
-          "object": "вложенные экраны архитектуры",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -546,20 +436,7 @@
         "компонент",
         "контракт"
       ],
-      "figures": [
-        {
-          "id": "fig-16-three-notations",
-          "concept": "один процесс в трёх нотациях",
-          "object": "три схемы рядом",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-18-api-contract",
-          "concept": "компоненты и контракт API",
-          "object": "схема архитектуры и карточка API",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -583,14 +460,7 @@
         "капча",
         "валидация"
       ],
-      "figures": [
-        {
-          "id": "fig-19-is-design",
-          "concept": "сценарий превращается в экран и правила",
-          "object": "макет экрана и список правил",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -614,14 +484,7 @@
         "Postman",
         "200/500"
       ],
-      "figures": [
-        {
-          "id": "fig-21-integration",
-          "concept": "модуль отдаёт обработанные данные по HTTP",
-          "object": "труба между базой и клиентом",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -653,20 +516,7 @@
         "JSON",
         "HTTP"
       ],
-      "figures": [
-        {
-          "id": "fig-20-auth-crud",
-          "concept": "экран входа и таблица пользователей",
-          "object": "панель администратора",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-22-postman",
-          "concept": "коллекция запросов проверяет статусы и JSON",
-          "object": "окно Postman с тестами",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -690,14 +540,7 @@
         "тестирование",
         "покрытие"
       ],
-      "figures": [
-        {
-          "id": "fig-23-quality",
-          "concept": "качество раскладывается на измеримые характеристики",
-          "object": "панель качества",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -721,14 +564,7 @@
         "покрытие",
         "риск"
       ],
-      "figures": [
-        {
-          "id": "fig-24-metrics",
-          "concept": "метрики и тесты подтверждают качество",
-          "object": "табло и чек-лист",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -752,14 +588,7 @@
         "защита",
         "шаблон"
       ],
-      "figures": [
-        {
-          "id": "fig-25-docs",
-          "concept": "решение и документация живут рядом с моделями",
-          "object": "карточка ADR и документ",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -783,14 +612,7 @@
         "шаблон",
         "примеры"
       ],
-      "figures": [
-        {
-          "id": "fig-26-api-doc",
-          "concept": "документ API повторяет структуру шаблона",
-          "object": "шаблон Word и примеры",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -814,14 +636,7 @@
         "ADR",
         "ИИ-ассистент"
       ],
-      "figures": [
-        {
-          "id": "fig-27-modern",
-          "concept": "модель, код и обратная связь образуют петлю",
-          "object": "петля разработки",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -845,14 +660,7 @@
         "API",
         "Postman"
       ],
-      "figures": [
-        {
-          "id": "fig-28-exam-map",
-          "concept": "шесть заданий и их артефакты",
-          "object": "карта экзамена",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -883,20 +691,7 @@
         "Postman",
         "тесты"
       ],
-      "figures": [
-        {
-          "id": "fig-29-project-er",
-          "concept": "первый комплект артефактов проекта",
-          "object": "ER, база и запрос",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-30-project-api",
-          "concept": "модули и API соединяются в работающий сервис",
-          "object": "панель приложения и Postman",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     },
     {
@@ -926,20 +721,7 @@
         "ретроспектива",
         "оценка"
       ],
-      "figures": [
-        {
-          "id": "fig-31-project-docs",
-          "concept": "документация и презентация завершают проект",
-          "object": "комплект документов",
-          "size": "Figure"
-        },
-        {
-          "id": "fig-32-defense",
-          "concept": "защита и ретроспектива завершают цикл",
-          "object": "круг ретроспективы",
-          "size": "Figure"
-        }
-      ],
+      "figures": [],
       "status": "planned"
     }
   ],

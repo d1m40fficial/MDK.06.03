@@ -6,7 +6,7 @@ Usage:
     python3 build_course.py courses/ --catalog        # catalog of every course → courses/catalog.html
 
 The course page shows the hero, outcomes and the syllabus (chapter status, minutes,
-planned figures). Chapters with a chapter.md are built with build_chapter.py and linked.
+topics). Chapters with a chapter.md are built with build_chapter.py and linked.
 """
 import json
 import subprocess
@@ -69,9 +69,7 @@ def build_course(root: Path) -> Path:
             stale = dist / f"{dirname}.html"
             if stale.exists():
                 stale.unlink()
-        figs = ch.get("figures", [])
-        tags = [f'<span class="fig">Fig · {esc(f.get("object") or f.get("concept") or f.get("id"))}</span>' for f in figs]
-        tags += [f"<span>{esc(t)}</span>" for t in ch.get("topics", [])[:6]]
+        tags = [f"<span>{esc(t)}</span>" for t in ch.get("topics", [])[:6]]
         ST = {"planned": "план", "drafted": "черновик", "figures-pending": "фигуры готовятся", "published": "готово"}
         if locked:
             status = " · закрыто"
