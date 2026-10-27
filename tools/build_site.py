@@ -22,6 +22,7 @@ Usage:
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -227,6 +228,12 @@ def card_vars(c: dict) -> str:
             f"--cd-tint:{esc(tint_dark)};")
 
 
+def code_key(c: dict):
+    """Natural order by the numeric part of the subject code."""
+    nums = [int(n) for n in re.findall(r"\d+", str(c.get("code", "")))]
+    return tuple((nums + [0, 0, 0])[:3])
+
+
 def discipline_card(c: dict) -> str:
     n = lesson_slots(c.get("chapters", []))
     avail = c.get("status") == "available"
@@ -253,6 +260,7 @@ def discipline_card(c: dict) -> str:
 
 def year_page(y: dict, courses: list):
     yid = str(y["id"])
+    courses = sorted(courses, key=lambda c: (c.get("status") != "available", code_key(c), str(c.get("code", ""))))
     body = (f'<main class="catalog">{rail(back="../index.html")}'
             f'<div class="crumbs"><a href="../index.html">Все курсы</a><span>/</span>'
             f'<span>{esc(y.get("title", yid))}</span></div>'

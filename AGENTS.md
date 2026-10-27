@@ -1,4 +1,4 @@
-# AGENTS.md: репозиторий MDK.06.03
+# AGENTS.md: репозиторий spo-it-materials
 
 Сайт со всеми дисциплинами техникума. Работай по локальному скиллу
 `.opencode/skills/course-studio/SKILL.md`: это объединённый скилл Course Studio +

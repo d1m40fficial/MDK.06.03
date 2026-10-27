@@ -195,7 +195,7 @@ python tools/ks/scripts/check_pages.py courses/4/is-certification/dist
 1. В ветке `main` включите **Settings → Pages → Source: GitHub Actions**.
 2. Workflow `.github/workflows/pages.yml` вызовет `python tools/build_site.py` и
    опубликует `docs/`.
-3. Итоговый адрес: https://d1m40fficial.github.io/MDK.06.03/.
+3. Итоговый адрес: https://d1m40fficial.github.io/spo-it-materials/.
 
 ## Правило оформления
 

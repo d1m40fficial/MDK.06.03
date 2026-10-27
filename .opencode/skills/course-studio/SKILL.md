@@ -1,13 +1,13 @@
 ---
 name: course-studio
-description: Use in the MDK repository (d1m40fficial/MDK.06.03) to plan and write disciplines, courses, syllabi, lesson plans, lectures, practices, chapters and notes for the technical college, and to build the static GitHub Pages site under docs/. Combines three skills into one, namely Course Studio (course.json, chapters, page building), Anatomy (interactive isometric SVG figures whose working is the concept, bundled in anatomy/) and Visualise (inline SVG/HTML diagrams, charts and widgets, in references/visualise/). Trigger on Russian or English requests such as «дисциплина», «курс», «план дисциплины», «лекция», «практика», «занятие», «методичка», «добавь дисциплину», «сделай фигуру», «нарисуй схему», "add a discipline", "write lesson 4", "build the course site", "make a figure for this lecture".
+description: Use in the MDK repository (d1m40fficial/spo-it-materials) to plan and write disciplines, courses, syllabi, lesson plans, lectures, practices, chapters and notes for the technical college, and to build the static GitHub Pages site under docs/. Combines three skills into one, namely Course Studio (course.json, chapters, page building), Anatomy (interactive isometric SVG figures whose working is the concept, bundled in anatomy/) and Visualise (inline SVG/HTML diagrams, charts and widgets, in references/visualise/). Trigger on Russian or English requests such as «дисциплина», «курс», «план дисциплины», «лекция», «практика», «занятие», «методичка», «добавь дисциплину», «сделай фигуру», «нарисуй схему», "add a discipline", "write lesson 4", "build the course site", "make a figure for this lecture".
 license: MIT
 compatibility: Repository-local merged skill. Bundles the Anatomy figure engine (MIT) and references for Visualise. Needs Python 3.9+ with markdown, pyyaml, pygments, python-docx (playwright + Chromium for page checks) and Node.js 20.10+ for figures.
 ---
 
 # Course Studio (merged: Course Studio + Anatomy + Visualise)
 
-This is the repository-local skill for `d1m40fficial/MDK.06.03`, the website of all
+This is the repository-local skill for `d1m40fficial/spo-it-materials`, the website of all
 disciplines taught at the technical college. It merges three skills into one place so
 any agent working with this repository can discover and use them:
 

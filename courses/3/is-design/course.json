@@ -6,7 +6,7 @@
   "level": "СПО",
   "hours": 128,
   "languages": [],
-  "status": "planned",
+  "status": "available",
   "assessment": "Экзамен",
   "price": null,
   "currency": "RUB",
@@ -52,7 +52,7 @@
         "итерация"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 2,
@@ -77,7 +77,7 @@
         "приоритет"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 3,
@@ -102,7 +102,7 @@
         "приоритет"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 4,
@@ -127,7 +127,7 @@
         "участник процесса"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 5,
@@ -152,7 +152,7 @@
         "балансировка"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 6,
@@ -177,7 +177,7 @@
         "альтернативный поток"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 7,
@@ -202,7 +202,7 @@
         "сценарий"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 8,
@@ -227,7 +227,7 @@
         "таблица переходов"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 9,
@@ -252,7 +252,7 @@
         "наследование"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 10,
@@ -277,7 +277,7 @@
         "возврат"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 11,
@@ -302,7 +302,7 @@
         "связь многие ко многим"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 12,
@@ -327,7 +327,7 @@
         "жизненный цикл объекта"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 13,
@@ -352,7 +352,7 @@
         "окружение"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 14,
@@ -377,7 +377,7 @@
         "слабая сущность"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 15,
@@ -402,7 +402,7 @@
         "граница контейнера"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 16,
@@ -427,7 +427,7 @@
         "аномалия обновления"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 17,
@@ -452,7 +452,7 @@
         "интеграция"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 18,
@@ -477,7 +477,7 @@
         "схема размещения"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 19,
@@ -502,7 +502,7 @@
         "детализация"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 20,
@@ -527,7 +527,7 @@
         "пагинация"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 21,
@@ -552,7 +552,7 @@
         "циклическая зависимость"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 22,
@@ -577,7 +577,7 @@
         "таймаут"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 23,
@@ -602,7 +602,7 @@
         "матрица доступа"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 24,
@@ -627,7 +627,7 @@
         "распределённая система"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 25,
@@ -652,7 +652,7 @@
         "кликабельный прототип"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 26,
@@ -677,7 +677,7 @@
         "точка отказа"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 27,
@@ -702,7 +702,7 @@
         "миграция"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 28,
@@ -727,7 +727,7 @@
         "сборка"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 29,
@@ -752,7 +752,7 @@
         "устаревание данных"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 30,
@@ -777,7 +777,7 @@
         "гарантия доставки"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 31,
@@ -802,7 +802,7 @@
         "план реагирования"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 32,
@@ -827,7 +827,7 @@
         "принцип минимальных прав"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 33,
@@ -852,7 +852,7 @@
         "регламент"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 34,
@@ -877,7 +877,7 @@
         "доступность"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 35,
@@ -902,7 +902,7 @@
         "повторная попытка"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 36,
@@ -927,7 +927,7 @@
         "бумажный набросок"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 37,
@@ -952,7 +952,7 @@
         "приоритет исправления"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 38,
@@ -977,7 +977,7 @@
         "версия документа"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 39,
@@ -1002,7 +1002,7 @@
         "перечень документов"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 40,
@@ -1027,7 +1027,7 @@
         "критерий приёмки"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 41,
@@ -1052,7 +1052,7 @@
         "риск"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 42,
@@ -1077,7 +1077,7 @@
         "этапы работы"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 43,
@@ -1102,7 +1102,7 @@
         "вывод"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 44,
@@ -1127,7 +1127,7 @@
         "граница системы"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 45,
@@ -1152,7 +1152,7 @@
         "альтернативный поток"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 46,
@@ -1177,7 +1177,7 @@
         "ограничение"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 47,
@@ -1202,7 +1202,7 @@
         "граница системы"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 48,
@@ -1227,7 +1227,7 @@
         "журнал аудита"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 49,
@@ -1252,7 +1252,7 @@
         "версия документа"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     },
     {
       "n": 50,
@@ -1277,7 +1277,7 @@
         "регламент"
       ],
       "figures": [],
-      "status": "planned"
+      "status": "published"
     }
   ]
 }
