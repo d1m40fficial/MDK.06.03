@@ -793,130 +793,143 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 11. Миграция</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 32</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 11. Миграция</h1><p class="dek">Переносим «Деканат» на версию схемы 2: отчество студента, ограничение и обратный скрипт.</p></div>
-<div class="glyph" aria-hidden="true">П11</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Писать прямой и обратный скрипт миграции</li><li>Проверять миграцию на копии базы</li><li>Сверять данные до и после изменения схемы</li><li>Фиксировать версию схемы и откатывать изменение</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Миграция меняет схему на работающей базе, поэтому ошибка стоит дороже, чем в учебном задании. Цель работы: добавить в таблицу <code>students</code> отчество, заполнить его и закрыть ограничением, провести изменение через версию схемы и доказать, что данные не потеряны.</p>
-<p>Работа идёт на копии базы, затем на рабочей базе. Обратный скрипт продумывают до запуска прямого: если откат придумывают после сбоя, данных для отката уже может не быть.</p>
+<div class="hero-panel"><h1>Практика 11. Миграция</h1><p class="dek">Добавляем отчество студента в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных.</p></div>
+<div class="glyph" aria-hidden="true">П11</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Писать прямой и обратный скрипт миграции MySQL</li><li>Заполнять новый столбец и закрывать его ограничением</li><li>Проверять миграцию и откат на копии базы</li><li>Сверять данные до и после изменения схемы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Миграция меняет схему на работающей базе, поэтому ошибка стоит дороже, чем в учебном задании. Цель работы: добавить в таблицу <code>students</code> отчество, заполнить его, закрыть обязательностью и ограничением, провести изменение через версию схемы и доказать, что данные не потеряны.</p>
+<p>Работа идёт на копии базы, затем на рабочей базе. Обратный скрипт продумывают до запуска прямого: в MySQL изменение структуры нельзя откатить командой <code>ROLLBACK</code>, и если откат придумывают после сбоя, данных для него уже может не быть.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.</li>
-<li>PostgreSQL 16 в гостевой системе, доступ <code>sudo</code> внутри машины.</li>
-<li>Клиент <code>psql</code>, текстовый редактор, табличный редактор.</li>
-<li>Учебная база <code>dean</code> с таблицами <code>students</code> и <code>schema_version</code>.</li>
-<li>Свободное место для копии базы.</li>
+<li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
+<li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и утилита <code>C:\xampp\mysql\bin\mysqldump.exe</code>.</li>
+<li>PowerShell и текстовый редактор для SQL-файлов.</li>
+<li>Учебная база <code>dean</code> с таблицами <code>students</code>, <code>groups</code>, <code>enrollments</code>, <code>payments</code> и <code>schema_version</code>.</li>
+<li>Свободное место для дампа и копии базы.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <h3>Версия схемы</h3>
-<p>Версия схемы это число, которое говорит, какие изменения уже применены. Таблица <code>schema_version</code> хранит применённые версии, а скрипт миграции добавляет новую строку в той же транзакции, что и изменение структуры. Если изменение откатилось, строка версии тоже исчезает, и состояние остаётся согласованным.</p>
-<p>Номер версии растёт только вперёд. Повторный запуск скрипта не должен ломать базу, поэтому операции делают идемпотентными: <code>IF NOT EXISTS</code>, <code>DROP CONSTRAINT IF EXISTS</code>, <code>ON CONFLICT DO NOTHING</code>.</p>
+<p>Версия схемы это число, которое говорит, какие изменения уже применены. Таблица <code>schema_version</code> хранит применённые версии, а скрипт миграции добавляет новую строку после изменения структуры. Номер растёт только вперёд, а перед запуском скрипт сверяет текущий максимум: если версия 2 уже стоит, повторный запуск не нужен.</p>
+<h3>DDL в MySQL фиксирует транзакцию неявно</h3>
+<p><code>ALTER TABLE</code> в MySQL вызывает неявную фиксацию. Открытая транзакция завершается, а <code>ROLLBACK</code> после изменения структуры ничего не вернёт. Из этого следуют три правила.</p>
+<p>Первое: до миграции снимают дамп и проверяют сценарий на копии. Второе: обратный скрипт пишут заранее и тоже проверяют. Третье: запись версии делают последней, после успешных изменений, чтобы номер не опережал реальную структуру.</p>
 <h3>Прямой и обратный скрипт</h3>
-<p>Прямой скрипт переводит схему из версии 1 в версию 2. Обратный возвращает из версии 2 в версию 1 и удаляет всё, что добавил прямой. Обратный скрипт не обязан спасать данные, которых больше нет в схеме, но он обязан вернуть работоспособную структуру.</p>
-<p>Оба скрипта состоят из одинаковых частей: начало транзакции, ограничение времени ожидания блокировки, изменения, запись версии, фиксация. Имена файлов начинаются с номера миграции, чтобы порядок применения читался без журнала: <code>001_add_middle_name_up.sql</code> и <code>001_add_middle_name_down.sql</code> относятся к одному переходу.</p>
-<h3>Порядок выпуска</h3>
-<p>Миграцию выпускают по шагам. Сначала фиксируют состояние и делают копию. Потом прогоняют прямой и обратный скрипт на копии и сверяют данные. Затем выбирают окно, когда изменение не мешает работе, применяют скрипт к рабочей базе и повторяют проверки. Если проверка не прошла, выполняют обратный скрипт, а не правят схему вручную.</p>
-<h3>Транзакция и блокировки</h3>
-<p>PostgreSQL выполняет <code>ALTER TABLE</code> транзакционно: при ошибке или явном <code>ROLLBACK</code> схема возвращается к прежнему виду. Цена этой надёжности в блокировке. <code>ALTER TABLE</code> берёт блокировку <code>ACCESS EXCLUSIVE</code>, и на время изменения чтение и запись таблицы ждут.</p>
-<p><code>SET LOCAL lock_timeout</code> не даёт миграции висеть в очереди за долгой транзакцией. Если блокировку не удалось взять за указанное время, скрипт падает и не блокирует таблицу дальше. Для большой таблицы <code>SET NOT NULL</code> заменяют парой <code>CHECK NOT VALID</code> и <code>VALIDATE CONSTRAINT</code>, но в учебной базе достаточно прямого варианта.</p>
-<h3>Проверка на копии и сверка</h3>
-<p>Копию делают до миграции и повторяют на ней весь сценарий, включая откат. Сверка сравнивает не только число строк, но и отпечаток содержимого: одинаковое количество строк при разных значениях ничего не доказывает. Отпечаток считают по столбцам, которые миграция не должна менять, иначе проверка сравнивает разное.</p>
+<p>Прямой скрипт переводит схему из версии 1 в версию 2. Обратный возвращает из версии 2 в версию 1 и удаляет всё, что добавил прямой. Имена файлов начинают с номера миграции, чтобы порядок читался без журнала: <code>001_add_middle_name_up.sql</code> и <code>001_add_middle_name_down.sql</code> относятся к одному переходу.</p>
+<p>Прямой скрипт состоит из четырёх частей: добавить столбец, заполнить его, сделать обязательным, поставить ограничение. Порядок обязателен: <code>NOT NULL</code> на пустом столбце упадёт, а ограничение на незаполненных данных не создастся.</p>
+<h3>Заполнение и ограничение</h3>
+<p>Отчество берут из третьего слова полного имени. Функция <code>SUBSTRING_INDEX(full_name, ' ', 3)</code> отрезает первые три слова, а внешняя <code>SUBSTRING_INDEX(..., ' ', -1)</code> оставляет последнее из них. Если слов меньше трёх, ставится значение <code>не указано</code>: пустая строка не пройдёт ограничение.</p>
+<p><code>VARCHAR(60) NOT NULL</code> и проверка <code>CHAR_LENGTH(middle_name) BETWEEN 1 AND 60</code> закрывают два разных случая. Обязательность не даёт пропустить поле, проверка не даёт записать пустую строку или слишком длинный текст.</p>
+<h3>Сверка данных</h3>
+<p>Сверка сравнивает не только число строк, но и контрольную сумму содержимого: одинаковое количество строк при разных значениях ничего не доказывает. Сумма <code>CRC32</code> по строкам не зависит от порядка и не упирается в ограничение <code>group_concat_max_len</code>. Такая сумма ловит случайные расхождения, но не заменяет проверку на подлог.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <p>Первой строкой каждого вывода печатайте фамилию и группу: <code>SELECT 'Иванов И.И., ИС-41' AS student;</code>.</p>
 <h3>Шаг 1. Зафиксируйте состояние до миграции</h3>
 <p>Проверьте версию схемы, структуру таблицы и число строк. Если таблица <code>schema_version</code> пуста, запишите текущее состояние как версию 1.</p>
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">schema_version</span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">CONFLICT</span><span class="w"> </span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">DO</span><span class="w"> </span><span class="k">NOTHING</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
 
-<span class="go">SELECT version, applied_at FROM schema_version ORDER BY version;</span>
-<span class="go">\d students</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">IGNORE</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">schema_version</span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="p">,</span><span class="w"> </span><span class="n">applied_at</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="p">;</span>
 
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">rows</span><span class="p">,</span>
-<span class="w">       </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fingerprint</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_count</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">CRC32</span><span class="p">(</span><span class="n">CONCAT_WS</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fingerprint</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот <code>\d students</code> и результата сверки. Эти значения станут точкой сравнения.</p>
+<p>Приложите скриншот <code>DESCRIBE students</code> и результата сверки. Эти значения станут точкой сравнения, запишите их в отчёт.</p>
 <h3>Шаг 2. Сделайте копию базы</h3>
-<p>Копия создаётся из шаблона и повторяет структуру и данные. Если база занята другими сессиями, сначала завершите их. Копия из шаблона быстрее выгрузки и сохраняет права, индексы и ограничения без отдельного восстановления.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = &#39;dean&#39; AND pid &lt;&gt; pg_backend_pid();&quot;</span>
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP DATABASE IF EXISTS dean_migration;&quot;</span>
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>-T<span class="w"> </span>dean<span class="w"> </span>dean_migration
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_migration<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT current_database(), count(*) FROM students;&quot;</span>
+<p>Снимите дамп и восстановите его в отдельную базу. Копия нужна, чтобы прогнать миграцию и откат без риска для рабочей базы.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">,</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">migrations</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean_before</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
+
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/backup/dean_before.sql&quot;</span>
 </code></pre></div>
 
-<p>Приложите скриншот числа строк в копии: оно совпадает с исходным.</p>
-<h3>Шаг 3. Напишите прямой скрипт</h3>
-<p>Сохраните файл <code>001_add_middle_name_up.sql</code>. Отчество берётся из третьего слова полного имени; если слов меньше, ставится значение <code>не указано</code>. Ограничение проверяет длину и не пропускает пустую строку.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
-<span class="k">SET</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">lock_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;5s&#39;</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students_in_copy</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
+</code></pre></div>
 
-<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="nb">text</span><span class="p">;</span>
+<p>Число строк в копии должно совпасть с исходным. Если дамп не восстановился, разберите ошибку до миграции, а не после.</p>
+<h3>Шаг 3. Напишите прямой скрипт</h3>
+<p>Сохраните файл <code>C:\dean\migrations\001_add_middle_name_up.sql</code>. Скрипт не содержит <code>USE</code>: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
+<span class="w">  </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">AFTER</span><span class="w"> </span><span class="n">full_name</span><span class="p">;</span>
 
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span>
-<span class="k">SET</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">nullif</span><span class="p">(</span><span class="n">split_part</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;не указано&#39;</span><span class="p">)</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CASE</span>
+<span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;% % %&#39;</span>
+<span class="w">      </span><span class="k">THEN</span><span class="w"> </span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;не указано&#39;</span>
+<span class="w">  </span><span class="k">END</span>
 <span class="k">WHERE</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
 
-<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">ALTER</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
-
-<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">DROP</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_middle_name_check</span><span class="p">;</span>
 <span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
-<span class="w">  </span><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">students_middle_name_check</span>
-<span class="w">  </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="k">char_length</span><span class="p">(</span><span class="n">middle_name</span><span class="p">)</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
+<span class="w">  </span><span class="k">MODIFY</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
 
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">schema_version</span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">CONFLICT</span><span class="w"> </span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">DO</span><span class="w"> </span><span class="k">NOTHING</span><span class="p">;</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
+<span class="w">  </span><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">chk_students_middle_name</span>
+<span class="w">  </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">middle_name</span><span class="p">)</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span>
 
-<span class="k">COMMIT</span><span class="p">;</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">IGNORE</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">schema_version</span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Перед запуском выполните проверку версии. Если запрос вернул <code>2</code>, миграция уже применена и скрипт запускать не нужно.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="k">version</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">current_version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="p">;</span>
 </code></pre></div>
 
 <h3>Шаг 4. Напишите обратный скрипт</h3>
 <p>Файл <code>001_add_middle_name_down.sql</code> удаляет ограничение, столбец и строку версии. Порядок обратный прямому: сначала снимается ограничение, потом исчезает столбец.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
-<span class="k">SET</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">lock_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;5s&#39;</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
+<span class="w">  </span><span class="k">DROP</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">chk_students_middle_name</span><span class="p">;</span>
 
-<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">DROP</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_middle_name_check</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">DROP</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">middle_name</span><span class="p">;</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
+<span class="w">  </span><span class="k">DROP</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">middle_name</span><span class="p">;</span>
+
 <span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-
-<span class="k">COMMIT</span><span class="p">;</span>
 </code></pre></div>
 
+<p>Если сервер не понимает <code>DROP CONSTRAINT</code>, используйте форму <code>ALTER TABLE students DROP CHECK chk_students_middle_name;</code>. Обе формы снимают проверку, различие только в версии сервера.</p>
 <h3>Шаг 5. Прогоните миграцию на копии</h3>
-<p>Запустите прямой скрипт с остановкой при первой ошибке. Затем проверьте структуру, версию и заполнение нового столбца.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_migration<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-f<span class="w"> </span>001_add_middle_name_up.sql
+<p>Запустите прямой скрипт на <code>dean_migration</code>. Клиентская команда <code>source</code> читает файл без перенаправления PowerShell, поэтому кодировка не портится.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_up.sql&quot;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="kp">\d</span><span class="w"> </span><span class="ss">students</span>
-<span class="go">SELECT version FROM schema_version ORDER BY version;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">;</span>
 
-<span class="go">SELECT count(*) AS total,</span>
-<span class="go">       count(*) FILTER (WHERE middle_name IS NULL) AS nulls,</span>
-<span class="go">       count(*) FILTER (WHERE middle_name = &#39;не указано&#39;) AS unknown</span>
-<span class="go">FROM students;</span>
-</code></pre></div>
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
 
-<p>Приложите скриншот <code>\d students</code> с новым столбцом и скриншот версии <code>2</code>. Нулевое число значений <code>NULL</code> показывает, что заполнение прошло по всем строкам; само ограничение проверьте в каталоге ниже.</p>
-<p>Отдельно проверьте, что ограничение записано в каталоге, а не только подразумевается типом столбца.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">conname</span><span class="p">,</span><span class="w"> </span><span class="n">pg_get_constraintdef</span><span class="p">(</span><span class="n">oid</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">definition</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_constraint</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">conrelid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">::</span><span class="n">regclass</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">conname</span><span class="p">;</span>
-</code></pre></div>
-
-<p>В результате должны быть первичный ключ, ссылка на группу, ограничение уникальности почты и проверка длины отчества. Скриншот этого запроса показывает, что миграция добавила именно то ограничение, которое обещала.</p>
-<h3>Шаг 6. Сверьте данные после миграции</h3>
-<p>Повторите запросы из шага 1 на копии и сравните результаты. Отпечаток считается по тем же столбцам, поэтому новое поле на него не влияет: так проверяется сохранность прежних данных.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="p">;</span>
-
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">rows</span><span class="p">,</span>
-<span class="w">       </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fingerprint</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">middle_name</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">nulls</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">middle_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;не указано&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">unknown</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Приложите скриншот <code>DESCRIBE students</code> с новым столбцом и скриншот <code>schema_version</code> с версией <code>2</code>. Нулевое число значений <code>NULL</code> показывает, что заполнение прошло по всем строкам. Ограничение проверьте в каталоге, а не по типу столбца.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">CONSTRAINT_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">CHECK_CLAUSE</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">CHECK_CONSTRAINTS</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">CONSTRAINT_SCHEMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean_migration&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3>Шаг 6. Сверьте данные после миграции</h3>
+<p>Повторите запросы из шага 1 на копии. Контрольная сумма считается по тем же столбцам, поэтому новое поле на неё не влияет: так проверяется сохранность прежних данных.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">groups</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">enrollments</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">payments</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_count</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">CRC32</span><span class="p">(</span><span class="n">CONCAT_WS</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fingerprint</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">students</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Заполните таблицу сверки.</p>
@@ -955,7 +968,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <td></td>
 </tr>
 <tr>
-<td>Отпечаток <code>students</code></td>
+<td>Контрольная сумма <code>students</code></td>
 <td></td>
 <td></td>
 <td></td>
@@ -969,45 +982,51 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 </tbody>
 </table>
 <h3>Шаг 7. Проверьте откат на копии</h3>
-<p>Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_migration<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-f<span class="w"> </span>001_add_middle_name_down.sql
+<p>Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте. Откат проверяют на той же копии, где прошла миграция: так видно, что скрипт работает поверх изменённой схемы, а не на пустой базе.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_down.sql&quot;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="kp">\d</span><span class="w"> </span><span class="ss">students</span>
-<span class="go">SELECT version FROM schema_version ORDER BY version;</span>
-<span class="go">SELECT count(*) AS students,</span>
-<span class="go">       md5(string_agg(id || &#39;|&#39; || full_name || &#39;|&#39; || email, &#39;,&#39; ORDER BY id)) AS fingerprint</span>
-<span class="go">FROM students;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">;</span>
+
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_count</span><span class="p">,</span>
+<span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">CRC32</span><span class="p">(</span><span class="n">CONCAT_WS</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">fingerprint</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот <code>\d students</code> без столбца <code>middle_name</code> и скриншот версии <code>1</code>. Отпечаток должен совпасть с исходным. Откат проверяют на той же копии, где прошла миграция: так видно, что обратный скрипт работает поверх изменённой схемы, а не на пустой базе.</p>
+<p>Приложите скриншот <code>DESCRIBE students</code> без столбца <code>middle_name</code>, скриншот версии <code>1</code> и контрольную сумму. Сумма должна совпасть с исходной.</p>
 <h3>Шаг 8. Примените миграцию к рабочей базе</h3>
 <p>Повторите прямой скрипт на <code>dean</code> и проверьте итог теми же запросами. Перед запуском убедитесь, что копия и откат прошли без ошибок: рабочая база не место для первой попытки.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-f<span class="w"> </span>001_add_middle_name_up.sql
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;\d students&quot;</span>
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT version FROM schema_version ORDER BY version;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_up.sql&quot;</span>
 </code></pre></div>
 
-<p>Приложите скриншот структуры и версии рабочей базы. Запишите в отчёт, сколько времени заняла миграция и какие блокировки она брала. Для этого перед запуском засеките время, а после проверьте журнал сервера: PostgreSQL пишет длительность выполнения операторов при включённом <code>log_min_duration_statement</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
+
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">middle_name</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">nulls</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Приложите скриншот структуры рабочей базы. Если скрипт упал посередине, не правьте схему вручную: восстановите базу из дампа и начните заново с исправленным файлом.</p>
 <h3>Шаг 9. Оцените совместимость</h3>
-<p>Ответьте, что произойдёт со старым приложением, которое делает <code>INSERT INTO students(full_name, group_id, email)</code>. Новый столбец обязательный, поэтому такой запрос упадёт без значения <code>middle_name</code>. Мера это значение по умолчанию, отдельная версия приложения или заполнение поля на стороне формы.</p>
-<p>Проверьте поведение на рабочей базе после миграции: старый запрос без нового поля должен упасть. Если вы хотите увидеть ошибку заранее, сделайте копию базы на версии 2 до отката и повторите запрос там.</p>
+<p>Проверьте, что произойдёт со старым приложением, которое вставляет студента без отчества. Новый столбец обязательный и не имеет значения по умолчанию, поэтому запрос должен упасть.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span>
 <span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Проверка Совместимости&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;compat@example.ru&#39;</span><span class="p">);</span>
 </code></pre></div>
 
-<p>Ошибка ограничения это ожидаемый результат, а не сбой практики. Зафиксируйте её и предложите совместимый вариант.</p>
-<h3>Требования к отчёту</h3>
-<p>Соберите отчёт из состояния до миграции, текстов прямого и обратного скриптов, результатов на копии, таблицы сверки, проверки отката и вывода о совместимости. Укажите версию схемы до и после, число изменённых строк и найденные ограничения.</p>
-<p>Скриншоты шапки отчёта и теории не нужны. Доказательствами служат структура таблицы, версия схемы, сверка и откат.</p>
+<p>Ожидаемая ошибка: <code>Field 'middle_name' doesn't have a default value</code>. Ошибка это результат проверки, а не сбой практики. Предложите меру: значение по умолчанию <code>не указано</code>, выпуск новой версии приложения вместе с миграцией или заполнение поля в форме. Выберите вариант и объясните выбор в отчёте.</p>
+<h3>Шаг 10. Оформите отчёт</h3>
+<p>Соберите отчёт из состояния до миграции, текстов прямого и обратного скриптов, результатов на копии, таблицы сверки, проверки отката и вывода о совместимости. Укажите версию схемы до и после, число изменённых строк и найденные ограничения. Скриншоты шапки отчёта и теории не нужны: доказательствами служат структура таблицы, версия схемы, сверка и откат.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ol>
 <li>Файлы <code>001_add_middle_name_up.sql</code> и <code>001_add_middle_name_down.sql</code>.</li>
-<li>Скриншоты <code>\d students</code> до и после миграции.</li>
+<li>Скриншоты <code>DESCRIBE students</code> до и после миграции.</li>
 <li>Скриншот <code>schema_version</code> с версиями 1 и 2.</li>
 <li>Таблицу сверки данных до и после.</li>
-<li>Скриншот отката: столбец удалён, версия вернулась к 1.</li>
-<li>Вывод о совместимости со старым приложением.</li>
+<li>Скриншот отката: столбец удалён, версия вернулась к 1, сумма совпала.</li>
+<li>Вывод о совместимости со старым приложением и выбранную меру.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <table>
@@ -1022,7 +1041,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <tr>
 <td>Прямой скрипт</td>
 <td>20</td>
-<td>Столбец, заполнение, ограничение и версия в одной транзакции</td>
+<td>Столбец, заполнение, обязательность, ограничение и версия</td>
 </tr>
 <tr>
 <td>Обратный скрипт</td>
@@ -1037,7 +1056,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <tr>
 <td>Сверка данных</td>
 <td>20</td>
-<td>Число строк и отпечаток совпадают</td>
+<td>Число строк и контрольная сумма совпадают</td>
 </tr>
 <tr>
 <td>Совместимость</td>
@@ -1047,7 +1066,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <tr>
 <td>Оформление</td>
 <td>10</td>
-<td>Скриншоты подписаны, версии указаны</td>
+<td>Скриншоты подписаны, версии и значения указаны</td>
 </tr>
 <tr>
 <td><strong>Итого</strong></td>
@@ -1059,13 +1078,13 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
+<li>Почему <code>ROLLBACK</code> не отменяет <code>ALTER TABLE</code> в MySQL и что из этого следует для плана миграции?</li>
 <li>Зачем писать обратный скрипт до прямого?</li>
-<li>Почему запись версии схемы входит в ту же транзакцию, что и изменение структуры?</li>
-<li>Какие блокировки берёт <code>ALTER TABLE</code> и чем опасен <code>lock_timeout</code> без ограничения?</li>
+<li>Почему <code>NOT NULL</code> ставят после заполнения столбца, а не вместе с добавлением?</li>
 <li>Почему одинакового числа строк недостаточно для сверки данных?</li>
-<li>Что произойдёт со старым приложением после добавления обязательного столбца?</li>
+<li>Что произойдёт со старым приложением после добавления обязательного столбца без значения по умолчанию?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="27-lek-17.html"><span>← Предыдущее занятие</span>Лекция 17. Миграции</a><a class="next" style="text-align:right;margin-left:auto" href="29-prakt-12.html"><span>Следующее занятие →</span>Практика 12. Итоговая БД</a></nav></main>
+</div></article><nav class="pager"><a class="" href="27-lek-17.html"><span>← Предыдущее занятие</span>Миграции схемы MySQL</a><a class="next" style="text-align:right;margin-left:auto" href="29-prakt-12.html"><span>Следующее занятие →</span>Итоговая база и .NET-приложение</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

@@ -16,8 +16,8 @@ Anatomy + Visualise, он описывает план дисциплин, нап
   часть практик по 180 минут. Число занятий фиксировано; баланс лекций и практик
   меняется только по запросу.
 - `courses/4/uifis/`: УФИС, 42 занятия и 84 ч.
-- `courses/4/db-automation/`: МДК.07.01, 29 занятий и 66 ч, PostgreSQL в учебной
-  Linux VM в VirtualBox.
+- `courses/4/db-automation/`: МДК.07.01, 29 занятий и 66 ч, MySQL в XAMPP,
+  phpMyAdmin, .NET SDK 10 и Visual Studio 2022.
 - `courses/4/is-certification/`: МДК.07.02, 18 занятий и 42 ч.
 - `courses/<year>/<slug>/chapters/<nn-slug>/`: занятие: `chapter.md` + `figures/<fig-id>/`.
 - `site.json`: специальности и карточки курсов для landing.
@@ -47,11 +47,12 @@ https://bom.firpo.ru/Public/6506.
   документация API по шаблону.
 - Компетенции: ПК 2.2-2.4, 5.1-5.4, 7.1-7.4, 11.1-11.5 и ОК 01, 02, 04, 09.
 - Доступное ПО: Excel, Word, PowerPoint, VS Code с Python, Visual Studio 2022
-  Community, Postman, XAMPP 8.5.12, VirtualBox с учебными Linux и Windows 10,
-  браузер с draw.io, sqliteonline.com, GitHub, Kaggle, Colab и Google Docs.
-  PostgreSQL для МДК.07.01 устанавливается внутри учебной Linux VM, на хосте ничего
-  не требуется. Не требовать PlantUML, StarUML, Enterprise Architect, Visio,
-  PyCharm, MySQL, PostgreSQL на хосте и платные сервисы.
+  Community с рабочей нагрузкой .NET desktop, .NET SDK 10, Postman, XAMPP 8.5.12
+  (MySQL/MariaDB и phpMyAdmin), VirtualBox с учебными Linux и Windows 10, браузер с
+  draw.io, sqliteonline.com, GitHub, Kaggle, Colab и Google Docs. MySQL для
+  МДК.07.01 работает из XAMPP, отдельный сервер MySQL или PostgreSQL не требуется.
+  Не требовать PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, отдельный
+  сервер MySQL или PostgreSQL и платные сервисы.
 - Настройки учебных ПК ограничены администратором. Лабы по ОС и системным настройкам
   выполняются в VirtualBox; не требовать прав администратора, host-only сети или
   изменений Windows на хосте. Для SSH использовать NAT и проброс порта.

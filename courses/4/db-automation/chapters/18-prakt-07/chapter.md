@@ -7,285 +7,259 @@ level: СПО
 glyph: П7
 outcomes:
   - Выгружать таблицу и выборку в CSV и JSON
-  - Снимать схему базы через pg_dump
+  - Снимать схему базы через mysqldump
   - Проверять кодировку и отсутствие BOM в файлах обмена
   - Сверять выгрузку по числу строк и контрольным суммам
 ---
 
 ## Цель работы
 
-Файл выгрузки считается готовым не тогда, когда команда завершилась без ошибки, а тогда, когда данные из него загружаются обратно и совпадают с источником. Ошибка в кавычках, разделителе или кодировке обнаруживается только на приёмной стороне, часто через несколько дней.
+Файл выгрузки готов не тогда, когда команда завершилась без ошибки, а тогда, когда данные из него загружаются обратно и совпадают с источником. Ошибка в кавычках, разделителе или кодировке обнаруживается только на приёмной стороне.
 
-Цель работы: выгрузить учебную базу `dean` в файлы обмена и проверить каждый файл обратной загрузкой. Вы сделаете CSV с заголовком, JSON Lines через `row_to_json`, схему через `pg_dump --schema-only`, затем загрузите файлы во временные таблицы и сравните число строк и контрольные суммы. Итог работы это скрипт экспорта, файлы обмена и заполненная таблица сверки.
+Цель работы: выгрузить базу `dean` в файлы обмена и проверить каждый файл обратной загрузкой. Вы сделаете CSV через phpMyAdmin и `INTO OUTFILE`, JSON через `JSON_OBJECT`, схему через `mysqldump`, затем загрузите файлы в таблицы проверки и сравните число строк и контрольные суммы.
 
 ## Оборудование и программное обеспечение
 
-- Персональный компьютер с VirtualBox и учебной Ubuntu Server.
-- PostgreSQL 16 в виртуальной машине, база `dean` с учебными данными.
-- Роль `dean_owner` с правом чтения всех таблиц базы.
-- Клиент `psql` версии 16 и утилиты `pg_dump`, `createdb`.
-- Утилиты `file`, `iconv`, `od`, `diff` из базового набора Ubuntu.
-- Текстовый редактор и табличный редактор для отчёта.
-- Каталог `~/export` для файлов и скриптов.
+- Персональный компьютер с Windows 10, XAMPP 8.5.12 и запущенными Apache и MySQL.
+- База `dean` в кодировке `utf8mb4` с учебными данными.
+- phpMyAdmin по адресу `http://localhost/phpmyadmin`.
+- Клиенты `C:\xampp\mysql\bin\mysql.exe` и `C:\xampp\mysql\bin\mysqldump.exe`.
+- Пользователь `root` или `dean_app` с правом `SELECT` и привилегией `FILE`.
+- PowerShell для проверки байтов файла.
+- Каталог `C:\dean\export` для файлов и скриптов.
 
 ## Краткие теоретические сведения
 
-**Формат обмена** выбирают по приёмной стороне. CSV понимают табличные редакторы, бухгалтерские программы и почти любая система импорта. JSON удобен, когда данные вложенные: студент вместе со списком курсов не раскладывается в плоскую таблицу без потерь. Схема базы в виде SQL-файла нужна, чтобы развернуть структуру на новом месте.
+**Формат обмена** выбирают по приёмной стороне. CSV понимают табличные редакторы, бухгалтерские программы и почти любая система импорта. JSON удобен, когда данные вложенные: студент вместе со списком курсов не раскладывается в плоскую таблицу без потерь. Схема в виде SQL-файла нужна, чтобы развернуть структуру на новом месте.
 
-**CSV** это текст с разделителем, кавычками и заголовком. Заголовок включается опцией `HEADER`, разделитель задаётся `DELIMITER`, кавычки и переводы строк экранируются по правилам RFC 4180. Значение с запятой или кавычкой обязано быть в кавычках, иначе приёмная сторона сдвинет столбцы.
+**CSV** это текст с разделителем, кавычками и заголовком. Значение с запятой или кавычкой обязано быть в кавычках, иначе приёмная сторона сдвинет столбцы. Перевод строки внутри значения тоже требует кавычек, поэтому разбор CSV не сводится к делению строки по запятым.
 
-**`COPY` и `\copy`.** Серверная команда `COPY ... TO ...` пишет файл на стороне сервера и требует прав на каталог. Мета-команда `\copy` пишет файл на машине клиента, поэтому в учебной базе используется она. Синтаксис опций одинаков: `WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')`.
+**`INTO OUTFILE`** пишет файл на стороне сервера, то есть на том же компьютере, где работает MySQL из XAMPP. Команда требует привилегии `FILE` и каталога, разрешённого переменной `secure_file_priv`. Если файл уже существует, сервер вернёт ошибку 1086: старую выгрузку удаляют до запуска.
 
-**`row_to_json`** превращает строку запроса в JSON-объект. Если вызвать его для каждой строки и писать по объекту на строку, получается JSON Lines: тот же формат, который разбирался при импорте. Вложенный массив курсов собирается через `json_agg` и `json_build_object` в подзапросе.
+**phpMyAdmin Export** выполняет ту же работу через браузер: формат CSV, разделитель, кавычки, кодировка `utf-8` и строка с именами столбцов. Этот путь удобен для небольшой таблицы и не требует привилегии `FILE`, но повторять его вручную на каждой выгрузке неудобно.
 
-**`pg_dump --schema-only`** выгружает только определения объектов: таблицы, ограничения, индексы, последовательности, представления. Данные в файл не попадают. Опции `--no-owner` и `--no-privileges` убирают привязку к конкретным ролям, чтобы файл разворачивался на другой машине.
+**`mysqldump --no-data`** выгружает только определения объектов: таблицы, ограничения, индексы, представления и триггеры. Данные в файл не попадают. Опции `--routines` и `--triggers` добавляют процедуры и триггеры, `--default-character-set=utf8mb4` сохраняет кириллицу.
 
-**Контрольная сумма** это короткий отпечаток содержимого. `md5` от строки, собранной из всех значимых столбцов в стабильном порядке, меняется при любом расхождении. Сумма не заменяет построчное сравнение, но быстро показывает, что файл дошёл без потерь и искажений.
+**Контрольная сумма** это короткий отпечаток содержимого. `MD5` от строки, собранной из всех значимых столбцов в стабильном порядке, меняется при любом расхождении. В MySQL строку собирает `GROUP_CONCAT`, но её длина ограничена параметром `group_concat_max_len`: без увеличения сумма считается по обрезанным данным и молча врёт.
 
-**Временная таблица для сверки**: загрузка обратно в рабочую таблицу рискует испортить данные или упереться в уникальность. Временная таблица повторяет структуру источника, живёт до конца сессии и удаляется сама. Конструкция `LIKE groups INCLUDING DEFAULTS` копирует столбцы и значения по умолчанию, но не ограничения и не индексы: для проверки содержимого этого достаточно.
-
-**Кодировка.** PostgreSQL хранит текст в UTF-8, если база создана с `ENCODING 'UTF8'`. Файл без BOM открывается в Excel с испорченной кириллицей, поэтому для обмена с табличным редактором либо добавляют BOM, либо импортируют через мастер «Данные из текста». Для обмена с другой СУБД BOM только мешает.
+**Кодировка.** Файл без BOM открывается в Excel с испорченной кириллицей, поэтому для обмена с табличным редактором BOM добавляют, а для загрузки в СУБД его быть не должно. Проверяют байты до загрузки: `EF BB BF` в начале файла ломает первый столбец.
 
 ## Ход работы
 
-### Шаг 1. Подготовьте каталог и проверьте кодировку
+### Шаг 1. Проверьте каталог, кодировку и разрешённый путь
 
-```bash
-mkdir -p ~/export && cd ~/export
-psql -h 127.0.0.1 -p 5432 -U dean_owner -d dean -c "SHOW server_encoding;"
+```bat
+mkdir C:\dean\export
+C:\xampp\mysql\bin\mysql.exe -u root dean
 ```
-
-Внутри `psql` проверьте кодировку клиента.
 
 ```sql
-\echo 'Иванов И.И., ИС-41'
-\encoding
+SELECT 'Иванов И.И., ИС-41' AS student;
+SHOW VARIABLES LIKE 'character_set_server';
+SHOW VARIABLES LIKE 'secure_file_priv';
+SELECT @@local_infile;
 ```
 
-Оба значения должны быть `UTF8`. Если клиент показывает другую кодировку, задайте её через `\encoding UTF8` или переменную окружения `PGCLIENTENCODING=UTF8`. Расхождение кодировок сервера и клиента даёт ошибку преобразования уже на первой кириллической фамилии.
+`character_set_server` должен быть `utf8mb4`. Значение `secure_file_priv` задаёт единственный каталог, куда сервер пишет файлы; пустое значение разрешает любой путь. Запишите его, он понадобится на шаге 3.
 
-### Шаг 2. Выгрузите группы в CSV
+### Шаг 2. Выгрузите группы в CSV через phpMyAdmin
 
-Запрос в скобках задаёт столбцы и порядок строк. Без скобок `COPY` берёт таблицу целиком и не даёт отсортировать результат.
+Откройте базу `dean`, таблицу `groups`, вкладку «Экспорт». Выберите формат CSV, разделитель `,`, кавычки `"`, кодировку `utf-8` и включите строку с именами столбцов. Сохраните файл как `groups_phpmyadmin.csv` в `C:\dean\export`.
+
+Приложите скриншот открытого файла: в нём видно заголовок `id,name,specialty` и кириллицу в названиях групп. Скриншот настроек экспорта без файла доказательством не является.
+
+### Шаг 3. Выгрузите студентов через INTO OUTFILE
+
+Запрос в скобках задаёт столбцы и порядок строк. Название группы добавляется соединением: приёмной стороне нужно читаемое значение, а не номер.
 
 ```sql
-\echo 'Иванов И.И., ИС-41'
-\copy (SELECT id, name, specialty FROM groups ORDER BY id)
-  TO 'groups.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8');
+SELECT 'Иванов И.И., ИС-41' AS student;
+
+SELECT s.id, s.full_name, g.name AS group_name, s.email, s.created_at
+FROM students s
+LEFT JOIN groups g ON g.id = s.group_id
+ORDER BY s.id
+INTO OUTFILE 'C:/dean/export/students.csv'
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n';
 ```
 
-`psql` ответит `COPY 3`. Серверный вариант той же операции выглядит так и выполняется от имени `postgres`, потому что файл пишет сервер.
+Путь подставьте из `secure_file_priv`, если переменная не пуста. Ошибка 1086 означает, что файл уже есть: удалите его и повторите. Ошибка 1227 означает, что у пользователя нет привилегии `FILE`.
+
+Заголовок `INTO OUTFILE` не пишет. Добавьте его отдельной командой.
+
+```bat
+cd /d C:\dean\export
+echo id,full_name,group_name,email,created_at> students_with_header.csv
+type students.csv>> students_with_header.csv
+```
+
+`echo` пишет только ASCII-заголовок, а `type` добавляет байты файла без перекодирования. `Set-Content -Encoding utf8` в Windows PowerShell добавляет BOM, и первый столбец при загрузке получит лишний символ.
+
+### Шаг 4. Выгрузите JSON
+
+`JSON_OBJECT` собирает объект из столбцов, `JSON_ARRAYAGG` превращает список курсов в массив. В MariaDB вместо него используйте `CONCAT('[', GROUP_CONCAT(JSON_OBJECT('course', c.title, 'grade', e.grade)), ']')`.
 
 ```sql
-COPY (SELECT id, name, specialty FROM groups ORDER BY id)
-  TO '/tmp/groups.csv' WITH (FORMAT csv, HEADER true);
+SELECT JSON_OBJECT(
+         'id', s.id,
+         'full_name', s.full_name,
+         'group_name', g.name,
+         'courses', (
+           SELECT JSON_ARRAYAGG(JSON_OBJECT('course', c.title, 'grade', e.grade))
+           FROM enrollments e JOIN courses c ON c.id = e.course_id
+           WHERE e.student_id = s.id
+         )
+       ) AS student_json
+FROM students s
+LEFT JOIN groups g ON g.id = s.group_id
+ORDER BY s.id
+INTO OUTFILE 'C:/dean/export/students.json';
 ```
 
-### Шаг 3. Выгрузите студентов с названием группы
+Каждая строка файла это самостоятельный объект, то есть JSON Lines. Такой формат читается потоком и совпадает с тем, что разбирался при импорте.
 
-Плоская таблица не хранит связь, поэтому название группы добавляется соединением. Приёмной стороне не нужен идентификатор, ей нужно читаемое значение. `LEFT JOIN` оставляет студента без группы: пропуск строки исказил бы число записей сильнее, чем пустое поле.
+### Шаг 5. Снимите схему через mysqldump
 
-```sql
-\copy (
-  SELECT s.id, s.full_name, g.name AS group_name, s.email, s.created_at
-  FROM students s
-  LEFT JOIN groups g ON g.id = s.group_id
-  ORDER BY s.id
-) TO 'students.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8');
+```bat
+C:\xampp\mysql\bin\mysqldump.exe -u root --no-data --routines --triggers ^
+  --default-character-set=utf8mb4 --result-file=C:\dean\export\schema.sql dean
 ```
 
-### Шаг 4. Выгрузите JSON через row_to_json
+Опция `--result-file` важна: перенаправление `>` в PowerShell пишет файл в UTF-16, и такой дамп не загрузится. Проверьте содержимое.
 
-Один объект на строку это JSON Lines. Вложенный массив курсов сохраняет связь, которую CSV теряет.
-
-```sql
-\copy (
-  SELECT row_to_json(t)
-  FROM (
-    SELECT s.id,
-           s.full_name,
-           g.name AS group_name,
-           s.email,
-           (
-             SELECT json_agg(json_build_object('course', c.title, 'grade', e.grade)
-                             ORDER BY c.title)
-             FROM enrollments e
-             JOIN courses c ON c.id = e.course_id
-             WHERE e.student_id = s.id
-           ) AS courses
-    FROM students s
-    LEFT JOIN groups g ON g.id = s.group_id
-    ORDER BY s.id
-  ) t
-) TO 'students.jsonl';
+```bat
+powershell -Command "Select-String -Path C:\dean\export\schema.sql -Pattern 'CREATE TABLE' | Measure-Object"
+powershell -Command "Select-String -Path C:\dean\export\schema.sql -Pattern 'INSERT INTO' | Measure-Object"
 ```
 
-### Шаг 5. Снимите схему через pg_dump
-
-```bash
-pg_dump -h 127.0.0.1 -p 5432 -U dean_owner -d dean \
-  --schema-only --no-owner --no-privileges -f schema.sql
-```
-
-Проверьте, что в файле есть таблицы и ограничения, но нет `INSERT`.
-
-```bash
-grep -c 'CREATE TABLE' schema.sql
-grep -c 'INSERT INTO' schema.sql || true
-```
-
-Первая команда покажет число таблиц, вторая должна показать 0. Если `INSERT` нашлись, значит опция `--schema-only` не применилась.
+Первая команда покажет число таблиц, вторая должна показать ноль. Если `INSERT` нашлись, опция `--no-data` не применилась.
 
 ### Шаг 6. Проверьте файлы и кодировку
 
-```bash
-printf 'Иванов И.И., ИС-41\n'
-head -n 3 groups.csv
-file -i groups.csv students.csv students.jsonl schema.sql
-iconv -f UTF-8 -t UTF-8 groups.csv > /dev/null && echo 'UTF-8 ok'
-od -An -tx1 -N3 groups.csv
+```bat
+powershell -Command "Get-Content C:\dean\export\students.csv -TotalCount 3"
+powershell -Command "[System.IO.File]::ReadAllBytes('C:\dean\export\students.csv')[0..2]"
+powershell -Command "Get-ChildItem C:\dean\export | Select-Object Name, Length"
 ```
 
-`file -i` должен показать `charset=utf-8`. Команда `iconv` завершается без ошибки, если файл действительно в UTF-8. `od` показывает первые три байта: `ef bb bf` означают BOM, которого в файле для СУБД быть не должно.
+Байты `239 187 191` означают BOM: для загрузки в MySQL его нужно убрать. Размер файла не должен быть нулевым. Приложите скриншот первых строк файла и списка файлов с размерами.
 
-Приложите скриншот `head` и `file -i`: на нём видно заголовок CSV, разделитель и кодировку. Скриншот пустого каталога доказательством не является.
+### Шаг 7. Загрузите CSV обратно в таблицу проверки
 
-### Шаг 7. Загрузите CSV обратно во временные таблицы
-
-Временная таблица живёт до конца сессии и не мешает рабочим данным.
+Таблицы проверки создаются обычными, а не временными: временная живёт только в своей сессии, и phpMyAdmin её не увидит. Структура повторяет файл, а не источник: в выгрузке есть текстовая колонка `group_name`, которой в `students` нет.
 
 ```sql
-CREATE TEMP TABLE tmp_groups (LIKE groups INCLUDING DEFAULTS);
-\copy tmp_groups (id, name, specialty) FROM 'groups.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8');
-SELECT count(*) AS loaded_groups FROM tmp_groups;
+USE dean;
+DROP TABLE IF EXISTS chk_students_flat, chk_groups;
+
+CREATE TABLE chk_students_flat (
+  id INT, full_name VARCHAR(128), group_name VARCHAR(32),
+  email VARCHAR(128), created_at TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOAD DATA LOCAL INFILE 'C:/dean/export/students_with_header.csv'
+INTO TABLE chk_students_flat
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
+IGNORE 1 LINES;
+
+SELECT COUNT(*) AS loaded_students FROM chk_students_flat;
 ```
 
-```sql
-CREATE TEMP TABLE tmp_students (
-  id int, full_name text, group_name text, email text, created_at timestamptz
-);
-\copy tmp_students FROM 'students.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8');
-SELECT count(*) AS loaded_students FROM tmp_students;
-```
+Для `LOAD DATA LOCAL INFILE` клиент запускают с ключом `--local-infile=1`, а сервер должен разрешать `local_infile`. Если политика XAMPP это запрещает, загрузите тот же файл через phpMyAdmin: вкладка «Импорт», формат CSV, разделитель `,`, первая строка содержит имена столбцов, таблица `chk_students_flat`. Так же загрузите `groups_phpmyadmin.csv` в `chk_groups`, созданную командой `CREATE TABLE chk_groups LIKE groups`. Результат должен совпасть.
 
 ### Шаг 8. Сверьте число строк и контрольные суммы
 
-Сначала сравните количество.
+Сначала количество.
 
 ```sql
-SELECT (SELECT count(*) FROM groups) AS source_groups,
-       (SELECT count(*) FROM tmp_groups) AS loaded_groups,
-       (SELECT count(*) FROM students) AS source_students,
-       (SELECT count(*) FROM tmp_students) AS loaded_students;
+SELECT (SELECT COUNT(*) FROM students) AS source_students,
+       (SELECT COUNT(*) FROM chk_students_flat) AS loaded_students,
+       (SELECT COUNT(*) FROM groups) AS source_groups,
+       (SELECT COUNT(*) FROM chk_groups) AS loaded_groups;
 ```
 
-Затем сравните содержимое. Строка собирается из значимых столбцов в одном порядке, поэтому любое расхождение меняет `md5`.
+Затем содержимое. Строка собирается из значимых столбцов в одном порядке, поэтому любое расхождение меняет `MD5`.
 
 ```sql
-SELECT md5(string_agg(id::text || '|' || name || '|' || specialty, E'\n' ORDER BY id)) AS source_md5
-FROM groups;
+SET SESSION group_concat_max_len = 1000000;
 
-SELECT md5(string_agg(id::text || '|' || name || '|' || specialty, E'\n' ORDER BY id)) AS loaded_md5
-FROM tmp_groups;
-```
-
-```sql
-SELECT md5(string_agg(s.id::text || '|' || s.full_name || '|' || coalesce(g.name, '') || '|' || s.email,
-                      E'\n' ORDER BY s.id)) AS source_md5
+SELECT MD5(GROUP_CONCAT(CONCAT_WS('|', s.id, s.full_name, COALESCE(g.name, ''), s.email)
+                        ORDER BY s.id SEPARATOR '\n')) AS source_md5
 FROM students s LEFT JOIN groups g ON g.id = s.group_id;
 
-SELECT md5(string_agg(id::text || '|' || full_name || '|' || coalesce(group_name, '') || '|' || email,
-                      E'\n' ORDER BY id)) AS loaded_md5
-FROM tmp_students;
+SELECT MD5(GROUP_CONCAT(CONCAT_WS('|', id, full_name, COALESCE(group_name, ''), email)
+                        ORDER BY id SEPARATOR '\n')) AS loaded_md5
+FROM chk_students_flat;
 ```
 
 Суммы должны совпасть. Если число строк совпало, а сумма нет, ищите разницу в кавычках, пробелах или кодировке.
 
 | Объект | Строк в источнике | Строк после загрузки | md5 источника | md5 загрузки | Вывод |
 |---|---|---|---|---|---|
-| groups | | | | | |
 | students | | | | | |
-| students.jsonl | | | | | |
+| groups | | | | | |
+| students.json | | | | | |
 
 ### Шаг 9. Загрузите JSON обратно
 
 ```sql
-CREATE TEMP TABLE tmp_students_json (data jsonb);
-\copy tmp_students_json (data) FROM 'students.jsonl'
-SELECT count(*) AS json_lines FROM tmp_students_json;
+DROP TABLE IF EXISTS chk_students_json;
+CREATE TABLE chk_students_json (data JSON) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOAD DATA LOCAL INFILE 'C:/dean/export/students.json'
+INTO TABLE chk_students_json
+LINES TERMINATED BY '\n';
+
+SELECT COUNT(*) AS json_lines FROM chk_students_json;
+SELECT COUNT(*) AS without_courses
+FROM chk_students_json
+WHERE COALESCE(JSON_LENGTH(JSON_EXTRACT(data, '$.courses')), 0) = 0;
 ```
 
-Проверьте, что каждый адрес из файла находится в основной таблице, а массивы курсов не потерялись.
-
-```sql
-SELECT count(*) AS missing_students
-FROM tmp_students_json j
-LEFT JOIN students s ON s.email = j.data->>'email'
-WHERE s.id IS NULL;
-
-SELECT count(*) AS students_with_courses
-FROM tmp_students_json
-WHERE jsonb_array_length(data->'courses') > 0;
-```
-
-Первое число должно быть нулевым. Второе показывает, у скольких студентов есть хотя бы один курс, и служит проверкой вложенного массива.
+Первое число равно числу студентов. Второе показывает, у скольких нет ни одного курса, и проверяет вложенный массив: если у всех ноль, массив потерялся при выгрузке. Удалите таблицы проверки командой `DROP TABLE chk_students_flat, chk_groups, chk_students_json`.
 
 ### Шаг 10. Разверните схему в отдельной базе
 
-Пустая база исключает влияние старых объектов.
-
-```bash
-dropdb -h 127.0.0.1 -p 5432 -U dean_owner --if-exists dean_check
-createdb -h 127.0.0.1 -p 5432 -U dean_owner dean_check
-psql -h 127.0.0.1 -p 5432 -U dean_owner -d dean_check -v ON_ERROR_STOP=1 -f schema.sql
+```bat
+C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+C:\xampp\mysql\bin\mysql.exe -u root dean_check -e "source C:/dean/export/schema.sql"
+C:\xampp\mysql\bin\mysql.exe -u root -e "SELECT table_name FROM information_schema.tables WHERE table_schema = 'dean_check' ORDER BY table_name;"
 ```
 
-Сравните список таблиц с исходной базой.
+Команда `source` читает файл внутри клиента и не зависит от перенаправления оболочки. Сравните список таблиц с базой `dean`: он должен совпасть. Пустой список чаще всего означает, что дамп не создался из-за ошибки прав или прерванного выполнения.
 
-```bash
-psql -h 127.0.0.1 -U dean_owner -d dean -Atc \
-  "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY 1" > tables_src.txt
-psql -h 127.0.0.1 -U dean_owner -d dean_check -Atc \
-  "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY 1" > tables_new.txt
-diff tables_src.txt tables_new.txt && echo 'схема совпадает'
-```
-
-`ON_ERROR_STOP=1` останавливает выполнение на первой ошибке. Без него `psql` продолжит работу и создаст половину схемы, а отчёт покажет успешный код возврата.
-
-Если `diff` показал расхождение, сравните не только имена таблиц, но и ограничения: `pg_dump --schema-only` выгружает их отдельными командами `ALTER TABLE`. Пустой список таблиц в новой базе чаще всего означает, что файл схемы не создался из-за ошибки прав или прерванного выполнения.
-
-### Требования к отчёту
-
-Приложите скриншоты вывода `\copy` с числом строк, `head` и `file -i` для файла, обратной загрузки во временную таблицу и итогового запроса счётчиков и сумм. В первой строке каждого вывода должна стоять подпись с фамилией и группой: в `psql` её печатает `\echo`, в оболочке `printf`. Скриншоты шапки отчёта и текста теории не нужны.
+Скриншоты делайте только как доказательства: файл CSV с заголовком, обратная загрузка с числом строк, итоговые счётчики и суммы. Шапка отчёта и текст теории в кадр не нужны.
 
 ## Что сдать
 
-- Скрипт экспорта с командами `\copy`, `row_to_json` и `pg_dump`.
-- Файлы `groups.csv`, `students.csv`, `students.jsonl`, `schema.sql`.
+- Скрипт экспорта с `INTO OUTFILE`, `JSON_OBJECT` и `mysqldump`.
+- Файлы `students.csv`, `students.json`, `schema.sql` и выгрузку из phpMyAdmin.
 - Таблицу сверки с числом строк и контрольными суммами.
-- Результат развёртывания схемы в отдельной базе и сравнение списка таблиц.
-- Скриншоты `\copy`, файла, обратной загрузки и счётчиков.
+- Список таблиц базы `dean_check` после развёртывания схемы.
+- Скриншоты файла, обратной загрузки и счётчиков.
 
 ## Критерии оценки
 
 | Критерий | Баллы | Что проверяется |
 |---|---|---|
 | Выгрузка | 25 | CSV и JSON содержат нужные столбцы, заголовок и порядок строк |
-| Кодировка | 15 | UTF-8 подтверждена, BOM отсутствует |
-| Обратная загрузка | 25 | Файлы читаются без ошибок и дают те же строки |
+| Кодировка | 15 | UTF-8 подтверждена, BOM проверен, дамп читается |
+| Обратная загрузка | 25 | Файлы загружаются без ошибок и дают те же строки |
 | Сверка | 20 | Число строк и контрольные суммы совпадают |
-| Схема и отчёт | 15 | `pg_dump` разворачивается, таблица сверки заполнена |
+| Схема и отчёт | 15 | `mysqldump` разворачивается, таблица сверки заполнена |
 
 ## Контрольные вопросы
 
 <div class="selfcheck no-copy" markdown="1">
 
-1. Чем серверный `COPY` отличается от `\copy` и когда нужен каждый?
-2. Зачем в `\copy` запрос заключается в скобки?
+1. Чем `INTO OUTFILE` отличается от экспорта через phpMyAdmin и когда нужен каждый?
+2. Почему `INTO OUTFILE` возвращает ошибку 1086 и что делать перед повторной выгрузкой?
 3. Почему для вложенного списка курсов выбран JSON, а не CSV?
 4. Что произойдёт с файлом CSV, если значение содержит запятую и не заключено в кавычки?
 5. Почему совпадения числа строк недостаточно для вывода о корректной выгрузке?
-6. Зачем нужны опции `--no-owner` и `--no-privileges` в `pg_dump`?
-7. Чем мешает BOM при загрузке CSV в PostgreSQL и когда он полезен?
+6. Зачем перед расчётом `MD5` увеличивают `group_concat_max_len`?
+7. Чем мешает BOM при загрузке CSV в MySQL и когда он полезен?
 
 </div>

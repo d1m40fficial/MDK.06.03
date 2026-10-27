@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Планировщик заданий</title>
+<title>Планировщик заданий и события MySQL</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -790,304 +790,223 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Планировщик заданий</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn rail-warn" data-warn data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Планировщик заданий и события MySQL</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn rail-warn" data-warn data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 23</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Планировщик заданий</h1><p class="dek">Планировщик запускает обслуживание без человека, поэтому расписание и права важнее самого скрипта.</p></div>
-<div class="glyph" aria-hidden="true">Л13</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настраивать расписание задания в cron и systemd timer</li><li>Запускать задание от отдельного пользователя с минимальными правами</li><li>Читать журнал и находить причину сбоя</li><li>Защищать окно обслуживания от пересечения запусков</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#cron-и-systemd-timers">cron и systemd timers</a></li><li><a href="#синтаксис-расписания">Синтаксис расписания</a></li><li><a href="#пользователь-и-окружение">Пользователь и окружение</a></li><li><a href="#pgpass-для-задания">.pgpass для задания</a></li><li><a href="#unit-и-timer">unit и timer</a></li><li><a href="#журнал-и-коды-возврата">Журнал и коды возврата</a></li><li><a href="#повторные-попытки-и-оповещения">Повторные попытки и оповещения</a></li><li><a href="#окно-обслуживания">Окно обслуживания</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итог">Итог</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
-<p>Скрипт копирования проверен вручную: запустили из терминала, файл появился, размер правдоподобный. Его ставят в расписание, и через сутки выясняется, что копии нет. Причина не в скрипте, а в том, что планировщик запустил его <strong>в другом окружении</strong>: от другого пользователя, с другим <code>PATH</code>, без переменных из профиля и не в том каталоге.</p>
-<p><strong>Планировщик</strong> это не «кнопка, которая нажимает скрипт по времени». Это отдельная среда исполнения со своими правилами: кто запускает, что видит процесс, куда пишется вывод и что считается успехом. Поэтому расписание и права здесь важнее текста скрипта.</p>
-<p>Главная мысль: задание проектируют с конца. Сначала решают, как узнать, что оно сработало, и что делать при сбое, а уже потом выбирают время запуска.</p>
-<h2 id="cron-и-systemd-timers"><span class="num">02</span>cron и systemd timers</h2>
-<p>В учебной Ubuntu доступны два планировщика. Оба решают одну задачу, но по-разному.</p>
-<table>
-<thead>
-<tr>
-<th>Свойство</th>
-<th>cron</th>
-<th>systemd timer</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Запись расписания</td>
-<td>строка из пяти полей</td>
-<td>секция <code>OnCalendar</code></td>
-</tr>
-<tr>
-<td>Окружение</td>
-<td>минимальное, из файла crontab</td>
-<td>задаётся в unit</td>
-</tr>
-<tr>
-<td>Журнал</td>
-<td>почта или перенаправление в файл</td>
-<td>journald автоматически</td>
-</tr>
-<tr>
-<td>Пропущенный запуск</td>
-<td>не догоняет</td>
-<td><code>Persistent=true</code> догоняет</td>
-</tr>
-<tr>
-<td>Зависимости</td>
-<td>нет</td>
-<td><code>After=</code>, <code>Requires=</code></td>
-</tr>
-<tr>
-<td>Проверка</td>
-<td><code>crontab -l</code>, <code>grep CRON</code></td>
-<td><code>systemctl list-timers</code></td>
-</tr>
-</tbody>
-</table>
-<p>cron старше и проще: одна строка, никаких файлов служб. Его достаточно для учебного стенда и для задач, которые не требуют сложной логики. systemd timer даёт журнал без дополнительных настроек, умеет догонять пропущенный запуск и связывать задание с другими службами, например ждать запуска PostgreSQL.</p>
-<p>На практике удобно так: cron для простых периодических команд, systemd timer для ночного обслуживания базы, где важны журнал и порядок запуска.</p>
-<h2 id="синтаксис-расписания"><span class="num">03</span>Синтаксис расписания</h2>
-<p>Строка cron состоит из пяти полей и команды. Поля отделяются пробелами, порядок фиксирован.</p>
-<table>
-<thead>
-<tr>
-<th>Поле</th>
-<th>Допустимые значения</th>
-<th>Пример</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>минута</td>
-<td>0 до 59</td>
-<td>0</td>
-</tr>
-<tr>
-<td>час</td>
-<td>0 до 23</td>
-<td>3</td>
-</tr>
-<tr>
-<td>день месяца</td>
-<td>1 до 31</td>
-<td>*</td>
-</tr>
-<tr>
-<td>месяц</td>
-<td>1 до 12</td>
-<td>*</td>
-</tr>
-<tr>
-<td>день недели</td>
-<td>0 до 7, где 0 и 7 это воскресенье</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-<p>Несколько примеров:</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>0 3 * * *      каждый день в 03:00
-*/15 * * * *   каждые пятнадцать минут
-0 3 * * 1      каждый понедельник в 03:00
-0 4 1 * *      первого числа каждого месяца в 04:00
-</code></pre></div>
-
-<p>Звёздочка означает «любое значение», <code>*/15</code> означает «каждое значение с шагом 15», а перечисление через запятую задаёт набор, например <code>0 3 * * 1,3,5</code> для понедельника, среды и пятницы.</p>
-<p>У cron есть неочевидное правило: если ограничены <strong>и</strong> день месяца, <strong>и</strong> день недели, задание запускается при совпадении <strong>любого</strong> из них, а не обоих. Строка <code>0 3 1 * 1</code> сработает и первого числа, и в каждый понедельник. Это редко нужно, но ошибка встречается.</p>
-<p>Время cron берёт из системного часового пояса. Проверить его можно командой <code>timedatectl</code>, а в systemd пояс указывают прямо в расписании: <code>OnCalendar=*-*-* 03:00:00 Europe/Moscow</code>.</p>
-<h2 id="пользователь-и-окружение"><span class="num">04</span>Пользователь и окружение</h2>
-<p>Самая частая причина «в терминале работает, в расписании нет» это окружение. Интерактивная оболочка читает профиль, подставляет <code>PATH</code>, псевдонимы и переменные. cron и systemd запускают команду без профиля и с минимальным набором переменных.</p>
-<p>Что это значит на практике:</p>
-<ul>
-<li><code>PATH</code> содержит только системные каталоги, поэтому <code>pg_dump</code> может не найтись, если он лежит в <code>/usr/lib/postgresql/16/bin</code>;</li>
-<li>у cron текущий каталог это домашний каталог пользователя, у systemd корень <code>/</code>, а не тот, где вы запускали скрипт;</li>
-<li>псевдонимы и функции оболочки не работают;</li>
-<li>переменные вроде <code>PGPASSWORD</code> из вашего профиля отсутствуют.</li>
-</ul>
-<p>Лечится это явно: в скрипте задают <code>PATH</code>, все пути делают абсолютными, а каталог меняют через <code>cd</code> или указывают в аргументах.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-<span class="nb">export</span><span class="w"> </span>PATH
-<span class="nb">cd</span><span class="w"> </span>/var/lib/dean<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
-</code></pre></div>
-
-<p>Запускать задание от <code>root</code> нельзя. Скрипт обслуживания базы не должен иметь прав менять систему, а ошибка в нём от root обойдётся дороже. Для задания создают отдельного пользователя, например <code>dean_job</code>, и дают ему только нужные права: чтение своего каталога, запись в каталог копий, доступ к базе через роль <code>dean_read</code> или <code>dean_app</code>.</p>
-<p>Проверяют задание тем же способом, каким его запустит планировщик: от нужного пользователя и с пустым окружением.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>dean_job<span class="w"> </span>env<span class="w"> </span>-i<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/dean_job<span class="w"> </span><span class="nv">PATH</span><span class="o">=</span>/usr/bin:/bin<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>/usr/local/bin/dean-backup.sh<span class="w"> </span>--db<span class="w"> </span>dean<span class="w"> </span>--dry-run
-</code></pre></div>
-
-<p>Если команда проходит так, скорее всего она пройдёт и из cron. Если работает только из вашего терминала, проблема в окружении, а не в базе.</p>
-<div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Где ночное задание берёт пароль к базе?</span></button></p>
-<div class="gate-content" hidden><h2 id="pgpass-для-задания"><span class="num">05</span>.pgpass для задания</h2>
-<p>Пароль задание берёт из файла <code>.pgpass</code> того пользователя, от имени которого оно работает. Это значит, что файл должен лежать в домашнем каталоге <code>dean_job</code>, принадлежать ему и иметь права <code>600</code>.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-o<span class="w"> </span>dean_job<span class="w"> </span>-g<span class="w"> </span>dean_job<span class="w"> </span>-m<span class="w"> </span><span class="m">750</span><span class="w"> </span>/etc/dean
-sudo<span class="w"> </span>install<span class="w"> </span>-o<span class="w"> </span>dean_job<span class="w"> </span>-g<span class="w"> </span>dean_job<span class="w"> </span>-m<span class="w"> </span><span class="m">600</span><span class="w"> </span>/dev/null<span class="w"> </span>/etc/dean/pgpass
-</code></pre></div>
-
-<p>Строка внутри обычная: хост, порт, база, пользователь, пароль.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>127.0.0.1:5432:dean:dean_app:secret
-</code></pre></div>
-
-<p>Если файл лежит не в домашнем каталоге, путь задают переменной <code>PGPASSFILE</code> в unit или в самой команде. Главное, чтобы эту переменную видел процесс задания, а не ваша интерактивная оболочка.</p>
-<p>Права проверяют после каждого изменения: <code>psql</code> отказывается читать файл, доступный группе или остальным. Сообщение об этом попадает в журнал, и ночью его никто не видит, поэтому проверку делают заранее от имени <code>dean_job</code>.</p></div>
-</div>
-
-<div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как описать службу и расписание в systemd?</span></button></p>
-<div class="gate-content" hidden><h2 id="unit-и-timer"><span class="num">06</span>unit и timer</h2>
-<p>Задание systemd состоит из двух файлов: службы, которая выполняет работу, и таймера, который её запускает. Служба описывает, <strong>что</strong> делать, таймер описывает <strong>когда</strong>.</p>
+<div class="hero-panel"><h1>Планировщик заданий и события MySQL</h1><p class="dek">Планировщик Windows и события MySQL запускают обслуживание без человека.</p></div>
+<div class="glyph" aria-hidden="true">Л13</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настраивать задание в Планировщике заданий Windows</li><li>Создавать и проверять событие MySQL</li><li>Разделять задачи между внешним планировщиком и сервером базы</li><li>Читать журнал задания и находить причину сбоя</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#планировщик-заданий-windows">Планировщик заданий Windows</a></li><li><a href="#почему-ручной-запуск-работает-а-задание-падает">Почему ручной запуск работает, а задание падает</a></li><li><a href="#история-и-журнал-задания">История и журнал задания</a></li><li><a href="#события-mysql">События MySQL</a></li><li><a href="#создание-события">Создание события</a></li><li><a href="#окно-обслуживания">Окно обслуживания</a></li><li><a href="#пересечение-запусков">Пересечение запусков</a></li><li><a href="#проверка-после-настройки">Проверка после настройки</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>Администратор уходит в отпуск на две недели. Копии базы делает его ручная привычка: каждую пятницу после пар. Привычка уходит вместе с ним, и две недели база живёт без копии. Никто не замечает этого, пока в первую неделю после отпуска не падает диск.</p>
+<p><strong>Обслуживание должно запускаться без человека.</strong> Для этого есть два механизма, и они решают разные задачи. Планировщик заданий Windows запускает программы: <code>DeanAdmin.exe</code>, <code>mysqldump</code>, скрипт PowerShell. Планировщик событий MySQL запускает SQL внутри сервера: чистку, пересчёт, архивирование строк.</p>
+<p>Соблазн выбрать один механизм на всё понятен, но он ведёт к костылям. Событие MySQL не умеет вызвать <code>mysqldump</code>, потому что это внешняя программа. Планировщик Windows не умеет работать с базой без программы, которую сам и запускает. Поэтому в рабочем регламенте почти всегда есть оба.</p>
+<h2 id="планировщик-заданий-windows"><span class="num">02</span>Планировщик заданий Windows</h2>
+<p>Задание состоит из трёх частей: <strong>триггер</strong> говорит когда, <strong>действие</strong> говорит что, <strong>условия и параметры</strong> говорят как. Пропущенная третья часть и создаёт большинство сбоев.</p>
 <figure class="diagram">
-<svg viewBox="0 0 680 320" role="img" aria-label="Цепочка запуска задания в systemd и путь ошибки">
+<svg viewBox="0 0 680 290" role="img" aria-label="Три части задания и расписание ночного обслуживания">
   <defs>
-    <marker id="sys" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="var(--accent)"/>
-    </marker>
-    <marker id="sysbad" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="var(--bad)"/>
-    </marker>
+    <marker id="ts-ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--ink-3)"/></marker>
   </defs>
   <g font-family="Inter, sans-serif">
-    <rect x="20" y="50" width="130" height="76" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
-    <text x="85" y="82" font-size="14" fill="var(--ink)" text-anchor="middle">Таймер</text>
-    <text x="85" y="104" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">OnCalendar</text>
-    <rect x="180" y="50" width="140" height="76" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
-    <text x="250" y="82" font-size="14" fill="var(--ink)" text-anchor="middle">Служба</text>
-    <text x="250" y="104" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">User=dean_job</text>
-    <rect x="350" y="50" width="140" height="76" rx="12" fill="var(--card)" stroke="var(--warn)" stroke-width="1.6"/>
-    <text x="420" y="82" font-size="14" fill="var(--ink)" text-anchor="middle">Скрипт</text>
-    <text x="420" y="104" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">pg_dump, psql</text>
-    <rect x="530" y="50" width="130" height="76" rx="12" fill="var(--card)" stroke="var(--ok)" stroke-width="1.6"/>
-    <text x="595" y="82" font-size="14" fill="var(--ink)" text-anchor="middle">Журнал</text>
-    <text x="595" y="104" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">journalctl</text>
-    <line x1="152" y1="88" x2="176" y2="88" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#sys)"/>
-    <line x1="322" y1="88" x2="346" y2="88" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#sys)"/>
-    <line x1="492" y1="88" x2="526" y2="88" stroke="var(--ok)" stroke-width="1.8" marker-end="url(#sys)"/>
-    <line x1="420" y1="128" x2="420" y2="192" stroke="var(--bad)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#sysbad)"/>
-    <text x="432" y="166" font-size="11.5" fill="var(--bad)">код не 0</text>
-    <rect x="340" y="198" width="160" height="66" rx="12" fill="var(--card)" stroke="var(--bad)" stroke-width="1.6"/>
-    <text x="420" y="226" font-size="13.5" fill="var(--ink)" text-anchor="middle">Оповещение</text>
-    <text x="420" y="247" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">OnFailure</text>
-    <text x="340" y="300" font-size="12.5" fill="var(--ink-3)" text-anchor="middle">таймер только запускает, результат и сбой видны в журнале и оповещении</text>
+    <rect x="24" y="34" width="180" height="70" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+    <text x="114" y="62" font-size="13.5" fill="var(--ink)" text-anchor="middle">Триггер</text>
+    <text x="114" y="82" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">ежедневно в 23:00</text>
+    <rect x="250" y="34" width="180" height="70" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+    <text x="340" y="62" font-size="13.5" fill="var(--ink)" text-anchor="middle">Действие</text>
+    <text x="340" y="82" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">DeanAdmin.exe backup</text>
+    <rect x="476" y="34" width="180" height="70" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.6"/>
+    <text x="566" y="62" font-size="13.5" fill="var(--ink)" text-anchor="middle">Параметры</text>
+    <text x="566" y="82" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">пользователь, папка</text>
+    <line x1="206" y1="69" x2="246" y2="69" stroke="var(--ink-3)" stroke-width="1.5" marker-end="url(#ts-ar)"/>
+    <line x1="432" y1="69" x2="472" y2="69" stroke="var(--ink-3)" stroke-width="1.5" marker-end="url(#ts-ar)"/>
+    <line x1="40" y1="160" x2="640" y2="160" stroke="var(--rule)" stroke-width="2"/>
+    <text x="40" y="150" font-size="11.5" fill="var(--ink-3)">22:00</text>
+    <text x="240" y="150" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">23:00</text>
+    <text x="440" y="150" font-size="11.5" fill="var(--ink-3)" text-anchor="middle">00:00</text>
+    <text x="640" y="150" font-size="11.5" fill="var(--ink-3)" text-anchor="end">01:00</text>
+    <circle cx="240" cy="160" r="7" fill="var(--accent)"/>
+    <line x1="240" y1="167" x2="240" y2="196" stroke="var(--accent)" stroke-width="1.4"/>
+    <text x="240" y="214" font-size="12" fill="var(--ink)" text-anchor="middle">копия dean</text>
+    <circle cx="340" cy="160" r="7" fill="var(--warn)"/>
+    <line x1="340" y1="167" x2="340" y2="196" stroke="var(--warn)" stroke-width="1.4"/>
+    <text x="340" y="214" font-size="12" fill="var(--ink)" text-anchor="middle">чистка</text>
+    <text x="340" y="230" font-size="12" fill="var(--ink)" text-anchor="middle">audit_log</text>
+    <text x="340" y="256" font-size="12.5" fill="var(--ink-3)" text-anchor="middle">окно обслуживания: ночью, когда нет учебной нагрузки</text>
   </g>
 </svg>
-<figcaption>Цепочка systemd: таймер запускает службу, служба выполняет скрипт, результат попадает в журнал, а ненулевой код запускает оповещение.</figcaption>
+<figcaption>Задание собирается из триггера, действия и параметров; ночное окно разносит копию и чистку по времени.</figcaption>
 </figure>
 
-<p>На схеме видно, что таймер не знает о базе: он только передаёт управление службе, а результат работы уходит в журнал и, при ошибке, в оповещение.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="c1"># /etc/systemd/system/dean-backup.service</span>
-<span class="k">[Unit]</span>
-<span class="na">Description</span><span class="o">=</span><span class="s">Backup of the dean database</span>
-<span class="na">After</span><span class="o">=</span><span class="s">postgresql.service</span>
-
-<span class="k">[Service]</span>
-<span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
-<span class="na">User</span><span class="o">=</span><span class="s">dean_job</span>
-<span class="na">Group</span><span class="o">=</span><span class="s">dean_job</span>
-<span class="na">Environment</span><span class="o">=</span><span class="s">PGPASSFILE=/etc/dean/pgpass</span>
-<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/local/bin/dean-backup.sh --db dean</span>
-<span class="na">Nice</span><span class="o">=</span><span class="s">10</span>
-<span class="na">IOSchedulingClass</span><span class="o">=</span><span class="s">idle</span>
+<p>В графическом интерфейсе задание создают через «Создать задачу», а не через «Создать простую задачу»: простая форма не показывает ни рабочую папку, ни правило повторного запуска.</p>
+<p>Порядок настройки:</p>
+<ol>
+<li><strong>Общие.</strong> Имя вида <code>Dean backup</code>, описание. Отметка «Выполнять вне зависимости от того, зарегистрирован ли пользователь» и, если нужно, «Выполнять с наивысшими правами».</li>
+<li><strong>Триггеры.</strong> Ежедневно в 23:00, отметка «Выполнить задачу как можно скорее после пропущенного запуска».</li>
+<li><strong>Действия.</strong> Программа <code>C:\DeanAdmin\publish\DeanAdmin.exe</code>, аргументы <code>backup</code>, рабочая папка <code>C:\DeanAdmin\publish</code>.</li>
+<li><strong>Условия.</strong> Снять отметку «Запускать только при питании от сети», иначе ноутбук не сделает копию от батареи.</li>
+<li><strong>Параметры.</strong> «Если задача уже выполняется, то: не запускать новый экземпляр», предел времени выполнения.</li>
+</ol>
+<p>То же самое из командной строки:</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nv">$action</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;C:\DeanAdmin\publish\DeanAdmin.exe&quot;</span> <span class="p">`</span>
+  <span class="n">-Argument</span> <span class="s2">&quot;backup&quot;</span> <span class="n">-WorkingDirectory</span> <span class="s2">&quot;C:\DeanAdmin\publish&quot;</span>
+<span class="nv">$trigger</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-Daily</span> <span class="n">-At</span> <span class="n">23</span><span class="p">:</span><span class="n">00</span>
+<span class="nv">$settings</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskSettingsSet</span> <span class="n">-MultipleInstances</span> <span class="n">IgnoreNew</span>
+<span class="nb">Register-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;Dean backup&quot;</span> <span class="n">-Action</span> <span class="nv">$action</span> <span class="p">`</span>
+  <span class="n">-Trigger</span> <span class="nv">$trigger</span> <span class="n">-Settings</span> <span class="nv">$settings</span> <span class="n">-User</span> <span class="s2">&quot;dean_task&quot;</span>
 </code></pre></div>
 
-<p><code>Type=oneshot</code> говорит, что служба выполняет одну команду и завершается. <code>User</code> и <code>Group</code> задают пользователя задания. <code>Environment</code> передаёт путь к файлу паролей. <code>Nice</code> и <code>IOSchedulingClass</code> снижают приоритет, чтобы копия не мешала рабочим запросам.</p>
-<p>Таймер ссылается на службу и задаёт расписание.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="c1"># /etc/systemd/system/dean-backup.timer</span>
-<span class="k">[Unit]</span>
-<span class="na">Description</span><span class="o">=</span><span class="s">Nightly backup of the dean database</span>
-
-<span class="k">[Timer]</span>
-<span class="na">OnCalendar</span><span class="o">=</span><span class="s">*-*-* 03:00:00</span>
-<span class="na">Persistent</span><span class="o">=</span><span class="s">true</span>
-<span class="na">RandomizedDelaySec</span><span class="o">=</span><span class="s">300</span>
-<span class="na">Unit</span><span class="o">=</span><span class="s">dean-backup.service</span>
-
-<span class="k">[Install]</span>
-<span class="na">WantedBy</span><span class="o">=</span><span class="s">timers.target</span>
+<p>Регистрация через PowerShell требует прав администратора. Командлет создаёт задание в корне библиотеки, а имя с обратной косой чертой, например <code>Dean\Backup</code>, раскладывает задания по папкам. Проверить результат можно до наступления ночи.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;Dean backup&quot;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TaskName</span><span class="p">,</span> <span class="n">State</span>
 </code></pre></div>
 
-<p><code>Persistent=true</code> означает: если машина была выключена в момент запуска, задание выполнится после включения. <code>RandomizedDelaySec=300</code> добавляет случайную задержку до пяти минут, чтобы несколько заданий не стартовали в одну секунду.</p>
-<p>После создания файлов systemd нужно перечитать конфигурацию и включить таймер.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
-sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>dean-backup.timer
-systemctl<span class="w"> </span>list-timers<span class="w"> </span>--all
+<p>Состояние <code>Ready</code> означает, что задание зарегистрировано и ждёт триггера. Состояние <code>Disabled</code> означает, что его выключили вручную или оно отключено политикой. Если задание не появилось, смотрят, от имени какого пользователя выполнялась регистрация: без прав администратора командлет вернёт отказ доступа.</p>
+<h2 id="почему-ручной-запуск-работает-а-задание-падает"><span class="num">03</span>Почему ручной запуск работает, а задание падает</h2>
+<p>Причина почти всегда в окружении. Из консоли программа видит ваш профиль, вашу переменную <code>PATH</code>, ваш текущий каталог. Планировщик запускает её от другого пользователя и из другого каталога.</p>
+<p><strong>Рабочая папка.</strong> По умолчанию это <code>C:\Windows\System32</code>. Относительный путь <code>logs\dean-admin.log</code> окажется там, и искать его будут долго. Лечение: абсолютные пути в программе и поле «Рабочая папка» в задании.</p>
+<p><strong>Переменная PATH.</strong> У системной учётной записи другой набор путей, и <code>mysqldump</code> может не найтись. Лечение: полный путь <code>C:\xampp\mysql\bin\mysqldump.exe</code> вместо имени.</p>
+<p><strong>Пользователь и права.</strong> Задание от вашей учётной записи работает, пока вы вошли в систему. Отметка «вне зависимости от входа» требует пароля при регистрации и сохранённых учётных данных. Отдельный пользователь <code>dean_task</code> с правом читать каталог программы и писать в каталог копий решает обе задачи.</p>
+<p><strong>Код возврата.</strong> Планировщик показывает последний результат задания. Ноль это успех, всё остальное это сбой, и именно код связывает задание с журналом программы.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Get-ScheduledTaskInfo</span> <span class="n">-TaskName</span> <span class="s2">&quot;Dean backup&quot;</span> <span class="p">|</span>
+  <span class="nb">Select-Object</span> <span class="n">LastRunTime</span><span class="p">,</span> <span class="n">LastTaskResult</span><span class="p">,</span> <span class="n">NextRunTime</span>
 </code></pre></div>
 
-<p><code>enable --now</code> включает автозапуск и сразу активирует таймер. <code>list-timers</code> показывает, когда задание сработает в следующий раз и когда сработало в прошлый.</p></div>
+<p><code>LastTaskResult</code> со значением <code>0x0</code> означает успех, <code>0x1</code> ошибку работы, <code>0x2</code> неверные аргументы. Эти же числа возвращает программа из прошлой лекции, поэтому отчёт читается без догадок.</p>
+<div class="callout pitfall"><span class="label">Задание выполнено, а копии нет</span><p>Код 0 говорит, что программа дошла до конца, а не что файл появился. Проверяют размер файла, время изменения и строку журнала <code>backup file=... rows=...</code>. Пустой файл при коде 0 означает, что <code>mysqldump</code> не нашёлся и вывод оказался пустым.</p></div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Почему задание работает вручную и падает по расписанию?</span></button></p>
+<div class="gate-content" hidden><h2 id="история-и-журнал-задания"><span class="num">04</span>История и журнал задания</h2>
+<p>В свойствах задания есть вкладка «История». Она показывает запуски, длительность и код, но работает только при включённом журнале <code>Microsoft-Windows-TaskScheduler/Operational</code>. По умолчанию он выключен, поэтому вкладка пуста и создаёт ложное впечатление, что задание не запускалось.</p>
+<p>Включить журнал можно в «Просмотре событий»: «Журналы приложений и служб», <code>Microsoft</code>, <code>Windows</code>, <code>TaskScheduler</code>, «Включить журнал». После этого история появляется и в Планировщике, и в событиях Windows.</p>
+<p>Журнал задания отвечает на вопрос «запускалось ли», а журнал программы отвечает на вопрос «что получилось». Нужны оба. Первый показывает, что триггер сработал, второй показывает, сколько строк изменено.</p>
+<h2 id="события-mysql"><span class="num">05</span>События MySQL</h2>
+<p>Событие это именованный SQL-код, который сервер выполняет по расписанию. Оно живёт внутри базы и не зависит от того, вошёл ли человек в Windows.</p>
+<p>Планировщик событий включается параметром <code>event_scheduler</code>. Проверка:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;event_scheduler&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Значение <code>ON</code> означает, что планировщик работает, <code>OFF</code> что выключен, <code>DISABLED</code> что его запрещено включать на ходу. Включение на время сессии сервера:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">event_scheduler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Постоянное включение прописывают в <code>C:\xampp\mysql\bin\my.ini</code> в разделе <code>[mysqld]</code>:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>event_scheduler=ON
+</code></pre></div>
+
+<p>После правки файла MySQL перезапускают из панели XAMPP: без перезапуска файл не прочитан и настройка не применится.</p>
+<h2 id="создание-события"><span class="num">06</span>Создание события</h2>
+<p>Событие задаёт расписание, момент начала и команду.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">EVENT</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">ev_cleanup_audit</span>
+<span class="k">ON</span><span class="w"> </span><span class="n">SCHEDULE</span><span class="w"> </span><span class="k">EVERY</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">DAY</span>
+<span class="n">STARTS</span><span class="w"> </span><span class="s1">&#39;2026-04-01 23:30:00&#39;</span>
+<span class="k">ON</span><span class="w"> </span><span class="k">COMPLETION</span><span class="w"> </span><span class="k">PRESERVE</span>
+<span class="n">ENABLE</span>
+<span class="k">DO</span>
+<span class="w">  </span><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
+<span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="k">at</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">365</span><span class="w"> </span><span class="k">DAY</span><span class="p">;</span>
+</code></pre></div>
+
+<p><code>ON COMPLETION PRESERVE</code> оставляет событие в базе после выполнения. Без этой фразы событие удаляется, и расписание исчезает после первого срабатывания. <code>ENABLE</code> включает событие сразу, <code>DISABLE</code> создаёт его выключенным, что удобно для проверки.</p>
+<p>Список событий смотрится двумя способами:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">EVENTS</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="n">event_name</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">last_executed</span><span class="p">,</span><span class="w"> </span><span class="n">starts</span><span class="p">,</span>
+<span class="w">       </span><span class="n">interval_value</span><span class="p">,</span><span class="w"> </span><span class="n">interval_field</span><span class="p">,</span><span class="w"> </span><span class="k">definer</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">EVENTS</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p><code>last_executed</code> это главный столбец. Если он пуст, событие ни разу не срабатывало, и причина почти всегда в выключенном планировщике или в статусе <code>DISABLED</code>.</p>
+<p>Перед включением тело события выполняют вручную: тот же <code>DELETE</code> запускают в phpMyAdmin и смотрят, сколько строк он затрагивает. Если число неожиданно большое, условие переписывают до включения события. После проверки событие включают и ждут первого срабатывания, чтобы увидеть <code>last_executed</code>.</p>
+<p>Остановить событие можно, не удаляя его. <code>ALTER EVENT ev_cleanup_audit DISABLE;</code> выключает расписание, а <code>ENABLE</code> возвращает. Удаление через <code>DROP EVENT</code> стирает и расписание, и тело, поэтому перед удалением полезно сохранить текст из <code>SHOW CREATE EVENT ev_cleanup_audit;</code>.</p>
+<p>Права на создание события выдаются отдельно:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">GRANT</span><span class="w"> </span><span class="n">EVENT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Событие выполняется от имени того, кто его создал, то есть от <code>definer</code>. Если этого пользователя удалить или лишить прав, событие перестанет работать, хотя останется в списке. Поэтому события создают от служебной учётной записи, а не от личной.</p>
+<div class="callout tradeoff"><span class="label">Событие или задание Windows</span><p>Событие живёт рядом с данными и не требует программы, но умеет только SQL и не запускает внешние процессы. Задание Windows запускает что угодно, но зависит от учётной записи и путей. Копию делает задание, чистку делает событие.</p></div></div>
 </div>
 
 <div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как узнать, что ночное задание упало?</span></button></p>
-<div class="gate-content" hidden><h2 id="журнал-и-коды-возврата"><span class="num">07</span>Журнал и коды возврата</h2>
-<p>У systemd журнал есть по умолчанию: всё, что служба пишет в стандартные потоки, попадает в journald.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>dean-backup.service
-journalctl<span class="w"> </span>-u<span class="w"> </span>dean-backup.service<span class="w"> </span>--since<span class="w"> </span>today
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как не допустить пересечения запусков?</span></button></p>
+<div class="gate-content" hidden><h2 id="окно-обслуживания"><span class="num">07</span>Окно обслуживания</h2>
+<p><strong>Окно обслуживания</strong> это время, когда нагрузка минимальна и можно менять данные без помех пользователям. Для учебной базы это ночь, для рабочей системы время выбирают по статистике подключений.</p>
+<p>Внутри окна задачи разносят по времени: копия в 23:00, чистка в 23:30, пересчёт отчётов в 00:00. Так они не конкурируют за блокировки и диск.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">EVENT</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">ev_refresh_stats</span>
+<span class="k">ON</span><span class="w"> </span><span class="n">SCHEDULE</span><span class="w"> </span><span class="k">EVERY</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">WEEK</span>
+<span class="n">STARTS</span><span class="w"> </span><span class="s1">&#39;2026-04-05 00:00:00&#39;</span>
+<span class="k">ON</span><span class="w"> </span><span class="k">COMPLETION</span><span class="w"> </span><span class="k">PRESERVE</span>
+<span class="k">DO</span>
+<span class="w">  </span><span class="k">ANALYZE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="p">,</span><span class="w"> </span><span class="n">enrollments</span><span class="p">,</span><span class="w"> </span><span class="n">payments</span><span class="p">;</span>
 </code></pre></div>
 
-<p><code>status</code> показывает последний запуск и код возврата, <code>journalctl</code> даёт полный вывод с временными метками. Если служба завершилась с ошибкой, в журнале видно, на какой команде это произошло.</p>
-<p>Код возврата службы это код возврата скрипта. Ноль означает успех, ненулевое значение означает сбой. Поэтому скрипт обязан возвращать осмысленный код, а не <code>exit 0</code> в конце любой ценой.</p>
-<p>Для cron журнала по умолчанию нет: вывод уходит почтой, а почта на учебном сервере обычно не настроена. Поэтому в строке cron вывод перенаправляют в файл явно. В файле <code>/etc/cron.d/dean-backup</code> пользователя указывают отдельным полем между расписанием и командой.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>0 3 * * * dean_job /usr/local/bin/dean-backup.sh --db dean &gt;&gt; /var/log/dean/backup.log 2&gt;&amp;1
+<p><code>ANALYZE TABLE</code> обновляет статистику, по которой планировщик строит планы. Без неё после массовой загрузки планы становятся неточными.</p>
+<h2 id="пересечение-запусков"><span class="num">08</span>Пересечение запусков</h2>
+<p>Две копии одной задачи опасны: они делят диск, мешают друг другу и создают два файла с одним именем. У Планировщика Windows правило задаётся явно: «не запускать новый экземпляр». У событий MySQL такой защиты нет.</p>
+<p>Если событие не успело закончиться к следующему запуску, MySQL может запустить второй экземпляр. Лечится это именованной блокировкой.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">DELIMITER</span><span class="w"> </span><span class="err">$$</span>
+
+<span class="k">ALTER</span><span class="w"> </span><span class="n">EVENT</span><span class="w"> </span><span class="n">ev_cleanup_audit</span>
+<span class="k">DO</span>
+<span class="k">BEGIN</span>
+<span class="w">  </span><span class="k">IF</span><span class="w"> </span><span class="n">GET_LOCK</span><span class="p">(</span><span class="s1">&#39;dean_cleanup&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">THEN</span>
+<span class="w">    </span><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="k">at</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">365</span><span class="w"> </span><span class="k">DAY</span><span class="p">;</span>
+<span class="w">    </span><span class="k">DO</span><span class="w"> </span><span class="n">RELEASE_LOCK</span><span class="p">(</span><span class="s1">&#39;dean_cleanup&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">END</span><span class="w"> </span><span class="k">IF</span><span class="p">;</span>
+<span class="k">END</span><span class="err">$$</span>
+
+<span class="k">DELIMITER</span><span class="w"> </span><span class="p">;</span>
 </code></pre></div>
 
-<p>Без <code>&gt;&gt; ... 2&gt;&amp;1</code> сообщение об ошибке теряется, и остаётся только догадываться, почему копии нет.</p>
-<h2 id="повторные-попытки-и-оповещения"><span class="num">08</span>Повторные попытки и оповещения</h2>
-<p>Сбой задания нужно заметить. Есть три уровня реакции.</p>
-<p><strong>Повтор.</strong> Если ошибка временная (база занята, не хватило места на минуту), запуск имеет смысл повторить. В systemd у службы типа <code>oneshot</code> нельзя включить <code>Restart=on-failure</code>, поэтому повтор делают отдельным заданием или циклом внутри скрипта с ограниченным числом попыток.</p>
-<p><strong>Оповещение.</strong> Для этого у службы есть директива <code>OnFailure</code>. Она запускает другую службу, когда основная завершилась с ошибкой.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">[Unit]</span>
-<span class="na">Description</span><span class="o">=</span><span class="s">Backup of the dean database</span>
-<span class="na">OnFailure</span><span class="o">=</span><span class="s">dean-alert.service</span>
+<p><code>GET_LOCK</code> с нулевым таймаутом пытается взять блокировку один раз и сразу возвращает результат. Если блокировку уже держит предыдущий экземпляр, условие ложно, и второй запуск завершается, не трогая данные. <code>RELEASE_LOCK</code> освобождает имя сразу после удаления, чтобы следующий запуск не ждал конца сессии.</p>
+<p><code>DELIMITER</code> меняет разделитель команд для клиента, потому что внутри <code>BEGIN</code> и <code>END</code> встречаются точки с запятой. В phpMyAdmin то же самое делает поле «Разделитель» в форме создания события.</p>
+<p>Для больших таблиц удаление делают порциями, чтобы не держать блокировку минутами.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">at</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">365</span><span class="w"> </span><span class="k">DAY</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">5000</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Служба <code>dean-alert</code> может отправить письмо, записать событие в отдельный журнал или создать файл-флаг, который проверяет мониторинг. Важно, чтобы оповещение не зависело от той же базы, которая упала.</p>
-<p><strong>Разбор.</strong> После сбоя смотрят код возврата, журнал и состояние базы. Если задание упало из-за долгой транзакции, повтор без её завершения приведёт к тому же результату.</p>
-<p>Для временных ошибок удобен код 75: он говорит внешнему обработчику, что запуск имеет смысл повторить позже. Постоянные ошибки, например неверный пароль или отсутствующая база, повтором не лечатся.</p>
-<h2 id="окно-обслуживания"><span class="num">09</span>Окно обслуживания</h2>
-<p><strong>Окно обслуживания</strong> это время, когда тяжёлые работы не мешают пользователям. Ночная копия, очистка, перестройка индексов и миграции должны попадать в это окно.</p>
-<p>При выборе времени учитывают три вещи:</p>
+<p>Порция удаляется быстро, а остальное дочищается следующим запуском. Так окно обслуживания не растягивается на всю ночь.</p>
+<h2 id="проверка-после-настройки"><span class="num">09</span>Проверка после настройки</h2>
+<p>Настроенное задание проверяют, не дожидаясь ночи. В Планировщике есть «Выполнить» в контекстном меню, а в PowerShell команда запуска.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="nb">Start-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;Dean backup&quot;</span>
+</code></pre></div>
+
+<p>После запуска смотрят три вещи: код возврата, строку в журнале программы и появившийся файл копии. Если что-то не совпало, разбор идёт по цепочке: сработал ли триггер, запустился ли процесс, дошёл ли он до базы, записался ли результат.</p>
+<p>Для события проверка та же, но средствами SQL: <code>last_executed</code>, число строк до и после, отсутствие ошибок в журнале ошибок MySQL <code>C:\xampp\mysql\data\mysql_error.log</code>.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что ломается чаще всего?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки"><span class="num">10</span>Типичные ошибки</h2>
 <ul>
-<li>нагрузку на базу: копия читает все данные и занимает диск;</li>
-<li>другие задания: копия и очистка не должны идти одновременно;</li>
-<li>длительность: окно должно быть больше самой долгой работы с запасом.</li>
+<li><strong>Запуск от пользователя без прав.</strong> Задание от учётной записи, которая не может читать каталог программы или писать в каталог копий, падает с кодом доступа. Лечение: отдельный пользователь с точными правами.</li>
+<li><strong>Нет PATH.</strong> <code>mysqldump</code> вызывается по имени, а у системной учётной записи такого пути нет. Лечение: полный путь к программе.</li>
+<li><strong>Нет лога.</strong> Задание упало ночью, и причину восстановить нечем. Лечение: журнал программы плюс история задания.</li>
+<li><strong>Пересечение запусков.</strong> Копия идёт дольше суток, и вторая начинается поверх первой. Лечение: правило «не запускать новый экземпляр» и именованная блокировка для событий.</li>
+<li><strong>Событие без <code>ON COMPLETION PRESERVE</code>.</strong> После первого срабатывания расписание исчезает, и чистка больше не повторяется.</li>
+<li><strong>Выключенный <code>event_scheduler</code>.</strong> Событие создано, но не выполняется ни разу. Лечение: проверить <code>SHOW VARIABLES</code> и прописать параметр в <code>my.ini</code>.</li>
+<li><strong>Событие от удалённого пользователя.</strong> <code>definer</code> исчез, и событие падает при каждом запуске. Лечение: служебная учётная запись и проверка <code>information_schema.EVENTS</code>.</li>
 </ul>
-<p>Пересечение запусков решают двумя способами. Первый это <code>flock</code> в скрипте: вторая копия видит занятую блокировку и выходит. Второй это разнесение по времени и <code>RandomizedDelaySec</code>, чтобы задания не стартовали в одну минуту.</p>
-<p>Перед тяжёлой работой полезно проверить, нет ли долгих транзакций: они держат снимок и мешают очистке.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">(</span><span class="n">now</span><span class="p">(),</span><span class="w"> </span><span class="n">xact_start</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">age</span>
-<span class="k">from</span><span class="w"> </span><span class="n">pg_stat_activity</span>
-<span class="k">where</span><span class="w"> </span><span class="n">datname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">age</span><span class="p">(</span><span class="n">now</span><span class="p">(),</span><span class="w"> </span><span class="n">xact_start</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nb">interval</span><span class="w"> </span><span class="s1">&#39;10 minutes&#39;</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Если такие сессии есть, тяжёлую операцию лучше отложить или сначала разобраться с ними. Иначе очистка не освободит место, а перестройка индекса будет ждать.</p>
-<h2 id="типичные-ошибки"><span class="num">10</span>Типичные ошибки</h2>
-<ul>
-<li><strong>Запуск от root.</strong> Задание получает лишние права, а ошибка в скрипте может затронуть систему. Для обслуживания базы создают отдельного пользователя.</li>
-<li><strong>Нет PATH.</strong> В cron и systemd окружение минимальное, и <code>pg_dump</code> не находится. Путь задают в скрипте или в unit.</li>
-<li><strong>Нет журнала.</strong> Вывод уходит в никуда, и причину сбоя не восстановить. Для cron перенаправляют вывод в файл, для systemd читают journald.</li>
-<li><strong>Пересечение запусков.</strong> Две копии идут одновременно и мешают друг другу. Помогают <code>flock</code>, разные окна и случайная задержка.</li>
-<li><strong>Неверный часовой пояс.</strong> Задание срабатывает не в 03:00, а в другое время, потому что сервер живёт в UTC. Проверяют <code>timedatectl</code> и указывают пояс явно.</li>
-<li><strong>Скрипт не исполняемый.</strong> Файл без права выполнения или с символами возврата каретки в конце строк. Симптом: <code>bad interpreter</code> или <code>\r: command not found</code>.</li>
-<li><strong>Неверные права на .pgpass.</strong> Файл доступен группе, и psql отказывается его читать. Права проверяют от имени пользователя задания.</li>
-<li><strong>Ошибка в расписании.</strong> Перепутаны поля минуты и часа, и задание идёт каждый час вместо раза в сутки. Расписание проверяют по <code>list-timers</code> или по журналу cron.</li>
-</ul>
-<div class="callout pitfall"><span class="label">«Проверю вручную, а расписание поставлю потом»</span><p>Ручной запуск из своей оболочки не проверяет ни пользователя, ни окружение, ни права на файлы. Проверка должна идти от имени задания и с тем же набором переменных, иначе сбой обнаружится в самый неудобный момент.</p></div>
-
 <h2 id="проверьте-себя"><span class="num">11</span>Проверьте себя</h2>
-<details class="check"><summary><span>Задание настроено на <code>0 3 * * *</code>, но копия появляется в 06:00. Что проверить?</span></summary><div><p>Часовой пояс сервера и время запуска. cron использует системное время, а сервер может работать в UTC. Проверяют <code>timedatectl</code> и при необходимости указывают пояс в расписании systemd или переносят время.</p></div></details>
+<details class="check"><summary><span>Задание завершилось с кодом 0, но копия не появилась. Где искать причину?</span></summary><div><p>В журнале программы: есть ли строка о запуске <code>mysqldump</code>, какой код вернул процесс и какой размер файла получен. Код 0 у задания означает только, что <code>DeanAdmin.exe</code> завершился штатно. Частая причина это пустой путь к <code>mysqldump</code>, из-за которого вывод оказался пустым.</p></div></details>
 
-<details class="check"><summary><span>Скрипт отлично работает от вашего пользователя, а служба с <code>User=dean_job</code> падает с ошибкой доступа к базе. В чём причина?</span></summary><div><p>У <code>dean_job</code> нет своего <code>.pgpass</code> или файл имеет неверные права и владельца. Пароль из вашего домашнего каталога служба не видит. Файл создают для <code>dean_job</code> с правами 600 и проверяют запуск от его имени.</p></div></details>
+<details class="check"><summary><span>Событие создано, <code>last_executed</code> пуст. Что проверить в первую очередь?</span></summary><div><p>Значение <code>event_scheduler</code> и статус события. При <code>OFF</code> или <code>DISABLED</code> событие не запускается, хотя строка в <code>information_schema.EVENTS</code> есть. Второй подозреваемый это <code>definer</code>: если пользователь удалён, событие падает при каждом срабатывании.</p></div></details>
 
-<details class="check"><summary><span>Зачем в таймере <code>Persistent=true</code>, если расписание и так ежедневное?</span></summary><div><p>Без него пропущенный из-за выключения машины запуск не выполнится. С <code>Persistent=true</code> systemd запоминает время последнего запуска и догоняет пропущенное после включения.</p></div></details>
+<details class="check"><summary><span>Почему копию не делают событием MySQL?</span></summary><div><p>Событие выполняет только SQL внутри сервера и не запускает внешние программы. <code>mysqldump</code> это отдельный процесс, поэтому его запускает Планировщик Windows, а событие отвечает за чистку и пересчёт внутри базы.</p></div></details>
 
-<h2 id="итог"><span class="num">12</span>Итог</h2>
+<h2 id="итоги"><span class="num">12</span>Итоги</h2>
 <ul>
-<li>Планировщик запускает задание в другом окружении, от другого пользователя и без профиля.</li>
-<li>cron задаёт расписание пятью полями, systemd timer описывает его в <code>OnCalendar</code>.</li>
-<li>Задание запускают от отдельного пользователя с минимальными правами, а не от root.</li>
-<li><code>PATH</code>, текущий каталог и <code>.pgpass</code> задают явно, иначе ночью задание не найдёт ни команду, ни пароль.</li>
-<li><code>Type=oneshot</code>, <code>User</code>, <code>Environment</code> и <code>ExecStart</code> описывают службу, а <code>OnCalendar</code> и <code>Persistent</code> описывают таймер.</li>
-<li>Журнал systemd читают через <code>journalctl -u</code>, журнал cron настраивают перенаправлением вывода.</li>
-<li>Сбой замечают по коду возврата и <code>OnFailure</code>, а не по отсутствию файла.</li>
-<li>Окно обслуживания защищают от пересечений через <code>flock</code> и разнесение запусков.</li>
+<li>Задание Windows состоит из триггера, действия и параметров, и параметры ломаются чаще всего.</li>
+<li>Рабочая папка, <code>PATH</code> и учётная запись задают окружение, которого нет при ручном запуске.</li>
+<li>История задания включается отдельно, а журнал программы пишет результат.</li>
+<li>Событие MySQL живёт в базе, требует включённого <code>event_scheduler</code> и прав <code>EVENT</code>.</li>
+<li><code>ON COMPLETION PRESERVE</code> сохраняет расписание после первого запуска.</li>
+<li>Окно обслуживания и защита от пересечения запусков берегут данные и диск.</li>
 </ul>
-<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Кто должен владеть файлом .pgpass задания?</p><div class="opts"><label class="opt"><input type="radio" name="q202_0" value="2"><span>Любой пользователь группы sudo</span></label><label class="opt"><input type="radio" name="q202_0" value="1"><span>Пользователь root</span></label><label class="opt"><input type="radio" name="q202_0" value="0" data-ok><span>Пользователь, от имени которого работает задание</span></label><label class="opt"><input type="radio" name="q202_0" value="3"><span>Роль postgres в базе</span></label></div><p class="quiz-why" hidden>psql читает файл от имени процесса задания и требует права 600.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Что помогает заданиям не пересекаться по времени?</p><div class="opts"><label class="opt"><input type="checkbox" name="q202_1" value="4"><span>Отключение журнала</span></label><label class="opt"><input type="checkbox" name="q202_1" value="1" data-ok><span>Разные окна запуска</span></label><label class="opt"><input type="checkbox" name="q202_1" value="0" data-ok><span>Блокировка flock в скрипте</span></label><label class="opt"><input type="checkbox" name="q202_1" value="3"><span>Запуск всех заданий в одну минуту</span></label><label class="opt"><input type="checkbox" name="q202_1" value="2" data-ok><span>Случайная задержка запуска</span></label></div><p class="quiz-why" hidden>Блокировка, разнесение по окнам и случайная задержка не дают работам мешать друг другу.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Какой параметр таймера заставляет systemd выполнить пропущенный запуск?</p><input type="text" class="short-answer" data-answers="[&quot;persistent&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой параметр таймера заставляет systemd выполнить пропущенный запуск?"><p class="quiz-why" hidden>Persistent=true догоняет запуск после включения машины.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>От какого пользователя выполняется служба systemd с директивой User=dean_job?</p><div class="opts"><label class="opt"><input type="radio" name="q202_3" value="1"><span>От root</span></label><label class="opt"><input type="radio" name="q202_3" value="2"><span>От пользователя, запустившего systemctl</span></label><label class="opt"><input type="radio" name="q202_3" value="0" data-ok><span>От dean_job</span></label><label class="opt"><input type="radio" name="q202_3" value="3"><span>От postgres</span></label></div><p class="quiz-why" hidden>Директива User задаёт учётную запись, от имени которой работает служба.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Почему скрипт может работать в терминале, но падать из cron?</p><div class="opts"><label class="opt"><input type="radio" name="q202_4" value="2"><span>cron удаляет файлы скрипта</span></label><label class="opt"><input type="radio" name="q202_4" value="0" data-ok><span>У задания другое окружение и другой PATH</span></label><label class="opt"><input type="radio" name="q202_4" value="3"><span>В cron нельзя обращаться к базе</span></label><label class="opt"><input type="radio" name="q202_4" value="1"><span>cron запрещает запускать bash</span></label></div><p class="quiz-why" hidden>Профиль и переменные интерактивной оболочки в cron не загружаются.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что проверяют при сбое задания?</p><div class="opts"><label class="opt"><input type="checkbox" name="q202_5" value="2" data-ok><span>Права на файлы и доступ к базе</span></label><label class="opt"><input type="checkbox" name="q202_5" value="0" data-ok><span>Код возврата службы</span></label><label class="opt"><input type="checkbox" name="q202_5" value="4"><span>Цвет оформления терминала</span></label><label class="opt"><input type="checkbox" name="q202_5" value="1" data-ok><span>Записи в журнале</span></label><label class="opt"><input type="checkbox" name="q202_5" value="3" data-ok><span>Наличие долгих транзакций</span></label><label class="opt"><input type="checkbox" name="q202_5" value="5"><span>Число установленных шрифтов</span></label></div><p class="quiz-why" hidden>Причину находят по коду, журналу, правам и состоянию базы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Когда запустится задание с расписанием 0 3 * * *?</p><div class="opts"><label class="opt"><input type="radio" name="q202_6" value="2"><span>Каждые три минуты</span></label><label class="opt"><input type="radio" name="q202_6" value="3"><span>Только третьего числа каждого месяца</span></label><label class="opt"><input type="radio" name="q202_6" value="0" data-ok><span>Каждый день в 03:00</span></label><label class="opt"><input type="radio" name="q202_6" value="1"><span>Каждые три часа</span></label></div><p class="quiz-why" hidden>Первое поле это минута, второе час, звёздочки означают любой день и месяц.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какая команда показывает список таймеров systemd и время следующего запуска?</p><input type="text" class="short-answer" data-answers="[&quot;systemctl list-timers&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какая команда показывает список таймеров systemd и время следующего запуска?"><p class="quiz-why" hidden>list-timers выводит активные таймеры и время следующего срабатывания.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что делает параметр Persistent=true в таймере?</p><div class="opts"><label class="opt"><input type="radio" name="q202_8" value="3"><span>Хранит журнал задания</span></label><label class="opt"><input type="radio" name="q202_8" value="0" data-ok><span>Догоняет запуск, пропущенный из-за выключения машины</span></label><label class="opt"><input type="radio" name="q202_8" value="1"><span>Запускает задание при каждой загрузке</span></label><label class="opt"><input type="radio" name="q202_8" value="2"><span>Запрещает повторный запуск</span></label></div><p class="quiz-why" hidden>systemd запоминает время последнего запуска и выполняет пропущенное.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какие ошибки типичны при настройке планировщика?</p><div class="opts"><label class="opt"><input type="checkbox" name="q202_9" value="2" data-ok><span>Отсутствие журнала</span></label><label class="opt"><input type="checkbox" name="q202_9" value="3" data-ok><span>Пересечение запусков</span></label><label class="opt"><input type="checkbox" name="q202_9" value="4"><span>Явное указание абсолютных путей</span></label><label class="opt"><input type="checkbox" name="q202_9" value="1" data-ok><span>Отсутствие PATH в окружении задания</span></label><label class="opt"><input type="checkbox" name="q202_9" value="0" data-ok><span>Запуск задания от root</span></label><label class="opt"><input type="checkbox" name="q202_9" value="5"><span>Проверка запуска от имени задания</span></label></div><p class="quiz-why" hidden>Лишние права, пустое окружение, отсутствие журнала и наложение запусков ломают задание.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Сколько полей содержит расписание cron перед командой?</p><div class="opts"><label class="opt"><input type="radio" name="q202_10" value="1"><span>Три</span></label><label class="opt"><input type="radio" name="q202_10" value="3"><span>Шесть</span></label><label class="opt"><input type="radio" name="q202_10" value="0" data-ok><span>Пять</span></label><label class="opt"><input type="radio" name="q202_10" value="2"><span>Четыре</span></label></div><p class="quiz-why" hidden>Поля задают минуту, час, день месяца, месяц и день недели.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Зачем нужен RandomizedDelaySec в таймере?</p><div class="opts"><label class="opt"><input type="radio" name="q202_11" value="1"><span>Ускоряет выполнение скрипта</span></label><label class="opt"><input type="radio" name="q202_11" value="2"><span>Отключает журналирование</span></label><label class="opt"><input type="radio" name="q202_11" value="0" data-ok><span>Разносит запуски нескольких заданий по времени</span></label><label class="opt"><input type="radio" name="q202_11" value="3"><span>Меняет пользователя задания</span></label></div><p class="quiz-why" hidden>Случайная задержка снижает пик одновременных запусков.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называется утилита просмотра журнала systemd?</p><input type="text" class="short-answer" data-answers="[&quot;journalctl&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется утилита просмотра журнала systemd?"><p class="quiz-why" hidden>journalctl читает журнал служб, включая вывод задания.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Что задают в секции Service файла службы?</p><div class="opts"><label class="opt"><input type="checkbox" name="q202_13" value="1" data-ok><span>Команду запуска</span></label><label class="opt"><input type="checkbox" name="q202_13" value="0" data-ok><span>Пользователя задания</span></label><label class="opt"><input type="checkbox" name="q202_13" value="3"><span>Расписание запуска</span></label><label class="opt"><input type="checkbox" name="q202_13" value="2" data-ok><span>Переменные окружения</span></label><label class="opt"><input type="checkbox" name="q202_13" value="4"><span>Список таймеров</span></label></div><p class="quiz-why" hidden>Расписание задаёт таймер, а служба описывает, что и от кого выполняется.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Где смотреть журнал службы systemd?</p><div class="opts"><label class="opt"><input type="radio" name="q202_14" value="2"><span>psql -l</span></label><label class="opt"><input type="radio" name="q202_14" value="0" data-ok><span>journalctl -u имя.service</span></label><label class="opt"><input type="radio" name="q202_14" value="1"><span>crontab -l</span></label><label class="opt"><input type="radio" name="q202_14" value="3"><span>systemctl list-timers</span></label></div><p class="quiz-why" hidden>journalctl показывает вывод службы с временными метками.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
-</div></article><nav class="pager"><a class="" href="20-prakt-08.html"><span>← Предыдущее занятие</span>Практика 8. Скрипт автоматизации</a><a class="next" style="text-align:right;margin-left:auto" href="22-lek-14.html"><span>Следующее занятие →</span>Лекция 14. Мониторинг</a></nav></main>
+<h2 id="тест-по-лекции"><span class="num">13</span>Тест по лекции</h2>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Почему mysqldump может не найтись при запуске из задания?</p><div class="opts"><label class="opt"><input type="radio" name="q134_0" value="3"><span>MySQL не работает ночью</span></label><label class="opt"><input type="radio" name="q134_0" value="2"><span>Планировщик запрещает внешние программы</span></label><label class="opt"><input type="radio" name="q134_0" value="0" data-ok><span>У системной учётной записи другой набор путей PATH</span></label><label class="opt"><input type="radio" name="q134_0" value="1"><span>Программа mysqldump удаляется после установки</span></label></div><p class="quiz-why" hidden>Надёжнее указывать полный путь к исполняемому файлу.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какие причины объясняют пустую вкладку «История» задания?</p><div class="opts"><label class="opt"><input type="checkbox" name="q134_1" value="2" data-ok><span>Журнал был очищен</span></label><label class="opt"><input type="checkbox" name="q134_1" value="3"><span>Программа вернула код 0</span></label><label class="opt"><input type="checkbox" name="q134_1" value="1" data-ok><span>Задание ещё ни разу не запускалось</span></label><label class="opt"><input type="checkbox" name="q134_1" value="0" data-ok><span>Журнал Microsoft-Windows-TaskScheduler/Operational выключен</span></label></div><p class="quiz-why" hidden>История хранится в отдельном журнале событий Windows.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>От чьего имени выполняется событие MySQL?</p><div class="opts"><label class="opt"><input type="radio" name="q134_2" value="2"><span>От учётной записи Windows</span></label><label class="opt"><input type="radio" name="q134_2" value="0" data-ok><span>От пользователя, указанного в definer</span></label><label class="opt"><input type="radio" name="q134_2" value="3"><span>От пользователя, который первым подключился</span></label><label class="opt"><input type="radio" name="q134_2" value="1"><span>От пользователя root всегда</span></label></div><p class="quiz-why" hidden>Если definer удалён, событие перестаёт работать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Какой параметр включает планировщик событий в файле my.ini?</p><input type="text" class="short-answer" data-answers="[&quot;event_scheduler=ON&quot;, &quot;event_scheduler = ON&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какой параметр включает планировщик событий в файле my.ini?"><p class="quiz-why" hidden>Настройка вступает в силу после перезапуска MySQL.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Какая рабочая папка используется по умолчанию при запуске задания?</p><div class="opts"><label class="opt"><input type="radio" name="q134_4" value="3"><span>Каталог MySQL</span></label><label class="opt"><input type="radio" name="q134_4" value="2"><span>Домашний каталог пользователя</span></label><label class="opt"><input type="radio" name="q134_4" value="0" data-ok><span>C:\Windows\System32</span></label><label class="opt"><input type="radio" name="q134_4" value="1"><span>Каталог программы</span></label></div><p class="quiz-why" hidden>Поэтому относительные пути в задании не находят файлы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что входит в окно обслуживания?</p><div class="opts"><label class="opt"><input type="checkbox" name="q134_5" value="1" data-ok><span>Разнесение задач по времени внутри окна</span></label><label class="opt"><input type="checkbox" name="q134_5" value="3"><span>Обязательное отключение сервера MySQL</span></label><label class="opt"><input type="checkbox" name="q134_5" value="2" data-ok><span>Ограничение длительности тяжёлых операций</span></label><label class="opt"><input type="checkbox" name="q134_5" value="0" data-ok><span>Время с минимальной нагрузкой на базу</span></label></div><p class="quiz-why" hidden>Окно нужно, чтобы обслуживание не мешало пользователям.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Что означает LastTaskResult со значением 0x0?</p><div class="opts"><label class="opt"><input type="radio" name="q134_6" value="2"><span>Задание выполняется сейчас</span></label><label class="opt"><input type="radio" name="q134_6" value="3"><span>Задание отключено</span></label><label class="opt"><input type="radio" name="q134_6" value="0" data-ok><span>Задание завершилось успешно</span></label><label class="opt"><input type="radio" name="q134_6" value="1"><span>Задание не запускалось</span></label></div><p class="quiz-why" hidden>Ноль это код успеха, остальные значения означают сбой.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Какая настройка включает планировщик событий MySQL?</p><div class="opts"><label class="opt"><input type="radio" name="q134_7" value="2"><span>autocommit = 1</span></label><label class="opt"><input type="radio" name="q134_7" value="1"><span>event_scheduler = DISABLED</span></label><label class="opt"><input type="radio" name="q134_7" value="3"><span>log_bin = ON</span></label><label class="opt"><input type="radio" name="q134_7" value="0" data-ok><span>event_scheduler = ON</span></label></div><p class="quiz-why" hidden>Параметр проверяют через SHOW VARIABLES и прописывают в my.ini.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Что настраивают в свойствах задания Windows?</p><div class="opts"><label class="opt"><input type="checkbox" name="q134_8" value="1" data-ok><span>Предел времени выполнения</span></label><label class="opt"><input type="checkbox" name="q134_8" value="3"><span>Пароль пользователя базы данных</span></label><label class="opt"><input type="checkbox" name="q134_8" value="2" data-ok><span>Условие запуска при питании от сети</span></label><label class="opt"><input type="checkbox" name="q134_8" value="0" data-ok><span>Правило при уже выполняющейся задаче</span></label></div><p class="quiz-why" hidden>Эти параметры определяют, как именно выполняется задание.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Из каких частей состоит задание в Планировщике Windows?</p><div class="opts"><label class="opt"><input type="radio" name="q134_9" value="3"><span>Копия, журнал и отчёт</span></label><label class="opt"><input type="radio" name="q134_9" value="2"><span>Пользователь, роль и привилегия</span></label><label class="opt"><input type="radio" name="q134_9" value="1"><span>Таблица, индекс и представление</span></label><label class="opt"><input type="radio" name="q134_9" value="0" data-ok><span>Триггер, действие и параметры</span></label></div><p class="quiz-why" hidden>Триггер задаёт время, действие задаёт программу, параметры задают окружение.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что делает ON COMPLETION PRESERVE в событии?</p><div class="opts"><label class="opt"><input type="radio" name="q134_10" value="1"><span>Удаляет событие после первого запуска</span></label><label class="opt"><input type="radio" name="q134_10" value="0" data-ok><span>Сохраняет событие после выполнения</span></label><label class="opt"><input type="radio" name="q134_10" value="3"><span>Меняет definer события</span></label><label class="opt"><input type="radio" name="q134_10" value="2"><span>Отключает расписание</span></label></div><p class="quiz-why" hidden>Без этой фразы событие исчезает после срабатывания.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какая команда показывает список событий базы dean?</p><input type="text" class="short-answer" data-answers="[&quot;SHOW EVENTS FROM dean&quot;, &quot;SHOW EVENTS&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какая команда показывает список событий базы dean?"><p class="quiz-why" hidden>SHOW EVENTS выводит события текущей базы или указанной схемы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Что показывает столбец last_executed в information_schema.EVENTS?</p><div class="opts"><label class="opt"><input type="radio" name="q134_12" value="2"><span>Время следующего запуска</span></label><label class="opt"><input type="radio" name="q134_12" value="1"><span>Время создания события</span></label><label class="opt"><input type="radio" name="q134_12" value="0" data-ok><span>Время последнего срабатывания события</span></label><label class="opt"><input type="radio" name="q134_12" value="3"><span>Время последней ошибки</span></label></div><p class="quiz-why" hidden>Пустое значение означает, что событие не срабатывало.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какие задачи подходят для события MySQL?</p><div class="opts"><label class="opt"><input type="checkbox" name="q134_13" value="2" data-ok><span>Пересчёт сводной таблицы по расписанию</span></label><label class="opt"><input type="checkbox" name="q134_13" value="3"><span>Запуск mysqldump</span></label><label class="opt"><input type="checkbox" name="q134_13" value="1" data-ok><span>Обновление статистики через ANALYZE TABLE</span></label><label class="opt"><input type="checkbox" name="q134_13" value="0" data-ok><span>Чистка старых записей</span></label></div><p class="quiz-why" hidden>Событие выполняет только SQL внутри сервера.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Зачем нужна именованная блокировка GET_LOCK в событии?</p><div class="opts"><label class="opt"><input type="radio" name="q134_14" value="1"><span>Чтобы ускорить удаление строк</span></label><label class="opt"><input type="radio" name="q134_14" value="3"><span>Чтобы включить планировщик событий</span></label><label class="opt"><input type="radio" name="q134_14" value="2"><span>Чтобы событие работало от другого пользователя</span></label><label class="opt"><input type="radio" name="q134_14" value="0" data-ok><span>Чтобы второй экземпляр события не начал работу</span></label></div><p class="quiz-why" hidden>События MySQL не защищены от параллельного запуска сами по себе.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="20-prakt-08.html"><span>← Предыдущее занятие</span>Консольное приложение обслуживания</a><a class="next" style="text-align:right;margin-left:auto" href="22-lek-14.html"><span>Следующее занятие →</span>Мониторинг MySQL и приложение WinForms</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>

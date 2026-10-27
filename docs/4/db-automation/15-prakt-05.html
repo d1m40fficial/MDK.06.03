@@ -793,62 +793,60 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 5. Транзакции</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 17</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 5. Транзакции</h1><p class="dek">Две сессии psql показывают, что видят параллельные запросы при разных уровнях изоляции и почему одна из транзакций откатывается.</p></div>
-<div class="glyph" aria-hidden="true">П5</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Оформлять изменение в транзакции с фиксацией, откатом и точкой сохранения</li><li>Воспроизводить неповторяющееся чтение и фантом на двух сессиях</li><li>Вызывать взаимную блокировку и находить её причину по pg_locks</li><li>Заполнять таблицу наблюдений с объяснением результата</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Транзакция даёт одно обещание: набор изменений применяется целиком или не применяется вовсе, а параллельные сессии не видят половину работы. На словах это просто. Ошибка начинается там, где два человека одновременно меняют одну строку или читают таблицу, пока другой её дописывает.</p>
-<p>Цель работы: проверить обещание транзакции на учебной базе <code>dean</code>. Вы увидите фиксацию и откат, точку сохранения, неповторяющееся чтение на <code>Read Committed</code>, фантом, конфликт на <code>Serializable</code>, взаимную блокировку и ожидание по <code>lock_timeout</code>. Каждый сценарий заканчивается записью в таблицу наблюдений: что сделала каждая сессия, что она увидела и почему.</p>
+<div class="hero-panel"><h1>Практика 5. Транзакции</h1><p class="dek">Две сессии mysql показывают, что видят параллельные запросы при разных уровнях изоляции и почему одна транзакция откатывается сама.</p></div>
+<div class="glyph" aria-hidden="true">П5</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Оформлять изменение в транзакции с фиксацией, откатом и точкой сохранения</li><li>Воспроизводить неповторяющееся чтение и фантом на двух сессиях</li><li>Вызывать взаимную блокировку и находить её причину в SHOW ENGINE INNODB STATUS</li><li>Заполнять таблицу наблюдений с объяснением результата</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Транзакция даёт одно обещание: набор изменений применяется целиком или не применяется вовсе, а параллельная сессия не видит половину работы. Ошибка начинается там, где два человека одновременно меняют одну строку или читают таблицу, пока другой её дописывает.</p>
+<p>Цель работы: проверить это обещание на базе <code>dean</code> в MySQL из XAMPP. Вы увидите фиксацию и откат, точку сохранения, неповторяющееся чтение, фантом, взаимную блокировку и ожидание по <code>innodb_lock_wait_timeout</code>. Каждый сценарий заканчивается записью в таблицу наблюдений: что сделала каждая сессия, что увидела и почему.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с VirtualBox и учебной Ubuntu Server.</li>
-<li>PostgreSQL 16 в виртуальной машине, база <code>dean</code> с учебными данными.</li>
-<li>Два окна терминала или tmux с двумя панелями для параллельных сессий.</li>
-<li>Роль <code>dean_owner</code> или <code>dean_write</code> с правом изменения таблиц <code>students</code>, <code>payments</code> и <code>enrollments</code>.</li>
-<li>Клиент <code>psql</code> версии 16.</li>
-<li>Текстовый редактор для SQL-скриптов и табличный редактор для отчёта.</li>
-<li>Каталог <code>~/transactions</code> для скриптов и скриншотов.</li>
+<li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
+<li>Запущенные в XAMPP Control Panel модули Apache и MySQL, база <code>dean</code> с учебными данными.</li>
+<li>Два окна командной строки для параллельных сессий <code>mysql</code>.</li>
+<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Пользователь <code>root</code> без пароля для учебных опытов или <code>dean_app</code> с правом изменения таблиц.</li>
+<li>Каталог <code>C:\dean\transactions</code> для скриптов и скриншотов.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<p><strong>Транзакция</strong> это последовательность операторов, которую сервер выполняет как единое целое. Свойства транзакции описывают четыре буквы ACID: атомарность (всё или ничего), согласованность (ограничения выполняются после фиксации), изолированность (параллельные транзакции не мешают друг другу) и долговечность (зафиксированное переживает сбой).</p>
-<p><strong>Фиксация</strong> (<code>COMMIT</code>) делает изменения видимыми и записывает их в журнал упреждающей записи. <strong>Откат</strong> (<code>ROLLBACK</code>) отменяет всё, что сделано после <code>BEGIN</code>. <strong>Точка сохранения</strong> (<code>SAVEPOINT</code>) позволяет отменить часть работы, не теряя транзакцию целиком: <code>ROLLBACK TO SAVEPOINT</code> возвращает состояние на момент точки, а <code>RELEASE SAVEPOINT</code> убирает её из стека.</p>
-<p><strong>Уровень изоляции</strong> определяет, какие изменения чужих транзакций видит ваша. В PostgreSQL три практических уровня. <code>Read Committed</code> (по умолчанию) видит только зафиксированные строки и берёт новый снимок на каждый оператор. <code>Repeatable Read</code> берёт снимок на всю транзакцию, поэтому повторный запрос возвращает те же строки. <code>Serializable</code> добавляет проверку зависимостей и может прервать транзакцию, если её результат нельзя объяснить последовательным выполнением.</p>
-<p><strong>Аномалии.</strong> Неповторяющееся чтение: два одинаковых запроса в одной транзакции дают разные значения. Фантомное чтение: между запросами появляются новые строки, и повторный <code>count(*)</code> меняется. Потерянное обновление: две транзакции читают одно значение и записывают результат, один результат теряется. Ошибка сериализации (<code>SQLSTATE 40001</code>) это не сбой, а требование повторить транзакцию.</p>
-<p><strong>Блокировки.</strong> Изменение строки берёт монопольную блокировку до конца транзакции, поэтому второй <code>UPDATE</code> той же строки ждёт. Если две транзакции ждут ресурсы друг друга, сервер находит цикл и отменяет одну с сообщением <code>deadlock detected</code> (<code>SQLSTATE 40P01</code>). Параметр <code>lock_timeout</code> ограничивает ожидание и превращает его в ошибку <code>canceling statement due to lock timeout</code>. Состояние блокировок видно в <code>pg_locks</code>, а сессии и их запросы в <code>pg_stat_activity</code>.</p>
+<p><strong>Транзакция</strong> это последовательность операторов, которую сервер выполняет как единое целое. Четыре буквы ACID означают атомарность (всё или ничего), согласованность (ограничения выполняются после фиксации), изолированность (параллельные транзакции не мешают друг другу) и долговечность (зафиксированное переживает сбой).</p>
+<p><strong>Фиксация</strong> (<code>COMMIT</code>) делает изменения видимыми и пишет их в журнал упреждающей записи. <strong>Откат</strong> (<code>ROLLBACK</code>) отменяет всё, что сделано после <code>START TRANSACTION</code>. <strong>Точка сохранения</strong> (<code>SAVEPOINT</code>) отменяет часть работы, не теряя транзакцию: <code>ROLLBACK TO SAVEPOINT</code> возвращает состояние на момент точки, <code>RELEASE SAVEPOINT</code> убирает её из стека.</p>
+<p><strong>Автофиксация.</strong> В MySQL оператор вне транзакции фиксируется сразу, потому что <code>autocommit</code> включён. <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code> и <code>TRUNCATE</code> вызывают неявную фиксацию, откатить их нельзя.</p>
+<p><strong>Уровень изоляции</strong> определяет, какие изменения чужих транзакций видит ваша. По умолчанию в InnoDB стоит <code>REPEATABLE READ</code>. На <code>READ COMMITTED</code> каждый оператор берёт новый снимок и видит только зафиксированные строки. На <code>REPEATABLE READ</code> снимок берётся при первом чтении и живёт до конца транзакции, поэтому повторный запрос возвращает те же строки. <code>SERIALIZABLE</code> превращает обычные чтения в блокирующие.</p>
+<p><strong>Аномалии.</strong> Неповторяющееся чтение даёт разные значения в двух одинаковых запросах одной транзакции. Фантом добавляет строки, и повторный <code>COUNT(*)</code> меняется. Потерянное обновление теряет результат одной из двух транзакций.</p>
+<p><strong>Блокировки.</strong> Изменение строки берёт монопольную блокировку до конца транзакции, поэтому второй <code>UPDATE</code> той же строки ждёт. InnoDB блокирует и промежуток в индексе (next-key lock), иначе фантом вернулся бы через вставку. Цикл ожидания сервер находит сам и отменяет одну транзакцию с ошибкой 1213.</p>
+<p><strong>Ожидание.</strong> Параметр <code>innodb_lock_wait_timeout</code> задаёт предел ожидания в секундах, по умолчанию 50. Истёкшее ожидание даёт ошибку 1205. Транзакции видны в <code>information_schema.INNODB_TRX</code>, а отчёт о последней взаимной блокировке в разделе <code>LATEST DETECTED DEADLOCK</code> команды <code>SHOW ENGINE INNODB STATUS</code>.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Откройте две сессии и подпишите вывод</h3>
-<p>Откройте два терминала. В каждом задайте имя приложения, чтобы сессии различались в <code>pg_stat_activity</code>.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nv">PGAPPNAME</span><span class="o">=</span>session_a<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean
+<p>Откройте два окна командной строки и в каждом запустите клиент на базе <code>dean</code>.</p>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nv">PGAPPNAME</span><span class="o">=</span>session_b<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean
+<p>В сессии A напечатайте подпись, номер соединения и уровень изоляции.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">CONNECTION_ID</span><span class="p">()</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">session_id</span><span class="p">,</span><span class="w"> </span><span class="k">CURRENT_USER</span><span class="p">()</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">db_user</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%isolation%&#39;</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">@@</span><span class="n">autocommit</span><span class="p">;</span>
 </code></pre></div>
 
-<p>В сессии A проверьте подключение и напечатайте подпись.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">pg_backend_pid</span><span class="p">()</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="k">current_user</span><span class="p">;</span>
-<span class="k">SHOW</span><span class="w"> </span><span class="n">default_transaction_isolation</span><span class="p">;</span>
-<span class="k">SHOW</span><span class="w"> </span><span class="n">deadlock_timeout</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Строка <code>\echo</code> попадает в вывод первой, поэтому на скриншоте видно, чья это работа. Повторяйте её перед каждым сценарием. Запишите номера процессов обеих сессий.</p>
+<p>Строка с фамилией попадает в вывод первой, поэтому на скриншоте видно, чья это работа. Повторяйте её перед каждым сценарием и запишите номера соединений обеих сессий.</p>
 <table>
 <thead>
 <tr>
 <th>Сессия</th>
-<th>Имя приложения</th>
-<th>PID</th>
-<th>Роль</th>
+<th><code>CONNECTION_ID()</code></th>
+<th>Пользователь</th>
+<th>Уровень изоляции</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>A</td>
-<td>session_a</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>B</td>
-<td>session_b</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -856,8 +854,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 2. Проверьте фиксацию, откат и точку сохранения</h3>
 <p>В сессии A выполните откат.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="k">ROLLBACK</span><span class="p">;</span>
@@ -865,7 +863,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Сумма после <code>ROLLBACK</code> вернулась к исходной. Теперь повторите с фиксацией и точкой сохранения.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="n">SAVEPOINT</span><span class="w"> </span><span class="n">before_second</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
@@ -874,54 +872,17 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SELECT</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Прибавка составила 100, а не 300: откат до точки сохранения убрал второе изменение, но сохранил первое. Запишите оба результата в таблицу наблюдений.</p>
+<p>Прибавка составила 100, а не 300: откат до точки убрал второе изменение, но сохранил первое. Запишите оба результата.</p>
 <h3>Шаг 3. Воспроизведите неповторяющееся чтение</h3>
-<p>Уровень <code>Read Committed</code> берёт новый снимок на каждый оператор, поэтому повторный запрос видит чужую фиксацию.</p>
-<table>
-<thead>
-<tr>
-<th>Шаг</th>
-<th>Сессия A</th>
-<th>Сессия B</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>BEGIN ISOLATION LEVEL READ COMMITTED;</code></td>
-<td></td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>SELECT amount FROM payments WHERE id = 1;</code></td>
-<td></td>
-</tr>
-<tr>
-<td>3</td>
-<td></td>
-<td><code>BEGIN; UPDATE payments SET amount = amount + 50 WHERE id = 1; COMMIT;</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td><code>SELECT amount FROM payments WHERE id = 1;</code></td>
-<td></td>
-</tr>
-<tr>
-<td>5</td>
-<td><code>COMMIT;</code></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">COMMITTED</span><span class="p">;</span>
+<p>На <code>READ COMMITTED</code> каждый оператор берёт новый снимок, поэтому повторный запрос видит чужую фиксацию.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">COMMITTED</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="k">COMMIT</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Вернитесь в сессию A, повторите запрос и зафиксируйте транзакцию.</p>
@@ -929,126 +890,108 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">COMMIT</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Второе значение отличается от первого. Это неповторяющееся чтение: внутри одной транзакции данные изменились. Причина в том, что <code>Read Committed</code> не обещает стабильный снимок, он обещает отсутствие грязного чтения.</p>
-<h3>Шаг 4. Повторите сценарий на Repeatable Read</h3>
-<p>Снимок теперь берётся на всю транзакцию. Повторите шаги 3 с другим уровнем.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">REPEATABLE</span><span class="w"> </span><span class="k">READ</span><span class="p">;</span>
+<p>Второе значение отличается от первого. Это неповторяющееся чтение: внутри одной транзакции данные изменились, потому что <code>READ COMMITTED</code> не обещает стабильный снимок, он обещает отсутствие грязного чтения.</p>
+<h3>Шаг 4. Повторите сценарий на REPEATABLE READ</h3>
+<p>Снимок теперь берётся при первом чтении и живёт до конца транзакции.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">REPEATABLE</span><span class="w"> </span><span class="k">READ</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">SELECT</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Сессия B снова прибавляет 50 и фиксирует изменение. Запрос в сессии A возвращает прежнее значение.</p>
+<p>Сессия B снова прибавляет 50. Запрос в сессии A возвращает прежнее значение.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="k">COMMIT</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Добавьте проверку записи: начните транзакцию <code>REPEATABLE READ</code>, прочитайте строку, измените её в сессии B, а затем попробуйте обновить ту же строку в сессии A. Сервер вернёт <code>could not serialize access due to concurrent update</code> и отменит транзакцию. Это защита от потерянного обновления: молча перезаписать чужую работу PostgreSQL не даёт.</p>
+<p>Разница между шагами 3 и 4 и есть цена уровня изоляции: <code>REPEATABLE READ</code> даёт стабильное чтение, но приложение работает с устаревшими числами.</p>
 <h3>Шаг 5. Покажите фантом на двух уровнях</h3>
-<p>Фантом проверяется не по одной строке, а по множеству. Считайте платежи студента с <code>id = 3</code>.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">COMMITTED</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<p>Фантом проверяется по множеству строк. Считайте платежи студента с <code>id = 3</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">COMMITTED</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments_before</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
 <span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">);</span>
 </code></pre></div>
 
 <p>Повторите счёт в сессии A и зафиксируйте транзакцию.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payments_after</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 <span class="k">COMMIT</span><span class="p">;</span>
 </code></pre></div>
 
-<p>На <code>Read Committed</code> второй счёт больше первого. Повторите сценарий на <code>Repeatable Read</code>: второй счёт останется прежним, потому что транзакция работает со снимком. Запишите оба результата.</p>
-<h3>Шаг 6. Получите ошибку сериализации на Serializable</h3>
-<p>На уровне <code>Serializable</code> сервер проверяет, можно ли объяснить результат последовательным выполнением транзакций.</p>
-<table>
-<thead>
-<tr>
-<th>Шаг</th>
-<th>Сессия A</th>
-<th>Сессия B</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>BEGIN ISOLATION LEVEL SERIALIZABLE;</code></td>
-<td><code>BEGIN ISOLATION LEVEL SERIALIZABLE;</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>SELECT sum(amount) FROM payments;</code></td>
-<td><code>SELECT sum(amount) FROM payments;</code></td>
-</tr>
-<tr>
-<td>3</td>
-<td><code>INSERT INTO payments (student_id, amount) VALUES (1, 10);</code></td>
-<td><code>INSERT INTO payments (student_id, amount) VALUES (2, 10);</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td><code>COMMIT;</code></td>
-<td><code>COMMIT;</code></td>
-</tr>
-</tbody>
-</table>
-<p>Одна из транзакций завершится ошибкой <code>could not serialize access due to read/write dependencies among transactions</code>. Откатите её через <code>ROLLBACK</code> и повторите: на повторном запуске конфликт исчезает. Запишите, какая сессия стала жертвой и на каком шаге.</p>
-<h3>Шаг 7. Вызовите взаимную блокировку</h3>
-<p>Каждая сессия захватывает свою строку, затем просит строку другой стороны. Цикл ожидания сервер находит сам.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="p">;</span>
+<p>На <code>READ COMMITTED</code> второй счёт больше первого. Повторите сценарий на <code>REPEATABLE READ</code>: обычный <code>SELECT COUNT(*)</code> покажет прежнее число, потому что транзакция читает снимок. Добавьте блокирующее чтение и убедитесь, что строки всё равно видны.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="w"> </span><span class="k">ISOLATION</span><span class="w"> </span><span class="k">LEVEL</span><span class="w"> </span><span class="k">REPEATABLE</span><span class="w"> </span><span class="k">READ</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">snapshot_count</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">locking_count</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Второе число больше первого. Фантом не исчез, он скрыт от согласованного чтения: <code>FOR UPDATE</code> читает последнюю версию и блокирует промежуток индекса, поэтому чужая вставка в диапазон будет ждать. Запишите оба числа.</p>
+<h3>Шаг 6. Вызовите взаимную блокировку</h3>
+<p>Каждая сессия захватывает свою строку, затем просит строку другой. Цикл сервер находит сам.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span>
-<span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Теперь поменяйте порядок: в сессии A обновите строку 2, в сессии B строку 1.</p>
+<p>Теперь поменяйте порядок: в сессии A обновите строку 2, в сессии B строку 1. Выполняйте по очереди: сначала команду в A, затем в B.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Через <code>deadlock_timeout</code> одна сессия получит <code>ERROR: deadlock detected</code>, и её транзакция будет отменена. Вторая продолжит работу после <code>COMMIT</code>. Обратите внимание: даже обновление без изменения значения берёт блокировку, потому что сервер создаёт новую версию строки.</p>
-<h3>Шаг 8. Ограничьте ожидание через lock_timeout</h3>
+<p>Одна сессия получит <code>ERROR 1213 (40001): Deadlock found when trying to get lock</code>, и её транзакция будет отменена целиком. Вторая продолжит работу после <code>COMMIT</code>. Запишите, какая сессия стала жертвой. Обновление без изменения значения тоже берёт блокировку.</p>
+<h3>Шаг 7. Ограничьте ожидание через innodb_lock_wait_timeout</h3>
 <p>Сессия A держит блокировку строки и не завершает транзакцию.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
 <p>В сессии B задайте предел ожидания и попробуйте обновить ту же строку.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span>
-<span class="k">SET</span><span class="w"> </span><span class="n">lock_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2s&#39;</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Петров П.П., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="n">innodb_lock_wait_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
 <span class="k">UPDATE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Запрос завершится ошибкой <code>canceling statement due to lock timeout</code>. После <code>COMMIT</code> в сессии A повторите запрос в сессии B: он пройдёт. Параметр действует на текущую сессию и сбрасывается через <code>RESET lock_timeout</code>.</p>
-<h3>Шаг 9. Посмотрите блокировки и ожидающие запросы</h3>
-<p>Пока сессия A держит строку, откройте третью сессию или используйте B после ошибки.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">application_name</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="k">state</span><span class="p">,</span>
-<span class="w">       </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">xact_start</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">xact_age</span><span class="p">,</span>
-<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">locktype</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="k">mode</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="k">granted</span><span class="p">,</span>
-<span class="w">       </span><span class="n">l</span><span class="p">.</span><span class="n">relation</span><span class="p">::</span><span class="n">regclass</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">object</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_locks</span><span class="w"> </span><span class="n">l</span>
-<span class="k">JOIN</span><span class="w"> </span><span class="n">pg_stat_activity</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">pid</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">relation</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="k">granted</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+<p>Через пять секунд запрос завершится ошибкой <code>ERROR 1205 (HY000): Lock wait timeout exceeded</code>. После <code>COMMIT</code> в сессии A повторите запрос в сессии B: он пройдёт. Параметр действует на текущую сессию.</p>
+<p>Приложите скриншот ошибки 1205: на нём видно, что ожидание ограничено.</p>
+<h3>Шаг 8. Найдите причину в INNODB STATUS и INNODB_TRX</h3>
+<p>Пока сессия A держит строку, откройте третье окно и посмотрите активные транзакции.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">trx_id</span><span class="p">,</span><span class="w"> </span><span class="n">trx_state</span><span class="p">,</span><span class="w"> </span><span class="n">trx_started</span><span class="p">,</span><span class="w"> </span><span class="n">trx_mysql_thread_id</span><span class="p">,</span>
+<span class="w">       </span><span class="n">trx_isolation_level</span><span class="p">,</span><span class="w"> </span><span class="n">trx_rows_locked</span><span class="p">,</span><span class="w"> </span><span class="k">LEFT</span><span class="p">(</span><span class="n">trx_query</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query_text</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">INNODB_TRX</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">trx_started</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Строка с <code>granted = false</code> это ожидание. Найдите, кто кого блокирует.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="n">application_name</span><span class="p">,</span><span class="w"> </span><span class="k">state</span><span class="p">,</span>
-<span class="w">       </span><span class="n">pg_blocking_pids</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocked_by</span><span class="p">,</span>
-<span class="w">       </span><span class="k">left</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_activity</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">datname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">cardinality</span><span class="p">(</span><span class="n">pg_blocking_pids</span><span class="p">(</span><span class="n">pid</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<p>Строка со старым <code>trx_started</code> и есть долгая транзакция. Посмотрите, кто кого ждёт.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">INNODB_LOCKS</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">INNODB_LOCK_WAITS</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Столбец <code>blocked_by</code> содержит PID держателя блокировки. Приложите скриншот обоих запросов: на нём видно, что ожидание относится к вашей паре сессий.</p>
-<h3>Шаг 10. Заполните таблицу наблюдений</h3>
+<p>В MySQL 8 таблицы <code>INNODB_LOCKS</code> и <code>INNODB_LOCK_WAITS</code> пусты: данные перенесены в <code>performance_schema</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">OBJECT_SCHEMA</span><span class="p">,</span><span class="w"> </span><span class="n">OBJECT_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">INDEX_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">LOCK_TYPE</span><span class="p">,</span>
+<span class="w">       </span><span class="n">LOCK_MODE</span><span class="p">,</span><span class="w"> </span><span class="n">LOCK_STATUS</span><span class="p">,</span><span class="w"> </span><span class="n">LOCK_DATA</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">data_locks</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">OBJECT_SCHEMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Строка с <code>LOCK_STATUS = 'WAITING'</code> это ожидание. Наконец, откройте полный отчёт сервера.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="n">INNODB</span><span class="w"> </span><span class="n">STATUS</span><span class="err">\</span><span class="k">G</span>
+</code></pre></div>
+
+<p>В разделе <code>LATEST DETECTED DEADLOCK</code> найдите транзакции, их запросы и строку, на которой возник цикл. В разделе <code>TRANSACTIONS</code> видны активные транзакции и удерживаемые блокировки. Приложите скриншот обоих разделов.</p>
+<h3>Шаг 9. Заполните таблицу наблюдений</h3>
 <p>Одна строка на сценарий. В последнем столбце объясните причину, а не перескажите результат.</p>
 <table>
 <thead>
@@ -1065,7 +1008,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td>Откат</td>
-<td>Read Committed</td>
+<td>по умолчанию</td>
 <td><code>UPDATE</code>, затем <code>ROLLBACK</code></td>
 <td>нет</td>
 <td>Исходное значение</td>
@@ -1074,7 +1017,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>Точка сохранения</td>
-<td>Read Committed</td>
+<td>по умолчанию</td>
 <td>Два <code>UPDATE</code>, <code>ROLLBACK TO</code></td>
 <td>нет</td>
 <td>Только первая прибавка</td>
@@ -1083,67 +1026,66 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>Повторное чтение</td>
-<td>Read Committed</td>
+<td><code>READ COMMITTED</code></td>
 <td>Два <code>SELECT</code></td>
-<td><code>UPDATE</code> и <code>COMMIT</code></td>
+<td><code>UPDATE</code> и автофиксация</td>
 <td>Значение изменилось</td>
 <td>Неповторяющееся чтение</td>
 <td>Новый снимок на каждый оператор</td>
 </tr>
 <tr>
 <td>Повторное чтение</td>
-<td>Repeatable Read</td>
+<td><code>REPEATABLE READ</code></td>
 <td>Два <code>SELECT</code></td>
-<td><code>UPDATE</code> и <code>COMMIT</code></td>
+<td><code>UPDATE</code> и автофиксация</td>
 <td>Значение прежнее</td>
 <td>нет</td>
 <td>Снимок на всю транзакцию</td>
 </tr>
 <tr>
 <td>Фантом</td>
-<td>Read Committed</td>
-<td>Два <code>count(*)</code></td>
+<td><code>READ COMMITTED</code></td>
+<td>Два <code>COUNT(*)</code></td>
 <td><code>INSERT</code></td>
 <td>Счёт вырос</td>
 <td>Фантом</td>
 <td>Новые строки попадают в снимок</td>
 </tr>
 <tr>
-<td>Конфликт</td>
-<td>Serializable</td>
-<td>Чтение и вставка</td>
-<td>Чтение и вставка</td>
-<td>Ошибка 40001</td>
-<td>Ошибка сериализации</td>
-<td>Транзакцию нужно повторить</td>
+<td>Фантом и блокировка</td>
+<td><code>REPEATABLE READ</code></td>
+<td><code>COUNT(*)</code>, затем <code>FOR UPDATE</code></td>
+<td>нет</td>
+<td>Числа различаются</td>
+<td>Фантом скрыт</td>
+<td>Блокирующее чтение видит новые строки</td>
 </tr>
 <tr>
 <td>Взаимная блокировка</td>
-<td>Read Committed</td>
+<td>по умолчанию</td>
 <td>Строка 1, затем 2</td>
 <td>Строка 2, затем 1</td>
-<td><code>deadlock detected</code></td>
+<td><code>ERROR 1213</code></td>
 <td>Взаимная блокировка</td>
 <td>Сервер отменил одну транзакцию</td>
 </tr>
 <tr>
 <td>Ожидание</td>
-<td>Read Committed</td>
+<td>по умолчанию</td>
 <td>Держит строку</td>
-<td><code>lock_timeout</code></td>
-<td>Ошибка ожидания</td>
+<td><code>innodb_lock_wait_timeout = 5</code></td>
+<td><code>ERROR 1205</code></td>
 <td>нет</td>
 <td>Ожидание ограничено параметром</td>
 </tr>
 </tbody>
 </table>
-<h3>Требования к отчёту</h3>
-<p>Соберите четыре SQL-скрипта: фиксация и откат, повторное чтение и фантом, сериализация, взаимная блокировка. Добавьте скрипт наблюдения с запросами к <code>pg_locks</code> и <code>pg_stat_activity</code>. Скриншоты делайте только как доказательства: две подписанные сессии, вывод <code>pg_locks</code> с <code>granted = false</code>, сообщение <code>deadlock detected</code>, ошибка <code>lock timeout</code>. Скриншоты шапки отчёта и текста теории не нужны.</p>
+<p>Скриншоты делайте только как доказательства: две подписанные сессии, ошибка 1205 при ожидании, ошибка 1213 и раздел <code>LATEST DETECTED DEADLOCK</code>. Шапка отчёта и текст теории в кадр не нужны.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
 <li>Четыре SQL-скрипта сценариев и скрипт наблюдения.</li>
 <li>Заполненную таблицу наблюдений по восьми сценариям.</li>
-<li>Скриншоты с подписью в первой строке: две сессии, <code>pg_locks</code>, <code>deadlock detected</code>, <code>lock_timeout</code>.</li>
+<li>Скриншоты с подписью в первой строке: две сессии, ожидание блокировки, взаимная блокировка.</li>
 <li>Краткий вывод: на каком уровне изоляции какая аномалия исчезает и какой ценой.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
@@ -1169,7 +1111,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tr>
 <td>Наблюдение</td>
 <td>20</td>
-<td><code>pg_locks</code> и <code>pg_stat_activity</code> использованы по назначению</td>
+<td><code>INNODB_TRX</code>, <code>data_locks</code> и <code>INNODB STATUS</code> использованы по назначению</td>
 </tr>
 <tr>
 <td>Объяснение</td>
@@ -1187,13 +1129,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="selfcheck no-copy">
 <ol>
 <li>Чем <code>ROLLBACK TO SAVEPOINT</code> отличается от <code>ROLLBACK</code>?</li>
-<li>Почему на <code>Read Committed</code> повторный запрос видит чужую фиксацию, а на <code>Repeatable Read</code> нет?</li>
-<li>Почему ошибку сериализации считают нормальным результатом, а не сбоем сервера?</li>
+<li>Почему на <code>READ COMMITTED</code> повторный запрос видит чужую фиксацию, а на <code>REPEATABLE READ</code> нет?</li>
+<li>Почему <code>CREATE TABLE</code> нельзя откатить вместе с остальной транзакцией?</li>
+<li>Почему на <code>REPEATABLE READ</code> обычный <code>SELECT COUNT(*)</code> не показывает фантом, а <code>FOR UPDATE</code> показывает?</li>
 <li>Как сервер находит взаимную блокировку и почему отменяет только одну транзакцию?</li>
-<li>Что показывает <code>granted = false</code> в <code>pg_locks</code>?</li>
-<li>Зачем нужен <code>lock_timeout</code>, если сервер сам умеет находить блокировки?</li>
+<li>Что показывает <code>LOCK_STATUS = 'WAITING'</code> в <code>performance_schema.data_locks</code>?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="14-lek-10.html"><span>← Предыдущее занятие</span>Лекция 10. Транзакции и блокировки</a><a class="next" style="text-align:right;margin-left:auto" href="16-lek-11.html"><span>Следующее занятие →</span>Лекция 11. Импорт и экспорт</a></nav></main>
+</div></article><nav class="pager"><a class="" href="14-lek-10.html"><span>← Предыдущее занятие</span>Транзакции и блокировки InnoDB</a><a class="next" style="text-align:right;margin-left:auto" href="16-lek-11.html"><span>Следующее занятие →</span>Импорт и экспорт данных</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

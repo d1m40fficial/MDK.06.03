@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 10. Аудит; Безопасность</title>
+<title>Практика 10. Аудит и безопасность</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -790,27 +790,28 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 10. Аудит; Безопасность</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 10. Аудит и безопасность</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 29-30</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 10. Аудит; Безопасность</h1><p class="dek">Включаем аудит «Деканата», читаем события и проверяем роли, доступ, секреты и защиту журнала.</p></div>
-<div class="glyph" aria-hidden="true">П10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Включать серверный журнал и триггерный аудит действий</li><li>Читать события и восстанавливать ход изменения данных</li><li>Проверять роли, pg_hba.conf, SSL и хранение секретов</li><li>Составлять список рисков с мерами защиты</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Аудит нужен не для отчёта, а для ответа на вопрос, кто и что сделал с данными. Без журнала инцидент разбирают по догадкам, а доступ к журналу у приложения превращает защиту в формальность. Цель работы: включить аудит учебной базы «Деканат», собрать события по тестовым изменениям и проверить защиту доступа, секретов и самого журнала.</p>
-<p>Результат работы это настройки аудита, выгрузка событий, доказательство запрета на изменение журнала и список рисков с мерами.</p>
+<div class="hero-panel"><h1>Практика 10. Аудит и безопасность</h1><p class="dek">Включаем general log и триггерный аудит «Деканата», читаем события и проверяем права, пароли и доступ к дампам.</p></div>
+<div class="glyph" aria-hidden="true">П10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Включать general log MySQL и читать события из mysql.general_log</li><li>Создавать триггерную таблицу аудита и разбирать изменения строк</li><li>Проверять привилегии через SHOW GRANTS и находить избыточные права</li><li>Находить риски доступа, секретов и дампов и предлагать меры</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Аудит нужен не для отчёта, а для ответа на вопрос, кто и что сделал с данными. Без журнала инцидент разбирают по догадкам, а доступ приложения к журналу превращает защиту в формальность. Цель работы: включить аудит учебной базы «Деканат», собрать события по тестовым изменениям и проверить защиту доступа, секретов и самого журнала.</p>
+<p>Результат работы это настройки аудита, выгрузка событий, ограничение прав и список рисков с мерами, включая проверку учебной настройки XAMPP с входом <code>root</code> без пароля.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.</li>
-<li>PostgreSQL 16 в гостевой системе, доступ <code>sudo</code> внутри машины.</li>
-<li>Клиент <code>psql</code>, текстовый редактор, табличный редактор.</li>
-<li>Учебная база <code>dean</code>, роли <code>dean_owner</code>, <code>dean_app</code>, <code>student_read</code>, <code>auditor</code>.</li>
-<li>Файл конфигурации <code>/etc/postgresql/16/main/pg_hba.conf</code>.</li>
+<li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
+<li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code>, утилита <code>mysqldump.exe</code>, конфигурация <code>C:\xampp\mysql\bin\my.ini</code>.</li>
+<li>PowerShell и текстовый редактор.</li>
+<li>Учебная база <code>dean</code> с таблицами <code>students</code>, <code>enrollments</code>, <code>payments</code> и <code>audit_log</code>.</li>
+<li>Пользователи <code>root</code> и <code>dean_app</code>, роли <code>dean_read</code>, <code>dean_write</code>, <code>student_read</code>, <code>auditor</code>.</li>
+<li>Табличный редактор для списка рисков.</li>
 </ul>
-<p>SQL-команды выполняются через <code>sudo -u postgres psql -d dean</code>, если в команде не указано другое подключение. Операции от имени приложения выполняются отдельной сессией <code>psql -U dean_app -h 127.0.0.1 -d dean</code>.</p>
+<p>SQL-команды выполняются в phpMyAdmin или в клиенте <code>mysql.exe</code> под <code>root</code>. Операции от имени приложения выполняются отдельной сессией <code>mysql.exe -u dean_app -p dean</code>.</p>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<h3>Три источника событий</h3>
-<p>Серверный журнал пишет то, что видит сервер: подключения, отключения, текст операторов, ошибки. Он включается параметрами <code>log_connections</code>, <code>log_disconnections</code> и <code>log_statement</code>. Журнал удобен для разбора инцидента, но не знает смысла изменения: в нём есть оператор, а не строка таблицы до и после.</p>
-<p>Триггерный аудит пишет события в обычную таблицу. Триггер видит старые и новые значения строки, поэтому отвечает на вопрос, что именно изменилось. Таблица аудита живёт в базе, её можно выгрузить запросом и ограничить правами.</p>
-<p>Третий источник это специализированное расширение <code>pgaudit</code>, которое задаёт политику по объектам и ролям. В учебной работе достаточно первых двух источников, но в списке рисков стоит указать, что политика аудита без расширения задаётся вручную.</p>
+<h3>Два источника событий</h3>
+<p><strong>General log</strong> пишет то, что видит сервер: подключения, текст операторов, ошибки. При <code>log_output = 'TABLE'</code> записи попадают в таблицу <code>mysql.general_log</code> с полями <code>event_time</code>, <code>user_host</code>, <code>thread_id</code>, <code>command_type</code> и <code>argument</code>. Журнал удобен для разбора инцидента, но не знает смысла изменения: в нём есть оператор, а не строка таблицы до и после.</p>
+<p><strong>Триггерный аудит</strong> пишет события в обычную таблицу <code>audit_log</code>. Триггер видит старые и новые значения строки, поэтому отвечает на вопрос, что именно изменилось. Таблица живёт в базе, её можно выгрузить запросом и ограничить правами.</p>
 <table>
 <thead>
 <tr>
@@ -822,10 +823,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>Серверный журнал</td>
+<td>General log</td>
 <td>Подключения, операторы, ошибки</td>
-<td>Файл в <code>/var/log/postgresql</code></td>
-<td>Нет старых и новых значений</td>
+<td>Таблица <code>mysql.general_log</code></td>
+<td>Нет старых и новых значений, растёт быстро</td>
 </tr>
 <tr>
 <td>Триггерная таблица</td>
@@ -834,77 +835,99 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>Нужен триггер на каждую таблицу</td>
 </tr>
 <tr>
-<td>Расширение <code>pgaudit</code></td>
-<td>События по политике</td>
-<td>Журнал сервера</td>
-<td>Требует установки и настройки</td>
+<td>Журнал ошибок MySQL</td>
+<td>Сбои сервера и запуск</td>
+<td>Файл в <code>C:\xampp\mysql\data</code></td>
+<td>Не содержит операторов клиентов</td>
 </tr>
 </tbody>
 </table>
 <h3>Что делает событие пригодным для разбора</h3>
-<p>Событие отвечает на пять вопросов: кто, когда, что, над каким объектом, с каким результатом. Поэтому в таблице есть пользователь, время, действие, имя таблицы, идентификатор строки и подробности в <code>jsonb</code>. Запись без пользователя или без времени для разбора бесполезна.</p>
+<p>Событие отвечает на пять вопросов: кто, когда, что, над каким объектом, с каким результатом. Поэтому в <code>audit_log</code> есть пользователь, время, действие, имя таблицы, идентификатор строки и подробности в JSON.</p>
+<p>В триггере <code>CURRENT_USER()</code> вернёт владельца, а не клиента: триггер выполняется с правами своего создателя. Клиента возвращает <code>USER()</code>: это учётная запись, под которой установлено соединение.</p>
 <h3>Защита журнала</h3>
-<p>Журнал аудита защищают тремя мерами. Первая: отдельная роль <code>auditor</code> только на чтение. Вторая: запрет <code>UPDATE</code> и <code>DELETE</code> для приложения и для владельца приложения. Третья: отсутствие прямого <code>INSERT</code> у приложения, запись идёт через функцию триггера с правами владельца. Если приложение может править журнал, аудит не доказывает ничего.</p>
+<p>Журнал аудита защищают тремя мерами. Первая: отдельная роль <code>auditor</code> только на чтение. Вторая: запрет <code>UPDATE</code> и <code>DELETE</code> для приложения. Третья: отсутствие прямого <code>INSERT</code> у приложения, запись идёт через триггер с правами владельца. Если приложение может править журнал, аудит не доказывает ничего.</p>
 <h3>Доступ, секреты и копии</h3>
-<p><code>pg_hba.conf</code> задаёт, кто и с какого адреса подключается и каким методом проверяется пароль. Опасны строки с методом <code>trust</code>, широкие диапазоны вроде <code>0.0.0.0/0</code> и порядок строк: первое совпадение выигрывает. SSL защищает пароль и данные в сети. Файл <code>.pgpass</code> хранит пароль для автоматических запусков и должен иметь права <code>600</code>. Пароль в командной строке виден в списке процессов и в истории оболочки, поэтому это риск, а не удобство.</p>
+<p>В XAMPP пользователь <code>root</code> по умолчанию входит без пароля. Это удобно на учебной машине и опасно на любой другой: полный доступ получает любой процесс и любой человек за этим компьютером. Приложение должно ходить в базу под <code>dean_app</code>, а <code>root</code> нужен только администратору.</p>
+<p>Строка подключения с паролем в коде, в <code>appsettings.json</code> или в истории PowerShell это утечка при первом копировании проекта. Дамп тоже секрет: файл в <code>C:\xampp\htdocs</code> открывается по адресу <code>http://localhost/dean.sql</code> без пароля.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
-<p>Первой строкой каждого вывода печатайте фамилию и группу: в <code>psql</code> это <code>SELECT 'Иванов И.И., ИС-41' AS student;</code>, в оболочке <code>echo "Иванов И.И., ИС-41"</code>.</p>
-<h3>Шаг 1. Включите серверный журнал</h3>
-<p>Задайте параметры через <code>ALTER SYSTEM</code>, чтобы они пережили перезапуск, и примените их перечитыванием конфигурации.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">SYSTEM</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">log_statement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;all&#39;</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">SYSTEM</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">log_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">on</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">SYSTEM</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">log_disconnections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">on</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">pg_reload_conf</span><span class="p">();</span>
+<p>Первой строкой каждого вывода печатайте фамилию и группу: в MySQL это <code>SELECT 'Иванов И.И., ИС-41' AS student;</code>, в PowerShell <code>Write-Host "Иванов И.И., ИС-41"</code>.</p>
+<h3>Шаг 1. Включите general log</h3>
+<p>Переключите вывод журнала в таблицу и включите запись. Настройки через <code>SET GLOBAL</code> действуют до перезапуска сервера.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">log_output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;TABLE&#39;</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ON&#39;</span><span class="p">;</span>
+
+<span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;general_log%&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;log_output&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Проверьте значения. Параметр <code>log_statement = 'all'</code> пишет и текст операторов, поэтому не выполняйте при нём смену паролей: пароль попадёт в журнал открытым текстом.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">setting</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_settings</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;log_statement&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;log_connections&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;log_disconnections&#39;</span><span class="p">,</span>
-<span class="w">               </span><span class="s1">&#39;log_destination&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;logging_collector&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;log_directory&#39;</span><span class="p">);</span>
+<p>Чтобы настройка пережила перезапуск, добавьте строки в секцию <code>[mysqld]</code> файла <code>C:\xampp\mysql\bin\my.ini</code> и перезапустите MySQL из панели XAMPP.</p>
+<div class="codehilite" data-lang="ini"><pre><span></span><code><span class="k">[mysqld]</span>
+<span class="na">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">log_output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">TABLE</span>
 </code></pre></div>
 
-<p>Приложите скриншот результата. В кадре должны быть видны значения <code>all</code>, <code>on</code> и <code>on</code>, а не только имена параметров.</p>
-<h3>Шаг 2. Прочитайте события подключения</h3>
-<p>Откройте новую сессию <code>psql</code>, выйдите из неё и найдите записи в журнале. На Ubuntu файл обычно лежит в <code>/var/log/postgresql/postgresql-16-main.log</code>; точное имя проверьте командой <code>sudo ls /var/log/postgresql/</code>.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;connection authorized|disconnection: session time&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>/var/log/postgresql/postgresql-16-main.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span>
+<p>Приложите скриншот <code>SHOW VARIABLES</code>: в кадре видны <code>general_log</code> со значением <code>ON</code> и <code>log_output</code> со значением <code>TABLE</code>. Пока журнал включён, не меняйте пароли: оператор попадёт в журнал открытым текстом.</p>
+<h3>Шаг 2. Прочитайте события general log</h3>
+<p>Выполните несколько запросов от <code>dean_app</code> и найдите их в таблице. Собственный <code>SELECT</code> по журналу тоже попадёт в журнал, это нормально.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">event_time</span><span class="p">,</span><span class="w"> </span><span class="n">user_host</span><span class="p">,</span><span class="w"> </span><span class="n">thread_id</span><span class="p">,</span><span class="w"> </span><span class="n">command_type</span><span class="p">,</span><span class="w"> </span><span class="k">LEFT</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span><span class="w"> </span><span class="mi">120</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">argument</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="n">general_log</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот двух событий: вход и выход. Сравните их с действиями, которые вы выполнили, и запишите, какие сведения о пользователе и базе даёт серверный журнал.</p>
-<h3>Шаг 3. Создайте триггерную таблицу аудита</h3>
-<p>В базе уже есть таблица <code>audit_log</code>. Создайте функцию, которая пишет событие при изменении строки, и повесьте её на <code>students</code>. Функция объявлена с правами владельца, чтобы приложение не нуждалось в прямом <code>INSERT</code> в журнал. Выполните блок от имени владельца объектов, иначе функция получит права суперпользователя.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">;</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">REPLACE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">audit_students</span><span class="p">()</span><span class="w"> </span><span class="k">RETURNS</span><span class="w"> </span><span class="k">trigger</span>
-<span class="k">LANGUAGE</span><span class="w"> </span><span class="n">plpgsql</span>
-<span class="k">SECURITY</span><span class="w"> </span><span class="k">DEFINER</span>
-<span class="k">SET</span><span class="w"> </span><span class="n">search_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">public</span><span class="p">,</span><span class="w"> </span><span class="n">pg_temp</span>
-<span class="k">AS</span><span class="w"> </span><span class="err">$$</span>
-<span class="k">BEGIN</span>
-<span class="w">  </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span><span class="p">)</span>
-<span class="w">  </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">session_user</span><span class="p">,</span><span class="w"> </span><span class="n">TG_OP</span><span class="p">,</span><span class="w"> </span><span class="n">TG_TABLE_NAME</span><span class="p">,</span>
-<span class="w">          </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">TG_OP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;DELETE&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="k">OLD</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">END</span><span class="p">::</span><span class="nb">text</span><span class="p">,</span>
-<span class="w">          </span><span class="n">jsonb_build_object</span><span class="p">(</span>
-<span class="w">            </span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">TG_OP</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;UPDATE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DELETE&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">to_jsonb</span><span class="p">(</span><span class="k">OLD</span><span class="p">)</span><span class="w"> </span><span class="k">END</span><span class="p">,</span>
-<span class="w">            </span><span class="s1">&#39;new&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="n">TG_OP</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;INSERT&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;UPDATE&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">to_jsonb</span><span class="p">(</span><span class="k">NEW</span><span class="p">)</span><span class="w"> </span><span class="k">END</span><span class="p">));</span>
-<span class="w">  </span><span class="k">RETURN</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
-<span class="k">END</span><span class="p">;</span>
-<span class="err">$$</span><span class="p">;</span>
-
-<span class="k">DROP</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_audit</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="n">students_audit</span>
-<span class="k">AFTER</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">students</span>
-<span class="k">FOR</span><span class="w"> </span><span class="k">EACH</span><span class="w"> </span><span class="k">ROW</span><span class="w"> </span><span class="k">EXECUTE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">audit_students</span><span class="p">();</span>
-
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">user_host</span><span class="p">,</span><span class="w"> </span><span class="n">command_type</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">events</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="n">general_log</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">user_host</span><span class="p">,</span><span class="w"> </span><span class="n">command_type</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">events</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
 </code></pre></div>
 
-<p>В функции с правами владельца <code>current_user</code> вернул бы владельца функции, а не того, кто выполнил оператор. Поэтому журнал пишет <code>session_user</code>: это учётная запись, под которой установлено соединение.</p>
-<p>Проверьте, что триггер создан: <code>SELECT tgname, tgrelid::regclass FROM pg_trigger WHERE NOT tgisinternal;</code>.</p>
+<p>Приложите скриншот общего журнала: в кадре видны время, пользователь с хостом и текст хотя бы одного оператора <code>Query</code>. Сравните запись <code>user_host</code> с той учётной записью, под которой вы работали, и запишите в отчёт, какие сведения даёт общий журнал и каких ему не хватает.</p>
+<p>Очистить журнал можно только при выключенной записи.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OFF&#39;</span><span class="p">;</span>
+<span class="k">TRUNCATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="n">general_log</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ON&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<h3>Шаг 3. Создайте триггеры аудита</h3>
+<p>Таблица <code>audit_log</code> уже есть в базе. В MySQL один триггер обслуживает одно событие, поэтому нужны три. Тело из одного оператора не требует смены разделителя, поэтому скрипт работает и в phpMyAdmin, и в клиенте.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
+
+<span class="k">DROP</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_ai</span><span class="p">;</span>
+<span class="k">DROP</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_au</span><span class="p">;</span>
+<span class="k">DROP</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">students_ad</span><span class="p">;</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="n">students_ai</span><span class="w"> </span><span class="k">AFTER</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">students</span>
+<span class="k">FOR</span><span class="w"> </span><span class="k">EACH</span><span class="w"> </span><span class="k">ROW</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">USER</span><span class="p">(),</span><span class="w"> </span><span class="s1">&#39;INSERT&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">),</span>
+<span class="w">        </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;full_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
+<span class="w">                                       </span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">                                       </span><span class="s1">&#39;group_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">group_id</span><span class="p">)));</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="n">students_au</span><span class="w"> </span><span class="k">AFTER</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">students</span>
+<span class="k">FOR</span><span class="w"> </span><span class="k">EACH</span><span class="w"> </span><span class="k">ROW</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">USER</span><span class="p">(),</span><span class="w"> </span><span class="s1">&#39;UPDATE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="k">NEW</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">),</span>
+<span class="w">        </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;full_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">OLD</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">OLD</span><span class="p">.</span><span class="n">email</span><span class="p">),</span>
+<span class="w">                    </span><span class="s1">&#39;new&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;full_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NEW</span><span class="p">.</span><span class="n">email</span><span class="p">)));</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TRIGGER</span><span class="w"> </span><span class="n">students_ad</span><span class="w"> </span><span class="k">AFTER</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">students</span>
+<span class="k">FOR</span><span class="w"> </span><span class="k">EACH</span><span class="w"> </span><span class="k">ROW</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">USER</span><span class="p">(),</span><span class="w"> </span><span class="s1">&#39;DELETE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="k">OLD</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">),</span>
+<span class="w">        </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;full_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">OLD</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">OLD</span><span class="p">.</span><span class="n">email</span><span class="p">)));</span>
+</code></pre></div>
+
+<p>Проверьте, что триггеры созданы и что владелец у них администратор.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">trigger_name</span><span class="p">,</span><span class="w"> </span><span class="n">event_manipulation</span><span class="p">,</span><span class="w"> </span><span class="n">action_timing</span><span class="p">,</span><span class="w"> </span><span class="k">definer</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">TRIGGERS</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">event_object_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">event_object_table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">;</span>
+</code></pre></div>
+
 <h3>Шаг 4. Выполните тестовые изменения</h3>
-<p>Сделайте три операции от имени приложения и прочитайте журнал. Для проверки нужен пользователь, у которого есть права на <code>students</code>, но нет права менять <code>audit_log</code>. Откройте сессию приложения.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span>-U<span class="w"> </span>dean_app<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-d<span class="w"> </span>dean
+<p>Сделайте три операции от имени приложения. Для проверки нужен пользователь, у которого есть права на <code>students</code>, но нет права менять <code>audit_log</code>.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span>
@@ -916,44 +939,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;test.audit2@example.ru&#39;</span><span class="p">;</span>
 </code></pre></div>
 
+<p>Прочитайте журнал отдельной сессией <code>root</code>: приложению чтение журнала не нужно.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">at</span><span class="p">,</span><span class="w"> </span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span>
-<span class="w">       </span><span class="n">details</span><span class="o">-&gt;</span><span class="s1">&#39;new&#39;</span><span class="o">-&gt;&gt;</span><span class="s1">&#39;email&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">new_email</span>
+<span class="w">       </span><span class="n">JSON_UNQUOTE</span><span class="p">(</span><span class="n">JSON_EXTRACT</span><span class="p">(</span><span class="n">details</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;$.old.email&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">old_email</span><span class="p">,</span>
+<span class="w">       </span><span class="n">JSON_UNQUOTE</span><span class="p">(</span><span class="n">JSON_EXTRACT</span><span class="p">(</span><span class="n">details</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;$.new.email&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">new_email</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span>
 <span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот событий: в нём видны три действия <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> и значения <code>old</code> и <code>new</code> хотя бы для одного из них.</p>
+<p>Приложите скриншот событий: в кадре видны три действия <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, пользователь <code>dean_app</code> и значения <code>old</code> и <code>new</code> хотя бы для одного изменения.</p>
 <h3>Шаг 5. Защитите журнал от изменения</h3>
-<p>Отзовите у приложения все права на журнал и оставьте чтение только роли <code>auditor</code>.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">PUBLIC</span><span class="p">;</span>
-<span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_app</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
+<p>Сначала посмотрите, как выданы права. Если у приложения есть права на всю базу <code>dean.*</code>, отзыв на отдельную таблицу ничего не изменит: привилегии складываются. Тогда отзовите широкое право и выдайте права по таблицам.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Проверьте запрет от имени приложения. Ошибка прав это и есть доказательство того, что мера работает.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span>-U<span class="w"> </span>dean_app<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-c<span class="w"> </span><span class="s2">&quot;UPDATE audit_log SET action = &#39;x&#39; WHERE id = 1;&quot;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">students</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">enrollments</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">payments</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">maintenance_runs</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">groups</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">courses</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">audit_log</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот сообщения <code>permission denied for table audit_log</code>. Затем повторите <code>INSERT</code> в <code>students</code> от <code>dean_app</code> и убедитесь, что изменение прошло. Событие проверьте отдельной сессией <code>auditor</code> или <code>postgres</code>: приложение журнал уже не читает, а триггер не должен сломать обычную работу.</p>
-<h3>Шаг 6. Проверьте роли и права</h3>
-<p>Соберите список ролей и их атрибутов. Суперпользователь, <code>CREATEDB</code> и <code>CREATEROLE</code> у прикладной роли это избыточные права.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">rolname</span><span class="p">,</span><span class="w"> </span><span class="n">rolsuper</span><span class="p">,</span><span class="w"> </span><span class="n">rolcreatedb</span><span class="p">,</span><span class="w"> </span><span class="n">rolcreaterole</span><span class="p">,</span><span class="w"> </span><span class="n">rolbypassrls</span><span class="p">,</span><span class="w"> </span><span class="n">rolcanlogin</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_roles</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">rolname</span><span class="w"> </span><span class="o">!~</span><span class="w"> </span><span class="s1">&#39;^pg_&#39;</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">rolname</span><span class="p">;</span>
+<p>Запись в журнал продолжит работать, потому что триггер выполняется с правами владельца и приложению прямой <code>INSERT</code> в <code>audit_log</code> не нужен. Проверьте запрет от имени приложения: ошибка прав и есть доказательство того, что мера работает.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;UPDATE audit_log SET action = &#39;x&#39; WHERE id = 1;&quot;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span>
-<span class="w">       </span><span class="n">string_agg</span><span class="p">(</span><span class="n">privilege_type</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;, &#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">privilege_type</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">privileges</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">role_table_grants</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">table_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;public&#39;</span>
-<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">;</span>
+<p>Ожидаемый ответ: <code>ERROR 1142 (42000): UPDATE command denied to user 'dean_app'@'localhost' for table 'audit_log'</code>. Затем повторите <code>INSERT</code> в <code>students</code> от <code>dean_app</code> и убедитесь, что изменение прошло, а событие появилось.</p>
+<h3>Шаг 6. Проверьте привилегии через SHOW GRANTS</h3>
+<p>Соберите права приложения, роли и список учётных записей. Суперпользователь, <code>GRANT OPTION</code> и права на все базы у прикладной роли это избыточные привилегии.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Заполните таблицу ожиданий и сравните с фактическим результатом.</p>
+<p>Приложите скриншот <code>SHOW GRANTS</code> для <code>dean_app</code>: в кадре видно, что права выданы по таблицам базы <code>dean</code>, а на <code>audit_log</code> их нет. Заполните таблицу ожиданий и сравните с фактическим результатом.</p>
 <table>
 <thead>
 <tr>
@@ -968,7 +993,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tr>
 <td><code>dean_read</code></td>
 <td>Чтение данных</td>
-<td><code>SELECT</code> на таблицы</td>
+<td><code>SELECT</code> на таблицы <code>dean</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -996,49 +1021,38 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tr>
 <td><code>dean_app</code></td>
 <td>Приложение</td>
-<td>Только необходимые операции</td>
+<td>Только необходимые операции в <code>dean</code></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<h3>Шаг 7. Проверьте правила подключения</h3>
-<p>Прочитайте <code>pg_hba.conf</code> без комментариев и пустых строк. Порядок строк важен: первое совпадение определяет метод проверки.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>grep<span class="w"> </span>-vE<span class="w"> </span><span class="s1">&#39;^\s*(#|$)&#39;</span><span class="w"> </span>/etc/postgresql/16/main/pg_hba.conf
+<h3>Шаг 7. Проверьте вход root без пароля</h3>
+<p>Попробуйте подключиться без пароля. Успешный вход означает, что любая программа на машине получает полный доступ к серверу.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;SELECT CURRENT_USER() AS who, VERSION() AS version;&quot;</span>
 </code></pre></div>
 
-<p>Приложите скриншот файла. Отметьте в отчёте каждую строку с <code>trust</code>, с широким диапазоном адресов и с методом <code>md5</code>: первые две опасны, третья уступает <code>scram-sha-256</code>. Если в вашей машине есть строка <code>host all all 0.0.0.0/0 trust</code>, это критический риск, даже если база учебная.</p>
-<h3>Шаг 8. Проверьте SSL</h3>
-<p>Убедитесь, что сервер принимает защищённые соединения. Локальное соединение через сокет SSL не использует, поэтому параметры шифрования проверяйте в TCP-сессии.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">ssl</span><span class="p">;</span>
+<p>Если соединение установилось, зафиксируйте риск и предложите меру: задать пароль командой <code>ALTER USER 'root'@'localhost' IDENTIFIED BY '...';</code> и прописать его в <code>C:\xampp\phpMyAdmin\config.inc.php</code>, иначе phpMyAdmin перестанет подключаться. Пароль администратора не храните в отчёте.</p>
+<p>Приложите скриншот одного подтверждённого риска: вход <code>root</code> без пароля или дамп, открытый по HTTP. Кадр должен показывать сам факт доступа, а не только текст команды.</p>
+<h3>Шаг 8. Проверьте доступ к дампам</h3>
+<p>Снимите дамп базы в отдельный каталог и посмотрите, кто может его прочитать. Ключ записи в файл надёжнее перенаправления вывода: PowerShell записал бы файл в UTF-16 и сломал кодировку.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
+
+<span class="nb">Get-ChildItem</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">LastWriteTime</span>
+<span class="n">icacls</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
+<span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">-Pattern</span> <span class="s1">&#39;INSERT INTO&#39;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">3</span>
 </code></pre></div>
 
-<p>Подключитесь с требованием шифрования и выполните запрос в этой же сессии.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean user=dean_app sslmode=require&quot;</span>
+<p>Проверьте, что дамп содержит данные: строки <code>INSERT INTO</code> с почтой студентов это подтверждают. Затем проверьте доступ через веб-сервер: скопируйте файл в <code>C:\xampp\htdocs</code> и откройте <code>http://localhost/dean.sql</code>. Если браузер показывает текст дампа, это критический риск. После проверки удалите копию из <code>htdocs</code>.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
+<span class="nb">Start-Process</span> <span class="s2">&quot;http://localhost/dean.sql&quot;</span>
+<span class="nb">Remove-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">usename</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">ssl</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="k">version</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">cipher</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_ssl</span><span class="w"> </span><span class="n">s</span>
-<span class="k">JOIN</span><span class="w"> </span><span class="n">pg_stat_activity</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pg_backend_pid</span><span class="p">();</span>
-</code></pre></div>
-
-<p>Если <code>ssl</code> равно <code>true</code>, пароль и данные идут по шифрованному каналу. Если соединение с <code>sslmode=require</code> падает, запишите это как риск передачи данных открытым текстом.</p>
-<h3>Шаг 9. Настройте <code>.pgpass</code> и найдите секреты</h3>
-<p>Создайте файл паролей для автоматических запусков и закройте его правами <code>600</code>. Замените слово <code>пароль</code> на пароль роли <code>dean_app</code>; пароль в командной строке больше не нужен.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;%s\n&#39;</span><span class="w"> </span><span class="s1">&#39;127.0.0.1:5432:dean:dean_app:пароль&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.pgpass
-chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.pgpass
-ls<span class="w"> </span>-l<span class="w"> </span>~/.pgpass
-psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-U<span class="w"> </span>dean_app<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT current_user;&quot;</span>
-</code></pre></div>
-
-<p>Найдите секреты в скриптах проекта. Ищите переменные с паролями, строки подключения и ключи.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>find<span class="w"> </span>/opt/dean<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">&quot;</span><span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.sh&#39;</span><span class="w"> </span>-exec<span class="w"> </span>grep<span class="w"> </span>-HniE<span class="w"> </span><span class="s1">&#39;PGPASSWORD|password|secret|token&#39;</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
-</code></pre></div>
-
-<p>Каждую находку внесите в список рисков. Если пароль хранится в скрипте открытым текстом, мера это переменная окружения из защищённого файла или <code>.pgpass</code>, а не переименование переменной.</p>
-<h3>Шаг 10. Составьте список рисков</h3>
-<p>Сведите находки в таблицу. У риска есть источник, влияние, вероятность, мера и остаточный риск после меры. Мера без проверки не считается выполненной.</p>
+<h3>Шаг 9. Составьте список рисков</h3>
+<p>Сведите находки в таблицу. У риска есть источник, влияние, вероятность, мера и остаточный риск после меры.</p>
 <table>
 <thead>
 <tr>
@@ -1052,11 +1066,19 @@ psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>
 </thead>
 <tbody>
 <tr>
-<td>Избыточные права приложения</td>
-<td>Список ролей</td>
-<td>Изменение любых данных</td>
+<td><code>root</code> без пароля</td>
+<td>Проверка входа</td>
+<td>Полный доступ к серверу</td>
 <td>Высокая</td>
-<td>Отозвать лишние права</td>
+<td>Пароль <code>root</code> и запись в <code>config.inc.php</code></td>
+<td>Низкий</td>
+</tr>
+<tr>
+<td>Избыточные права приложения</td>
+<td><code>SHOW GRANTS</code></td>
+<td>Изменение любых данных</td>
+<td>Средняя</td>
+<td>Отозвать лишние привилегии</td>
 <td>Низкий</td>
 </tr>
 <tr>
@@ -1064,63 +1086,67 @@ psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>
 <td>Права на <code>audit_log</code></td>
 <td>Сокрытие следов</td>
 <td>Средняя</td>
-<td>Запрет <code>UPDATE</code> и <code>DELETE</code></td>
+<td>Запрет <code>UPDATE</code> и <code>DELETE</code>, чтение через <code>auditor</code></td>
 <td>Низкий</td>
 </tr>
 <tr>
-<td><code>trust</code> в <code>pg_hba.conf</code></td>
-<td>Файл правил</td>
-<td>Вход без пароля</td>
+<td>Дамп в <code>htdocs</code></td>
+<td>Проверка по HTTP</td>
+<td>Утечка всей базы</td>
 <td>Высокая</td>
-<td>Заменить на <code>scram-sha-256</code></td>
+<td>Хранить вне корня сайта, закрыть правами</td>
 <td>Низкий</td>
 </tr>
 <tr>
-<td>Пароль в скрипте</td>
-<td>Поиск секретов</td>
+<td>Пароль в коде или истории</td>
+<td>Поиск по проекту</td>
 <td>Утечка при копировании</td>
 <td>Средняя</td>
-<td><code>.pgpass</code> с правами <code>600</code></td>
+<td>Файл с паролем вне репозитория, <code>.gitignore</code></td>
 <td>Средний</td>
 </tr>
 <tr>
-<td>Соединение без SSL</td>
-<td><code>pg_stat_ssl</code></td>
-<td>Перехват пароля</td>
+<td>Общий журнал включён постоянно</td>
+<td><code>SHOW VARIABLES</code></td>
+<td>Рост файла и утечка текста запросов</td>
 <td>Средняя</td>
-<td><code>sslmode=require</code></td>
+<td>Включать на время разбора</td>
 <td>Низкий</td>
-</tr>
-<tr>
-<td>Копии без защиты</td>
-<td>Каталог копий</td>
-<td>Утечка всей базы</td>
-<td>Средняя</td>
-<td>Шифрование и права на каталог</td>
-<td>Средний</td>
 </tr>
 <tr>
 <td>Журнал без ротации</td>
-<td>Настройки сервера</td>
+<td><code>audit_log</code></td>
 <td>Переполнение диска</td>
 <td>Средняя</td>
-<td>Ротация и срок хранения</td>
-<td>Низкий</td>
+<td>Срок хранения и архивирование</td>
+<td>Средний</td>
 </tr>
 </tbody>
 </table>
-<h3>Требования к отчёту</h3>
-<p>Соберите отчёт из настроек аудита, определений функции и триггера, выгрузки событий, проверки прав, <code>pg_hba.conf</code>, SSL, <code>.pgpass</code> и списка рисков. Для каждого риска укажите, подтверждён он проверкой или остался предположением.</p>
-<p>Скриншоты шапки отчёта, теории и пустых окон не нужны. Доказательствами служат кадры с настройками, событиями аудита, ошибкой доступа и файлом правил.</p>
+<p>Поиск секретов выполните по проекту.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\*\*.</span><span class="n">cs</span><span class="p">,</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\*\*.</span><span class="n">json</span> <span class="n">-Pattern</span> <span class="s1">&#39;Password|Pwd|secret|token&#39;</span>
+</code></pre></div>
+
+<p>Каждую находку внесите в список рисков. Если пароль лежит в <code>appsettings.json</code> открытым текстом, мера это переменная окружения или файл вне репозитория, а не переименование поля.</p>
+<h3>Шаг 10. Выключите общий журнал и оформите отчёт</h3>
+<p>После разбора выключите запись и сохраните выгрузку событий отдельным файлом.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OFF&#39;</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">at</span><span class="p">,</span><span class="w"> </span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Соберите отчёт из настроек аудита, определений триггеров, выгрузки событий, проверки прав, проверки <code>root</code>, доступа к дампу и списка рисков. Для каждого риска укажите, подтверждён он проверкой или остался предположением. Скриншоты шапки отчёта и текста теории не нужны: доказательствами служат кадры с журналом, событиями, правами и подтверждённым риском.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ol>
-<li>Настройки <code>log_statement</code>, <code>log_connections</code>, <code>log_disconnections</code> с подтверждением.</li>
-<li>Функцию и триггер аудита, выгрузку событий трёх типов.</li>
-<li>Скриншот отказа при попытке изменить <code>audit_log</code>.</li>
-<li>Таблицу проверки ролей и прав.</li>
-<li>Скриншот <code>pg_hba.conf</code> и проверку SSL.</li>
-<li>Настроенный <code>.pgpass</code> и результаты поиска секретов.</li>
-<li>Список рисков с мерами и остаточным риском.</li>
+<li>Настройки <code>general_log</code> и <code>log_output</code> с подтверждением и скриншотом.</li>
+<li>Скрипт трёх триггеров и выгрузку событий <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>.</li>
+<li>Скриншот отказа при попытке изменить <code>audit_log</code> от имени приложения.</li>
+<li>Скриншот <code>SHOW GRANTS</code> для <code>dean_app</code> и заполненную таблицу ожиданий.</li>
+<li>Результат проверки входа <code>root</code> без пароля и проверки дампа по HTTP.</li>
+<li>Список рисков с мерами и остаточным риском, вывод.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <table>
@@ -1133,14 +1159,14 @@ psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>
 </thead>
 <tbody>
 <tr>
-<td>Настройка аудита</td>
+<td>Настройка общего журнала</td>
 <td>15</td>
-<td>Параметры включены и подтверждены запросом</td>
+<td>Запись в таблицу включена, события прочитаны и объяснены</td>
 </tr>
 <tr>
 <td>Триггерный аудит</td>
-<td>20</td>
-<td>События содержат пользователя, действие и старые и новые значения</td>
+<td>25</td>
+<td>Три события, пользователь, старые и новые значения</td>
 </tr>
 <tr>
 <td>Защита журнала</td>
@@ -1148,19 +1174,19 @@ psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>
 <td>Права ограничены, запрет доказан ошибкой доступа</td>
 </tr>
 <tr>
-<td>Проверка ролей и доступа</td>
+<td>Проверка привилегий</td>
 <td>20</td>
-<td>Роли, права, <code>pg_hba.conf</code> и SSL проверены</td>
+<td><code>SHOW GRANTS</code>, роли и расхождения описаны</td>
 </tr>
 <tr>
-<td>Секреты</td>
+<td>Риски доступа и дампов</td>
 <td>10</td>
-<td><code>.pgpass</code> с правами <code>600</code>, поиск находок выполнен</td>
+<td>Риски подтверждены проверкой, меры конкретны</td>
 </tr>
 <tr>
-<td>Список рисков</td>
-<td>15</td>
-<td>Риски подтверждены, меры конкретны, остаточный риск оценён</td>
+<td>Список рисков и отчёт</td>
+<td>10</td>
+<td>Остаточный риск оценён, вывод опирается на находки</td>
 </tr>
 <tr>
 <td><strong>Итого</strong></td>
@@ -1172,13 +1198,13 @@ psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
-<li>Чем серверный журнал уступает триггерной таблице при разборе изменения строки?</li>
+<li>Чем общий журнал уступает триггерной таблице при разборе изменения строки?</li>
+<li>Почему в триггере пишут <code>USER()</code>, а не <code>CURRENT_USER()</code>?</li>
 <li>Почему приложению не нужно право <code>INSERT</code> в таблицу аудита?</li>
-<li>Что опаснее в <code>pg_hba.conf</code>: строка <code>trust</code> или широкий диапазон адресов?</li>
-<li>Почему пароль в командной строке считается утечкой, даже если он не попал в журнал?</li>
-<li>Зачем у риска указывать остаточный риск после меры?</li>
+<li>Чем опасен вход <code>root</code> без пароля, если к компьютеру есть доступ у постороннего?</li>
+<li>Почему дамп в каталоге веб-сервера считается утечкой, даже если ссылку никто не знает?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="25-lek-16.html"><span>← Предыдущее занятие</span>Лекция 16. Безопасность</a><a class="next" style="text-align:right;margin-left:auto" href="27-lek-17.html"><span>Следующее занятие →</span>Лекция 17. Миграции</a></nav></main>
+</div></article><nav class="pager"><a class="" href="25-lek-16.html"><span>← Предыдущее занятие</span>Безопасность MySQL и .NET</a><a class="next" style="text-align:right;margin-left:auto" href="27-lek-17.html"><span>Следующее занятие →</span>Миграции схемы MySQL</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

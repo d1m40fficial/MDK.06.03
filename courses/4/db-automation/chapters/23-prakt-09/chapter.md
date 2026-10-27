@@ -1,335 +1,378 @@
 ---
-title: Практика 9. Планировщик; Мониторинг
-dek: "Ставим обслуживание «Деканата» на расписание и превращаем метрики PostgreSQL в отчёт наблюдений с порогами."
+title: Практика 9. Планировщик и мониторинг
+dek: "Ставим обслуживание «Деканата» в Планировщик Windows и выводим метрики MySQL в окно WinForms с порогами."
 chapter: "Практика 9"
 minutes: 180
 level: СПО
 glyph: П9
 outcomes:
-  - Ставить скрипт обслуживания в systemd timer или cron
-  - Проверять срабатывание задания по журналу и коду возврата
-  - Собирать метрики соединений, размера, WAL и запросов
-  - Задавать пороги и оформлять отчёт наблюдений
+  - Ставить консольное приложение обслуживания в Планировщик Windows
+  - Доказывать срабатывание задания по журналу и коду возврата
+  - Снимать метрики MySQL через SHOW GLOBAL STATUS и SHOW PROCESSLIST
+  - Выводить показатели с порогами в приложении WinForms
 ---
 
 ## Цель работы
 
-Обслуживание, которое держится на памяти администратора, рано или поздно пропускается. Задание, которое никто не проверял, может месяцами завершаться ошибкой, и узнают об этом только при сбое. Цель работы: поставить скрипт обслуживания учебной базы «Деканат» в планировщик, доказать его срабатывание и собрать наблюдения за состоянием базы.
+Обслуживание, которое держится на памяти администратора, рано или поздно пропускается. Задание, которое никто не проверял, может месяцами завершаться ошибкой, и узнают об этом только при сбое. Цель работы: поставить приложение обслуживания учебной базы «Деканат» в Планировщик Windows, доказать его срабатывание и собрать наблюдения за состоянием MySQL.
 
-На выходе получаются три артефакта: скрипт с журналом и кодом возврата, задание планировщика с доказательством запуска и отчёт наблюдений с порогами.
+На выходе получаются четыре артефакта: приложение `DeanMaintenance` с журналом и кодом возврата, задание планировщика с доказательством запуска, снятые метрики сервера и приложение `DeanDashboard`, которое показывает показатели и сравнивает их с порогами.
 
 ## Оборудование и программное обеспечение
 
-- Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.
-- PostgreSQL 16 в гостевой системе, доступ `sudo` внутри машины.
-- Клиент `psql`, утилиты `systemctl`, `journalctl`, служба `cron`.
-- Текстовый редактор для скриптов и табличный редактор для отчёта.
-- Учебная база `dean` с таблицами `students`, `enrollments`, `payments`.
+- Персональный компьютер с Windows 10 и XAMPP 8.5.12.
+- Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
+- Клиент `C:\xampp\mysql\bin\mysql.exe` и конфигурация `C:\xampp\mysql\bin\my.ini`.
+- .NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».
+- Пакет `MySqlConnector` для подключения к MySQL из C#.
+- Планировщик Windows (`taskschd.msc`) и оснастка служб для проверки запуска.
+- Учебная база `dean` с таблицами `students`, `enrollments`, `payments` и пользователем `dean_app`.
+- Текстовый редактор и табличный редактор для отчёта.
 
 ## Краткие теоретические сведения
 
-### Планировщик и его признаки
+### Из чего состоит задание планировщика
 
-Планировщик запускает команду в заданный момент, но не гарантирует, что команда завершилась успешно. Поэтому у задания есть расписание, учётная запись с минимальными правами, журнал и код возврата. Хорошее задание можно запустить вручную, и оно даст тот же результат, что и по расписанию.
+Задание в Планировщике Windows собирается из четырёх частей. **Триггер** задаёт момент запуска: раз в сутки, при входе в систему, по повторению каждые несколько минут. **Действие** описывает, что именно запустить: программу, аргументы и рабочую папку. **Учётная запись** определяет права процесса. **Условия** запрещают, например, запуск от батареи.
 
-В Ubuntu доступны два инструмента. systemd timer связан со службой, пишет вывод в journald, умеет догонять пропущенный запуск и разносить старт по времени. cron проще: строка в файле `/etc/cron.d` задаёт поля расписания, пользователя и команду, а вывод уходит в почту или в перенаправленный файл.
+Планировщик не знает, хорошо ли отработала программа. Он запоминает только код возврата и время последнего запуска. Поэтому приложение само пишет журнал и строку в таблицу `maintenance_runs`: без этого успешный код возврата скрывает, что скрипт ничего не сделал.
 
-| Свойство | systemd timer | cron |
-|---|---|---|
-| Где задаётся | Пара файлов `.service` и `.timer` | Файл в `/etc/cron.d` или `crontab -e` |
-| Журнал | `journalctl -u` | Почта, файл через перенаправление |
-| Пропущенный запуск | `Persistent=true` | Не догоняет |
-| Зависимости | `After=postgresql.service` | Нет |
-| Проверка расписания | `systemctl list-timers` | Чтение файла расписания |
+Хорошее задание можно запустить вручную, и результат совпадёт с запуском по расписанию. Если ручной запуск и расписание расходятся, различие обычно в рабочей папке, переменных окружения или правах учётной записи.
 
-### Метрики состояния базы
+### Метрики состояния MySQL
 
-Метрика это число, снятое в момент времени. Разовый замер ничего не говорит: смысл появляется при сравнении снимков и с порогом. В PostgreSQL основные источники метрик это системные представления и файлы WAL.
+Метрика это число, снятое в момент времени. Разовый замер ничего не говорит: смысл появляется при сравнении двух снимков и с порогом.
 
-| Метрика | Источник | Что показывает | Пример порога |
+| Метрика | Источник | Тип | Что показывает |
 |---|---|---|---|
-| Число сессий | `pg_stat_activity` | Занятость соединений | Больше 80 процентов от `max_connections` |
-| Долгий запрос | `pg_stat_activity` | Запрос, который держит ресурсы | Дольше 60 секунд |
-| Попадание в кэш | `pg_stat_database` | Доля чтений из буферов | Ниже 95 процентов |
-| Мёртвые строки | `pg_stat_user_tables` | Работа autovacuum | Больше 10 процентов живых строк |
-| Размер базы | `pg_database_size` | Рост данных | Прирост больше 20 процентов за сутки |
-| Объём WAL | `pg_stat_wal` | Интенсивность записи | Выход за среднее втрое |
-| Время запросов | `pg_stat_statements` | Самые дорогие запросы | Среднее выше 200 мс |
+| `Threads_connected` | `SHOW GLOBAL STATUS` | мгновенное значение | Сколько клиентов подключено прямо сейчас |
+| `Questions` | `SHOW GLOBAL STATUS` | счётчик | Сколько операторов выполнили клиенты с момента старта |
+| `Uptime` | `SHOW GLOBAL STATUS` | счётчик секунд | Сколько работает сервер, после перезапуска обнуляется |
+| `Innodb_buffer_pool_read_requests` | `SHOW GLOBAL STATUS` | счётчик | Сколько логических чтений запросили запросы |
+| `Innodb_buffer_pool_reads` | `SHOW GLOBAL STATUS` | счётчик | Сколько чтений ушло на диск мимо буферного пула |
 
-### Порог, оповещение и наблюдение
+Счётчик сравнивают дельтой: два снимка с интервалом дают скорость. Число операторов в секунду считают как разность `Questions`, делённую на разность `Uptime` или на время между снимками. Доля попаданий в буферный пул равна единице минус отношение прироста физических чтений к приросту логических.
 
-Порог без реакции бесполезен. У каждого порога есть владелец и действие: проверить блокировки, увеличить память, запустить vacuum, разобрать запрос. Наблюдение отличается от разового замера тем, что хранит серию снимков и заканчивается выводом, а не набором чисел.
+`SHOW PROCESSLIST` показывает, кто работает сейчас: идентификатор соединения, пользователь, хост, база, команда, время в секундах и состояние. Строка с командой `Sleep` это открытое соединение без запроса, строка с большим `Time` и командой `Query` это долгий запрос.
+
+`SHOW ENGINE INNODB STATUS` отдаёт текстовый отчёт движка. В нём важны раздел `TRANSACTIONS` со списком активных транзакций, длина истории отмены `History list length` и счётчик обнаруженных взаимных блокировок.
+
+### Порог и реакция
+
+Порог без реакции бесполезен. У каждого порога есть владелец и действие: проверить блокировки, разобрать план запроса, увеличить буферный пул, завершить соединение. Наблюдение отличается от разового замера тем, что хранит серию снимков и заканчивается выводом, а не набором чисел.
 
 ## Ход работы
 
-### Шаг 1. Подготовьте скрипт обслуживания
+Перед каждым снимком вывода печатайте фамилию и группу, чтобы кадр нельзя было перепутать с чужим. В PowerShell это `Write-Host "Иванов И.И., ИС-41"`, в MySQL строка `SELECT 'Иванов И.И., ИС-41' AS student;`.
 
-Создайте каталоги и таблицу запусков. SQL выполняйте через `sudo -u postgres psql -d dean`, чтобы владелец совпадал с учётной записью службы. Скрипт будет писать строку в журнал и в таблицу, чтобы факт запуска сохранился даже при смене файла журнала.
+### Шаг 1. Подготовьте базу и журнал
+
+Создайте таблицу запусков и каталог для файла журнала. Таблица нужна, чтобы факт запуска сохранился даже после очистки или смены файла.
 
 ```sql
+USE dean;
+
 CREATE TABLE IF NOT EXISTS maintenance_runs (
-  id bigserial PRIMARY KEY,
-  started_at timestamptz NOT NULL DEFAULT now(),
-  script text NOT NULL,
-  status text NOT NULL CHECK (status IN ('ok', 'failed')),
-  note text
-);
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  script VARCHAR(64) NOT NULL,
+  status VARCHAR(16) NOT NULL,
+  note VARCHAR(255)
+) ENGINE=InnoDB;
+
+SELECT COUNT(*) AS students FROM students;
+SELECT VERSION() AS server_version;
 ```
 
-Разместите скрипт `/opt/dean/bin/maintenance.sh`. Он выполняет `VACUUM (ANALYZE)` по трём таблицам, пишет итог в журнал и возвращает код возврата.
-
-```bash
-#!/usr/bin/env bash
-set -uo pipefail
-
-DB=dean
-LOG=/var/log/dean/maintenance.log
-STAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-echo "$STAMP start $DB" >> "$LOG"
-
-if psql -d "$DB" -v ON_ERROR_STOP=1 -q \
-     -c "VACUUM (ANALYZE) students, enrollments, payments;" >> "$LOG" 2>&1; then
-  STATUS=ok
-else
-  STATUS=failed
-fi
-
-if ! psql -d "$DB" -q -c \
-  "INSERT INTO maintenance_runs(script, status) VALUES ('maintenance.sh', '$STATUS');" \
-  >> "$LOG" 2>&1; then
-  STATUS=failed
-fi
-echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) finish $STATUS" >> "$LOG"
-[ "$STATUS" = "ok" ]
+```powershell
+New-Item -ItemType Directory -Force C:\dean\log, C:\dean\src, C:\dean\secret | Out-Null
+[System.IO.File]::WriteAllText("C:\dean\secret\db_password.txt", "пароль_пользователя_dean_app")
+icacls C:\dean\secret\db_password.txt /inheritance:r /grant:r "$($env:USERNAME):(R)"
 ```
 
-Выдайте права: владелец `root`, каталог журнала принадлежит `postgres`. Скрипт запускается от имени `postgres`, поэтому пароль в нём не нужен: работает локальное доверие через сокет.
+Пароль приложение читает из файла, а не из кода. Доступ к файлу оставьте только своей учётной записи: тогда задание в планировщике работает без переменных окружения и без пароля в командной строке.
 
-```bash
-sudo mkdir -p /opt/dean/bin /var/log/dean
-sudo chown postgres:postgres /var/log/dean
-sudo chmod 750 /var/log/dean
-sudo chown root:root /opt/dean/bin/maintenance.sh
-sudo chmod 755 /opt/dean/bin/maintenance.sh
+### Шаг 2. Соберите приложение DeanMaintenance
+
+Создайте консольное приложение и добавьте драйвер. Пароль не храните в коде: приложение читает его из файла `C:\dean\secret\db_password.txt`.
+
+```powershell
+cd C:\dean\src
+dotnet new console -n DeanMaintenance
+cd DeanMaintenance
+dotnet add package MySqlConnector
 ```
 
-Каждый скриншот доказывает конкретную проверку. Первой строкой вывода печатайте фамилию и группу, чтобы кадр нельзя было перепутать с чужим. В оболочке это `echo "Иванов И.И., ИС-41"`, в `psql` строка `SELECT 'Иванов И.И., ИС-41' AS student;`.
+Замените содержимое `Program.cs`. Приложение выполняет `ANALYZE TABLE` по трём таблицам, пишет журнал и возвращает ноль при успехе или единицу при ошибке.
 
-### Шаг 2. Проверьте ручной запуск
+```csharp
+using MySqlConnector;
 
-Запустите скрипт и посмотрите код возврата, журнал и таблицу запусков.
+var secret = @"C:\dean\secret\db_password.txt";
+var password = File.Exists(secret) ? File.ReadAllText(secret).Trim() : "";
 
-```bash
-sudo -u postgres /opt/dean/bin/maintenance.sh
-echo "exit code: $?"
-sudo tail -n 10 /var/log/dean/maintenance.log
-sudo -u postgres psql -d dean -c "SELECT id, started_at, status FROM maintenance_runs ORDER BY id DESC LIMIT 5;"
+var cs = new MySqlConnectionStringBuilder
+{
+    Server = "localhost",
+    Port = 3306,
+    Database = "dean",
+    UserID = "dean_app",
+    Password = password,
+    CharacterSet = "utf8mb4"
+}.ConnectionString;
+
+var log = @"C:\dean\log\maintenance.log";
+
+void Write(string line) =>
+    File.AppendAllText(log, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {line}{Environment.NewLine}");
+
+Write("start DeanMaintenance");
+
+try
+{
+    await using var conn = new MySqlConnection(cs);
+    await conn.OpenAsync();
+
+    foreach (var table in new[] { "students", "enrollments", "payments" })
+    {
+        await using var analyze = new MySqlCommand($"ANALYZE TABLE {table}", conn);
+        await analyze.ExecuteNonQueryAsync();
+    }
+
+    await using var mark = new MySqlCommand(
+        "INSERT INTO maintenance_runs(script, status) VALUES ('DeanMaintenance', 'ok')", conn);
+    await mark.ExecuteNonQueryAsync();
+
+    Write("finish ok");
+    return 0;
+}
+catch (Exception ex)
+{
+    Write($"finish failed: {ex.Message}");
+    return 1;
+}
 ```
 
-Приложите скриншот журнала и строки таблицы. Нулевой код возврата и строка `ok` означают, что задание готово к расписанию.
+Соберите проект и проверьте, что компиляция прошла без ошибок.
 
-### Шаг 3. Поставьте задание в планировщик
-
-Создайте службу и таймер. Служба запускается один раз и завершается, поэтому тип `oneshot`.
-
-```ini
-# /etc/systemd/system/dean-maintenance.service
-[Unit]
-Description=Dean database maintenance
-After=postgresql.service
-
-[Service]
-Type=oneshot
-User=postgres
-ExecStart=/opt/dean/bin/maintenance.sh
+```powershell
+dotnet build -c Release
 ```
 
-```ini
-# /etc/systemd/system/dean-maintenance.timer
-[Unit]
-Description=Nightly dean maintenance
+### Шаг 3. Проверьте ручной запуск
 
-[Timer]
-OnCalendar=*-*-* 03:30:00
-Persistent=true
-RandomizedDelaySec=120
+Запустите приложение, посмотрите код возврата, журнал и строку в таблице. Нулевой код и запись `ok` означают, что задание готово к расписанию.
 
-[Install]
-WantedBy=timers.target
-```
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable dean-maintenance.timer
-sudo systemctl start dean-maintenance.timer
-systemctl list-timers dean-maintenance.timer
-```
-
-Вместо таймера допустим cron. Строка в `/etc/cron.d/dean-maintenance` делает то же самое и тоже годится как артефакт.
-
-```bash
-30 3 * * * postgres /opt/dean/bin/maintenance.sh >> /var/log/dean/cron.log 2>&1
-```
-
-Приложите скриншот файлов unit или строки crontab.
-
-### Шаг 4. Докажите срабатывание по расписанию
-
-Однократный запуск службы не доказывает, что работает таймер. Временно поставьте расписание на короткий интервал, перезагрузите конфигурацию и дождитесь срабатывания.
-
-```bash
-sudo sed -i 's|OnCalendar=.*|OnCalendar=*:0/2|' /etc/systemd/system/dean-maintenance.timer
-sudo systemctl daemon-reload
-sudo systemctl restart dean-maintenance.timer
-systemctl list-timers dean-maintenance.timer
-sudo journalctl -u dean-maintenance.service -n 20 -o cat
-```
-
-Скриншот `list-timers` показывает время следующего запуска, скриншот журнала показывает запись о запуске. После проверки верните расписание и перезагрузите таймер.
-
-```bash
-sudo sed -i 's|OnCalendar=.*|OnCalendar=*-*-* 03:30:00|' /etc/systemd/system/dean-maintenance.timer
-sudo systemctl daemon-reload
-sudo systemctl restart dean-maintenance.timer
-```
-
-Для cron доказательством служит строка в `/var/log/dean/cron.log` с временем.
-
-### Шаг 5. Включите сбор статистики запросов
-
-Расширение `pg_stat_statements` требует загрузки библиотеки при старте сервера.
-
-```sql
-ALTER SYSTEM SET shared_preload_libraries = 'pg_stat_statements';
-```
-
-Перезапустите кластер и создайте расширение.
-
-```bash
-sudo systemctl restart postgresql
-sudo -u postgres psql -d dean -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
+```powershell
+dotnet run -c Release
+Write-Host "exit code: $LASTEXITCODE"
+Get-Content C:\dean\log\maintenance.log -Tail 4
 ```
 
 ```sql
-SHOW shared_preload_libraries;
-SELECT count(*) AS tracked_queries FROM pg_stat_statements;
+SELECT id, started_at, script, status FROM maintenance_runs ORDER BY id DESC LIMIT 3;
 ```
 
-### Шаг 6. Снимите метрики
+### Шаг 4. Поставьте задание в Планировщик Windows
 
-Выполните запросы по соединениям, базе, таблицам, размеру и WAL. Каждый результат сохраняйте: это исходные данные отчёта.
+Опубликуйте приложение в отдельный каталог и создайте задание. Для проверки поставьте повторение каждую минуту, потом вернёте суточное расписание.
 
-```sql
-SELECT state, count(*) AS sessions
-FROM pg_stat_activity
-WHERE datname = 'dean'
-GROUP BY state
-ORDER BY sessions DESC;
-
-SELECT pid, usename, state, now() - query_start AS running, left(query, 60) AS query
-FROM pg_stat_activity
-WHERE datname = 'dean' AND state <> 'idle'
-ORDER BY query_start
-LIMIT 5;
+```powershell
+dotnet publish C:\dean\src\DeanMaintenance -c Release -o C:\dean\bin
+schtasks /Create /TN "DeanMaintenance" /SC MINUTE /MO 1 /TR "C:\dean\bin\DeanMaintenance.exe" /F
+schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 ```
 
-```sql
-SELECT datname, numbackends, xact_commit, xact_rollback, deadlocks,
-       round(100.0 * blks_hit / nullif(blks_hit + blks_read, 0), 2) AS cache_hit_pct
-FROM pg_stat_database
-WHERE datname = 'dean';
+В окне `taskschd.msc` откройте свойства задания и проверьте вкладки. На вкладке «Триггеры» видно расписание и повторение, на вкладке «Действия» указана программа `C:\dean\bin\DeanMaintenance.exe`. Рабочую папку задайте как `C:\dean\bin` без кавычек, иначе планировщик воспримет кавычки как часть пути.
 
-SELECT relname, n_live_tup, n_dead_tup, seq_scan, idx_scan, last_autovacuum
-FROM pg_stat_user_tables
-ORDER BY n_dead_tup DESC;
+Приложите скриншот окна свойств задания с вкладкой «Триггеры». В кадре должны быть имя задания, дата начала и повторение. Скриншот пустого списка заданий ничего не доказывает.
+
+### Шаг 5. Докажите срабатывание по расписанию
+
+Ручной запуск не доказывает, что работает триггер. Дождитесь двух запусков по повторению и сверьте время в журнале с временем последнего запуска задания.
+
+```powershell
+Start-Sleep -Seconds 130
+Get-Content C:\dean\log\maintenance.log -Tail 8
+schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 ```
 
-```sql
-SELECT pg_size_pretty(pg_database_size(current_database())) AS db_size;
-SELECT wal_records, pg_size_pretty(wal_bytes) AS wal_bytes, stats_reset FROM pg_stat_wal;
+Код `0` в поле результата означает успех, `1` означает ошибку приложения. Найдите в выводе время последнего запуска и результат. Приложите скриншот журнала: две строки `start` с разными минутами доказывают, что задание сработало само. После проверки верните суточное расписание.
 
-SELECT calls, round(total_exec_time::numeric, 2) AS total_ms,
-       round(mean_exec_time::numeric, 2) AS mean_ms, rows, left(query, 70) AS query
-FROM pg_stat_statements
-ORDER BY total_exec_time DESC
-LIMIT 10;
+```powershell
+schtasks /Change /TN "DeanMaintenance" /SC DAILY /ST 03:30
+schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 ```
 
-Приложите скриншоты метрик. В кадре должны быть видны значения, а не только заголовки столбцов.
+### Шаг 6. Снимите метрики MySQL
 
-### Шаг 7. Сохраните серию снимков
-
-Создайте таблицу снимков и скрипт `/opt/dean/bin/metrics.sh`, который складывает в неё ключевые числа. Один снимок это точка, два снимка уже показывают изменение.
+Сделайте два снимка с интервалом, чтобы получить не только значения, но и прирост. Снимки сохраните в таблицу: по ним считается скорость.
 
 ```sql
 CREATE TABLE IF NOT EXISTS monitor_snapshots (
-  id bigserial PRIMARY KEY,
-  at timestamptz NOT NULL DEFAULT now(),
-  metric text NOT NULL,
-  value numeric NOT NULL
-);
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  metric VARCHAR(64) NOT NULL,
+  value BIGINT NOT NULL
+) ENGINE=InnoDB;
+
+INSERT INTO monitor_snapshots(metric, value)
+SELECT LOWER(VARIABLE_NAME), CAST(VARIABLE_VALUE AS UNSIGNED)
+FROM information_schema.GLOBAL_STATUS
+WHERE VARIABLE_NAME IN ('THREADS_CONNECTED', 'QUESTIONS', 'UPTIME',
+                        'INNODB_BUFFER_POOL_READ_REQUESTS', 'INNODB_BUFFER_POOL_READS');
 ```
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-psql -d dean -v ON_ERROR_STOP=1 -q <<'SQL'
-INSERT INTO monitor_snapshots(metric, value)
-SELECT 'db_size_bytes', pg_database_size(current_database());
-INSERT INTO monitor_snapshots(metric, value)
-SELECT 'sessions', count(*) FROM pg_stat_activity WHERE datname = 'dean';
-INSERT INTO monitor_snapshots(metric, value)
-SELECT 'wal_bytes', wal_bytes::numeric FROM pg_stat_wal;
-INSERT INTO monitor_snapshots(metric, value)
-SELECT 'dead_tup', coalesce(sum(n_dead_tup), 0) FROM pg_stat_user_tables;
-SQL
-```
-
-Запустите скрипт от имени `postgres`, выполните несколько изменений в `enrollments`, запустите снова и сравните снимки.
-
-```bash
-sudo -u postgres bash /opt/dean/bin/metrics.sh
-sudo -u postgres bash /opt/dean/bin/metrics.sh
-```
+Выполните несколько запросов к базе, подождите минуту и повторите вставку. Затем посмотрите текущее состояние сервера.
 
 ```sql
-SELECT metric, min(value) AS first_value, max(value) AS last_value,
-       max(value) - min(value) AS delta
+SHOW GLOBAL STATUS
+WHERE Variable_name IN ('Threads_connected', 'Questions', 'Uptime',
+                        'Innodb_buffer_pool_read_requests', 'Innodb_buffer_pool_reads');
+
+SHOW PROCESSLIST;
+
+SHOW ENGINE INNODB STATUS;
+```
+
+Приложите скриншот `SHOW GLOBAL STATUS` с четырьмя значениями и скриншот `SHOW PROCESSLIST`. В кадре `SHOW ENGINE INNODB STATUS` достаточно раздела `TRANSACTIONS` и строки `History list length`: весь текст отчёта не читается на снимке.
+
+Посчитайте прирост между снимками.
+
+```sql
+SELECT metric,
+       MAX(value) - MIN(value) AS delta,
+       TIMESTAMPDIFF(SECOND, MIN(at), MAX(at)) AS seconds,
+       ROUND((MAX(value) - MIN(value)) / NULLIF(TIMESTAMPDIFF(SECOND, MIN(at), MAX(at)), 0), 2) AS per_second
 FROM monitor_snapshots
 GROUP BY metric
 ORDER BY metric;
 ```
 
+### Шаг 7. Соберите приложение DeanDashboard
+
+Создайте проект Windows Forms и добавьте тот же драйвер. Приложение раз в пять секунд читает `SHOW GLOBAL STATUS` и заполняет таблицу.
+
+```powershell
+cd C:\dean\src
+dotnet new winforms -n DeanDashboard
+cd DeanDashboard
+dotnet add package MySqlConnector
+```
+
+Замените `Form1.cs` целиком.
+
+```csharp
+using MySqlConnector;
+
+namespace DeanDashboard;
+
+public partial class Form1 : Form
+{
+    private readonly DataGridView grid = new()
+    {
+        Dock = DockStyle.Fill,
+        ReadOnly = true,
+        AllowUserToAddRows = false
+    };
+    private readonly System.Windows.Forms.Timer timer = new() { Interval = 5000 };
+    private readonly string cs;
+
+    public Form1()
+    {
+        cs = new MySqlConnectionStringBuilder
+        {
+            Server = "localhost",
+            Port = 3306,
+            Database = "dean",
+            UserID = "dean_app",
+            Password = ReadPassword(),
+            CharacterSet = "utf8mb4"
+        }.ConnectionString;
+
+        Text = "DeanDashboard";
+        Width = 760;
+        Height = 260;
+        grid.Columns.Add("metric", "Показатель");
+        grid.Columns.Add("value", "Значение");
+        grid.Columns.Add("limit", "Порог");
+        grid.Columns.Add("state", "Статус");
+        Controls.Add(grid);
+
+        Load += async (_, _) => { timer.Start(); await RefreshAsync(); };
+        timer.Tick += async (_, _) => await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        try
+        {
+            await using var conn = new MySqlConnection(cs);
+            await conn.OpenAsync();
+
+            var values = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+            await using var cmd = new MySqlCommand("SHOW GLOBAL STATUS", conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                values[reader.GetString(0)] = long.TryParse(reader.GetString(1), out var v) ? v : 0;
+            }
+
+            grid.Rows.Clear();
+            Add("Threads_connected", values.GetValueOrDefault("Threads_connected"), 20);
+            Add("Questions", values.GetValueOrDefault("Questions"), 0);
+            Add("Uptime, ч", values.GetValueOrDefault("Uptime") / 3600, 0);
+            Add("Buffer read requests",
+                values.GetValueOrDefault("Innodb_buffer_pool_read_requests"), 0);
+        }
+        catch (Exception ex)
+        {
+            grid.Rows.Clear();
+            grid.Rows.Add("Ошибка", ex.Message, "", "");
+        }
+    }
+
+    private void Add(string name, long value, long limit)
+    {
+        var state = limit > 0 && value > limit ? "порог нарушен" : "в норме";
+        grid.Rows.Add(name, value.ToString("N0"), limit > 0 ? limit.ToString("N0") : "нет", state);
+    }
+
+    private static string ReadPassword()
+    {
+        var file = @"C:\dean\secret\db_password.txt";
+        return File.Exists(file) ? File.ReadAllText(file).Trim() : "";
+    }
+}
+```
+
+Запустите приложение и откройте вторую сессию MySQL, чтобы число соединений изменилось. Приложите скриншот окна `DeanDashboard`: в кадре видны четыре строки, значения и столбец «Статус».
+
 ### Шаг 8. Задайте пороги и реакции
 
-Заполните таблицу порогов под свою базу. Порог без действия не считается настроенным.
+Заполните таблицу под свою базу. Порог без действия не считается настроенным.
 
 | Метрика | Порог | Как проверить | Действие при выходе |
 |---|---|---|---|
-| Сессии | Больше 80 процентов от `max_connections` | `pg_stat_activity` | Найти источник соединений, проверить пул |
-| Долгий запрос | Дольше 60 секунд | `pg_stat_activity` | Разобрать план, проверить блокировки |
-| Кэш | Ниже 95 процентов | `pg_stat_database` | Проверить `shared_buffers` и рабочий набор |
-| Мёртвые строки | Больше 10 процентов | `pg_stat_user_tables` | Проверить autovacuum, выполнить `VACUUM` |
-| Размер базы | Прирост больше 20 процентов за сутки | `pg_database_size` | Найти таблицу роста, проверить архивирование |
-| Время запроса | Среднее выше 200 мс | `pg_stat_statements` | Переписать запрос или добавить индекс |
+| `Threads_connected` | Больше 20 | `SHOW GLOBAL STATUS` | Найти источник соединений, проверить пул в приложении |
+| Долгий запрос | Дольше 60 секунд | `SHOW PROCESSLIST`, столбец `Time` | Разобрать план, проверить блокировки, при необходимости `KILL` |
+| `Questions` | Больше 50 в секунду | Два снимка и дельта | Найти частые запросы, добавить кэш или индекс |
+| Буферный пул | Доля попаданий ниже 95 процентов | Прирост `read_requests` и `reads` | Увеличить `innodb_buffer_pool_size` в `my.ini` |
+| `Uptime` | Меньше часа без планового перезапуска | `SHOW GLOBAL STATUS` | Проверить журнал ошибок MySQL в `C:\xampp\mysql\data` |
 
 ### Шаг 9. Смоделируйте инцидент
 
-Откройте вторую сессию и запустите долгий запрос. В первой сессии найдите его по `pg_stat_activity` и зафиксируйте, что порог нарушен.
+Откройте вторую сессию и запустите долгий запрос. В первой сессии найдите его по `SHOW PROCESSLIST` и зафиксируйте, что порог нарушен.
 
 ```sql
-SELECT pg_sleep(90);
+SELECT SLEEP(120);
 ```
 
 ```sql
-SELECT pid, usename, state, now() - query_start AS running, left(query, 50) AS query
-FROM pg_stat_activity
-WHERE datname = 'dean' AND state = 'active'
-ORDER BY query_start;
+SHOW PROCESSLIST;
 ```
 
-Приложите скриншот: в нём видно, что запрос активен дольше порога. Остановите его командой `SELECT pg_cancel_backend(<pid>);` и объясните в отчёте, почему выбрали отмену, а не завершение сессии.
+Найдите строку с командой `Query` и временем около 120 секунд. Завершите только запрос, а не соединение: `KILL QUERY <id>;` останавливает оператор, `KILL <id>;` закрывает сессию. В отчёте объясните, почему выбрали первый вариант. Приложите скриншот `SHOW PROCESSLIST` до завершения: в нём видно, что запрос активен дольше порога.
 
 ### Шаг 10. Оформите отчёт наблюдений
 
@@ -337,48 +380,47 @@ ORDER BY query_start;
 
 | Метрика | Значение | Порог | Статус | Действие | Источник |
 |---|---|---|---|---|---|
-| Сессии |  |  |  |  | `pg_stat_activity` |
-| Долгий запрос |  |  |  |  | `pg_stat_activity` |
-| Кэш |  |  |  |  | `pg_stat_database` |
-| Мёртвые строки |  |  |  |  | `pg_stat_user_tables` |
-| Размер базы |  |  |  |  | `pg_database_size` |
-| WAL |  |  |  |  | `pg_stat_wal` |
-| Время запроса |  |  |  |  | `pg_stat_statements` |
+| Соединения |  | 20 |  |  | `SHOW GLOBAL STATUS` |
+| Долгий запрос |  | 60 с |  |  | `SHOW PROCESSLIST` |
+| Операторов в секунду |  | 50 |  |  | Дельта снимков |
+| Попадание в буферный пул |  | 95 процентов |  |  | Дельта снимков |
+| Время работы сервера |  | 1 ч |  |  | `SHOW GLOBAL STATUS` |
+
+В выводе назовите, какое задание вы поставили в планировщик, почему выбрали повторение и как убедились, что оно срабатывает само. Перечислите, что осталось вне наблюдения: место на диске, репликация, ошибки в журнале MySQL.
 
 ### Требования к отчёту
 
-Соберите отчёт из цели, схемы расписания, скрипта, доказательств запуска, таблицы порогов, отчёта наблюдений и вывода. Укажите, какое задание вы выбрали, systemd timer или cron, и почему. Перечислите, что осталось вне наблюдения: например, место на диске и репликация, если они не настроены.
-
-Скриншоты шапки отчёта, текста теории и пустых окон не нужны. Доказательством служат только кадры с выводом команд и запросов.
+Соберите отчёт из цели, кода приложения, команды создания задания, доказательств запуска, метрик, таблицы порогов и наблюдений. Каждый скриншот подпишите: что проверялось, дата, имя базы. Скриншоты шапки отчёта и текста теории не нужны: доказательствами служат только кадры с заданием, журналом, метриками и окном приложения.
 
 ## Что сдать
 
-1. Скрипт `maintenance.sh` с журналом, кодом возврата и записью в `maintenance_runs`.
-2. Файлы unit или строку crontab, поставленные в систему.
-3. Скриншоты `systemctl list-timers`, журнала запуска и метрик.
-4. Скрипт `metrics.sh` и таблицу `monitor_snapshots` с двумя сериями.
-5. Таблицу порогов и отчёт наблюдений с выводом.
+1. Проект `DeanMaintenance` с журналом, кодом возврата и записью в `maintenance_runs`.
+2. Команду создания задания и скриншот свойств задания в Планировщике Windows.
+3. Скриншот журнала с двумя запусками по расписанию и результатом `0`.
+4. Скриншоты `SHOW GLOBAL STATUS`, `SHOW PROCESSLIST`, `SHOW ENGINE INNODB STATUS` и таблицу `monitor_snapshots` с двумя сериями.
+5. Проект `DeanDashboard` и скриншот его окна с четырьмя показателями.
+6. Таблицу порогов, отчёт наблюдений и вывод.
 
 ## Критерии оценки
 
 | Критерий | Баллы | Что проверяется |
 |---|---|---|
-| Задание планировщика | 20 | Расписание, права, unit или cron, задание установлено |
+| Задание планировщика | 20 | Триггер, действие, учётная запись и рабочая папка заданы верно |
 | Журнал и код возврата | 20 | Запуск подтверждён журналом и таблицей, сбой виден |
-| Метрики | 20 | Сняты соединения, размер, WAL, таблицы и запросы |
-| Пороги и реакции | 20 | У каждого порога есть проверка и действие |
-| Отчёт наблюдений | 15 | Таблица заполнена, вывод опирается на значения |
-| Оформление | 5 | Скриншоты подписаны, команды воспроизводимы |
+| Метрики | 20 | Сняты четыре показателя, `PROCESSLIST` и отчёт InnoDB |
+| Приложение WinForms | 20 | Таймер, таблица, пороги и статус работают |
+| Пороги и реакции | 10 | У каждого порога есть проверка и действие |
+| Отчёт наблюдений | 10 | Таблица заполнена, вывод опирается на значения |
 | **Итого** | **100** | Зачёт от 60 баллов |
 
 ## Контрольные вопросы
 
 <div class="selfcheck no-copy" markdown="1">
 
-1. Чем systemd timer удобнее cron при обслуживании базы и в чём cron проще?
-2. Почему код возврата скрипта важен для планировщика?
-3. Какие метрики показывают нехватку памяти, а какие рост данных?
-4. Почему порог без описанного действия не считается настроенным?
-5. Чем разовый замер отличается от наблюдения и зачем хранить серию снимков?
+1. Почему код возврата задания не доказывает, что обслуживание выполнено?
+2. Чем счётчик отличается от мгновенного значения и какие из метрик относятся к каждому типу?
+3. Что покажет `Questions`, делённое на `Uptime`, и почему для текущей нагрузки нужна дельта?
+4. Чем `KILL QUERY` отличается от `KILL` и когда нужен второй вариант?
+5. Почему порог без описанного действия не считается настроенным?
 
 </div>

@@ -794,143 +794,139 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 20</span><span class="pill">Управление и автоматизация баз данных</span></div>
 <div class="hero-panel"><h1>Практика 7. Экспорт</h1><p class="dek">Выгрузка в CSV и JSON проверяется обратной загрузкой, сверкой числа строк и контрольными суммами.</p></div>
-<div class="glyph" aria-hidden="true">П7</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выгружать таблицу и выборку в CSV и JSON</li><li>Снимать схему базы через pg_dump</li><li>Проверять кодировку и отсутствие BOM в файлах обмена</li><li>Сверять выгрузку по числу строк и контрольным суммам</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Файл выгрузки считается готовым не тогда, когда команда завершилась без ошибки, а тогда, когда данные из него загружаются обратно и совпадают с источником. Ошибка в кавычках, разделителе или кодировке обнаруживается только на приёмной стороне, часто через несколько дней.</p>
-<p>Цель работы: выгрузить учебную базу <code>dean</code> в файлы обмена и проверить каждый файл обратной загрузкой. Вы сделаете CSV с заголовком, JSON Lines через <code>row_to_json</code>, схему через <code>pg_dump --schema-only</code>, затем загрузите файлы во временные таблицы и сравните число строк и контрольные суммы. Итог работы это скрипт экспорта, файлы обмена и заполненная таблица сверки.</p>
+<div class="glyph" aria-hidden="true">П7</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Выгружать таблицу и выборку в CSV и JSON</li><li>Снимать схему базы через mysqldump</li><li>Проверять кодировку и отсутствие BOM в файлах обмена</li><li>Сверять выгрузку по числу строк и контрольным суммам</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Файл выгрузки готов не тогда, когда команда завершилась без ошибки, а тогда, когда данные из него загружаются обратно и совпадают с источником. Ошибка в кавычках, разделителе или кодировке обнаруживается только на приёмной стороне.</p>
+<p>Цель работы: выгрузить базу <code>dean</code> в файлы обмена и проверить каждый файл обратной загрузкой. Вы сделаете CSV через phpMyAdmin и <code>INTO OUTFILE</code>, JSON через <code>JSON_OBJECT</code>, схему через <code>mysqldump</code>, затем загрузите файлы в таблицы проверки и сравните число строк и контрольные суммы.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с VirtualBox и учебной Ubuntu Server.</li>
-<li>PostgreSQL 16 в виртуальной машине, база <code>dean</code> с учебными данными.</li>
-<li>Роль <code>dean_owner</code> с правом чтения всех таблиц базы.</li>
-<li>Клиент <code>psql</code> версии 16 и утилиты <code>pg_dump</code>, <code>createdb</code>.</li>
-<li>Утилиты <code>file</code>, <code>iconv</code>, <code>od</code>, <code>diff</code> из базового набора Ubuntu.</li>
-<li>Текстовый редактор и табличный редактор для отчёта.</li>
-<li>Каталог <code>~/export</code> для файлов и скриптов.</li>
+<li>Персональный компьютер с Windows 10, XAMPP 8.5.12 и запущенными Apache и MySQL.</li>
+<li>База <code>dean</code> в кодировке <code>utf8mb4</code> с учебными данными.</li>
+<li>phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Клиенты <code>C:\xampp\mysql\bin\mysql.exe</code> и <code>C:\xampp\mysql\bin\mysqldump.exe</code>.</li>
+<li>Пользователь <code>root</code> или <code>dean_app</code> с правом <code>SELECT</code> и привилегией <code>FILE</code>.</li>
+<li>PowerShell для проверки байтов файла.</li>
+<li>Каталог <code>C:\dean\export</code> для файлов и скриптов.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<p><strong>Формат обмена</strong> выбирают по приёмной стороне. CSV понимают табличные редакторы, бухгалтерские программы и почти любая система импорта. JSON удобен, когда данные вложенные: студент вместе со списком курсов не раскладывается в плоскую таблицу без потерь. Схема базы в виде SQL-файла нужна, чтобы развернуть структуру на новом месте.</p>
-<p><strong>CSV</strong> это текст с разделителем, кавычками и заголовком. Заголовок включается опцией <code>HEADER</code>, разделитель задаётся <code>DELIMITER</code>, кавычки и переводы строк экранируются по правилам RFC 4180. Значение с запятой или кавычкой обязано быть в кавычках, иначе приёмная сторона сдвинет столбцы.</p>
-<p><strong><code>COPY</code> и <code>\copy</code>.</strong> Серверная команда <code>COPY ... TO ...</code> пишет файл на стороне сервера и требует прав на каталог. Мета-команда <code>\copy</code> пишет файл на машине клиента, поэтому в учебной базе используется она. Синтаксис опций одинаков: <code>WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')</code>.</p>
-<p><strong><code>row_to_json</code></strong> превращает строку запроса в JSON-объект. Если вызвать его для каждой строки и писать по объекту на строку, получается JSON Lines: тот же формат, который разбирался при импорте. Вложенный массив курсов собирается через <code>json_agg</code> и <code>json_build_object</code> в подзапросе.</p>
-<p><strong><code>pg_dump --schema-only</code></strong> выгружает только определения объектов: таблицы, ограничения, индексы, последовательности, представления. Данные в файл не попадают. Опции <code>--no-owner</code> и <code>--no-privileges</code> убирают привязку к конкретным ролям, чтобы файл разворачивался на другой машине.</p>
-<p><strong>Контрольная сумма</strong> это короткий отпечаток содержимого. <code>md5</code> от строки, собранной из всех значимых столбцов в стабильном порядке, меняется при любом расхождении. Сумма не заменяет построчное сравнение, но быстро показывает, что файл дошёл без потерь и искажений.</p>
-<p><strong>Временная таблица для сверки</strong>: загрузка обратно в рабочую таблицу рискует испортить данные или упереться в уникальность. Временная таблица повторяет структуру источника, живёт до конца сессии и удаляется сама. Конструкция <code>LIKE groups INCLUDING DEFAULTS</code> копирует столбцы и значения по умолчанию, но не ограничения и не индексы: для проверки содержимого этого достаточно.</p>
-<p><strong>Кодировка.</strong> PostgreSQL хранит текст в UTF-8, если база создана с <code>ENCODING 'UTF8'</code>. Файл без BOM открывается в Excel с испорченной кириллицей, поэтому для обмена с табличным редактором либо добавляют BOM, либо импортируют через мастер «Данные из текста». Для обмена с другой СУБД BOM только мешает.</p>
+<p><strong>Формат обмена</strong> выбирают по приёмной стороне. CSV понимают табличные редакторы, бухгалтерские программы и почти любая система импорта. JSON удобен, когда данные вложенные: студент вместе со списком курсов не раскладывается в плоскую таблицу без потерь. Схема в виде SQL-файла нужна, чтобы развернуть структуру на новом месте.</p>
+<p><strong>CSV</strong> это текст с разделителем, кавычками и заголовком. Значение с запятой или кавычкой обязано быть в кавычках, иначе приёмная сторона сдвинет столбцы. Перевод строки внутри значения тоже требует кавычек, поэтому разбор CSV не сводится к делению строки по запятым.</p>
+<p><strong><code>INTO OUTFILE</code></strong> пишет файл на стороне сервера, то есть на том же компьютере, где работает MySQL из XAMPP. Команда требует привилегии <code>FILE</code> и каталога, разрешённого переменной <code>secure_file_priv</code>. Если файл уже существует, сервер вернёт ошибку 1086: старую выгрузку удаляют до запуска.</p>
+<p><strong>phpMyAdmin Export</strong> выполняет ту же работу через браузер: формат CSV, разделитель, кавычки, кодировка <code>utf-8</code> и строка с именами столбцов. Этот путь удобен для небольшой таблицы и не требует привилегии <code>FILE</code>, но повторять его вручную на каждой выгрузке неудобно.</p>
+<p><strong><code>mysqldump --no-data</code></strong> выгружает только определения объектов: таблицы, ограничения, индексы, представления и триггеры. Данные в файл не попадают. Опции <code>--routines</code> и <code>--triggers</code> добавляют процедуры и триггеры, <code>--default-character-set=utf8mb4</code> сохраняет кириллицу.</p>
+<p><strong>Контрольная сумма</strong> это короткий отпечаток содержимого. <code>MD5</code> от строки, собранной из всех значимых столбцов в стабильном порядке, меняется при любом расхождении. В MySQL строку собирает <code>GROUP_CONCAT</code>, но её длина ограничена параметром <code>group_concat_max_len</code>: без увеличения сумма считается по обрезанным данным и молча врёт.</p>
+<p><strong>Кодировка.</strong> Файл без BOM открывается в Excel с испорченной кириллицей, поэтому для обмена с табличным редактором BOM добавляют, а для загрузки в СУБД его быть не должно. Проверяют байты до загрузки: <code>EF BB BF</code> в начале файла ломает первый столбец.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
-<h3>Шаг 1. Подготовьте каталог и проверьте кодировку</h3>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/export<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/export
-psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SHOW server_encoding;&quot;</span>
+<h3>Шаг 1. Проверьте каталог, кодировку и разрешённый путь</h3>
+<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">mkdir</span> C:\dean\export
+C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean</span>
 </code></pre></div>
 
-<p>Внутри <code>psql</code> проверьте кодировку клиента.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="err">\</span><span class="k">encoding</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;character_set_server&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;secure_file_priv&#39;</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">@@</span><span class="n">local_infile</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Оба значения должны быть <code>UTF8</code>. Если клиент показывает другую кодировку, задайте её через <code>\encoding UTF8</code> или переменную окружения <code>PGCLIENTENCODING=UTF8</code>. Расхождение кодировок сервера и клиента даёт ошибку преобразования уже на первой кириллической фамилии.</p>
-<h3>Шаг 2. Выгрузите группы в CSV</h3>
-<p>Запрос в скобках задаёт столбцы и порядок строк. Без скобок <code>COPY</code> берёт таблицу целиком и не даёт отсортировать результат.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span>
-<span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
-<span class="w">  </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;groups.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="n">FORMAT</span><span class="w"> </span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="n">HEADER</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="k">ENCODING</span><span class="w"> </span><span class="s1">&#39;UTF8&#39;</span><span class="p">);</span>
+<p><code>character_set_server</code> должен быть <code>utf8mb4</code>. Значение <code>secure_file_priv</code> задаёт единственный каталог, куда сервер пишет файлы; пустое значение разрешает любой путь. Запишите его, он понадобится на шаге 3.</p>
+<h3>Шаг 2. Выгрузите группы в CSV через phpMyAdmin</h3>
+<p>Откройте базу <code>dean</code>, таблицу <code>groups</code>, вкладку «Экспорт». Выберите формат CSV, разделитель <code>,</code>, кавычки <code>"</code>, кодировку <code>utf-8</code> и включите строку с именами столбцов. Сохраните файл как <code>groups_phpmyadmin.csv</code> в <code>C:\dean\export</code>.</p>
+<p>Приложите скриншот открытого файла: в нём видно заголовок <code>id,name,specialty</code> и кириллицу в названиях групп. Скриншот настроек экспорта без файла доказательством не является.</p>
+<h3>Шаг 3. Выгрузите студентов через INTO OUTFILE</h3>
+<p>Запрос в скобках задаёт столбцы и порядок строк. Название группы добавляется соединением: приёмной стороне нужно читаемое значение, а не номер.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">created_at</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
+<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.csv&#39;</span>
+<span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
+<span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p><code>psql</code> ответит <code>COPY 3</code>. Серверный вариант той же операции выглядит так и выполняется от имени <code>postgres</code>, потому что файл пишет сервер.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">COPY</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
-<span class="w">  </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;/tmp/groups.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="n">FORMAT</span><span class="w"> </span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="n">HEADER</span><span class="w"> </span><span class="k">true</span><span class="p">);</span>
+<p>Путь подставьте из <code>secure_file_priv</code>, если переменная не пуста. Ошибка 1086 означает, что файл уже есть: удалите его и повторите. Ошибка 1227 означает, что у пользователя нет привилегии <code>FILE</code>.</p>
+<p>Заголовок <code>INTO OUTFILE</code> не пишет. Добавьте его отдельной командой.</p>
+<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">cd</span> /d C:\dean\export
+<span class="k">echo</span> id,full_name,group_name,email,created_at<span class="p">&gt;</span> students_with_header.csv
+<span class="k">type</span> students.csv<span class="p">&gt;&gt;</span> students_with_header.csv
 </code></pre></div>
 
-<h3>Шаг 3. Выгрузите студентов с названием группы</h3>
-<p>Плоская таблица не хранит связь, поэтому название группы добавляется соединением. Приёмной стороне не нужен идентификатор, ей нужно читаемое значение. <code>LEFT JOIN</code> оставляет студента без группы: пропуск строки исказил бы число записей сильнее, чем пустое поле.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">created_at</span>
-<span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
-<span class="w">  </span><span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
-<span class="w">  </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
-<span class="p">)</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;students.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="n">FORMAT</span><span class="w"> </span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="n">HEADER</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="k">ENCODING</span><span class="w"> </span><span class="s1">&#39;UTF8&#39;</span><span class="p">);</span>
+<p><code>echo</code> пишет только ASCII-заголовок, а <code>type</code> добавляет байты файла без перекодирования. <code>Set-Content -Encoding utf8</code> в Windows PowerShell добавляет BOM, и первый столбец при загрузке получит лишний символ.</p>
+<h3>Шаг 4. Выгрузите JSON</h3>
+<p><code>JSON_OBJECT</code> собирает объект из столбцов, <code>JSON_ARRAYAGG</code> превращает список курсов в массив. В MariaDB вместо него используйте <code>CONCAT('[', GROUP_CONCAT(JSON_OBJECT('course', c.title, 'grade', e.grade)), ']')</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">JSON_OBJECT</span><span class="p">(</span>
+<span class="w">         </span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">         </span><span class="s1">&#39;full_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
+<span class="w">         </span><span class="s1">&#39;group_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">         </span><span class="s1">&#39;courses&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span>
+<span class="w">           </span><span class="k">SELECT</span><span class="w"> </span><span class="n">JSON_ARRAYAGG</span><span class="p">(</span><span class="n">JSON_OBJECT</span><span class="p">(</span><span class="s1">&#39;course&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;grade&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">grade</span><span class="p">))</span>
+<span class="w">           </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span>
+<span class="w">           </span><span class="k">WHERE</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
+<span class="w">         </span><span class="p">)</span>
+<span class="w">       </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student_json</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
+<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.json&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<h3>Шаг 4. Выгрузите JSON через row_to_json</h3>
-<p>Один объект на строку это JSON Lines. Вложенный массив курсов сохраняет связь, которую CSV теряет.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">row_to_json</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span>
-<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
-<span class="w">           </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span>
-<span class="w">           </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span>
-<span class="w">           </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
-<span class="w">           </span><span class="p">(</span>
-<span class="w">             </span><span class="k">SELECT</span><span class="w"> </span><span class="n">json_agg</span><span class="p">(</span><span class="n">json_build_object</span><span class="p">(</span><span class="s1">&#39;course&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;grade&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">grade</span><span class="p">)</span>
-<span class="w">                             </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">)</span>
-<span class="w">             </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="n">e</span>
-<span class="w">             </span><span class="k">JOIN</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span>
-<span class="w">             </span><span class="k">WHERE</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
-<span class="w">           </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">courses</span>
-<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
-<span class="w">    </span><span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
-<span class="w">    </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
-<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="n">t</span>
-<span class="p">)</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;students.jsonl&#39;</span><span class="p">;</span>
+<p>Каждая строка файла это самостоятельный объект, то есть JSON Lines. Такой формат читается потоком и совпадает с тем, что разбирался при импорте.</p>
+<h3>Шаг 5. Снимите схему через mysqldump</h3>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysqldump.exe</span><span class="c1"> -u root --no-data --routines --triggers ^</span>
+  --default-character-set=utf8mb4 --result-file=C:\dean\export\schema.sql dean
 </code></pre></div>
 
-<h3>Шаг 5. Снимите схему через pg_dump</h3>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>pg_dump<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--schema-only<span class="w"> </span>--no-owner<span class="w"> </span>--no-privileges<span class="w"> </span>-f<span class="w"> </span>schema.sql
+<p>Опция <code>--result-file</code> важна: перенаправление <code>&gt;</code> в PowerShell пишет файл в UTF-16, и такой дамп не загрузится. Проверьте содержимое.</p>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Select-String -Path C:\dean\export\schema.sql -Pattern &#39;CREATE TABLE&#39; | Measure-Object&quot;</span>
+powershell -Command <span class="s2">&quot;Select-String -Path C:\dean\export\schema.sql -Pattern &#39;INSERT INTO&#39; | Measure-Object&quot;</span>
 </code></pre></div>
 
-<p>Проверьте, что в файле есть таблицы и ограничения, но нет <code>INSERT</code>.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;CREATE TABLE&#39;</span><span class="w"> </span>schema.sql
-grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;INSERT INTO&#39;</span><span class="w"> </span>schema.sql<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
-</code></pre></div>
-
-<p>Первая команда покажет число таблиц, вторая должна показать 0. Если <code>INSERT</code> нашлись, значит опция <code>--schema-only</code> не применилась.</p>
+<p>Первая команда покажет число таблиц, вторая должна показать ноль. Если <code>INSERT</code> нашлись, опция <code>--no-data</code> не применилась.</p>
 <h3>Шаг 6. Проверьте файлы и кодировку</h3>
-<div class="codehilite" data-lang="bash"><pre><span></span><code><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41\n&#39;</span>
-head<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span><span class="w"> </span>groups.csv
-file<span class="w"> </span>-i<span class="w"> </span>groups.csv<span class="w"> </span>students.csv<span class="w"> </span>students.jsonl<span class="w"> </span>schema.sql
-iconv<span class="w"> </span>-f<span class="w"> </span>UTF-8<span class="w"> </span>-t<span class="w"> </span>UTF-8<span class="w"> </span>groups.csv<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;UTF-8 ok&#39;</span>
-od<span class="w"> </span>-An<span class="w"> </span>-tx1<span class="w"> </span>-N3<span class="w"> </span>groups.csv
+<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Get-Content C:\dean\export\students.csv -TotalCount 3&quot;</span>
+powershell -Command <span class="s2">&quot;[System.IO.File]::ReadAllBytes(&#39;C:\dean\export\students.csv&#39;)[0..2]&quot;</span>
+powershell -Command <span class="s2">&quot;Get-ChildItem C:\dean\export | Select-Object Name, Length&quot;</span>
 </code></pre></div>
 
-<p><code>file -i</code> должен показать <code>charset=utf-8</code>. Команда <code>iconv</code> завершается без ошибки, если файл действительно в UTF-8. <code>od</code> показывает первые три байта: <code>ef bb bf</code> означают BOM, которого в файле для СУБД быть не должно.</p>
-<p>Приложите скриншот <code>head</code> и <code>file -i</code>: на нём видно заголовок CSV, разделитель и кодировку. Скриншот пустого каталога доказательством не является.</p>
-<h3>Шаг 7. Загрузите CSV обратно во временные таблицы</h3>
-<p>Временная таблица живёт до конца сессии и не мешает рабочим данным.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">TEMP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">tmp_groups</span><span class="w"> </span><span class="p">(</span><span class="k">LIKE</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">INCLUDING</span><span class="w"> </span><span class="k">DEFAULTS</span><span class="p">);</span>
-<span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="n">tmp_groups</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;groups.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="n">FORMAT</span><span class="w"> </span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="n">HEADER</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="k">ENCODING</span><span class="w"> </span><span class="s1">&#39;UTF8&#39;</span><span class="p">);</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_groups</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tmp_groups</span><span class="p">;</span>
+<p>Байты <code>239 187 191</code> означают BOM: для загрузки в MySQL его нужно убрать. Размер файла не должен быть нулевым. Приложите скриншот первых строк файла и списка файлов с размерами.</p>
+<h3>Шаг 7. Загрузите CSV обратно в таблицу проверки</h3>
+<p>Таблицы проверки создаются обычными, а не временными: временная живёт только в своей сессии, и phpMyAdmin её не увидит. Структура повторяет файл, а не источник: в выгрузке есть текстовая колонка <code>group_name</code>, которой в <code>students</code> нет.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
+<span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">chk_students_flat</span><span class="p">,</span><span class="w"> </span><span class="n">chk_groups</span><span class="p">;</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_flat</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span><span class="w"> </span><span class="n">group_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
+
+<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students_with_header.csv&#39;</span>
+<span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_flat</span>
+<span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
+<span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span>
+<span class="k">IGNORE</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">LINES</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">chk_students_flat</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">TEMP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">tmp_students</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span><span class="w"> </span><span class="n">group_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="n">timestamptz</span>
-<span class="p">);</span>
-<span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="n">tmp_students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;students.csv&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="n">FORMAT</span><span class="w"> </span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="n">HEADER</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="k">ENCODING</span><span class="w"> </span><span class="s1">&#39;UTF8&#39;</span><span class="p">);</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students</span><span class="p">;</span>
-</code></pre></div>
-
+<p>Для <code>LOAD DATA LOCAL INFILE</code> клиент запускают с ключом <code>--local-infile=1</code>, а сервер должен разрешать <code>local_infile</code>. Если политика XAMPP это запрещает, загрузите тот же файл через phpMyAdmin: вкладка «Импорт», формат CSV, разделитель <code>,</code>, первая строка содержит имена столбцов, таблица <code>chk_students_flat</code>. Так же загрузите <code>groups_phpmyadmin.csv</code> в <code>chk_groups</code>, созданную командой <code>CREATE TABLE chk_groups LIKE groups</code>. Результат должен совпасть.</p>
 <h3>Шаг 8. Сверьте число строк и контрольные суммы</h3>
-<p>Сначала сравните количество.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_groups</span><span class="p">,</span>
-<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tmp_groups</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_groups</span><span class="p">,</span>
-<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_students</span><span class="p">,</span>
-<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_students</span><span class="p">;</span>
+<p>Сначала количество.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_students</span><span class="p">,</span>
+<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">chk_students_flat</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_students</span><span class="p">,</span>
+<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_groups</span><span class="p">,</span>
+<span class="w">       </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">chk_groups</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_groups</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Затем сравните содержимое. Строка собирается из значимых столбцов в одном порядке, поэтому любое расхождение меняет <code>md5</code>.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">id</span><span class="p">::</span><span class="nb">text</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">specialty</span><span class="p">,</span><span class="w"> </span><span class="n">E</span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_md5</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">groups</span><span class="p">;</span>
+<p>Затем содержимое. Строка собирается из значимых столбцов в одном порядке, поэтому любое расхождение меняет <code>MD5</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="n">group_concat_max_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000000</span><span class="p">;</span>
 
-<span class="k">SELECT</span><span class="w"> </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">id</span><span class="p">::</span><span class="nb">text</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">specialty</span><span class="p">,</span><span class="w"> </span><span class="n">E</span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_md5</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">tmp_groups</span><span class="p">;</span>
-</code></pre></div>
-
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">::</span><span class="nb">text</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">coalesce</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
-<span class="w">                      </span><span class="n">E</span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_md5</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">MD5</span><span class="p">(</span><span class="n">GROUP_CONCAT</span><span class="p">(</span><span class="n">CONCAT_WS</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="n">SEPARATOR</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">source_md5</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span><span class="p">;</span>
 
-<span class="k">SELECT</span><span class="w"> </span><span class="n">md5</span><span class="p">(</span><span class="n">string_agg</span><span class="p">(</span><span class="n">id</span><span class="p">::</span><span class="nb">text</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">coalesce</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">                      </span><span class="n">E</span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_md5</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">MD5</span><span class="p">(</span><span class="n">GROUP_CONCAT</span><span class="p">(</span><span class="n">CONCAT_WS</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">email</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="n">SEPARATOR</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">loaded_md5</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">chk_students_flat</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Суммы должны совпасть. Если число строк совпало, а сумма нет, ищите разницу в кавычках, пробелах или кодировке.</p>
@@ -947,14 +943,6 @@ od<span class="w"> </span>-An<span class="w"> </span>-tx1<span class="w"> </span
 </thead>
 <tbody>
 <tr>
-<td>groups</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td>students</td>
 <td></td>
 <td></td>
@@ -963,7 +951,15 @@ od<span class="w"> </span>-An<span class="w"> </span>-tx1<span class="w"> </span
 <td></td>
 </tr>
 <tr>
-<td>students.jsonl</td>
+<td>groups</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>students.json</td>
 <td></td>
 <td></td>
 <td></td>
@@ -973,49 +969,35 @@ od<span class="w"> </span>-An<span class="w"> </span>-tx1<span class="w"> </span
 </tbody>
 </table>
 <h3>Шаг 9. Загрузите JSON обратно</h3>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">TEMP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">tmp_students_json</span><span class="w"> </span><span class="p">(</span><span class="k">data</span><span class="w"> </span><span class="n">jsonb</span><span class="p">);</span>
-<span class="err">\</span><span class="k">copy</span><span class="w"> </span><span class="n">tmp_students_json</span><span class="w"> </span><span class="p">(</span><span class="k">data</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;students.jsonl&#39;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">json_lines</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students_json</span><span class="p">;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">chk_students_json</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_json</span><span class="w"> </span><span class="p">(</span><span class="k">data</span><span class="w"> </span><span class="n">JSON</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
+
+<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.json&#39;</span>
+<span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_json</span>
+<span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">json_lines</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">chk_students_json</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">without_courses</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">chk_students_json</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">COALESCE</span><span class="p">(</span><span class="n">JSON_LENGTH</span><span class="p">(</span><span class="n">JSON_EXTRACT</span><span class="p">(</span><span class="k">data</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;$.courses&#39;</span><span class="p">)),</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Проверьте, что каждый адрес из файла находится в основной таблице, а массивы курсов не потерялись.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">missing_students</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students_json</span><span class="w"> </span><span class="n">j</span>
-<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="k">data</span><span class="o">-&gt;&gt;</span><span class="s1">&#39;email&#39;</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
-
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students_with_courses</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">tmp_students_json</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">jsonb_array_length</span><span class="p">(</span><span class="k">data</span><span class="o">-&gt;</span><span class="s1">&#39;courses&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Первое число должно быть нулевым. Второе показывает, у скольких студентов есть хотя бы один курс, и служит проверкой вложенного массива.</p>
+<p>Первое число равно числу студентов. Второе показывает, у скольких нет ни одного курса, и проверяет вложенный массив: если у всех ноль, массив потерялся при выгрузке. Удалите таблицы проверки командой <code>DROP TABLE chk_students_flat, chk_groups, chk_students_json</code>.</p>
 <h3>Шаг 10. Разверните схему в отдельной базе</h3>
-<p>Пустая база исключает влияние старых объектов.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>dropdb<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>--if-exists<span class="w"> </span>dean_check
-createdb<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>dean_check
-psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean_check<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-f<span class="w"> </span>schema.sql
+<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root -e &quot;DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean_check -e &quot;source C:/dean/export/schema.sql&quot;</span>
+C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root -e &quot;SELECT table_name FROM information_schema.tables WHERE table_schema = &#39;dean_check&#39; ORDER BY table_name;&quot;</span>
 </code></pre></div>
 
-<p>Сравните список таблиц с исходной базой.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-Atc<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="s2">&quot;SELECT table_name FROM information_schema.tables WHERE table_schema = &#39;public&#39; ORDER BY 1&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>tables_src.txt
-psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-U<span class="w"> </span>dean_owner<span class="w"> </span>-d<span class="w"> </span>dean_check<span class="w"> </span>-Atc<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="s2">&quot;SELECT table_name FROM information_schema.tables WHERE table_schema = &#39;public&#39; ORDER BY 1&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>tables_new.txt
-diff<span class="w"> </span>tables_src.txt<span class="w"> </span>tables_new.txt<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;схема совпадает&#39;</span>
-</code></pre></div>
-
-<p><code>ON_ERROR_STOP=1</code> останавливает выполнение на первой ошибке. Без него <code>psql</code> продолжит работу и создаст половину схемы, а отчёт покажет успешный код возврата.</p>
-<p>Если <code>diff</code> показал расхождение, сравните не только имена таблиц, но и ограничения: <code>pg_dump --schema-only</code> выгружает их отдельными командами <code>ALTER TABLE</code>. Пустой список таблиц в новой базе чаще всего означает, что файл схемы не создался из-за ошибки прав или прерванного выполнения.</p>
-<h3>Требования к отчёту</h3>
-<p>Приложите скриншоты вывода <code>\copy</code> с числом строк, <code>head</code> и <code>file -i</code> для файла, обратной загрузки во временную таблицу и итогового запроса счётчиков и сумм. В первой строке каждого вывода должна стоять подпись с фамилией и группой: в <code>psql</code> её печатает <code>\echo</code>, в оболочке <code>printf</code>. Скриншоты шапки отчёта и текста теории не нужны.</p>
+<p>Команда <code>source</code> читает файл внутри клиента и не зависит от перенаправления оболочки. Сравните список таблиц с базой <code>dean</code>: он должен совпасть. Пустой список чаще всего означает, что дамп не создался из-за ошибки прав или прерванного выполнения.</p>
+<p>Скриншоты делайте только как доказательства: файл CSV с заголовком, обратная загрузка с числом строк, итоговые счётчики и суммы. Шапка отчёта и текст теории в кадр не нужны.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
-<li>Скрипт экспорта с командами <code>\copy</code>, <code>row_to_json</code> и <code>pg_dump</code>.</li>
-<li>Файлы <code>groups.csv</code>, <code>students.csv</code>, <code>students.jsonl</code>, <code>schema.sql</code>.</li>
+<li>Скрипт экспорта с <code>INTO OUTFILE</code>, <code>JSON_OBJECT</code> и <code>mysqldump</code>.</li>
+<li>Файлы <code>students.csv</code>, <code>students.json</code>, <code>schema.sql</code> и выгрузку из phpMyAdmin.</li>
 <li>Таблицу сверки с числом строк и контрольными суммами.</li>
-<li>Результат развёртывания схемы в отдельной базе и сравнение списка таблиц.</li>
-<li>Скриншоты <code>\copy</code>, файла, обратной загрузки и счётчиков.</li>
+<li>Список таблиц базы <code>dean_check</code> после развёртывания схемы.</li>
+<li>Скриншоты файла, обратной загрузки и счётчиков.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <table>
@@ -1035,12 +1017,12 @@ diff<span class="w"> </span>tables_src.txt<span class="w"> </span>tables_new.txt
 <tr>
 <td>Кодировка</td>
 <td>15</td>
-<td>UTF-8 подтверждена, BOM отсутствует</td>
+<td>UTF-8 подтверждена, BOM проверен, дамп читается</td>
 </tr>
 <tr>
 <td>Обратная загрузка</td>
 <td>25</td>
-<td>Файлы читаются без ошибок и дают те же строки</td>
+<td>Файлы загружаются без ошибок и дают те же строки</td>
 </tr>
 <tr>
 <td>Сверка</td>
@@ -1050,22 +1032,22 @@ diff<span class="w"> </span>tables_src.txt<span class="w"> </span>tables_new.txt
 <tr>
 <td>Схема и отчёт</td>
 <td>15</td>
-<td><code>pg_dump</code> разворачивается, таблица сверки заполнена</td>
+<td><code>mysqldump</code> разворачивается, таблица сверки заполнена</td>
 </tr>
 </tbody>
 </table>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
-<li>Чем серверный <code>COPY</code> отличается от <code>\copy</code> и когда нужен каждый?</li>
-<li>Зачем в <code>\copy</code> запрос заключается в скобки?</li>
+<li>Чем <code>INTO OUTFILE</code> отличается от экспорта через phpMyAdmin и когда нужен каждый?</li>
+<li>Почему <code>INTO OUTFILE</code> возвращает ошибку 1086 и что делать перед повторной выгрузкой?</li>
 <li>Почему для вложенного списка курсов выбран JSON, а не CSV?</li>
 <li>Что произойдёт с файлом CSV, если значение содержит запятую и не заключено в кавычки?</li>
 <li>Почему совпадения числа строк недостаточно для вывода о корректной выгрузке?</li>
-<li>Зачем нужны опции <code>--no-owner</code> и <code>--no-privileges</code> в <code>pg_dump</code>?</li>
-<li>Чем мешает BOM при загрузке CSV в PostgreSQL и когда он полезен?</li>
+<li>Зачем перед расчётом <code>MD5</code> увеличивают <code>group_concat_max_len</code>?</li>
+<li>Чем мешает BOM при загрузке CSV в MySQL и когда он полезен?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="17-prakt-06.html"><span>← Предыдущее занятие</span>Практика 6. Импорт JSON</a><a class="next" style="text-align:right;margin-left:auto" href="19-lek-12.html"><span>Следующее занятие →</span>Лекция 12. Автоматизация скриптов</a></nav></main>
+</div></article><nav class="pager"><a class="" href="17-prakt-06.html"><span>← Предыдущее занятие</span>Импорт JSON</a><a class="next" style="text-align:right;margin-left:auto" href="19-lek-12.html"><span>Следующее занятие →</span>Автоматизация на C# и .NET SDK 10</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

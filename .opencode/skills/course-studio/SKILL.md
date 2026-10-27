@@ -73,18 +73,20 @@ Exam structure:
 
 Available software policy:
 
-- Use only Excel, Word, PowerPoint; VS Code with Python; Visual Studio 2022 Community;
-  Postman; XAMPP 8.5.12; VirtualBox with the learning Linux and Windows 10 images; a
-  browser with draw.io, sqliteonline.com, GitHub, Kaggle, Colab and Google Docs.
-- Do not require PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, a MySQL
-  server, PostgreSQL on the host, or paid cloud services. PostgreSQL for database
-  automation is installed inside the learning Linux VM.
+- Use only Excel, Word, PowerPoint; VS Code with Python; Visual Studio 2022
+  Community with the .NET desktop workload; .NET SDK 10; Postman; XAMPP 8.5.12 with
+  MySQL/MariaDB and phpMyAdmin; VirtualBox with the learning Linux and Windows 10
+  images; a browser with draw.io, sqliteonline.com, GitHub, Kaggle, Colab and Google
+  Docs.
+- Do not require PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, a separate
+  MySQL or PostgreSQL server, or paid cloud services. MySQL for database automation
+  runs from XAMPP.
 - Host PC settings are locked by the administrator. Run OS and system labs inside
   VirtualBox; use NAT and port forwarding, never host-only adapters, admin rights or
   Windows changes on the host.
 - Diagrams: draw.io. Database: SQLite through Python or sqliteonline.com, LocalDB if
-  it is present in Visual Studio, or PostgreSQL inside the learning Linux VM for
-  database automation. API: Python with Flask/FastAPI in VS Code, or ASP.NET
+  it is present in Visual Studio, or MySQL in XAMPP for database automation. API:
+  Python with Flask/FastAPI in VS Code, or ASP.NET
   Core in Visual Studio. Tests: Postman. Documentation: Word and PowerPoint. Version
   control: GitHub. Operating systems: VirtualBox with the learning Linux and Windows 10
   images.

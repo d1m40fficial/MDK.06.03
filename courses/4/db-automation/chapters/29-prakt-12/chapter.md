@@ -1,46 +1,50 @@
 ---
-title: Практика 12. Итоговая БД
-dek: "Собираем «Деканат» целиком и принимаем базу по чек-листу из двенадцати пунктов."
+title: Практика 12. Итоговая база и .NET-приложение
+dek: "Собираем «Деканат» из скриптов, проверяем по чек-листу из двенадцати пунктов и принимаем базу сквозным прогоном."
 chapter: "Практика 12"
 minutes: 90
 level: СПО
 glyph: П12
 outcomes:
-  - Собирать базу из скриптов на чистом месте
+  - Собирать базу MySQL из скриптов на чистом месте
   - Проверять схему, ограничения, роли и индексы
-  - Подтверждать копирование и обслуживание
+  - Подтверждать копирование и обслуживание из .NET-приложения
   - Оформлять протокол приёмки по чек-листу
 ---
 
 ## Цель работы
 
-Готовая база отличается от учебной не объёмом, а воспроизводимостью. Её можно собрать из скриптов на пустом месте, проверить по списку и передать другому администратору. Цель работы: собрать итоговую базу «Деканат», пройти чек-лист из двенадцати пунктов и подтвердить работу сквозным сценарием.
+Готовая база отличается от учебной не объёмом, а воспроизводимостью. Её можно собрать из скриптов на пустом месте, проверить по списку и передать другому администратору. Цель работы: собрать итоговую базу «Деканат», пройти чек-лист из двенадцати пунктов и подтвердить работу сквозным сценарием с приложением на C#.
 
 Результат работы это комплект скриптов, заполненный чек-лист, доказательства проверок и протокол приёмки.
 
 ## Оборудование и программное обеспечение
 
-- Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.
-- PostgreSQL 16 в гостевой системе, доступ `sudo` внутри машины.
-- Клиент `psql`, утилиты `pg_dump` и `pg_restore`.
-- Скрипты предыдущих практик: схема, роли, индексы, загрузка данных, обслуживание.
+- Персональный компьютер с Windows 10 и XAMPP 8.5.12.
+- Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
+- Клиент `C:\xampp\mysql\bin\mysql.exe` и утилита `mysqldump.exe`.
+- .NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».
+- Приложение `DeanMaintenance` из практики 9 и пакет `MySqlConnector`.
+- Скрипты предыдущих практик: схема, роли, индексы, данные, обслуживание.
 - Текстовый редактор и табличный редактор для протокола.
 
 ## Краткие теоретические сведения
 
 ### Что значит готовая база
 
-Готовая к эксплуатации база отвечает четырём условиям. Её структура описана скриптами, а не руками. Ограничения живут в базе, а не только в коде приложения. Права выданы ролям по минимальным привилегиям. Копия снимается и восстанавливается, а обслуживание запускается по расписанию.
+Готовая к эксплуатации база отвечает четырём условиям. Её структура описана скриптами, а не создана руками. Ограничения живут в базе, а не только в коде приложения. Права выданы ролям по минимальным привилегиям. Копия снимается и восстанавливается, а обслуживание запускается приложением.
 
 Отдельно проверяется версия схемы. Если на стенде стоит версия 2, а скрипты собирают версию 1, следующая миграция сломается.
 
 ### Чек-лист как инструмент приёмки
 
-Чек-лист это список проверок с ожидаемым результатом и свидетельством. Пункт без способа проверки бесполезен: «права настроены» нельзя принять, а «роль `student_read` не может выполнить `INSERT` в `students`» можно. Свидетельство это скриншот, вывод запроса или файл, который проверяющий видит без вашего участия.
+Чек-лист это список проверок с ожидаемым результатом и свидетельством. Пункт без способа проверки бесполезен: «права настроены» нельзя принять, а «пользователь `student_ro` не может выполнить `INSERT` в `students`» можно. Свидетельство это скриншот, вывод запроса или файл, который проверяющий видит без вашего участия.
 
 ### Воспроизводимость сборки
 
 Скрипты применяются в фиксированном порядке: схема, роли, индексы, данные. Порядок важен: индекс не строится на несуществующей таблице, а права не выдаются на отсутствующий объект. Повторный запуск на чистой базе должен давать тот же результат.
+
+Роли в MySQL живут на уровне сервера, а привилегии привязаны к базе. Поэтому `roles.sql` для `dean_final` выдаёт права заново, а создание роли делают через `CREATE ROLE IF NOT EXISTS`: иначе повторная сборка упадёт с ошибкой «роль уже существует».
 
 ### Протокол приёмки
 
@@ -48,7 +52,7 @@ outcomes:
 
 ## Ход работы
 
-Первой строкой каждого вывода печатайте фамилию и группу: `SELECT 'Иванов И.И., ИС-41' AS student;`.
+Первой строкой каждого консольного вывода печатайте фамилию и группу: `Write-Host "Иванов И.И., ИС-41"`.
 
 ### Шаг 1. Соберите комплект файлов
 
@@ -56,128 +60,145 @@ outcomes:
 
 | Файл | Что содержит | Откуда взят |
 |---|---|---|
-| `schema.sql` | Таблицы, ключи, ограничения, версия схемы | Практики 8 и 11 |
-| `roles.sql` | Роли, владелец, права, членство | Практика 2 |
+| `schema.sql` | Таблицы, ключи, ограничения, триггеры, версия схемы | Практики 8, 10 и 11 |
+| `roles.sql` | Роли, пользователи, права, роли по умолчанию | Практика 2 |
 | `indexes.sql` | Индексы под проверенные запросы | Практика 4 |
 | `data.sql` | Учебные данные «Деканата» | Практика 6 |
-| `maintenance.sh` | Обслуживание с журналом и кодом возврата | Практика 9 |
-| `backup.sh` | Полная копия и проверка файла | Практика 3 |
+| `DeanMaintenance.exe` | Обслуживание с журналом и кодом возврата | Практика 9 |
+| `backup.ps1` | Дамп и проверка восстановлением | Практика 3 |
 | `README.md` | Порядок сборки и проверки | Составляется здесь |
 
-В `schema.sql` включите таблицу `maintenance_runs` из практики 9 и таблицу `audit_log` с триггером из практики 10. Без них проверки обслуживания и аудита в чек-листе не пройдут.
-
-В `maintenance.sh` добавьте параметр базы: `DB=${1:-dean}`. Тогда один скрипт обслуживает и рабочую базу, и итоговую.
-
-Роли живут в кластере, а не в базе, поэтому `CREATE ROLE` при повторной сборке упадёт с ошибкой «роль уже существует». Сделайте `roles.sql` идемпотентным через проверку каталога.
-
-```sql
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'dean_read') THEN
-    EXECUTE 'CREATE ROLE dean_read NOLOGIN';
-  END IF;
-END;
-$$;
-```
-
-Повторите блок для остальных ролей: `dean_write`, `student_read`, `auditor`, `dean_app` и `dean_owner`.
+В `schema.sql` включите таблицу `maintenance_runs` из практики 9, таблицу `audit_log` и триггеры из практики 10, столбец `middle_name` и строку версии 2 из практики 11.
 
 ### Шаг 2. Соберите базу на чистом месте
 
-Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. Если база от прошлой попытки уже существует, удалите её командой `sudo -u postgres dropdb dean_final`.
+Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. В `roles.sql` указывайте полные имена объектов `dean_final.*`: скрипт выполняется без выбранной базы.
 
-```bash
-sudo -u postgres createdb dean_final
-for f in schema.sql roles.sql indexes.sql data.sql; do
-  sudo -u postgres psql -d dean_final -v ON_ERROR_STOP=1 -f "$f" || break
-done
+```powershell
+& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+foreach ($f in "schema.sql", "roles.sql", "indexes.sql", "data.sql") {
+  & C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_final -e "source C:/dean/final/$f"
+  if ($LASTEXITCODE -ne 0) { Write-Host "stop at $f"; break }
+}
 ```
 
 Приложите скриншот последнего успешного запуска. Если сборка упала, исправьте скрипт и начните с новой базы, а не правьте схему вручную.
 
 ### Шаг 3. Проверьте схему и ограничения
 
-Проверьте структуру основной таблицы и полный список ограничений. Ограничения это часть схемы, поэтому они должны быть видны в каталоге.
+Откройте `dean_final` в phpMyAdmin и проверьте список таблиц и структуру основной таблицы. Приложите скриншот вкладки «Структура» таблицы `students`: в кадре видны столбцы, типы, `NOT NULL` и ключи.
 
-```psql
-\d students
+```sql
+USE dean_final;
 
-SELECT conrelid::regclass AS table_name, conname, contype,
-       pg_get_constraintdef(oid) AS definition
-FROM pg_constraint
-WHERE connamespace = 'public'::regnamespace
-ORDER BY table_name, conname;
+SHOW TABLES;
+DESCRIBE students;
+
+SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = 'dean_final'
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
+
+SELECT CONSTRAINT_NAME, CHECK_CLAUSE
+FROM information_schema.CHECK_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'dean_final';
 ```
 
-Приложите скриншот `\d students` и списка ограничений. В кадре должны быть первичный ключ, внешний ключ на `groups`, уникальность почты и проверка оценки или суммы.
+В результатах должны быть первичные ключи, внешний ключ на `groups`, уникальность почты и проверки суммы платежа и оценки.
 
 ### Шаг 4. Проверьте роли и права
 
-Соберите список ролей и прав на таблицы. Отдельно проверьте, что приложение не может менять журнал аудита, а роль студента не может писать в таблицы.
+Соберите права пользователей и убедитесь, что приложение не может менять журнал аудита, а учебный пользователь не может писать в таблицы. Пользователя `student_ro` с ролью `student_read` создайте в `roles.sql`.
 
-```psql
-\du
-\dp public.students
-
-SELECT has_table_privilege('dean_app', 'students', 'INSERT') AS app_insert,
-       has_table_privilege('student_read', 'students', 'INSERT') AS student_insert,
-       has_table_privilege('auditor', 'audit_log', 'SELECT') AS auditor_read,
-       has_table_privilege('dean_app', 'audit_log', 'UPDATE') AS app_audit_update;
+```sql
+SHOW GRANTS FOR 'dean_app'@'localhost';
+SHOW GRANTS FOR 'student_ro'@'localhost';
 ```
 
-Ожидаемые значения: `app_insert` истина, `student_insert` ложь, `auditor_read` истина, `app_audit_update` ложь. Приложите скриншоты `\du`, `\dp` и результата проверки.
+Проверьте запрет от имени учебного пользователя. Ошибка прав и есть доказательство того, что мера работает.
+
+```powershell
+& C:\xampp\mysql\bin\mysql.exe -u student_ro -p dean_final -e "INSERT INTO students(full_name, email) VALUES ('Тест', 'deny@example.ru');"
+```
+
+Приложите скриншот `SHOW GRANTS`: в кадре видно, что права `dean_app` выданы по таблицам базы `dean_final`, а на `audit_log` их нет. Скриншот ошибки доступа приложите в отчёт отдельным кадром или строкой протокола.
 
 ### Шаг 5. Проверьте индексы
 
 Индекс оправдан запросом. Выпишите индексы и укажите запрос, который каждый из них ускоряет.
 
-```psql
-\di
-SELECT tablename, indexname, indexdef
-FROM pg_indexes
-WHERE schemaname = 'public'
-ORDER BY tablename, indexname;
-```
-
 ```sql
-EXPLAIN (ANALYZE, BUFFERS)
-SELECT s.full_name, c.title
+SHOW INDEX FROM enrollments;
+SHOW INDEX FROM students;
+
+EXPLAIN SELECT s.full_name, c.title
 FROM enrollments e
 JOIN students s ON s.id = e.student_id
 JOIN courses c ON c.id = e.course_id
 WHERE s.group_id = 1;
 ```
 
-Приложите скриншот списка индексов и план запроса. Если планировщик выбрал последовательное сканирование, объясните почему: на десяти строках это нормально и не означает, что индекс лишний.
+Приложите скриншот `SHOW INDEX` и план запроса. В плане смотрите столбцы `type`, `key`, `rows` и `Extra`. Если планировщик выбрал полное сканирование, объясните почему: на десяти строках это нормально и не означает, что индекс лишний.
 
 ### Шаг 6. Снимите и восстановите копию
 
 Копия проверяется восстановлением, а не размером файла.
 
-```bash
-sudo mkdir -p /var/backups/dean
-sudo chown postgres:postgres /var/backups/dean
-sudo -u postgres pg_dump -Fc -f /var/backups/dean/dean_final.dump dean_final
-sudo -u postgres psql -c "DROP DATABASE IF EXISTS dean_restore;"
-sudo -u postgres createdb dean_restore
-sudo -u postgres pg_restore -d dean_restore /var/backups/dean/dean_final.dump
-sudo -u postgres psql -d dean_restore -c "SELECT count(*) AS students FROM students;"
+```powershell
+New-Item -ItemType Directory -Force C:\dean\backup | Out-Null
+
+& C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=C:\dean\backup\dean_final.sql dean_final
+
+& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_restore -e "source C:/dean/backup/dean_final.sql"
 ```
 
-Приложите скриншот создания копии и числа строк в восстановленной базе. Число должно совпадать с исходным.
+```sql
+SELECT 'source' AS side, COUNT(*) AS students FROM dean_final.students
+UNION ALL
+SELECT 'restored', COUNT(*) FROM dean_restore.students;
 
-### Шаг 7. Запустите обслуживание
-
-Запустите скрипт на итоговой базе и проверьте журнал и таблицу запусков.
-
-```bash
-sudo -u postgres /opt/dean/bin/maintenance.sh dean_final
-echo "exit code: $?"
-sudo tail -n 10 /var/log/dean/maintenance.log
-sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maintenance_runs ORDER BY id DESC LIMIT 3;"
+SELECT version FROM dean_restore.schema_version ORDER BY version;
 ```
 
-Приложите скриншот запуска и строки `ok`. Если скрипт возвращает ошибку, разберите её до заполнения чек-листа.
+Приложите скриншот создания копии и сравнения числа строк. Числа должны совпасть, версия схемы в копии тоже.
+
+### Шаг 7. Запустите обслуживание из .NET-приложения
+
+Приложению из практики 9 нужно передать имя базы, иначе оно всегда работает с `dean`. Добавьте разбор аргумента.
+
+```csharp
+var database = args.Length > 0 ? args[0] : "dean";
+
+var secret = @"C:\dean\secret\db_password.txt";
+var password = File.Exists(secret) ? File.ReadAllText(secret).Trim() : "";
+
+var cs = new MySqlConnectionStringBuilder
+{
+    Server = "localhost",
+    Port = 3306,
+    Database = database,
+    UserID = "dean_app",
+    Password = password,
+    CharacterSet = "utf8mb4"
+}.ConnectionString;
+```
+
+```powershell
+dotnet publish C:\dean\src\DeanMaintenance -c Release -o C:\dean\bin
+
+C:\dean\bin\DeanMaintenance.exe dean_final
+Write-Host "exit code: $LASTEXITCODE"
+Get-Content C:\dean\log\maintenance.log -Tail 3
+```
+
+```sql
+SELECT id, started_at, script, status FROM dean_final.maintenance_runs ORDER BY id DESC LIMIT 3;
+```
+
+Приложите скриншот запуска: в кадре видны имя базы, код возврата `0` и строка `ok` в журнале. Если приложение возвращает единицу, разберите ошибку до заполнения чек-листа.
 
 ### Шаг 8. Заполните чек-лист
 
@@ -185,18 +206,18 @@ sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maint
 
 | № | Пункт | Как проверить | Результат | Свидетельство |
 |---|---|---|---|---|
-| 1 | Все таблицы созданы | `\dt` |  |  |
-| 2 | Первичные ключи | `pg_constraint` |  |  |
-| 3 | Внешние ключи | `pg_constraint` |  |  |
-| 4 | Ограничения `CHECK` | `pg_constraint` |  |  |
-| 5 | Уникальность | `pg_constraint` |  |  |
-| 6 | Обязательные поля | `\d students` |  |  |
+| 1 | Все таблицы созданы | `SHOW TABLES` |  |  |
+| 2 | Первичные ключи | `information_schema.TABLE_CONSTRAINTS` |  |  |
+| 3 | Внешние ключи | `information_schema.REFERENTIAL_CONSTRAINTS` |  |  |
+| 4 | Ограничения `CHECK` | `information_schema.CHECK_CONSTRAINTS` |  |  |
+| 5 | Уникальность | `SHOW INDEX`, `Non_unique = 0` |  |  |
+| 6 | Обязательные поля | `DESCRIBE students` |  |  |
 | 7 | Версия схемы | `schema_version` |  |  |
-| 8 | Владелец объектов | `\dt` |  |  |
-| 9 | Роли и права | `\du`, `\dp` |  |  |
-| 10 | Индексы | `\di` |  |  |
-| 11 | Копия и восстановление | `pg_restore` |  |  |
-| 12 | Обслуживание и аудит | `maintenance.sh`, `audit_log` |  |  |
+| 8 | Роли и права | `SHOW GRANTS` |  |  |
+| 9 | Индексы | `SHOW INDEX` |  |  |
+| 10 | Копия и восстановление | `mysqldump`, `source` |  |  |
+| 11 | Обслуживание | `DeanMaintenance.exe dean_final` |  |  |
+| 12 | Аудит | `audit_log`, `information_schema.TRIGGERS` |  |  |
 
 ### Шаг 9. Прогоните сквозной сценарий
 
@@ -205,14 +226,36 @@ sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maint
 | Шаг | Действие | Ожидаемый результат |
 |---|---|---|
 | 1 | Подключение `dean_app` к `dean_final` | Вход выполнен |
-| 2 | `INSERT` платежа | Строка добавлена, ограничение суммы соблюдено |
-| 3 | Отчёт по группе с соединением трёх таблиц | Список студентов и курсов получен |
-| 4 | Чтение `audit_log` ролью `auditor` | Событие `INSERT` видно |
-| 5 | Попытка `student_read` изменить `students` | Отказ по правам |
-| 6 | Запуск `maintenance.sh` | Код возврата 0, запись `ok` |
-| 7 | Копия и восстановление | Число строк совпадает |
+| 2 | `INSERT` студента с отчеством | Строка добавлена, событие аудита записано |
+| 3 | `INSERT` платежа на 1500 рублей | Строка добавлена |
+| 4 | `INSERT` платежа с суммой минус 5 | Отказ по ограничению `CHECK` |
+| 5 | Отчёт по группе с соединением четырёх таблиц | Список студентов и курсов получен |
+| 6 | Чтение `audit_log` ролью `auditor` | Событие `INSERT` по `students` видно |
+| 7 | Попытка `student_ro` изменить `students` | Отказ по правам |
+| 8 | Запуск `DeanMaintenance.exe dean_final` | Код возврата 0, запись `ok` |
 
-Приложите доказательства шагов 2, 4 и 5: добавленную строку, событие аудита и ошибку прав. Роли без права входа проверяйте через `SET ROLE`, например `SET ROLE student_read;`, а после проверки возвращайтесь командой `RESET ROLE;`.
+```sql
+INSERT INTO students(full_name, middle_name, group_id, email)
+VALUES ('Тестов Тест Тестович', 'Тестович', 1, 'final.test@example.ru');
+
+INSERT INTO payments(student_id, amount) VALUES (1, 1500.00);
+INSERT INTO payments(student_id, amount) VALUES (1, -5.00);
+
+SELECT g.name AS group_name, s.full_name, c.title, e.grade
+FROM enrollments e
+JOIN students s ON s.id = e.student_id
+JOIN courses c ON c.id = e.course_id
+JOIN groups g ON g.id = s.group_id
+WHERE g.name = 'ИС-41'
+ORDER BY s.full_name, c.title;
+
+SELECT id, at, db_user, action, table_name, row_id
+FROM audit_log
+ORDER BY id DESC
+LIMIT 5;
+```
+
+В запросе отчёта подставьте имя своей группы. Событие аудита читайте под ролью `auditor`: если она выдана вашей учётной записи, начните сессию с `SET ROLE auditor;`. Приложите доказательства шагов 2, 3, 4 и 6: добавленную строку, ошибку ограничения и событие аудита. Ошибка `Check constraint 'payments_chk_1' is violated` это ожидаемый результат проверки, а не сбой.
 
 ### Шаг 10. Оформите протокол
 
@@ -227,20 +270,16 @@ sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maint
 | Не пройдено |  |
 | Замечания |  |
 
-### Требования к отчёту
-
-Соберите отчёт из перечня файлов, команд сборки, доказательств схемы, ролей, индексов, копии и обслуживания, заполненного чек-листа и протокола. В выводе назовите два слабых места своей базы и меры, которые вы бы приняли следующими.
-
-Скриншоты шапки отчёта и теории не нужны. Доказательством служат только структура, права, индексы, копия и запуск скрипта.
+В выводе назовите два слабых места своей базы и меры, которые вы бы приняли следующими. Скриншоты шапки отчёта и теории не нужны: доказательством служат структура, права, индексы, копия и запуск приложения.
 
 ## Что сдать
 
 1. Комплект скриптов сборки и `README.md` с порядком применения.
-2. Скриншоты `\d students`, `\du`, `\dp`, списка индексов.
-3. Скриншот создания копии и числа строк после восстановления.
-4. Скриншот запуска `maintenance.sh` и записи в журнале.
+2. Скриншот phpMyAdmin со структурой `students`, скриншоты `SHOW GRANTS` и `SHOW INDEX`.
+3. Скриншот создания дампа и сравнения числа строк после восстановления.
+4. Скриншот запуска `DeanMaintenance.exe dean_final` с кодом `0` и записью в журнале.
 5. Заполненный чек-лист из двенадцати пунктов.
-6. Протокол приёмки и вывод о слабых местах.
+6. Протокол приёмки, вывод о слабых местах и мерах.
 
 ## Критерии оценки
 
@@ -250,7 +289,7 @@ sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maint
 | Схема и ограничения | 20 | Ключи, проверки и обязательные поля на месте |
 | Роли и права | 20 | Минимальные привилегии, запреты доказаны |
 | Индексы | 10 | Индексы обоснованы запросами |
-| Копия и обслуживание | 20 | Восстановление и запуск скрипта подтверждены |
+| Копия и обслуживание | 20 | Восстановление и запуск приложения подтверждены |
 | Чек-лист и протокол | 10 | Пункты заполнены, свидетельства указаны |
 | **Итого** | **100** | Зачёт от 60 баллов |
 
@@ -261,7 +300,7 @@ sudo -u postgres psql -d dean_final -c "SELECT id, started_at, status FROM maint
 1. Почему база, собранная вручную, не считается готовой к эксплуатации?
 2. Зачем проверять ограничения в каталоге, если они уже описаны в скрипте?
 3. Почему копия проверяется восстановлением, а не размером файла?
-4. Что делать, если пункт чек-листа не пройден, а срок сдачи близко?
-5. Какие два слабых места чаще всего остаются у учебной базы?
+4. Почему роли создают через `CREATE ROLE IF NOT EXISTS`, а привилегии выдают заново для новой базы?
+5. Что делать, если пункт чек-листа не пройден, а срок сдачи близко?
 
 </div>

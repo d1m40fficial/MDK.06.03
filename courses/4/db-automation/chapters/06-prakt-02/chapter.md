@@ -1,334 +1,253 @@
 ---
-title: Практика 2. Пользователи и роли
-dek: "Строим доступ к «Деканату» на пяти ролях и доказываем матрицей, что каждая видит ровно то, что ей положено."
+title: Практика 2. Роли и доступ в MySQL
+dek: "Строим доступ к «Деканату» на четырёх ролях и доказываем матрицей, что каждая учётная запись видит ровно положенное."
 chapter: "Практика 2"
 minutes: 90
 level: СПО
 glyph: П2
 outcomes:
-  - Разделять владельца объектов и рабочие роли
-  - Выдавать права на схему, таблицы и последовательности
-  - Настраивать права по умолчанию для новых таблиц
-  - Проверять доступ от имени каждой роли и заполнять матрицу
+  - Создавать роли MySQL и связывать их с учётными записями
+  - Выдавать и отзывать привилегии на базу и таблицы
+  - Проверять доступ из phpMyAdmin, командной строки и .NET
+  - Собирать матрицу прав по фактическим результатам
 ---
 
 ## Цель работы
 
-Права в базе выдают не человеку, а роли, и проверяют не по списку `GRANT`, а попыткой выполнить запрещённое действие. Цель работы: собрать для «Деканата» пять ролей с разными задачами, выдать им минимально достаточные права и доказать результат таблицей проверок.
+Права в базе выдают не человеку, а роли, и проверяют не по списку `GRANT`, а попыткой выполнить запрещённое действие. Цель работы: собрать для «Деканата» четыре роли с разными задачами, выдать им минимально достаточные привилегии и доказать результат таблицей проверок.
 
-Вы создаёте пять ролей, связываете их с учётной записью приложения `dean_app` и проходите по каждому оператору `SELECT`, `INSERT`, `UPDATE`, `DELETE` от имени каждой роли. Итог: матрица доступа, где каждая клетка подтверждена запросом или сообщением об ошибке.
+Вы создаёте роли `dean_read`, `dean_write`, `student_read` и `auditor`, заводите под каждую отдельную учётную запись и проходите по операциям `SELECT`, `INSERT`, `UPDATE`, `DELETE`. Итог: матрица доступа, где каждая клетка подтверждена запросом или сообщением об ошибке.
 
 ## Оборудование и программное обеспечение
 
-- Виртуальная машина Ubuntu Server с PostgreSQL 16 и базой `dean` из практики 1.
-- Клиент `psql` внутри машины, доступ к роли `postgres` через `sudo -u postgres psql`.
-- Текстовый редактор для SQL-скрипта и табличный редактор для матрицы доступа.
-- Файл `roles.sql` для повторного запуска скрипта на чистой базе.
+- Компьютер с XAMPP 8.5.12 и базой `dean` из практики 1.
+- phpMyAdmin и клиент `C:\xampp\mysql\bin\mysql.exe`.
+- .NET SDK 10 и проект `DeanAdmin` из практики 1.
+- Текстовый редактор для скрипта `roles.sql` и табличный редактор для матрицы.
 
 ## Краткие теоретические сведения
 
-**Привилегия** это разрешение на конкретное действие с конкретным объектом: `SELECT` на таблицу, `USAGE` на схему, `CONNECT` на базу. Привилегии не складываются в «уровень доступа»: роль может читать одну таблицу и не видеть соседнюю.
+**Привилегия** это разрешение на действие с объектом. Уровней четыре: глобальный `*.*`, база `dean.*`, таблица `dean.payments`, столбец. Чем уже уровень, тем меньше ущерб от ошибки, поэтому приложению выдают права на базу, а не на весь сервер.
 
-**Владелец объекта** имеет все права на объект и может передавать их дальше. Поэтому владельцем схемы и таблиц делают отдельную роль без права входа `dean_owner`, а не учётную запись приложения. Приложение получает только те права, которые ему нужны для работы, и не может незаметно переписать структуру.
+**Роль** в MySQL это учётная запись без пароля: ей выдают привилегии, а затем выдают саму роль пользователю. Роль действует не всегда: в MySQL её назначают ролью по умолчанию при входе или включают командой `SET ROLE`, в MariaDB выданная роль обычно активна сразу. Что активно сейчас, показывает `CURRENT_ROLE()`.
 
-**Наследование ролей** позволяет выдать одной роли другую: `GRANT dean_read TO dean_write` означает, что `dean_write` получает все права `dean_read`. Так строят лестницу прав, а учётки пользователей входят в групповые роли.
+**Привилегии не складываются в уровень доступа.** Учётная запись может читать одну таблицу и не видеть соседнюю. `GRANT` добавляет право, `REVOKE` забирает. Общий `GRANT` на `dean.*` перекрывает точечный `REVOKE`, если выполнить их в обратном порядке, поэтому сначала выдают широкое право, потом отзывают лишнее.
 
-**Права по умолчанию** (`ALTER DEFAULT PRIVILEGES`) действуют на объекты, которые создадут после этой команды. Они не меняют уже существующие таблицы и привязаны к роли, которая создаёт объект. Если таблицу создаст другая роль, правило не сработает.
+**Новые объекты** попадают под право уровня базы автоматически, а под право на конкретную таблицу нет. Схему фиксируют до выдачи прав: после новой таблицы или `ALTER TABLE` доступ иногда приходится выдавать заново.
 
-**Проверка доступа** идёт двумя способами. `SET ROLE` переключает текущий сеанс на другую роль, и вы видите ровно то, что увидит приложение. `information_schema.role_table_grants` и `\dp` показывают выданные права, но не заменяют проверку: право может быть выдано на схему, а не на таблицу.
+**Проверка** идёт от имени проверяемой учётной записи. `root` обходит проверки привилегий, поэтому его результат ничего не говорит о правах приложения. `SHOW GRANTS FOR 'user'@'host'` показывает выданное, `SHOW GRANTS` в сеансе показывает действующее. Право передавать права дальше (`WITH GRANT OPTION`) не выдают никому: иначе учётная запись расширит доступ сама, и матрица перестанет что-либо доказывать.
 
 ## Ход работы
 
 ### Шаг 1. Зафиксируйте исходное состояние
 
-```bash
-psql "host=127.0.0.1 dbname=dean user=dean_app"
-```
-
 ```sql
 SELECT 'Иванов ИС-41' AS student;
-\du
-\dn+
-\dp
+SELECT CURRENT_USER();
+SELECT user, host FROM mysql.user ORDER BY user, host;
+SHOW GRANTS FOR 'dean_app'@'localhost';
 ```
 
-Запишите, кто владеет схемой `public` и какие права есть у `PUBLIC`. В PostgreSQL 15 и новее `USAGE` у `PUBLIC` остаётся, и его нужно снять.
+Запишите, какие права есть у приложения после практики 1: четыре операции на `dean.*` и ничего на другие базы.
 
 ### Шаг 2. Создайте роли
 
-Подключитесь как `postgres` к базе `dean` и выполните скрипт.
-
-```bash
-sudo -u postgres psql -d dean
+```sql
+CREATE ROLE 'dean_read', 'dean_write', 'student_read', 'auditor';
+SHOW GRANTS FOR 'dean_read';
 ```
+
+Роль создаётся заблокированной: пароля у неё нет, войти под ней нельзя. Роль это тот же объект `mysql.user`, поэтому её видно в списке учётных записей, а её права читаются командой `SHOW GRANTS`.
+
+### Шаг 3. Выдайте привилегии ролям
 
 ```sql
-CREATE ROLE dean_owner NOLOGIN;
-CREATE ROLE dean_read NOLOGIN;
-CREATE ROLE dean_write NOLOGIN;
-CREATE ROLE student_read NOLOGIN;
-CREATE ROLE auditor NOLOGIN;
-
-GRANT dean_read TO dean_write;
-GRANT dean_write TO dean_app;
+GRANT SELECT ON dean.* TO 'dean_read';
+GRANT SELECT, INSERT, UPDATE, DELETE ON dean.* TO 'dean_write';
+GRANT SELECT ON dean.groups TO 'student_read';
+GRANT SELECT ON dean.courses TO 'student_read';
+GRANT SELECT ON dean.audit_log TO 'auditor';
+REVOKE DELETE ON dean.* FROM 'dean_write';
+SHOW GRANTS FOR 'dean_write';
 ```
+
+`REVOKE` стоит после общего `GRANT`: платежи нельзя удалять даже роли записи, исправление проводят обратной операцией, а не удалением строки. В выводе `SHOW GRANTS` у `dean_write` останутся `SELECT`, `INSERT` и `UPDATE`.
+
+Роль чтения студентов получает две таблицы поимённо. Можно было выдать `SELECT` на всю базу и отозвать лишнее, но точечная выдача точнее показывает замысел и не открывает новую таблицу сама по себе.
+
+### Шаг 4. Создайте учётные записи и выдайте роли
+
+```sql
+CREATE USER 'dean_reader'@'localhost' IDENTIFIED BY 'Reader_2026';
+CREATE USER 'student_user'@'localhost' IDENTIFIED BY 'Student_2026';
+CREATE USER 'audit_user'@'localhost' IDENTIFIED BY 'Audit_2026';
+
+REVOKE ALL PRIVILEGES ON dean.* FROM 'dean_app'@'localhost';
+
+GRANT 'dean_read' TO 'dean_reader'@'localhost';
+GRANT 'student_read' TO 'student_user'@'localhost';
+GRANT 'auditor' TO 'audit_user'@'localhost';
+GRANT 'dean_write' TO 'dean_app'@'localhost';
+
+SET DEFAULT ROLE ALL TO 'dean_reader'@'localhost', 'student_user'@'localhost',
+  'audit_user'@'localhost', 'dean_app'@'localhost';
+```
+
+Прямые права, выданные приложению в практике 1, нужно снять. Иначе они останутся в силе вместе с ролью, и отзыв `DELETE` у роли ничего не изменит: сервер проверит прямое право и разрешит удаление. После этой команды права `dean_app` берутся только из роли.
+
+Пароли учебные и лежат в скрипте. На рабочем стенде их генерируют и хранят вне репозитория: скрипт с паролем в системе контроля версий это утечка.
+
+### Шаг 5. Проверьте роли и выданные права
 
 ```sql
 SELECT 'Иванов ИС-41' AS student;
-\du
+SHOW GRANTS FOR 'dean_reader'@'localhost';
+SHOW GRANTS FOR 'dean_read';
 ```
 
-У `dean_app` в столбце `Member of` появится `dean_write`, а через него и `dean_read`. Войти можно только под `dean_app`: остальные роли созданы с `NOLOGIN` и служат группами прав.
+Первая команда показывает выданную роль, вторая права самой роли. Затем войдите как `dean_reader`.
 
-Сделайте скриншот `\du` с фамилией в первой строке вывода.
-
-### Шаг 3. Передайте схему владельцу
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean
+```
 
 ```sql
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-ALTER SCHEMA public OWNER TO dean_owner;
-GRANT USAGE ON SCHEMA public TO dean_owner, dean_read, dean_write, student_read, auditor;
-REVOKE ALL ON DATABASE dean FROM PUBLIC;
-GRANT CONNECT ON DATABASE dean TO dean_owner, dean_read, dean_write, student_read, auditor;
+SELECT CURRENT_USER(), CURRENT_ROLE();
+SHOW GRANTS;
 ```
 
-`REVOKE ALL ON DATABASE dean FROM PUBLIC` закрывает подключение для всех. Проверьте, что `dean_app` сохранил вход: он владелец базы и участник `dean_write`.
+Если `CURRENT_ROLE()` вернул `NONE`, роль не активна: выполните `SET ROLE 'dean_read';` и повторите запрос. Причина в том, что роль по умолчанию не назначена или сервер не включил её при входе.
 
-### Шаг 4. Создайте таблицы от имени владельца
+### Шаг 6. Пройдите разрешённые и запрещённые запросы
 
-```sql
-SET ROLE dean_owner;
+Выполняйте пары: сначала разрешённый запрос, потом запрещённый. Ошибка и есть доказательство.
 
-CREATE TABLE groups (
-  id serial PRIMARY KEY,
-  name text UNIQUE NOT NULL,
-  specialty text NOT NULL
-);
-
-CREATE TABLE students (
-  id serial PRIMARY KEY,
-  full_name text NOT NULL,
-  group_id int REFERENCES groups(id),
-  email text UNIQUE NOT NULL,
-  created_at timestamptz DEFAULT now()
-);
-
-CREATE TABLE courses (
-  id serial PRIMARY KEY,
-  title text NOT NULL,
-  hours int CHECK (hours > 0)
-);
-
-CREATE TABLE enrollments (
-  id serial PRIMARY KEY,
-  student_id int REFERENCES students(id) ON DELETE CASCADE,
-  course_id int REFERENCES courses(id),
-  grade int CHECK (grade BETWEEN 2 AND 5),
-  enrolled_at date DEFAULT current_date,
-  UNIQUE (student_id, course_id)
-);
-
-CREATE TABLE payments (
-  id serial PRIMARY KEY,
-  student_id int REFERENCES students(id),
-  amount numeric(10,2) CHECK (amount > 0),
-  paid_at timestamptz DEFAULT now()
-);
-
-CREATE TABLE audit_log (
-  id bigserial PRIMARY KEY,
-  at timestamptz DEFAULT now(),
-  db_user text,
-  action text,
-  table_name text,
-  row_id text,
-  details jsonb
-);
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean -e "SELECT 'Иванов ИС-41'; SELECT COUNT(*) FROM students;"
+& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean -e "INSERT INTO groups (name, specialty) VALUES ('ИС-44','09.02.07');"
 ```
 
-Заполните таблицы набором данных курса: десять студентов, пять курсов, двадцать записей о зачислении, десять платежей и две строки журнала.
+Второй запрос вернёт `ERROR 1142 (42000): INSERT command denied to user 'dean_reader'@'localhost' for table 'groups'`.
 
-```sql
-INSERT INTO groups (name, specialty) VALUES
-  ('ИС-41', '09.02.07'), ('ИС-42', '09.02.07'), ('ИС-43', '09.02.07');
-
-INSERT INTO students (full_name, group_id, email) VALUES
-  ('Иванов Пётр', 1, 'ivanov@example.edu'),
-  ('Смирнова Анна', 1, 'smirnova@example.edu'),
-  ('Кузнецов Илья', 2, 'kuznetsov@example.edu'),
-  ('Орлова Мария', 2, 'orlova@example.edu'),
-  ('Белов Артём', 3, 'belov@example.edu'),
-  ('Гусева Ольга', 1, 'guseva@example.edu'),
-  ('Морозов Денис', 2, 'morozov@example.edu'),
-  ('Павлова Кира', 3, 'pavlova@example.edu'),
-  ('Соколов Ян', 1, 'sokolov@example.edu'),
-  ('Титова Вера', 2, 'titova@example.edu');
-
-INSERT INTO courses (title, hours) VALUES
-  ('Базы данных', 72), ('Операционные системы', 54),
-  ('Веб-технологии', 64), ('Сети и телекоммуникации', 48),
-  ('Инженерная графика', 36);
-
-INSERT INTO enrollments (student_id, course_id, grade) VALUES
-  (1,1,5),(1,2,4),(2,1,4),(2,3,5),(3,2,5),(3,3,4),(4,1,3),(4,2,4),
-  (5,3,4),(5,1,5),(6,2,4),(6,3,3),(7,1,5),(7,2,5),(8,3,4),(8,1,4),
-  (9,2,3),(9,3,5),(10,1,4),(10,2,5);
-
-INSERT INTO payments (student_id, amount) VALUES
-  (1,12000.00),(2,12000.00),(3,9000.00),(4,9000.00),(5,12000.00),
-  (6,9000.00),(7,12000.00),(8,9000.00),(9,12000.00),(10,9000.00);
-
-INSERT INTO audit_log (db_user, action, table_name, row_id) VALUES
-  ('dean_app', 'INSERT', 'students', '1'),
-  ('dean_app', 'UPDATE', 'enrollments', '3');
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u dean_app -p dean -e "INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);"
+& "C:\xampp\mysql\bin\mysql.exe" -u dean_app -p dean -e "DELETE FROM payments WHERE id = 1;"
 ```
 
-### Шаг 5. Выдайте права и настройте значения по умолчанию
+Первый запрос проходит, второй возвращает `ERROR 1142` на таблицу `payments`: приложение получило права `dean_write`, но не право удаления.
 
-Продолжайте в том же сеансе или выполните `SET ROLE dean_owner;` в начале шага: права по умолчанию привязаны к роли, которая их настраивает.
-
-```sql
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO dean_read;
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dean_write;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO dean_write;
-
-GRANT SELECT ON courses, groups TO student_read;
-GRANT SELECT ON audit_log TO auditor;
-
-REVOKE DELETE ON payments FROM dean_write;
-
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-  GRANT SELECT ON TABLES TO dean_read;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-  GRANT INSERT, UPDATE, DELETE ON TABLES TO dean_write;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-  GRANT USAGE, SELECT ON SEQUENCES TO dean_write;
-
-RESET ROLE;
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u student_user -p dean -e "SELECT title FROM courses;"
+& "C:\xampp\mysql\bin\mysql.exe" -u student_user -p dean -e "SELECT full_name FROM students;"
+& "C:\xampp\mysql\bin\mysql.exe" -u audit_user -p dean -e "SELECT COUNT(*) FROM audit_log;"
+& "C:\xampp\mysql\bin\mysql.exe" -u audit_user -p dean -e "INSERT INTO audit_log (db_user, action) VALUES ('audit_user','DELETE');"
 ```
 
-`REVOKE DELETE ON payments` стоит после общего `GRANT`, иначе общее правило вернёт право обратно. Платежи нельзя удалять даже роли записи: исправление проводят обратной операцией, а не удалением строки.
+`student_user` видит только справочники, `audit_user` читает журнал и не может в него писать. Сделайте скриншоты успешного и запрещённого запроса: в кадре должны быть команда, имя учётной записи и текст ошибки.
 
-`GRANT USAGE ON SEQUENCES` нужен для `INSERT`: без него `nextval` не сработает, и вставка упадёт, хотя право на таблицу есть.
+### Шаг 7. Проверьте доступ из phpMyAdmin
 
-### Шаг 6. Проверьте права по умолчанию
+Войдите в phpMyAdmin по очереди каждой учётной записью. В дереве видно, какие таблицы доступны: у `student_user` только `courses` и `groups`, у `audit_user` только `audit_log`. Выполните запрещённый запрос на вкладке `SQL` и приложите красное сообщение об ошибке. Список баз в phpMyAdmin тоже полезен: у приложения видна только `dean`.
 
-Создайте новую таблицу от владельца и убедитесь, что права появились без отдельного `GRANT`.
+### Шаг 8. Проверьте доступ из .NET
 
-```sql
-SET ROLE dean_owner;
-CREATE TABLE rooms (id serial PRIMARY KEY, name text NOT NULL);
-INSERT INTO rooms (name) VALUES ('204'), ('311');
-RESET ROLE;
+Добавьте в `DeanAdmin` выбор учётной записи и обработку ошибки.
 
-SET ROLE dean_read;
-SELECT count(*) AS rooms_visible FROM rooms;
-RESET ROLE;
+```csharp
+using MySqlConnector;
+
+string user = args.Length > 0 ? args[0] : "dean_app";
+string password = Environment.GetEnvironmentVariable("DEAN_DB_PASSWORD") ?? "";
+
+var builder = new MySqlConnectionStringBuilder
+{
+    Server = "localhost",
+    Database = "dean",
+    UserID = user,
+    Password = password,
+    CharacterSet = "utf8mb4"
+};
+
+await using var connection = new MySqlConnection(builder.ConnectionString);
+await connection.OpenAsync();
+Console.WriteLine($"Иванов ИС-41, вход: {user}");
+
+try
+{
+    await using var command = new MySqlCommand(
+        "INSERT INTO payments (student_id, amount) VALUES (4, 9000.00)", connection);
+    await command.ExecuteNonQueryAsync();
+    Console.WriteLine("Запись добавлена");
+}
+catch (MySqlException ex)
+{
+    Console.WriteLine($"Отказано: {ex.Number}, {ex.Message}");
+}
 ```
 
-Если запрос вернул `2`, правило `ALTER DEFAULT PRIVILEGES` работает. Если получено `permission denied`, проверьте, что таблицу создавал именно `dean_owner`: для объектов другой роли правило не действует.
+Запустите приложение под двумя учётными записями.
 
-### Шаг 7. Пройдите проверки от имени каждой роли
-
-Выполняйте пары запросов: разрешённый и запрещённый. Ошибка и есть доказательство.
-
-```sql
-SET ROLE dean_read;
-SELECT count(*) FROM students;
-INSERT INTO groups (name, specialty) VALUES ('ИС-44', '09.02.07');
-RESET ROLE;
-
-SET ROLE dean_write;
-INSERT INTO groups (name, specialty) VALUES ('ИС-44', '09.02.07');
-UPDATE enrollments SET grade = 5 WHERE id = 4;
-DELETE FROM payments WHERE id = 1;
-RESET ROLE;
-
-SET ROLE student_read;
-SELECT title, hours FROM courses;
-SELECT full_name FROM students;
-RESET ROLE;
-
-SET ROLE auditor;
-SELECT db_user, action, table_name FROM audit_log;
-INSERT INTO audit_log (db_user, action) VALUES ('auditor', 'DELETE');
-RESET ROLE;
+```powershell
+$env:DEAN_DB_PASSWORD = "DeanApp_2026"; dotnet run -- dean_app
+$env:DEAN_DB_PASSWORD = "Reader_2026"; dotnet run -- dean_reader
 ```
 
-Ожидаемые результаты: `dean_read` читает и не пишет, `dean_write` пишет везде, кроме удаления платежей, `student_read` видит только справочники, `auditor` читает журнал и не может в него писать. Затем проверьте приложение от его собственной учётной записи.
+От `dean_app` приложение печатает «Запись добавлена», от `dean_reader` печатает код 1142. Код ошибки в отчёте важнее текста: по нему видно, что отказ пришёл от сервера, а не от проверки внутри приложения.
 
-```bash
-psql "host=127.0.0.1 dbname=dean user=dean_app" -c "INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);"
-psql "host=127.0.0.1 dbname=dean user=dean_app" -c "DELETE FROM payments WHERE id = 1;"
-```
+### Шаг 9. Соберите матрицу прав
 
-Первый запрос проходит, второй возвращает `permission denied for table payments`: приложение унаследовало права `dean_write`, но не получило право удаления.
+Заполняйте матрицу по фактическим результатам, а не по тексту скрипта.
 
-Сделайте скриншоты успешного запроса и запрещённого запроса с текстом ошибки.
+| Роль | SELECT | INSERT | UPDATE | DELETE | Объекты |
+|---|---|---|---|---|---|
+| `dean_read` | Да | Нет | Нет | Нет | Все таблицы `dean` |
+| `dean_write` | Да | Да | Да | Нет | Все таблицы, кроме удаления в `payments` |
+| `student_read` | Да | Нет | Нет | Нет | `groups`, `courses` |
+| `auditor` | Да | Нет | Нет | Нет | `audit_log` |
+| `dean_app` | Да | Да | Да | Нет | Как `dean_write` |
 
-### Шаг 8. Соберите матрицу доступа
+### Шаг 10. Сверьте матрицу с проверками
 
-Заполните матрицу по фактическим результатам, а не по тексту скрипта.
-
-| Роль | SELECT | INSERT | UPDATE | DELETE |
-|---|---|---|---|---|
-| `dean_read` | Все таблицы `public` | Нет | Нет | Нет |
-| `dean_write` | Все таблицы `public` | Все таблицы | Все таблицы | Все, кроме `payments` |
-| `student_read` | `groups`, `courses` | Нет | Нет | Нет |
-| `auditor` | `audit_log` | Нет | Нет | Нет |
-| `dean_app` | Как `dean_write` | Как `dean_write` | Как `dean_write` | Как `dean_write` |
-
-### Шаг 9. Сверьте матрицу с каталогом
-
-```sql
-SET ROLE dean_owner;
-SELECT 'Иванов ИС-41' AS student;
-
-SELECT grantee, table_name,
-       string_agg(privilege_type, ', ' ORDER BY privilege_type) AS privileges
-FROM information_schema.role_table_grants
-WHERE table_schema = 'public'
-  AND grantee IN ('dean_read', 'dean_write', 'student_read', 'auditor')
-GROUP BY grantee, table_name
-ORDER BY grantee, table_name;
-
-\dp public.*
-```
-
-Запрос выполняется от `dean_owner`, потому что `role_table_grants` показывает права, где текущая роль выступает выдавшим или получателем. От имени `postgres` вы увидите пустой список и решите, что прав нет.
-
-Сделайте скриншот `\dp` и результата запроса к `role_table_grants`.
+| Учётная запись | Запрос | Ожидаемо | Фактически | Код | Скриншот |
+|---|---|---|---|---|---|
+| `dean_reader` | `SELECT` из `students` | Успех | | | 1 |
+| `dean_reader` | `INSERT` в `groups` | Отказ | | 1142 | 2 |
+| `dean_app` | `INSERT` в `payments` | Успех | | | |
+| `dean_app` | `DELETE` из `payments` | Отказ | | 1142 | |
+| `student_user` | `SELECT` из `students` | Отказ | | 1142 | |
+| `audit_user` | `INSERT` в `audit_log` | Отказ | | 1142 | |
 
 ### Требования к отчёту
 
-Отчёт содержит скрипт `roles.sql`, матрицу доступа, таблицу проверок с ожидаемым и фактическим результатом, скриншоты `\du`, `\dp`, успешного и запрещённого запроса. В выводе объясните, почему `dean_app` не суперпользователь, зачем нужна отдельная роль владельца и какое право вы бы выдали осторожнее.
+Отчёт содержит скрипт `roles.sql`, матрицу прав, таблицу проверок и скриншоты успешного и запрещённого запроса. В выводе объясните, почему приложение работает не под `root`, зачем нужна отдельная роль чтения и какое право выдавать опаснее всего. Скриншоты шапки отчёта и текста теории не нужны: доказательствами служат только результаты запросов.
 
 ## Что сдать
 
-- SQL-скрипт создания ролей, схемы, таблиц и выдачи прав.
-- Матрицу доступа по пяти ролям и четырём операциям.
+- SQL-скрипт создания ролей, учётных записей и выдачи прав.
+- Матрицу доступа по четырём ролям и четырём операциям.
 - Таблицу проверок с ожидаемым и фактическим результатом.
-- Скриншоты `\du`, `\dp`, успешного и запрещённого запроса.
-- Вывод о минимальных привилегиях и о роли владельца объектов.
+- Скриншоты успешного и запрещённого запроса с текстом ошибки.
+- Вывод о минимальных привилегиях и об опасных правах.
 
 ## Критерии оценки
 
 | Критерий | Баллы | Что проверяется |
 |---|---|---|
-| Роли и владелец | 20 | Пять ролей, у `dean_owner` нет входа, объекты принадлежат ему |
-| Права на объекты | 25 | Схема, таблицы и последовательности закрыты, права выданы по задачам |
-| Права по умолчанию | 15 | Новая таблица доступна роли чтения без отдельного `GRANT` |
-| Проверки доступа | 25 | Каждая роль проверена разрешённым и запрещённым запросом |
-| Матрица и отчёт | 15 | Матрица совпадает с каталогом и фактическими результатами |
+| Роли | 20 | Четыре роли созданы, права выданы на нужные объекты |
+| Учётные записи | 20 | У каждой роли своя запись, роли назначены и активны |
+| Отзыв прав | 20 | `DELETE` на `payments` отозван и подтверждён ошибкой |
+| Проверки | 30 | Каждая роль проверена разрешённым и запрещённым запросом |
+| Матрица и отчёт | 10 | Матрица совпадает с фактическими результатами |
 
 ## Контрольные вопросы
 
 <div class="selfcheck no-copy" markdown="1">
 
-1. Почему владельцем таблиц сделали роль без права входа, а не `dean_app`?
-2. Что произойдёт с доступом `dean_app`, если отозвать у неё `dean_write`, хотя `dean_read` выдана только роли `dean_write`?
-3. Почему `GRANT USAGE ON SEQUENCES` обязателен для вставки строк?
-4. Чем `ALTER DEFAULT PRIVILEGES` отличается от `GRANT ON ALL TABLES`?
-5. Почему `role_table_grants` под `postgres` показал пустой список и как это исправить?
+1. Почему права выдают роли, а не каждой учётной записи отдельно?
+2. Что произойдёт, если выполнить `REVOKE DELETE` до общего `GRANT` на `dean.*`?
+3. Почему проверка под `root` не доказывает права приложения?
+4. Чем право на `dean.*` отличается от права на `dean.payments` для новой таблицы?
+5. Что означает `CURRENT_ROLE() = NONE` и как включить роль в сеансе?
+6. Почему код ошибки 1142 убедительнее текста сообщения?
 
 </div>

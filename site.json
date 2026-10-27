@@ -59,9 +59,10 @@
     "Word",
     "PowerPoint",
     "VS Code с Python",
-    "Visual Studio 2022 Community",
+    "Visual Studio 2022 Community, .NET desktop",
     "Postman",
     "XAMPP 8.5.12",
+    ".NET SDK 10",
     "VirtualBox с Linux и Windows 10",
     "Браузер и draw.io",
     "sqliteonline.com",
@@ -69,7 +70,6 @@
     "Kaggle",
     "Colab",
     "Google Docs",
-    "PowerShell",
-    "PostgreSQL в VirtualBox"
+    "PowerShell"
   ]
 }

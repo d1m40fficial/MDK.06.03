@@ -1,58 +1,59 @@
 ---
 title: Практика 11. Миграция
-dek: "Переносим «Деканат» на версию схемы 2: отчество студента, ограничение и обратный скрипт."
+dek: "Добавляем отчество студента в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных."
 chapter: "Практика 11"
 minutes: 90
 level: СПО
 glyph: П11
 outcomes:
-  - Писать прямой и обратный скрипт миграции
-  - Проверять миграцию на копии базы
+  - Писать прямой и обратный скрипт миграции MySQL
+  - Заполнять новый столбец и закрывать его ограничением
+  - Проверять миграцию и откат на копии базы
   - Сверять данные до и после изменения схемы
-  - Фиксировать версию схемы и откатывать изменение
 ---
 
 ## Цель работы
 
-Миграция меняет схему на работающей базе, поэтому ошибка стоит дороже, чем в учебном задании. Цель работы: добавить в таблицу `students` отчество, заполнить его и закрыть ограничением, провести изменение через версию схемы и доказать, что данные не потеряны.
+Миграция меняет схему на работающей базе, поэтому ошибка стоит дороже, чем в учебном задании. Цель работы: добавить в таблицу `students` отчество, заполнить его, закрыть обязательностью и ограничением, провести изменение через версию схемы и доказать, что данные не потеряны.
 
-Работа идёт на копии базы, затем на рабочей базе. Обратный скрипт продумывают до запуска прямого: если откат придумывают после сбоя, данных для отката уже может не быть.
+Работа идёт на копии базы, затем на рабочей базе. Обратный скрипт продумывают до запуска прямого: в MySQL изменение структуры нельзя откатить командой `ROLLBACK`, и если откат придумывают после сбоя, данных для него уже может не быть.
 
 ## Оборудование и программное обеспечение
 
-- Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.
-- PostgreSQL 16 в гостевой системе, доступ `sudo` внутри машины.
-- Клиент `psql`, текстовый редактор, табличный редактор.
-- Учебная база `dean` с таблицами `students` и `schema_version`.
-- Свободное место для копии базы.
+- Персональный компьютер с Windows 10 и XAMPP 8.5.12.
+- Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
+- Клиент `C:\xampp\mysql\bin\mysql.exe` и утилита `C:\xampp\mysql\bin\mysqldump.exe`.
+- PowerShell и текстовый редактор для SQL-файлов.
+- Учебная база `dean` с таблицами `students`, `groups`, `enrollments`, `payments` и `schema_version`.
+- Свободное место для дампа и копии базы.
 
 ## Краткие теоретические сведения
 
 ### Версия схемы
 
-Версия схемы это число, которое говорит, какие изменения уже применены. Таблица `schema_version` хранит применённые версии, а скрипт миграции добавляет новую строку в той же транзакции, что и изменение структуры. Если изменение откатилось, строка версии тоже исчезает, и состояние остаётся согласованным.
+Версия схемы это число, которое говорит, какие изменения уже применены. Таблица `schema_version` хранит применённые версии, а скрипт миграции добавляет новую строку после изменения структуры. Номер растёт только вперёд, а перед запуском скрипт сверяет текущий максимум: если версия 2 уже стоит, повторный запуск не нужен.
 
-Номер версии растёт только вперёд. Повторный запуск скрипта не должен ломать базу, поэтому операции делают идемпотентными: `IF NOT EXISTS`, `DROP CONSTRAINT IF EXISTS`, `ON CONFLICT DO NOTHING`.
+### DDL в MySQL фиксирует транзакцию неявно
+
+`ALTER TABLE` в MySQL вызывает неявную фиксацию. Открытая транзакция завершается, а `ROLLBACK` после изменения структуры ничего не вернёт. Из этого следуют три правила.
+
+Первое: до миграции снимают дамп и проверяют сценарий на копии. Второе: обратный скрипт пишут заранее и тоже проверяют. Третье: запись версии делают последней, после успешных изменений, чтобы номер не опережал реальную структуру.
 
 ### Прямой и обратный скрипт
 
-Прямой скрипт переводит схему из версии 1 в версию 2. Обратный возвращает из версии 2 в версию 1 и удаляет всё, что добавил прямой. Обратный скрипт не обязан спасать данные, которых больше нет в схеме, но он обязан вернуть работоспособную структуру.
+Прямой скрипт переводит схему из версии 1 в версию 2. Обратный возвращает из версии 2 в версию 1 и удаляет всё, что добавил прямой. Имена файлов начинают с номера миграции, чтобы порядок читался без журнала: `001_add_middle_name_up.sql` и `001_add_middle_name_down.sql` относятся к одному переходу.
 
-Оба скрипта состоят из одинаковых частей: начало транзакции, ограничение времени ожидания блокировки, изменения, запись версии, фиксация. Имена файлов начинаются с номера миграции, чтобы порядок применения читался без журнала: `001_add_middle_name_up.sql` и `001_add_middle_name_down.sql` относятся к одному переходу.
+Прямой скрипт состоит из четырёх частей: добавить столбец, заполнить его, сделать обязательным, поставить ограничение. Порядок обязателен: `NOT NULL` на пустом столбце упадёт, а ограничение на незаполненных данных не создастся.
 
-### Порядок выпуска
+### Заполнение и ограничение
 
-Миграцию выпускают по шагам. Сначала фиксируют состояние и делают копию. Потом прогоняют прямой и обратный скрипт на копии и сверяют данные. Затем выбирают окно, когда изменение не мешает работе, применяют скрипт к рабочей базе и повторяют проверки. Если проверка не прошла, выполняют обратный скрипт, а не правят схему вручную.
+Отчество берут из третьего слова полного имени. Функция `SUBSTRING_INDEX(full_name, ' ', 3)` отрезает первые три слова, а внешняя `SUBSTRING_INDEX(..., ' ', -1)` оставляет последнее из них. Если слов меньше трёх, ставится значение `не указано`: пустая строка не пройдёт ограничение.
 
-### Транзакция и блокировки
+`VARCHAR(60) NOT NULL` и проверка `CHAR_LENGTH(middle_name) BETWEEN 1 AND 60` закрывают два разных случая. Обязательность не даёт пропустить поле, проверка не даёт записать пустую строку или слишком длинный текст.
 
-PostgreSQL выполняет `ALTER TABLE` транзакционно: при ошибке или явном `ROLLBACK` схема возвращается к прежнему виду. Цена этой надёжности в блокировке. `ALTER TABLE` берёт блокировку `ACCESS EXCLUSIVE`, и на время изменения чтение и запись таблицы ждут.
+### Сверка данных
 
-`SET LOCAL lock_timeout` не даёт миграции висеть в очереди за долгой транзакцией. Если блокировку не удалось взять за указанное время, скрипт падает и не блокирует таблицу дальше. Для большой таблицы `SET NOT NULL` заменяют парой `CHECK NOT VALID` и `VALIDATE CONSTRAINT`, но в учебной базе достаточно прямого варианта.
-
-### Проверка на копии и сверка
-
-Копию делают до миграции и повторяют на ней весь сценарий, включая откат. Сверка сравнивает не только число строк, но и отпечаток содержимого: одинаковое количество строк при разных значениях ничего не доказывает. Отпечаток считают по столбцам, которые миграция не должна менять, иначе проверка сравнивает разное.
+Сверка сравнивает не только число строк, но и контрольную сумму содержимого: одинаковое количество строк при разных значениях ничего не доказывает. Сумма `CRC32` по строкам не зависит от порядка и не упирается в ограничение `group_concat_max_len`. Такая сумма ловит случайные расхождения, но не заменяет проверку на подлог.
 
 ## Ход работы
 
@@ -62,63 +63,79 @@ PostgreSQL выполняет `ALTER TABLE` транзакционно: при �
 
 Проверьте версию схемы, структуру таблицы и число строк. Если таблица `schema_version` пуста, запишите текущее состояние как версию 1.
 
-```psql
-INSERT INTO schema_version(version) VALUES (1) ON CONFLICT (version) DO NOTHING;
+```sql
+USE dean;
+
+INSERT IGNORE INTO schema_version(version) VALUES (1);
 
 SELECT version, applied_at FROM schema_version ORDER BY version;
-\d students
+DESCRIBE students;
 ```
 
 ```sql
-SELECT count(*) AS students FROM students;
-SELECT count(*) AS groups FROM groups;
-SELECT count(*) AS enrollments FROM enrollments;
-SELECT count(*) AS payments FROM payments;
+SELECT COUNT(*) AS students FROM students;
+SELECT COUNT(*) AS groups FROM groups;
+SELECT COUNT(*) AS enrollments FROM enrollments;
+SELECT COUNT(*) AS payments FROM payments;
 
-SELECT count(*) AS rows,
-       md5(string_agg(id || '|' || full_name || '|' || email, ',' ORDER BY id)) AS fingerprint
+SELECT COUNT(*) AS rows_count,
+       SUM(CRC32(CONCAT_WS('|', id, full_name, email))) AS fingerprint
 FROM students;
 ```
 
-Приложите скриншот `\d students` и результата сверки. Эти значения станут точкой сравнения.
+Приложите скриншот `DESCRIBE students` и результата сверки. Эти значения станут точкой сравнения, запишите их в отчёт.
 
 ### Шаг 2. Сделайте копию базы
 
-Копия создаётся из шаблона и повторяет структуру и данные. Если база занята другими сессиями, сначала завершите их. Копия из шаблона быстрее выгрузки и сохраняет права, индексы и ограничения без отдельного восстановления.
+Снимите дамп и восстановите его в отдельную базу. Копия нужна, чтобы прогнать миграцию и откат без риска для рабочей базы.
 
-```bash
-sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'dean' AND pid <> pg_backend_pid();"
-sudo -u postgres psql -c "DROP DATABASE IF EXISTS dean_migration;"
-sudo -u postgres createdb -T dean dean_migration
-sudo -u postgres psql -d dean_migration -c "SELECT current_database(), count(*) FROM students;"
+```powershell
+New-Item -ItemType Directory -Force C:\dean\backup, C:\dean\migrations | Out-Null
+
+& C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=C:\dean\backup\dean_before.sql dean
+
+& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/backup/dean_before.sql"
 ```
 
-Приложите скриншот числа строк в копии: оно совпадает с исходным.
+```sql
+SELECT COUNT(*) AS students_in_copy FROM dean_migration.students;
+SELECT version FROM dean_migration.schema_version ORDER BY version;
+```
+
+Число строк в копии должно совпасть с исходным. Если дамп не восстановился, разберите ошибку до миграции, а не после.
 
 ### Шаг 3. Напишите прямой скрипт
 
-Сохраните файл `001_add_middle_name_up.sql`. Отчество берётся из третьего слова полного имени; если слов меньше, ставится значение `не указано`. Ограничение проверяет длину и не пропускает пустую строку.
+Сохраните файл `C:\dean\migrations\001_add_middle_name_up.sql`. Скрипт не содержит `USE`: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.
 
 ```sql
-BEGIN;
-SET LOCAL lock_timeout = '5s';
-
-ALTER TABLE students ADD COLUMN IF NOT EXISTS middle_name text;
+ALTER TABLE students
+  ADD COLUMN middle_name VARCHAR(60) NULL AFTER full_name;
 
 UPDATE students
-SET middle_name = COALESCE(nullif(split_part(full_name, ' ', 3), ''), 'не указано')
+SET middle_name = CASE
+    WHEN full_name LIKE '% % %'
+      THEN SUBSTRING_INDEX(SUBSTRING_INDEX(full_name, ' ', 3), ' ', -1)
+    ELSE 'не указано'
+  END
 WHERE middle_name IS NULL;
 
-ALTER TABLE students ALTER COLUMN middle_name SET NOT NULL;
-
-ALTER TABLE students DROP CONSTRAINT IF EXISTS students_middle_name_check;
 ALTER TABLE students
-  ADD CONSTRAINT students_middle_name_check
-  CHECK (char_length(middle_name) BETWEEN 1 AND 60);
+  MODIFY COLUMN middle_name VARCHAR(60) NOT NULL;
 
-INSERT INTO schema_version(version) VALUES (2) ON CONFLICT (version) DO NOTHING;
+ALTER TABLE students
+  ADD CONSTRAINT chk_students_middle_name
+  CHECK (CHAR_LENGTH(middle_name) BETWEEN 1 AND 60);
 
-COMMIT;
+INSERT IGNORE INTO schema_version(version) VALUES (2);
+```
+
+Перед запуском выполните проверку версии. Если запрос вернул `2`, миграция уже применена и скрипт запускать не нужно.
+
+```sql
+SELECT MAX(version) AS current_version FROM schema_version;
 ```
 
 ### Шаг 4. Напишите обратный скрипт
@@ -126,60 +143,58 @@ COMMIT;
 Файл `001_add_middle_name_down.sql` удаляет ограничение, столбец и строку версии. Порядок обратный прямому: сначала снимается ограничение, потом исчезает столбец.
 
 ```sql
-BEGIN;
-SET LOCAL lock_timeout = '5s';
+ALTER TABLE students
+  DROP CONSTRAINT chk_students_middle_name;
 
-ALTER TABLE students DROP CONSTRAINT IF EXISTS students_middle_name_check;
-ALTER TABLE students DROP COLUMN IF EXISTS middle_name;
+ALTER TABLE students
+  DROP COLUMN middle_name;
+
 DELETE FROM schema_version WHERE version = 2;
-
-COMMIT;
 ```
+
+Если сервер не понимает `DROP CONSTRAINT`, используйте форму `ALTER TABLE students DROP CHECK chk_students_middle_name;`. Обе формы снимают проверку, различие только в версии сервера.
 
 ### Шаг 5. Прогоните миграцию на копии
 
-Запустите прямой скрипт с остановкой при первой ошибке. Затем проверьте структуру, версию и заполнение нового столбца.
+Запустите прямой скрипт на `dean_migration`. Клиентская команда `source` читает файл без перенаправления PowerShell, поэтому кодировка не портится.
 
-```bash
-sudo -u postgres psql -d dean_migration -v ON_ERROR_STOP=1 -f 001_add_middle_name_up.sql
+```powershell
+& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/migrations/001_add_middle_name_up.sql"
 ```
 
-```psql
-\d students
+```sql
+USE dean_migration;
+
+DESCRIBE students;
 SELECT version FROM schema_version ORDER BY version;
 
-SELECT count(*) AS total,
-       count(*) FILTER (WHERE middle_name IS NULL) AS nulls,
-       count(*) FILTER (WHERE middle_name = 'не указано') AS unknown
+SELECT COUNT(*) AS total,
+       SUM(middle_name IS NULL) AS nulls,
+       SUM(middle_name = 'не указано') AS unknown
 FROM students;
 ```
 
-Приложите скриншот `\d students` с новым столбцом и скриншот версии `2`. Нулевое число значений `NULL` показывает, что заполнение прошло по всем строкам; само ограничение проверьте в каталоге ниже.
-
-Отдельно проверьте, что ограничение записано в каталоге, а не только подразумевается типом столбца.
+Приложите скриншот `DESCRIBE students` с новым столбцом и скриншот `schema_version` с версией `2`. Нулевое число значений `NULL` показывает, что заполнение прошло по всем строкам. Ограничение проверьте в каталоге, а не по типу столбца.
 
 ```sql
-SELECT conname, pg_get_constraintdef(oid) AS definition
-FROM pg_constraint
-WHERE conrelid = 'students'::regclass
-ORDER BY conname;
+SELECT CONSTRAINT_NAME, CHECK_CLAUSE
+FROM information_schema.CHECK_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'dean_migration';
 ```
-
-В результате должны быть первичный ключ, ссылка на группу, ограничение уникальности почты и проверка длины отчества. Скриншот этого запроса показывает, что миграция добавила именно то ограничение, которое обещала.
 
 ### Шаг 6. Сверьте данные после миграции
 
-Повторите запросы из шага 1 на копии и сравните результаты. Отпечаток считается по тем же столбцам, поэтому новое поле на него не влияет: так проверяется сохранность прежних данных.
+Повторите запросы из шага 1 на копии. Контрольная сумма считается по тем же столбцам, поэтому новое поле на неё не влияет: так проверяется сохранность прежних данных.
 
 ```sql
-SELECT count(*) AS students FROM students;
-SELECT count(*) AS groups FROM groups;
-SELECT count(*) AS enrollments FROM enrollments;
-SELECT count(*) AS payments FROM payments;
+SELECT COUNT(*) AS students FROM dean_migration.students;
+SELECT COUNT(*) AS groups FROM dean_migration.groups;
+SELECT COUNT(*) AS enrollments FROM dean_migration.enrollments;
+SELECT COUNT(*) AS payments FROM dean_migration.payments;
 
-SELECT count(*) AS rows,
-       md5(string_agg(id || '|' || full_name || '|' || email, ',' ORDER BY id)) AS fingerprint
-FROM students;
+SELECT COUNT(*) AS rows_count,
+       SUM(CRC32(CONCAT_WS('|', id, full_name, email))) AS fingerprint
+FROM dean_migration.students;
 ```
 
 Заполните таблицу сверки.
@@ -190,87 +205,92 @@ FROM students;
 | Число строк `groups` |  |  |  |
 | Число строк `enrollments` |  |  |  |
 | Число строк `payments` |  |  |  |
-| Отпечаток `students` |  |  |  |
+| Контрольная сумма `students` |  |  |  |
 | Версия схемы | 1 | 2 | Изменилась по плану |
 
 ### Шаг 7. Проверьте откат на копии
 
-Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте.
+Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте. Откат проверяют на той же копии, где прошла миграция: так видно, что скрипт работает поверх изменённой схемы, а не на пустой базе.
 
-```bash
-sudo -u postgres psql -d dean_migration -v ON_ERROR_STOP=1 -f 001_add_middle_name_down.sql
+```powershell
+& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/migrations/001_add_middle_name_down.sql"
 ```
 
-```psql
-\d students
+```sql
+USE dean_migration;
+
+DESCRIBE students;
 SELECT version FROM schema_version ORDER BY version;
-SELECT count(*) AS students,
-       md5(string_agg(id || '|' || full_name || '|' || email, ',' ORDER BY id)) AS fingerprint
+
+SELECT COUNT(*) AS rows_count,
+       SUM(CRC32(CONCAT_WS('|', id, full_name, email))) AS fingerprint
 FROM students;
 ```
 
-Приложите скриншот `\d students` без столбца `middle_name` и скриншот версии `1`. Отпечаток должен совпасть с исходным. Откат проверяют на той же копии, где прошла миграция: так видно, что обратный скрипт работает поверх изменённой схемы, а не на пустой базе.
+Приложите скриншот `DESCRIBE students` без столбца `middle_name`, скриншот версии `1` и контрольную сумму. Сумма должна совпасть с исходной.
 
 ### Шаг 8. Примените миграцию к рабочей базе
 
 Повторите прямой скрипт на `dean` и проверьте итог теми же запросами. Перед запуском убедитесь, что копия и откат прошли без ошибок: рабочая база не место для первой попытки.
 
-```bash
-sudo -u postgres psql -d dean -v ON_ERROR_STOP=1 -f 001_add_middle_name_up.sql
-sudo -u postgres psql -d dean -c "\d students"
-sudo -u postgres psql -d dean -c "SELECT version FROM schema_version ORDER BY version;"
+```powershell
+& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean -e "source C:/dean/migrations/001_add_middle_name_up.sql"
 ```
 
-Приложите скриншот структуры и версии рабочей базы. Запишите в отчёт, сколько времени заняла миграция и какие блокировки она брала. Для этого перед запуском засеките время, а после проверьте журнал сервера: PostgreSQL пишет длительность выполнения операторов при включённом `log_min_duration_statement`.
+```sql
+USE dean;
+
+DESCRIBE students;
+SELECT version FROM schema_version ORDER BY version;
+SELECT COUNT(*) AS total, SUM(middle_name IS NULL) AS nulls FROM students;
+```
+
+Приложите скриншот структуры рабочей базы. Если скрипт упал посередине, не правьте схему вручную: восстановите базу из дампа и начните заново с исправленным файлом.
 
 ### Шаг 9. Оцените совместимость
 
-Ответьте, что произойдёт со старым приложением, которое делает `INSERT INTO students(full_name, group_id, email)`. Новый столбец обязательный, поэтому такой запрос упадёт без значения `middle_name`. Мера это значение по умолчанию, отдельная версия приложения или заполнение поля на стороне формы.
-
-Проверьте поведение на рабочей базе после миграции: старый запрос без нового поля должен упасть. Если вы хотите увидеть ошибку заранее, сделайте копию базы на версии 2 до отката и повторите запрос там.
+Проверьте, что произойдёт со старым приложением, которое вставляет студента без отчества. Новый столбец обязательный и не имеет значения по умолчанию, поэтому запрос должен упасть.
 
 ```sql
 INSERT INTO students(full_name, group_id, email)
 VALUES ('Проверка Совместимости', 1, 'compat@example.ru');
 ```
 
-Ошибка ограничения это ожидаемый результат, а не сбой практики. Зафиксируйте её и предложите совместимый вариант.
+Ожидаемая ошибка: `Field 'middle_name' doesn't have a default value`. Ошибка это результат проверки, а не сбой практики. Предложите меру: значение по умолчанию `не указано`, выпуск новой версии приложения вместе с миграцией или заполнение поля в форме. Выберите вариант и объясните выбор в отчёте.
 
-### Требования к отчёту
+### Шаг 10. Оформите отчёт
 
-Соберите отчёт из состояния до миграции, текстов прямого и обратного скриптов, результатов на копии, таблицы сверки, проверки отката и вывода о совместимости. Укажите версию схемы до и после, число изменённых строк и найденные ограничения.
-
-Скриншоты шапки отчёта и теории не нужны. Доказательствами служат структура таблицы, версия схемы, сверка и откат.
+Соберите отчёт из состояния до миграции, текстов прямого и обратного скриптов, результатов на копии, таблицы сверки, проверки отката и вывода о совместимости. Укажите версию схемы до и после, число изменённых строк и найденные ограничения. Скриншоты шапки отчёта и теории не нужны: доказательствами служат структура таблицы, версия схемы, сверка и откат.
 
 ## Что сдать
 
 1. Файлы `001_add_middle_name_up.sql` и `001_add_middle_name_down.sql`.
-2. Скриншоты `\d students` до и после миграции.
+2. Скриншоты `DESCRIBE students` до и после миграции.
 3. Скриншот `schema_version` с версиями 1 и 2.
 4. Таблицу сверки данных до и после.
-5. Скриншот отката: столбец удалён, версия вернулась к 1.
-6. Вывод о совместимости со старым приложением.
+5. Скриншот отката: столбец удалён, версия вернулась к 1, сумма совпала.
+6. Вывод о совместимости со старым приложением и выбранную меру.
 
 ## Критерии оценки
 
 | Критерий | Баллы | Что проверяется |
 |---|---|---|
-| Прямой скрипт | 20 | Столбец, заполнение, ограничение и версия в одной транзакции |
+| Прямой скрипт | 20 | Столбец, заполнение, обязательность, ограничение и версия |
 | Обратный скрипт | 20 | Возвращает структуру и версию, запускается без ошибок |
 | Проверка на копии | 20 | Миграция и откат пройдены до рабочей базы |
-| Сверка данных | 20 | Число строк и отпечаток совпадают |
+| Сверка данных | 20 | Число строк и контрольная сумма совпадают |
 | Совместимость | 10 | Названо влияние на старые запросы и предложена мера |
-| Оформление | 10 | Скриншоты подписаны, версии указаны |
+| Оформление | 10 | Скриншоты подписаны, версии и значения указаны |
 | **Итого** | **100** | Зачёт от 60 баллов |
 
 ## Контрольные вопросы
 
 <div class="selfcheck no-copy" markdown="1">
 
-1. Зачем писать обратный скрипт до прямого?
-2. Почему запись версии схемы входит в ту же транзакцию, что и изменение структуры?
-3. Какие блокировки берёт `ALTER TABLE` и чем опасен `lock_timeout` без ограничения?
+1. Почему `ROLLBACK` не отменяет `ALTER TABLE` в MySQL и что из этого следует для плана миграции?
+2. Зачем писать обратный скрипт до прямого?
+3. Почему `NOT NULL` ставят после заполнения столбца, а не вместе с добавлением?
 4. Почему одинакового числа строк недостаточно для сверки данных?
-5. Что произойдёт со старым приложением после добавления обязательного столбца?
+5. Что произойдёт со старым приложением после добавления обязательного столбца без значения по умолчанию?
 
 </div>

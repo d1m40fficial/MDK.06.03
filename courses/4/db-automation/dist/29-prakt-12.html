@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 12. Итоговая БД</title>
+<title>Практика 12. Итоговая база и .NET-приложение</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -790,33 +790,36 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 12. Итоговая БД</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 12. Итоговая база и .NET-приложение</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 33</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 12. Итоговая БД</h1><p class="dek">Собираем «Деканат» целиком и принимаем базу по чек-листу из двенадцати пунктов.</p></div>
-<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Собирать базу из скриптов на чистом месте</li><li>Проверять схему, ограничения, роли и индексы</li><li>Подтверждать копирование и обслуживание</li><li>Оформлять протокол приёмки по чек-листу</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Готовая база отличается от учебной не объёмом, а воспроизводимостью. Её можно собрать из скриптов на пустом месте, проверить по списку и передать другому администратору. Цель работы: собрать итоговую базу «Деканат», пройти чек-лист из двенадцати пунктов и подтвердить работу сквозным сценарием.</p>
+<div class="hero-panel"><h1>Практика 12. Итоговая база и .NET-приложение</h1><p class="dek">Собираем «Деканат» из скриптов, проверяем по чек-листу из двенадцати пунктов и принимаем базу сквозным прогоном.</p></div>
+<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Собирать базу MySQL из скриптов на чистом месте</li><li>Проверять схему, ограничения, роли и индексы</li><li>Подтверждать копирование и обслуживание из .NET-приложения</li><li>Оформлять протокол приёмки по чек-листу</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Готовая база отличается от учебной не объёмом, а воспроизводимостью. Её можно собрать из скриптов на пустом месте, проверить по списку и передать другому администратору. Цель работы: собрать итоговую базу «Деканат», пройти чек-лист из двенадцати пунктов и подтвердить работу сквозным сценарием с приложением на C#.</p>
 <p>Результат работы это комплект скриптов, заполненный чек-лист, доказательства проверок и протокол приёмки.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с VirtualBox и учебной виртуальной машиной Ubuntu Server.</li>
-<li>PostgreSQL 16 в гостевой системе, доступ <code>sudo</code> внутри машины.</li>
-<li>Клиент <code>psql</code>, утилиты <code>pg_dump</code> и <code>pg_restore</code>.</li>
-<li>Скрипты предыдущих практик: схема, роли, индексы, загрузка данных, обслуживание.</li>
+<li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
+<li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и утилита <code>mysqldump.exe</code>.</li>
+<li>.NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».</li>
+<li>Приложение <code>DeanMaintenance</code> из практики 9 и пакет <code>MySqlConnector</code>.</li>
+<li>Скрипты предыдущих практик: схема, роли, индексы, данные, обслуживание.</li>
 <li>Текстовый редактор и табличный редактор для протокола.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <h3>Что значит готовая база</h3>
-<p>Готовая к эксплуатации база отвечает четырём условиям. Её структура описана скриптами, а не руками. Ограничения живут в базе, а не только в коде приложения. Права выданы ролям по минимальным привилегиям. Копия снимается и восстанавливается, а обслуживание запускается по расписанию.</p>
+<p>Готовая к эксплуатации база отвечает четырём условиям. Её структура описана скриптами, а не создана руками. Ограничения живут в базе, а не только в коде приложения. Права выданы ролям по минимальным привилегиям. Копия снимается и восстанавливается, а обслуживание запускается приложением.</p>
 <p>Отдельно проверяется версия схемы. Если на стенде стоит версия 2, а скрипты собирают версию 1, следующая миграция сломается.</p>
 <h3>Чек-лист как инструмент приёмки</h3>
-<p>Чек-лист это список проверок с ожидаемым результатом и свидетельством. Пункт без способа проверки бесполезен: «права настроены» нельзя принять, а «роль <code>student_read</code> не может выполнить <code>INSERT</code> в <code>students</code>» можно. Свидетельство это скриншот, вывод запроса или файл, который проверяющий видит без вашего участия.</p>
+<p>Чек-лист это список проверок с ожидаемым результатом и свидетельством. Пункт без способа проверки бесполезен: «права настроены» нельзя принять, а «пользователь <code>student_ro</code> не может выполнить <code>INSERT</code> в <code>students</code>» можно. Свидетельство это скриншот, вывод запроса или файл, который проверяющий видит без вашего участия.</p>
 <h3>Воспроизводимость сборки</h3>
 <p>Скрипты применяются в фиксированном порядке: схема, роли, индексы, данные. Порядок важен: индекс не строится на несуществующей таблице, а права не выдаются на отсутствующий объект. Повторный запуск на чистой базе должен давать тот же результат.</p>
+<p>Роли в MySQL живут на уровне сервера, а привилегии привязаны к базе. Поэтому <code>roles.sql</code> для <code>dean_final</code> выдаёт права заново, а создание роли делают через <code>CREATE ROLE IF NOT EXISTS</code>: иначе повторная сборка упадёт с ошибкой «роль уже существует».</p>
 <h3>Протокол приёмки</h3>
 <p>Протокол фиксирует версию, дату, исполнителя, результаты пунктов и замечания. Он не пересказывает теорию и не заменяет доказательства. Если пункт не пройден, в протоколе стоит «не пройден» и причина, а не пустая ячейка.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
-<p>Первой строкой каждого вывода печатайте фамилию и группу: <code>SELECT 'Иванов И.И., ИС-41' AS student;</code>.</p>
+<p>Первой строкой каждого консольного вывода печатайте фамилию и группу: <code>Write-Host "Иванов И.И., ИС-41"</code>.</p>
 <h3>Шаг 1. Соберите комплект файлов</h3>
 <p>Разложите скрипты по назначению. Один файл отвечает за одну задачу, чтобы порядок сборки читался без пояснений.</p>
 <table>
@@ -830,12 +833,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td><code>schema.sql</code></td>
-<td>Таблицы, ключи, ограничения, версия схемы</td>
-<td>Практики 8 и 11</td>
+<td>Таблицы, ключи, ограничения, триггеры, версия схемы</td>
+<td>Практики 8, 10 и 11</td>
 </tr>
 <tr>
 <td><code>roles.sql</code></td>
-<td>Роли, владелец, права, членство</td>
+<td>Роли, пользователи, права, роли по умолчанию</td>
 <td>Практика 2</td>
 </tr>
 <tr>
@@ -849,13 +852,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>Практика 6</td>
 </tr>
 <tr>
-<td><code>maintenance.sh</code></td>
+<td><code>DeanMaintenance.exe</code></td>
 <td>Обслуживание с журналом и кодом возврата</td>
 <td>Практика 9</td>
 </tr>
 <tr>
-<td><code>backup.sh</code></td>
-<td>Полная копия и проверка файла</td>
+<td><code>backup.ps1</code></td>
+<td>Дамп и проверка восстановлением</td>
 <td>Практика 3</td>
 </tr>
 <tr>
@@ -865,91 +868,108 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>В <code>schema.sql</code> включите таблицу <code>maintenance_runs</code> из практики 9 и таблицу <code>audit_log</code> с триггером из практики 10. Без них проверки обслуживания и аудита в чек-листе не пройдут.</p>
-<p>В <code>maintenance.sh</code> добавьте параметр базы: <code>DB=${1:-dean}</code>. Тогда один скрипт обслуживает и рабочую базу, и итоговую.</p>
-<p>Роли живут в кластере, а не в базе, поэтому <code>CREATE ROLE</code> при повторной сборке упадёт с ошибкой «роль уже существует». Сделайте <code>roles.sql</code> идемпотентным через проверку каталога.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">DO</span><span class="w"> </span><span class="err">$$</span>
-<span class="k">BEGIN</span>
-<span class="w">  </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">pg_roles</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rolname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span>
-<span class="w">    </span><span class="k">EXECUTE</span><span class="w"> </span><span class="s1">&#39;CREATE ROLE dean_read NOLOGIN&#39;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">END</span><span class="w"> </span><span class="k">IF</span><span class="p">;</span>
-<span class="k">END</span><span class="p">;</span>
-<span class="err">$$</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Повторите блок для остальных ролей: <code>dean_write</code>, <code>student_read</code>, <code>auditor</code>, <code>dean_app</code> и <code>dean_owner</code>.</p>
+<p>В <code>schema.sql</code> включите таблицу <code>maintenance_runs</code> из практики 9, таблицу <code>audit_log</code> и триггеры из практики 10, столбец <code>middle_name</code> и строку версии 2 из практики 11.</p>
 <h3>Шаг 2. Соберите базу на чистом месте</h3>
-<p>Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. Если база от прошлой попытки уже существует, удалите её командой <code>sudo -u postgres dropdb dean_final</code>.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>dean_final
-<span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>schema.sql<span class="w"> </span>roles.sql<span class="w"> </span>indexes.sql<span class="w"> </span>data.sql<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">  </span>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_final<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">break</span>
-<span class="k">done</span>
+<p>Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. В <code>roles.sql</code> указывайте полные имена объектов <code>dean_final.*</code>: скрипт выполняется без выбранной базы.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$f</span> <span class="k">in</span> <span class="s2">&quot;schema.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;roles.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;indexes.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;data.sql&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/final/$f&quot;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$LASTEXITCODE</span> <span class="o">-ne</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Write-Host</span> <span class="s2">&quot;stop at $f&quot;</span><span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 
 <p>Приложите скриншот последнего успешного запуска. Если сборка упала, исправьте скрипт и начните с новой базы, а не правьте схему вручную.</p>
 <h3>Шаг 3. Проверьте схему и ограничения</h3>
-<p>Проверьте структуру основной таблицы и полный список ограничений. Ограничения это часть схемы, поэтому они должны быть видны в каталоге.</p>
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="kp">\d</span><span class="w"> </span><span class="ss">students</span>
+<p>Откройте <code>dean_final</code> в phpMyAdmin и проверьте список таблиц и структуру основной таблицы. Приложите скриншот вкладки «Структура» таблицы <code>students</code>: в кадре видны столбцы, типы, <code>NOT NULL</code> и ключи.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean_final</span><span class="p">;</span>
 
-<span class="go">SELECT conrelid::regclass AS table_name, conname, contype,</span>
-<span class="go">       pg_get_constraintdef(oid) AS definition</span>
-<span class="go">FROM pg_constraint</span>
-<span class="go">WHERE connamespace = &#39;public&#39;::regnamespace</span>
-<span class="go">ORDER BY table_name, conname;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="p">;</span>
+<span class="k">DESCRIBE</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="k">CONSTRAINT_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">CONSTRAINT_TYPE</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">TABLE_CONSTRAINTS</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">TABLE_SCHEMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean_final&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">CONSTRAINT_TYPE</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">CONSTRAINT_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">CHECK_CLAUSE</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">CHECK_CONSTRAINTS</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">CONSTRAINT_SCHEMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dean_final&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот <code>\d students</code> и списка ограничений. В кадре должны быть первичный ключ, внешний ключ на <code>groups</code>, уникальность почты и проверка оценки или суммы.</p>
+<p>В результатах должны быть первичные ключи, внешний ключ на <code>groups</code>, уникальность почты и проверки суммы платежа и оценки.</p>
 <h3>Шаг 4. Проверьте роли и права</h3>
-<p>Соберите список ролей и прав на таблицы. Отдельно проверьте, что приложение не может менять журнал аудита, а роль студента не может писать в таблицы.</p>
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="kp">\du</span>
-<span class="go">\dp public.students</span>
-
-<span class="go">SELECT has_table_privilege(&#39;dean_app&#39;, &#39;students&#39;, &#39;INSERT&#39;) AS app_insert,</span>
-<span class="go">       has_table_privilege(&#39;student_read&#39;, &#39;students&#39;, &#39;INSERT&#39;) AS student_insert,</span>
-<span class="go">       has_table_privilege(&#39;auditor&#39;, &#39;audit_log&#39;, &#39;SELECT&#39;) AS auditor_read,</span>
-<span class="go">       has_table_privilege(&#39;dean_app&#39;, &#39;audit_log&#39;, &#39;UPDATE&#39;) AS app_audit_update;</span>
+<p>Соберите права пользователей и убедитесь, что приложение не может менять журнал аудита, а учебный пользователь не может писать в таблицы. Пользователя <code>student_ro</code> с ролью <code>student_read</code> создайте в <code>roles.sql</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;student_ro&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Ожидаемые значения: <code>app_insert</code> истина, <code>student_insert</code> ложь, <code>auditor_read</code> истина, <code>app_audit_update</code> ложь. Приложите скриншоты <code>\du</code>, <code>\dp</code> и результата проверки.</p>
+<p>Проверьте запрет от имени учебного пользователя. Ошибка прав и есть доказательство того, что мера работает.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">student_ro</span> <span class="n">-p</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO students(full_name, email) VALUES (&#39;Тест&#39;, &#39;deny@example.ru&#39;);&quot;</span>
+</code></pre></div>
+
+<p>Приложите скриншот <code>SHOW GRANTS</code>: в кадре видно, что права <code>dean_app</code> выданы по таблицам базы <code>dean_final</code>, а на <code>audit_log</code> их нет. Скриншот ошибки доступа приложите в отчёт отдельным кадром или строкой протокола.</p>
 <h3>Шаг 5. Проверьте индексы</h3>
 <p>Индекс оправдан запросом. Выпишите индексы и укажите запрос, который каждый из них ускоряет.</p>
-<div class="codehilite" data-lang="psql"><pre><span></span><code><span class="kp">\di</span>
-<span class="go">SELECT tablename, indexname, indexdef</span>
-<span class="go">FROM pg_indexes</span>
-<span class="go">WHERE schemaname = &#39;public&#39;</span>
-<span class="go">ORDER BY tablename, indexname;</span>
-</code></pre></div>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="p">(</span><span class="k">ANALYZE</span><span class="p">,</span><span class="w"> </span><span class="n">BUFFERS</span><span class="p">)</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span>
+<span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="n">e</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span>
 <span class="k">WHERE</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот списка индексов и план запроса. Если планировщик выбрал последовательное сканирование, объясните почему: на десяти строках это нормально и не означает, что индекс лишний.</p>
+<p>Приложите скриншот <code>SHOW INDEX</code> и план запроса. В плане смотрите столбцы <code>type</code>, <code>key</code>, <code>rows</code> и <code>Extra</code>. Если планировщик выбрал полное сканирование, объясните почему: на десяти строках это нормально и не означает, что индекс лишний.</p>
 <h3>Шаг 6. Снимите и восстановите копию</h3>
 <p>Копия проверяется восстановлением, а не размером файла.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/backups/dean
-sudo<span class="w"> </span>chown<span class="w"> </span>postgres:postgres<span class="w"> </span>/var/backups/dean
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>pg_dump<span class="w"> </span>-Fc<span class="w"> </span>-f<span class="w"> </span>/var/backups/dean/dean_final.dump<span class="w"> </span>dean_final
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP DATABASE IF EXISTS dean_restore;&quot;</span>
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>dean_restore
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>pg_restore<span class="w"> </span>-d<span class="w"> </span>dean_restore<span class="w"> </span>/var/backups/dean/dean_final.dump
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_restore<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT count(*) AS students FROM students;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean_final</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean_final</span>
+
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_restore</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/backup/dean_final.sql&quot;</span>
 </code></pre></div>
 
-<p>Приложите скриншот создания копии и числа строк в восстановленной базе. Число должно совпадать с исходным.</p>
-<h3>Шаг 7. Запустите обслуживание</h3>
-<p>Запустите скрипт на итоговой базе и проверьте журнал и таблицу запусков.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>/opt/dean/bin/maintenance.sh<span class="w"> </span>dean_final
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;exit code: </span><span class="nv">$?</span><span class="s2">&quot;</span>
-sudo<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>/var/log/dean/maintenance.log
-sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean_final<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT id, started_at, status FROM maintenance_runs ORDER BY id DESC LIMIT 3;&quot;</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;source&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">side</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_final</span><span class="p">.</span><span class="n">students</span>
+<span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;restored&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_restore</span><span class="p">.</span><span class="n">students</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_restore</span><span class="p">.</span><span class="n">schema_version</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">version</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Приложите скриншот запуска и строки <code>ok</code>. Если скрипт возвращает ошибку, разберите её до заполнения чек-листа.</p>
+<p>Приложите скриншот создания копии и сравнения числа строк. Числа должны совпасть, версия схемы в копии тоже.</p>
+<h3>Шаг 7. Запустите обслуживание из .NET-приложения</h3>
+<p>Приложению из практики 9 нужно передать имя базы, иначе оно всегда работает с <code>dean</code>. Добавьте разбор аргумента.</p>
+<div class="codehilite" data-lang="csharp"><pre><span></span><code><span class="kt">var</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">.</span><span class="n">Length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dean&quot;</span><span class="p">;</span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;C:\dean\secret\db_password.txt&quot;</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="n">secret</span><span class="p">).</span><span class="n">Trim</span><span class="p">()</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">cs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySqlConnectionStringBuilder</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3306</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">database</span><span class="p">,</span>
+<span class="w">    </span><span class="n">UserID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dean_app&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">password</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CharacterSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;utf8mb4&quot;</span>
+<span class="p">}.</span><span class="n">ConnectionString</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">dotnet</span> <span class="n">publish</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\</span><span class="n">DeanMaintenance</span> <span class="n">-c</span> <span class="n">Release</span> <span class="n">-o</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">bin</span>
+
+<span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">DeanMaintenance</span><span class="p">.</span><span class="n">exe</span> <span class="n">dean_final</span>
+<span class="nb">Write-Host</span> <span class="s2">&quot;exit code: $LASTEXITCODE&quot;</span>
+<span class="nb">Get-Content</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">log</span><span class="p">\</span><span class="n">maintenance</span><span class="p">.</span><span class="n">log</span> <span class="n">-Tail</span> <span class="n">3</span>
+</code></pre></div>
+
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">started_at</span><span class="p">,</span><span class="w"> </span><span class="n">script</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_final</span><span class="p">.</span><span class="n">maintenance_runs</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Приложите скриншот запуска: в кадре видны имя базы, код возврата <code>0</code> и строка <code>ok</code> в журнале. Если приложение возвращает единицу, разберите ошибку до заполнения чек-листа.</p>
 <h3>Шаг 8. Заполните чек-лист</h3>
 <p>Пройдите двенадцать пунктов. В столбце «Свидетельство» укажите номер скриншота или запрос, а не общее слово «проверено».</p>
 <table>
@@ -966,42 +986,42 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <tr>
 <td>1</td>
 <td>Все таблицы созданы</td>
-<td><code>\dt</code></td>
+<td><code>SHOW TABLES</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>2</td>
 <td>Первичные ключи</td>
-<td><code>pg_constraint</code></td>
+<td><code>information_schema.TABLE_CONSTRAINTS</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>3</td>
 <td>Внешние ключи</td>
-<td><code>pg_constraint</code></td>
+<td><code>information_schema.REFERENTIAL_CONSTRAINTS</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>4</td>
 <td>Ограничения <code>CHECK</code></td>
-<td><code>pg_constraint</code></td>
+<td><code>information_schema.CHECK_CONSTRAINTS</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>5</td>
 <td>Уникальность</td>
-<td><code>pg_constraint</code></td>
+<td><code>SHOW INDEX</code>, <code>Non_unique = 0</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>6</td>
 <td>Обязательные поля</td>
-<td><code>\d students</code></td>
+<td><code>DESCRIBE students</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -1014,36 +1034,36 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 </tr>
 <tr>
 <td>8</td>
-<td>Владелец объектов</td>
-<td><code>\dt</code></td>
+<td>Роли и права</td>
+<td><code>SHOW GRANTS</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>9</td>
-<td>Роли и права</td>
-<td><code>\du</code>, <code>\dp</code></td>
+<td>Индексы</td>
+<td><code>SHOW INDEX</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>10</td>
-<td>Индексы</td>
-<td><code>\di</code></td>
+<td>Копия и восстановление</td>
+<td><code>mysqldump</code>, <code>source</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>11</td>
-<td>Копия и восстановление</td>
-<td><code>pg_restore</code></td>
+<td>Обслуживание</td>
+<td><code>DeanMaintenance.exe dean_final</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>12</td>
-<td>Обслуживание и аудит</td>
-<td><code>maintenance.sh</code>, <code>audit_log</code></td>
+<td>Аудит</td>
+<td><code>audit_log</code>, <code>information_schema.TRIGGERS</code></td>
 <td></td>
 <td></td>
 </tr>
@@ -1067,37 +1087,62 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 </tr>
 <tr>
 <td>2</td>
-<td><code>INSERT</code> платежа</td>
-<td>Строка добавлена, ограничение суммы соблюдено</td>
+<td><code>INSERT</code> студента с отчеством</td>
+<td>Строка добавлена, событие аудита записано</td>
 </tr>
 <tr>
 <td>3</td>
-<td>Отчёт по группе с соединением трёх таблиц</td>
-<td>Список студентов и курсов получен</td>
+<td><code>INSERT</code> платежа на 1500 рублей</td>
+<td>Строка добавлена</td>
 </tr>
 <tr>
 <td>4</td>
-<td>Чтение <code>audit_log</code> ролью <code>auditor</code></td>
-<td>Событие <code>INSERT</code> видно</td>
+<td><code>INSERT</code> платежа с суммой минус 5</td>
+<td>Отказ по ограничению <code>CHECK</code></td>
 </tr>
 <tr>
 <td>5</td>
-<td>Попытка <code>student_read</code> изменить <code>students</code></td>
-<td>Отказ по правам</td>
+<td>Отчёт по группе с соединением четырёх таблиц</td>
+<td>Список студентов и курсов получен</td>
 </tr>
 <tr>
 <td>6</td>
-<td>Запуск <code>maintenance.sh</code></td>
-<td>Код возврата 0, запись <code>ok</code></td>
+<td>Чтение <code>audit_log</code> ролью <code>auditor</code></td>
+<td>Событие <code>INSERT</code> по <code>students</code> видно</td>
 </tr>
 <tr>
 <td>7</td>
-<td>Копия и восстановление</td>
-<td>Число строк совпадает</td>
+<td>Попытка <code>student_ro</code> изменить <code>students</code></td>
+<td>Отказ по правам</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Запуск <code>DeanMaintenance.exe dean_final</code></td>
+<td>Код возврата 0, запись <code>ok</code></td>
 </tr>
 </tbody>
 </table>
-<p>Приложите доказательства шагов 2, 4 и 5: добавленную строку, событие аудита и ошибку прав. Роли без права входа проверяйте через <code>SET ROLE</code>, например <code>SET ROLE student_read;</code>, а после проверки возвращайтесь командой <code>RESET ROLE;</code>.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">middle_name</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Тестов Тест Тестович&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Тестович&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;final.test@example.ru&#39;</span><span class="p">);</span>
+
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">payments</span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1500</span><span class="p">.</span><span class="mi">00</span><span class="p">);</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">payments</span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">00</span><span class="p">);</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">grade</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="n">e</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">student_id</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">course_id</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ИС-41&#39;</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">title</span><span class="p">;</span>
+
+<span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">at</span><span class="p">,</span><span class="w"> </span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</code></pre></div>
+
+<p>В запросе отчёта подставьте имя своей группы. Событие аудита читайте под ролью <code>auditor</code>: если она выдана вашей учётной записи, начните сессию с <code>SET ROLE auditor;</code>. Приложите доказательства шагов 2, 3, 4 и 6: добавленную строку, ошибку ограничения и событие аудита. Ошибка <code>Check constraint 'payments_chk_1' is violated</code> это ожидаемый результат проверки, а не сбой.</p>
 <h3>Шаг 10. Оформите протокол</h3>
 <p>Заполните протокол приёмки. Он короткий: версия, дата, исполнитель, итог по пунктам и замечания.</p>
 <table>
@@ -1134,17 +1179,15 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 </tr>
 </tbody>
 </table>
-<h3>Требования к отчёту</h3>
-<p>Соберите отчёт из перечня файлов, команд сборки, доказательств схемы, ролей, индексов, копии и обслуживания, заполненного чек-листа и протокола. В выводе назовите два слабых места своей базы и меры, которые вы бы приняли следующими.</p>
-<p>Скриншоты шапки отчёта и теории не нужны. Доказательством служат только структура, права, индексы, копия и запуск скрипта.</p>
+<p>В выводе назовите два слабых места своей базы и меры, которые вы бы приняли следующими. Скриншоты шапки отчёта и теории не нужны: доказательством служат структура, права, индексы, копия и запуск приложения.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ol>
 <li>Комплект скриптов сборки и <code>README.md</code> с порядком применения.</li>
-<li>Скриншоты <code>\d students</code>, <code>\du</code>, <code>\dp</code>, списка индексов.</li>
-<li>Скриншот создания копии и числа строк после восстановления.</li>
-<li>Скриншот запуска <code>maintenance.sh</code> и записи в журнале.</li>
+<li>Скриншот phpMyAdmin со структурой <code>students</code>, скриншоты <code>SHOW GRANTS</code> и <code>SHOW INDEX</code>.</li>
+<li>Скриншот создания дампа и сравнения числа строк после восстановления.</li>
+<li>Скриншот запуска <code>DeanMaintenance.exe dean_final</code> с кодом <code>0</code> и записью в журнале.</li>
 <li>Заполненный чек-лист из двенадцати пунктов.</li>
-<li>Протокол приёмки и вывод о слабых местах.</li>
+<li>Протокол приёмки, вывод о слабых местах и мерах.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <table>
@@ -1179,7 +1222,7 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <tr>
 <td>Копия и обслуживание</td>
 <td>20</td>
-<td>Восстановление и запуск скрипта подтверждены</td>
+<td>Восстановление и запуск приложения подтверждены</td>
 </tr>
 <tr>
 <td>Чек-лист и протокол</td>
@@ -1199,10 +1242,10 @@ sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> <
 <li>Почему база, собранная вручную, не считается готовой к эксплуатации?</li>
 <li>Зачем проверять ограничения в каталоге, если они уже описаны в скрипте?</li>
 <li>Почему копия проверяется восстановлением, а не размером файла?</li>
+<li>Почему роли создают через <code>CREATE ROLE IF NOT EXISTS</code>, а привилегии выдают заново для новой базы?</li>
 <li>Что делать, если пункт чек-листа не пройден, а срок сдачи близко?</li>
-<li>Какие два слабых места чаще всего остаются у учебной базы?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="28-prakt-11.html"><span>← Предыдущее занятие</span>Практика 11. Миграция</a><span></span></nav></main>
+</div></article><nav class="pager"><a class="" href="28-prakt-11.html"><span>← Предыдущее занятие</span>Миграция</a><span></span></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

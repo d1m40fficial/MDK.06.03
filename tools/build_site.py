@@ -231,8 +231,7 @@ def discipline_card(c: dict) -> str:
     n = lesson_slots(c.get("chapters", []))
     avail = c.get("status") == "available"
     code = c.get("code", "")
-    spec = " · ".join(x for x in [esc(code), esc(c.get("level", "")),
-                                  f"{c['hours']} ч" if c.get("hours") else None,
+    spec = " · ".join(x for x in [esc(code),
                                   f"{n} {plural_lessons(n)}" if n else None,
                                   esc(c.get("assessment", ""))] if x)
     card_class = "course-card shader-card" if avail else "course-card pending shader-card"

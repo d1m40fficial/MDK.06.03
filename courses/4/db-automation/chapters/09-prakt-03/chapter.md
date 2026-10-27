@@ -1,281 +1,251 @@
 ---
-title: Практика 3. Резервное копирование; Восстановление
-dek: "Проверяем копию единственным честным способом: восстанавливаем «Деканат» на чистом месте и сверяем строки и контрольные суммы."
+title: Практика 3. Резервное копирование и восстановление
+dek: "Проверяем копию единственным честным способом: восстанавливаем «Деканат» и возвращаем базу на момент до ошибки."
 chapter: "Практика 3"
 minutes: 180
 level: СПО
 glyph: П3
 outcomes:
-  - Делать логическую копию базы в пользовательском формате
-  - Восстанавливать копию в отдельную базу и сверять данные
-  - Делать физическую копию кластера с архивом WAL
-  - Настраивать восстановление на момент времени и читать журнал
+  - Делать полный дамп базы утилитой mysqldump
+  - Восстанавливать дамп в отдельную базу и сверять данные
+  - Делать копию через phpMyAdmin и объяснять её ограничения
+  - Включать binary log и возвращать базу на момент времени
 ---
 
 ## Цель работы
 
-Копия существует не тогда, когда появился файл, а тогда, когда из него получена работающая база с теми же данными. Цель работы: пройти оба пути копирования, логический и физический, восстановить «Деканат» на чистом месте и доказать совпадение данными, а не размером файла.
+Копия существует не тогда, когда появился файл, а тогда, когда из него получена работающая база с теми же данными. Цель работы: пройти путь от дампа до восстановления, вернуть «Деканат» на момент до ошибки и доказать совпадение данными, а не размером файла.
 
-Вы делаете дамп `pg_dump -Fc`, восстанавливаете его в `dean_restore`, сверяете число строк и контрольные суммы, отдельно проверяете копию только схемы. Затем снимаете физическую копию `pg_basebackup`, включаете архив WAL и восстанавливаете кластер на отдельном порту до выбранного момента.
+Вы делаете дамп `mysqldump`, восстанавливаете его в `dean_restore`, сверяете число строк и контрольные суммы, повторяете копию через phpMyAdmin Export, включаете binary log в `my.ini` и проигрываете журнал до нужного момента. Итог: скрипты копирования, протокол сверки и понимание, что дамп без журнала не отменяет ошибочный `DELETE`.
 
 ## Оборудование и программное обеспечение
 
-- Виртуальная машина Ubuntu Server с PostgreSQL 16 и базой `dean` после практик 1 и 2.
-- Не менее 3 ГБ свободного места под копии и распакованный кластер.
-- Утилиты `pg_dump`, `pg_restore`, `pg_basebackup`, `pg_ctl`, `psql`.
-- Права `sudo` и доступ к роли `postgres`.
+- Компьютер с XAMPP 8.5.12 и базой `dean` после практик 1 и 2.
+- Утилиты `C:\xampp\mysql\bin\mysqldump.exe`, `mysql.exe`, `mysqlbinlog.exe`.
+- Доступ к файлу `C:\xampp\mysql\bin\my.ini` и к перезапуску MySQL в Control Panel.
+- Не менее 200 МБ свободного места под копии.
 - Табличный редактор для протокола восстановления.
 
 ## Краткие теоретические сведения
 
-**Логическая копия** это набор команд SQL и данных, описывающих базу. `pg_dump` читает базу через обычное подключение и складывает результат в файл. Формат `custom` (`-Fc`) сжимает данные, хранит оглавление объектов и позволяет при восстановлении выбрать часть таблиц. Логическая копия переносима между версиями PostgreSQL и между разными операционными системами, но восстанавливается медленнее физической и не позволяет вернуться к моменту между копиями.
+**Логическая копия** это набор команд SQL и данных, описывающих базу. `mysqldump` читает базу через обычное подключение и складывает результат в файл. Копия переносима между версиями и серверами, но восстанавливается медленнее физической и не позволяет вернуться к моменту между копиями.
 
-**Физическая копия** это файлы кластера вместе с журналом WAL. `pg_basebackup` копирует каталог данных и требует той же мажорной версии PostgreSQL и той же архитектуры. Такая копия быстро возвращает сервер к жизни, но не переносит базу на другую версию.
+**`--single-transaction`** снимает согласованный снимок InnoDB, не блокируя запись: сервер открывает транзакцию с уровнем `REPEATABLE READ` и читает данные на одном снимке. Для таблиц MyISAM этот ключ не работает, там нужна блокировка таблиц.
 
-**Архив WAL** важен для восстановления на момент времени. При `archive_mode = on` сервер после заполнения сегмента вызывает `archive_command` и складывает сегмент в отдельный каталог. Без архива физическая копия возвращает только состояние на момент её снятия: изменения после копии потеряны.
+**`--routines` и `--triggers`** добавляют в файл процедуры, функции и триггеры. Без них копия выглядит полной, но после восстановления часть логики пропадает. События планировщика выгружает отдельный ключ `--events`.
 
-**Восстановление на момент времени** (PITR) собирает кластер из физической копии и проигрывает архивные сегменты WAL до `recovery_target_time`. Файл `recovery.signal` сообщает серверу, что нужен режим восстановления, а `recovery_target_action = 'promote'` переводит его в обычную работу после достижения цели. Восстановление всегда идёт в отдельный каталог и на отдельный порт: рабочий кластер не трогают, пока копия не проверена.
+**`--default-character-set=utf8mb4`** фиксирует кодировку соединения при выгрузке. Без него сервер может отдать текст в другой кодировке, и кириллица в файле превратится в мусор.
 
-**Проверка копии** опирается на две величины. Число строк отвечает, все ли записи на месте. Контрольная сумма `md5(string_agg(t::text, '' ORDER BY id))` отвечает, совпадает ли содержимое построчно. Сумму считают в одинаковых условиях: одна и та же временная зона сеанса, иначе `timestamptz` отобразится по-разному и сумма разойдётся без потери данных.
+**Восстановление** выполняет `mysql`, читая файл как обычный SQL-скрипт. Если дамп сделан без ключа `--databases`, в нём нет ни `CREATE DATABASE`, ни `USE`: база назначения задаётся в командной строке. С ключом `--databases` файл содержит `USE dean`, и импорт в `dean_restore` молча перезапишет рабочую базу.
+
+**Проверка копии** опирается на две величины. Число строк отвечает, все ли записи на месте. `CHECKSUM TABLE` считает сумму по содержимому строк и отвечает, совпадают ли данные построчно. Сумму сравнивают у источника и у копии, а не с числом из учебника.
+
+**Binary log** это журнал изменений сервера. Он дополняет дамп: дамп даёт состояние на момент снятия, журнал даёт все изменения после этого момента. Восстановление на момент времени собирает базу из дампа и проигрывает журнал до нужной позиции или времени. Сам журнал копией не является: без дампа восстанавливать нечего.
 
 **RPO** это допустимый объём потерянных изменений, **RTO** допустимое время восстановления. Копия, которая восстанавливается дольше RTO, не годится.
 
 ## Ход работы
 
-### Шаг 1. Зафиксируйте состояние базы
+### Шаг 1. Зафиксируйте эталон
 
-Создайте каталог для копий и выдайте права служебной роли.
-
-```bash
-echo "Иванов ИС-41"
-sudo mkdir -p /var/backups/dean/wal
-sudo chown -R postgres:postgres /var/backups/dean
-df -h /var/backups
-```
-
-Дальше работайте в сеансе `psql` базы `dean` и начинайте каждый вывод строкой с фамилией и группой.
-
-```bash
-psql "host=127.0.0.1 dbname=dean user=dean_app"
-```
-
-Снимите число строк и контрольные суммы. Эти значения станут эталоном для сверки.
+Работайте в базе `dean` и начинайте каждый вывод строкой с фамилией и группой.
 
 ```sql
-SELECT 'groups' AS tbl, count(*) FROM groups
-UNION ALL SELECT 'students', count(*) FROM students
-UNION ALL SELECT 'courses', count(*) FROM courses
-UNION ALL SELECT 'enrollments', count(*) FROM enrollments
-UNION ALL SELECT 'payments', count(*) FROM payments
-UNION ALL SELECT 'audit_log', count(*) FROM audit_log
+SELECT 'Иванов ИС-41' AS student;
+
+SELECT 'groups' AS tbl, COUNT(*) AS rows_cnt FROM groups
+UNION ALL SELECT 'students', COUNT(*) FROM students
+UNION ALL SELECT 'courses', COUNT(*) FROM courses
+UNION ALL SELECT 'enrollments', COUNT(*) FROM enrollments
+UNION ALL SELECT 'payments', COUNT(*) FROM payments
+UNION ALL SELECT 'audit_log', COUNT(*) FROM audit_log
 ORDER BY tbl;
 
-SET TIME ZONE 'Europe/Moscow';
-
-SELECT 'students' AS tbl, md5(string_agg(t::text, '' ORDER BY id)) AS checksum
-FROM students t
-UNION ALL
-SELECT 'enrollments', md5(string_agg(t::text, '' ORDER BY id)) FROM enrollments t
-UNION ALL
-SELECT 'payments', md5(string_agg(t::text, '' ORDER BY id)) FROM payments t;
+CHECKSUM TABLE groups, students, courses, enrollments, payments, audit_log;
 ```
 
-Запишите результаты в протокол.
+Запишите результаты в протокол: это эталон для сверки.
 
-### Шаг 2. Сделайте логическую копию
+### Шаг 2. Включите binary log
 
-```bash
-echo "Иванов ИС-41"
-sudo -u postgres pg_dump -Fc -d dean -f /var/backups/dean/dean.dump
-sudo -u postgres pg_dump --schema-only -d dean -f /var/backups/dean/dean_schema.sql
-ls -lh /var/backups/dean
-sudo -u postgres pg_restore -l /var/backups/dean/dean.dump | head -n 20
+Откройте `C:\xampp\mysql\bin\my.ini` и добавьте строки в существующую секцию `[mysqld]`.
+
+```ini
+log-bin=mysql-bin
+server-id=1
+binlog_format=ROW
 ```
 
-`-Fc` даёт сжатый файл с оглавлением. `pg_restore -l` показывает, что внутри: таблицы, последовательности, ограничения, владельцы. Если в списке нет нужной таблицы, копия неполная, и дальше идти нет смысла.
-
-Сделайте скриншот вывода `pg_dump` и списка оглавления.
-
-### Шаг 3. Восстановите копию в отдельную базу
-
-```bash
-echo "Иванов ИС-41"
-sudo -u postgres createdb -O dean_owner dean_restore
-sudo -u postgres pg_restore -d dean_restore --exit-on-error /var/backups/dean/dean.dump
-```
-
-Флаг `--exit-on-error` останавливает восстановление на первой ошибке: для проверки копии нужна уверенность, что прошло всё.
-
-Сверьте данные в `dean_restore` теми же запросами, что на шаге 1.
+Остановите и снова запустите MySQL в Control Panel: параметры журнала применяются только при старте. Затем проверьте настройку.
 
 ```sql
-\c dean_restore
-SET TIME ZONE 'Europe/Moscow';
-
-SELECT 'groups' AS tbl, count(*) FROM groups
-UNION ALL SELECT 'students', count(*) FROM students
-UNION ALL SELECT 'courses', count(*) FROM courses
-UNION ALL SELECT 'enrollments', count(*) FROM enrollments
-UNION ALL SELECT 'payments', count(*) FROM payments
-UNION ALL SELECT 'audit_log', count(*) FROM audit_log
-ORDER BY tbl;
+SHOW VARIABLES WHERE Variable_name IN ('log_bin', 'server_id', 'binlog_format', 'log_bin_basename');
+SHOW MASTER STATUS;
 ```
 
-Сделайте скриншот `pg_restore` и результата `SELECT count(*)`: числа должны совпасть с эталоном.
+`log_bin` должен быть `ON`, а `SHOW MASTER STATUS` вернёт имя файла и позицию. В MySQL 8.4 эта команда называется `SHOW BINARY LOG STATUS`. Файлы журнала лежат в `C:\xampp\mysql\data`.
 
-### Шаг 4. Проверьте копию только схемы
+### Шаг 3. Сделайте дамп
 
-```bash
-sudo -u postgres createdb -O dean_owner dean_schema
-sudo -u postgres psql -d dean_schema -f /var/backups/dean/dean_schema.sql
-sudo -u postgres psql -d dean_schema -c "\dt"
-sudo -u postgres psql -d dean_schema -c "SELECT count(*) FROM students;"
+```powershell
+New-Item -ItemType Directory -Force C:\backup | Out-Null
+& "C:\xampp\mysql\bin\mysqldump.exe" -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file="C:\backup\dean_full.sql" dean
+Get-Item C:\backup\dean_full.sql | Select-Object Name, Length, LastWriteTime
 ```
 
-Таблицы созданы, строк нет: `--schema-only` не выгружает данные. Такая копия нужна для развёртывания пустой структуры.
+Ключ `--result-file` важен на Windows: перенаправление `>` в Windows PowerShell 5.1 пишет файл в UTF-16, и `mysql` потом читает его как мусор.
 
-### Шаг 5. Включите архив WAL и снимите физическую копию
+Сделайте первый скриншот: команда без сообщений об ошибках и размер полученного файла. Пустой вывод `mysqldump` означает успех, а не отсутствие работы.
 
-```bash
-sudo -u postgres psql -c "ALTER SYSTEM SET archive_mode = on;"
-sudo -u postgres psql -c "ALTER SYSTEM SET archive_command = 'test ! -f /var/backups/dean/wal/%f && cp %p /var/backups/dean/wal/%f';"
-sudo systemctl restart postgresql
-sudo -u postgres psql -c "SHOW archive_mode;"
-sudo -u postgres psql -c "SELECT pg_switch_wal();"
-```
-
-`archive_mode` требует перезапуска, `archive_command` применяется без него. Команда архивации сначала проверяет, нет ли уже такого файла: повторная запись того же сегмента не должна затирать предыдущий.
-
-```bash
-echo "Иванов ИС-41"
-sudo -u postgres pg_basebackup -D /var/backups/dean/base -Ft -z -P -X stream
-ls -lh /var/backups/dean/base
-```
-
-`-Ft` упаковывает копию в tar, `-z` сжимает, `-X stream` передаёт WAL вместе с копией, `-P` показывает ход. Каталог назначения должен быть пустым.
-
-Сделайте скриншот `pg_basebackup` с итоговой строкой о завершении.
-
-### Шаг 6. Создайте точку восстановления и «аварию»
-
-Запомните время до изменения, добавьте платёж, затем удалите записи и запомните время ошибки.
+### Шаг 4. Восстановите дамп в отдельную базу
 
 ```sql
-SELECT now() AS t_before;
+CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 dean_restore -e "SOURCE C:\backup\dean_full.sql"
+```
+
+База `dean_restore` указана в командной строке, потому что в дампе нет `USE`. Если бы дамп снимали с ключом `--databases`, эта команда загрузила бы данные в `dean` и затёрла рабочую базу.
+
+Сделайте второй скриншот: команду восстановления без ошибок и список таблиц `dean_restore`.
+
+### Шаг 5. Сверьте данные
+
+```sql
+SELECT 'dean' AS base, COUNT(*) AS students FROM dean.students
+UNION ALL SELECT 'dean_restore', COUNT(*) FROM dean_restore.students;
+
+CHECKSUM TABLE dean.students, dean_restore.students,
+               dean.enrollments, dean_restore.enrollments,
+               dean.payments, dean_restore.payments;
+```
+
+Пары значений должны совпасть. Сделайте третий скриншот: числа строк и контрольные суммы источника и копии.
+
+### Шаг 6. Сделайте копию через phpMyAdmin
+
+Откройте базу `dean`, вкладка `Экспорт`, метод `Настроить`, формат `SQL`, кодировка `utf8mb4`, снимите галочку добавления `CREATE DATABASE` и сохраните файл. Затем создайте базу `dean_export` и загрузите файл через вкладку `Импорт`.
+
+Сверьте число строк в `dean_export` тем же запросом. Этот путь удобен для небольшой базы, но ограничен настройками PHP: большие файлы упираются в пределы загрузки и времени выполнения, поэтому для рабочей базы используют `mysqldump`.
+
+### Шаг 7. Начните новый файл журнала и смоделируйте ошибку
+
+```sql
+FLUSH BINARY LOGS;
+SHOW MASTER STATUS;
+SELECT NOW() AS t_start;
 INSERT INTO payments (student_id, amount) VALUES (5, 9000.00);
-SELECT pg_sleep(5);
-SELECT now() AS t_target;
-SELECT pg_sleep(2);
-SELECT now() AS t_error;
+SELECT NOW() AS t_good;
+SELECT SLEEP(3);
 DELETE FROM enrollments WHERE course_id = 3;
+SELECT NOW() AS t_bad;
 ```
 
-`t_target` это момент между полезным изменением и ошибкой. Именно его вы подставите в настройку восстановления.
+`FLUSH BINARY LOGS` закрывает текущий файл и открывает новый. Запишите его имя и позицию: это начало окна, которое вы проиграете, поэтому в него попадут только изменения после этой точки.
 
-```bash
-sudo -u postgres psql -c "SELECT pg_switch_wal();"
-ls /var/backups/dean/wal | tail -n 5
+`t_good` это момент после полезной вставки и до ошибки. Пауза нужна потому, что `NOW()` считает секунды: без неё оба события попадут в одну секунду, и остановка по времени не отделит одно от другого.
+
+### Шаг 8. Прочитайте binary log
+
+```sql
+SHOW BINARY LOGS;
 ```
 
-### Шаг 7. Восстановите кластер на отдельном порту
-
-```bash
-sudo mkdir -p /var/lib/postgresql/16/pitr
-sudo chown postgres:postgres /var/lib/postgresql/16/pitr
-sudo -u postgres tar -xzf /var/backups/dean/base/base.tar.gz -C /var/lib/postgresql/16/pitr
-sudo -u postgres mkdir -p /var/lib/postgresql/16/pitr/pg_wal
-sudo -u postgres tar -xzf /var/backups/dean/base/pg_wal.tar.gz -C /var/lib/postgresql/16/pitr/pg_wal
+```powershell
+& "C:\xampp\mysql\bin\mysqlbinlog.exe" --base64-output=DECODE-ROWS -v `
+  --result-file="C:\backup\binlog.txt" "C:\xampp\mysql\data\mysql-bin.000002"
+Select-String -Path C:\backup\binlog.txt -Pattern "DELETE FROM" | Select-Object -First 5
 ```
 
-Добавьте параметры восстановления в конец `postgresql.auto.conf`. Время подставьте своё, из `t_target`.
+Читайте файл из шага 7, а не самый старый: в нём лежат обе операции. Имя файла возьмите из `SHOW MASTER STATUS`, в примере это `mysql-bin.000002`. Ключ `-v` показывает построчные события как псевдо-SQL, поэтому удаление видно глазами.
 
-```bash
-sudo -u postgres tee -a /var/lib/postgresql/16/pitr/postgresql.auto.conf <<'EOF'
-restore_command = 'cp /var/backups/dean/wal/%f %p'
-recovery_target_time = '2026-10-27 10:15:00+03'
-recovery_target_action = 'promote'
-EOF
-sudo -u postgres touch /var/lib/postgresql/16/pitr/recovery.signal
-sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/16/pitr -l /tmp/pitr.log -o "-p 5433" start
-```
+Сделайте четвёртый скриншот: список файлов журнала, текущую позицию и найденный фрагмент с `DELETE FROM`.
 
-Проверьте журнал и данные. В журнале должны быть строки о восстановлении и достижении согласованного состояния.
+Журнал растёт с каждой записью и занимает диск. После проверенной копии старые файлы удаляют командой `PURGE BINARY LOGS`, но только если дамп снят позже удаляемых файлов: иначе восстанавливать будет нечего.
 
-```bash
-sudo grep -i -E "recovery|consistent" /tmp/pitr.log | tail -n 20
-sudo -u postgres psql -p 5433 -d dean -c "SELECT count(*) FROM payments;"
-sudo -u postgres psql -p 5433 -d dean -c "SELECT count(*) FROM enrollments WHERE course_id = 3;"
-sudo -u postgres psql -p 5433 -d dean -c "SELECT pg_is_in_recovery();"
-```
+### Шаг 9. Верните базу на момент до ошибки
 
-Ожидаемый результат: платёж на месте, удалённые записи о зачислении тоже на месте, `pg_is_in_recovery()` возвращает `false`. Остановите учебный кластер после проверки.
+Сначала сохраните повреждённое состояние как доказательство, затем восстановите дамп и проиграйте журнал до `t_good`.
 
-```bash
-sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/16/pitr stop
-```
-
-Сделайте скриншот журнала восстановления и результатов запросов.
-
-### Шаг 8. Если PITR не поднялся, выполните учебную симуляцию
-
-Если кластер на порту 5433 не стартует, разберите журнал, а затем выполните упрощённый вариант: восстановите дамп в `dean_pitr` и постройте срез данных на момент времени запросом.
-
-```bash
-sudo -u postgres createdb -O dean_owner dean_pitr
-sudo -u postgres pg_restore -d dean_pitr /var/backups/dean/dean.dump
+```powershell
+& "C:\xampp\mysql\bin\mysqldump.exe" -u root --single-transaction `
+  --default-character-set=utf8mb4 --result-file="C:\backup\dean_broken.sql" dean
 ```
 
 ```sql
-\c dean_pitr
-SELECT count(*) FROM payments WHERE paid_at <= '2026-10-27 10:15:00+03';
+DROP DATABASE dean;
+CREATE DATABASE dean CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Это срез таблицы, а не PITR. Логическое восстановление возвращает только состояние на момент дампа: оно не умеет отменять `DELETE`, не восстанавливает изменения схемы после копии и не возвращает значения последовательностей. PITR проигрывает журнал и потому возвращает базу целиком на выбранный момент. Разницу опишите в выводе.
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 dean -e "SOURCE C:\backup\dean_full.sql"
+& "C:\xampp\mysql\bin\mysqlbinlog.exe" --start-position=ПОЗИЦИЯ --stop-datetime="ВРЕМЯ" `
+  --result-file="C:\backup\replay.sql" "C:\xampp\mysql\data\mysql-bin.000002"
+& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 -e "SOURCE C:\backup\replay.sql"
+```
 
-### Шаг 9. Заполните протокол восстановления
+Вместо `ПОЗИЦИЯ` подставьте позицию из шага 7, вместо `ВРЕМЯ` значение `t_good`, вместо имени файла то, что вернул `SHOW MASTER STATUS` после `FLUSH BINARY LOGS`. Проигрывание начинается с начала окна, поэтому чужие события в него не попадут.
 
-| Проверка | Логическая копия | Физическая копия |
-|---|---|---|
-| Что копируется | Объекты и данные в виде команд | Файлы кластера и WAL |
-| Формат и размер | `-Fc`, размер файла | tar.gz, размер каталога |
-| Куда восстановлено | `dean_restore` | `/var/lib/postgresql/16/pitr`, порт 5433 |
-| Время восстановления | Замер времени | Замер времени |
-| Число строк совпало | Да или нет, по каждой таблице | Да или нет |
-| Контрольная сумма совпала | Да или нет | Да или нет |
-| Точка во времени | Не поддерживается | `recovery_target_time` |
+Журнал проигрывают только на ту же схему. Если между дампом и аварией меняли таблицы, сначала применяют миграции, иначе события не найдут своих столбцов.
 
-Ниже добавьте таблицу сверки по каждой таблице: имя, строк в источнике, строк в копии, контрольная сумма источника, контрольная сумма копии, вывод.
+Учётные записи и их права лежат в базе `mysql`, а не в дампе `dean`, поэтому после `DROP DATABASE` они сохранились. Полная копия сервера снимается иначе и включает служебные базы.
+
+### Шаг 10. Проверьте результат и заполните протокол
+
+```sql
+SELECT 'Иванов ИС-41' AS student;
+SELECT COUNT(*) AS enrollments_course3 FROM enrollments WHERE course_id = 3;
+SELECT COUNT(*) AS payments_student5 FROM payments WHERE student_id = 5;
+CHECKSUM TABLE students, enrollments, payments;
+```
+
+Записи о зачислении на третий курс должны вернуться, платёж из шага 7 остаться, а состояние совпасть с моментом `t_good`. Заполните протокол.
+
+| Проверка | Значение |
+|---|---|
+| Файл дампа и размер | |
+| Позиция начала окна журнала | |
+| Время полезной вставки `t_good` | |
+| Время ошибки `t_bad` | |
+| Строк в источнике и в копии | |
+| Контрольные суммы совпали | |
+| Время восстановления | |
+| RPO и RTO стенда | |
 
 ### Требования к отчёту
 
-Отчёт содержит скрипт копирования, протокол восстановления, таблицу сверки, скриншоты `pg_dump`, `pg_restore`, `SELECT count(*)`, `pg_basebackup` и журнала восстановления. В выводе укажите, какую копию вы выбрали бы для ежедневного расписания и почему, какие значения RPO и RTO получились в вашем стенде и что произойдёт с базой, если каталог WAL потеряется.
+Отчёт содержит скрипт копирования и восстановления, протокол, таблицу сверки по каждой таблице и четыре скриншота. В выводе объясните, почему дамп без журнала не отменяет `DELETE`, что произойдёт при потере каталога `data` и почему копию хранят на другом диске. Скриншоты шапки отчёта и текста теории не нужны: доказательствами служат команды, числа и фрагменты журнала.
 
 ## Что сдать
 
-- Скрипт создания логической и физической копии.
-- Протокол восстановления логической копии с таблицей сверки строк и сумм.
-- Результат восстановления на момент времени либо учебную симуляцию с объяснением разницы.
-- Скриншоты `pg_dump`, `pg_restore`, `SELECT count(*)`, `pg_basebackup`, журнала восстановления.
+- Скрипт дампа и восстановления для PowerShell.
+- Протокол с позицией журнала, временами и результатами сверки.
+- Таблицу сверки: таблица, строк в источнике, строк в копии, суммы, вывод.
+- Скриншоты дампа, восстановления, сверки и binary log.
 - Вывод о выборе вида копии, RPO и RTO.
 
 ## Критерии оценки
 
 | Критерий | Баллы | Что проверяется |
 |---|---|---|
-| Логическая копия | 20 | Дамп в формате `-Fc`, оглавление проверено, схема выгружена отдельно |
-| Восстановление | 25 | Копия развёрнута в отдельную базу без ошибок |
-| Сверка данных | 25 | Число строк и контрольные суммы совпали по каждой таблице |
-| Физическая копия и PITR | 20 | `pg_basebackup` выполнен, архив WAL включён, восстановление на момент проверено |
-| Протокол | 10 | Таблицы заполнены, разница видов копий объяснена |
+| Дамп | 20 | Все нужные ключи, файл читается, размер зафиксирован |
+| Восстановление | 20 | Копия развёрнута в отдельную базу без ошибок |
+| Сверка | 25 | Число строк и суммы совпали по каждой таблице |
+| Binary log | 25 | Журнал включён, событие найдено, база возвращена на момент |
+| Протокол | 10 | Позиция, времена и RPO с RTO записаны |
 
 ## Контрольные вопросы
 
 <div class="selfcheck no-copy" markdown="1">
 
 1. Почему факт создания файла копии не доказывает её пригодность?
-2. Что произойдёт при восстановлении копии `-Fc` в базу PostgreSQL другой мажорной версии?
-3. Зачем нужен `archive_command`, если физическая копия уже снята?
-4. Почему контрольные суммы считают в одной временной зоне сеанса?
-5. Чем учебный срез таблицы по времени отличается от восстановления на момент времени?
+2. Что сделает импорт дампа с ключом `--databases` в базу `dean_restore`?
+3. Зачем нужен `--single-transaction` и почему он не помогает для MyISAM?
+4. Почему дамп без binary log не отменяет ошибочный `DELETE`?
+5. Что произойдёт, если остановить проигрывание журнала позже `t_bad`?
+6. Почему копию хранят на другом диске или на другом сервере?
 
 </div>

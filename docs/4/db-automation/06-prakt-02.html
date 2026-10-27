@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 2. Пользователи и роли</title>
+<title>Практика 2. Роли и доступ в MySQL</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -790,222 +790,148 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 2. Пользователи и роли</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 2. Роли и доступ в MySQL</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 6</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 2. Пользователи и роли</h1><p class="dek">Строим доступ к «Деканату» на пяти ролях и доказываем матрицей, что каждая видит ровно то, что ей положено.</p></div>
-<div class="glyph" aria-hidden="true">П2</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Разделять владельца объектов и рабочие роли</li><li>Выдавать права на схему, таблицы и последовательности</li><li>Настраивать права по умолчанию для новых таблиц</li><li>Проверять доступ от имени каждой роли и заполнять матрицу</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>Права в базе выдают не человеку, а роли, и проверяют не по списку <code>GRANT</code>, а попыткой выполнить запрещённое действие. Цель работы: собрать для «Деканата» пять ролей с разными задачами, выдать им минимально достаточные права и доказать результат таблицей проверок.</p>
-<p>Вы создаёте пять ролей, связываете их с учётной записью приложения <code>dean_app</code> и проходите по каждому оператору <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> от имени каждой роли. Итог: матрица доступа, где каждая клетка подтверждена запросом или сообщением об ошибке.</p>
+<div class="hero-panel"><h1>Практика 2. Роли и доступ в MySQL</h1><p class="dek">Строим доступ к «Деканату» на четырёх ролях и доказываем матрицей, что каждая учётная запись видит ровно положенное.</p></div>
+<div class="glyph" aria-hidden="true">П2</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Создавать роли MySQL и связывать их с учётными записями</li><li>Выдавать и отзывать привилегии на базу и таблицы</li><li>Проверять доступ из phpMyAdmin, командной строки и .NET</li><li>Собирать матрицу прав по фактическим результатам</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Права в базе выдают не человеку, а роли, и проверяют не по списку <code>GRANT</code>, а попыткой выполнить запрещённое действие. Цель работы: собрать для «Деканата» четыре роли с разными задачами, выдать им минимально достаточные привилегии и доказать результат таблицей проверок.</p>
+<p>Вы создаёте роли <code>dean_read</code>, <code>dean_write</code>, <code>student_read</code> и <code>auditor</code>, заводите под каждую отдельную учётную запись и проходите по операциям <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>. Итог: матрица доступа, где каждая клетка подтверждена запросом или сообщением об ошибке.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Виртуальная машина Ubuntu Server с PostgreSQL 16 и базой <code>dean</code> из практики 1.</li>
-<li>Клиент <code>psql</code> внутри машины, доступ к роли <code>postgres</code> через <code>sudo -u postgres psql</code>.</li>
-<li>Текстовый редактор для SQL-скрипта и табличный редактор для матрицы доступа.</li>
-<li>Файл <code>roles.sql</code> для повторного запуска скрипта на чистой базе.</li>
+<li>Компьютер с XAMPP 8.5.12 и базой <code>dean</code> из практики 1.</li>
+<li>phpMyAdmin и клиент <code>C:\xampp\mysql\bin\mysql.exe</code>.</li>
+<li>.NET SDK 10 и проект <code>DeanAdmin</code> из практики 1.</li>
+<li>Текстовый редактор для скрипта <code>roles.sql</code> и табличный редактор для матрицы.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<p><strong>Привилегия</strong> это разрешение на конкретное действие с конкретным объектом: <code>SELECT</code> на таблицу, <code>USAGE</code> на схему, <code>CONNECT</code> на базу. Привилегии не складываются в «уровень доступа»: роль может читать одну таблицу и не видеть соседнюю.</p>
-<p><strong>Владелец объекта</strong> имеет все права на объект и может передавать их дальше. Поэтому владельцем схемы и таблиц делают отдельную роль без права входа <code>dean_owner</code>, а не учётную запись приложения. Приложение получает только те права, которые ему нужны для работы, и не может незаметно переписать структуру.</p>
-<p><strong>Наследование ролей</strong> позволяет выдать одной роли другую: <code>GRANT dean_read TO dean_write</code> означает, что <code>dean_write</code> получает все права <code>dean_read</code>. Так строят лестницу прав, а учётки пользователей входят в групповые роли.</p>
-<p><strong>Права по умолчанию</strong> (<code>ALTER DEFAULT PRIVILEGES</code>) действуют на объекты, которые создадут после этой команды. Они не меняют уже существующие таблицы и привязаны к роли, которая создаёт объект. Если таблицу создаст другая роль, правило не сработает.</p>
-<p><strong>Проверка доступа</strong> идёт двумя способами. <code>SET ROLE</code> переключает текущий сеанс на другую роль, и вы видите ровно то, что увидит приложение. <code>information_schema.role_table_grants</code> и <code>\dp</code> показывают выданные права, но не заменяют проверку: право может быть выдано на схему, а не на таблицу.</p>
+<p><strong>Привилегия</strong> это разрешение на действие с объектом. Уровней четыре: глобальный <code>*.*</code>, база <code>dean.*</code>, таблица <code>dean.payments</code>, столбец. Чем уже уровень, тем меньше ущерб от ошибки, поэтому приложению выдают права на базу, а не на весь сервер.</p>
+<p><strong>Роль</strong> в MySQL это учётная запись без пароля: ей выдают привилегии, а затем выдают саму роль пользователю. Роль действует не всегда: в MySQL её назначают ролью по умолчанию при входе или включают командой <code>SET ROLE</code>, в MariaDB выданная роль обычно активна сразу. Что активно сейчас, показывает <code>CURRENT_ROLE()</code>.</p>
+<p><strong>Привилегии не складываются в уровень доступа.</strong> Учётная запись может читать одну таблицу и не видеть соседнюю. <code>GRANT</code> добавляет право, <code>REVOKE</code> забирает. Общий <code>GRANT</code> на <code>dean.*</code> перекрывает точечный <code>REVOKE</code>, если выполнить их в обратном порядке, поэтому сначала выдают широкое право, потом отзывают лишнее.</p>
+<p><strong>Новые объекты</strong> попадают под право уровня базы автоматически, а под право на конкретную таблицу нет. Схему фиксируют до выдачи прав: после новой таблицы или <code>ALTER TABLE</code> доступ иногда приходится выдавать заново.</p>
+<p><strong>Проверка</strong> идёт от имени проверяемой учётной записи. <code>root</code> обходит проверки привилегий, поэтому его результат ничего не говорит о правах приложения. <code>SHOW GRANTS FOR 'user'@'host'</code> показывает выданное, <code>SHOW GRANTS</code> в сеансе показывает действующее. Право передавать права дальше (<code>WITH GRANT OPTION</code>) не выдают никому: иначе учётная запись расширит доступ сама, и матрица перестанет что-либо доказывать.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Зафиксируйте исходное состояние</h3>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean user=dean_app&quot;</span>
-</code></pre></div>
-
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
-<span class="err">\</span><span class="n">du</span>
-<span class="err">\</span><span class="n">dn</span><span class="o">+</span>
-<span class="err">\</span><span class="n">dp</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">CURRENT_USER</span><span class="p">();</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Запишите, кто владеет схемой <code>public</code> и какие права есть у <code>PUBLIC</code>. В PostgreSQL 15 и новее <code>USAGE</code> у <code>PUBLIC</code> остаётся, и его нужно снять.</p>
+<p>Запишите, какие права есть у приложения после практики 1: четыре операции на <code>dean.*</code> и ничего на другие базы.</p>
 <h3>Шаг 2. Создайте роли</h3>
-<p>Подключитесь как <code>postgres</code> к базе <code>dean</code> и выполните скрипт.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>dean
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;student_read&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;auditor&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_owner</span><span class="w"> </span><span class="n">NOLOGIN</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_read</span><span class="w"> </span><span class="n">NOLOGIN</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_write</span><span class="w"> </span><span class="n">NOLOGIN</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">student_read</span><span class="w"> </span><span class="n">NOLOGIN</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">auditor</span><span class="w"> </span><span class="n">NOLOGIN</span><span class="p">;</span>
-
-<span class="k">GRANT</span><span class="w"> </span><span class="n">dean_read</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="n">dean_write</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_app</span><span class="p">;</span>
+<p>Роль создаётся заблокированной: пароля у неё нет, войти под ней нельзя. Роль это тот же объект <code>mysql.user</code>, поэтому её видно в списке учётных записей, а её права читаются командой <code>SHOW GRANTS</code>.</p>
+<h3>Шаг 3. Выдайте привилегии ролям</h3>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="p">,</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">groups</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;student_read&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">courses</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;student_read&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="n">audit_log</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;auditor&#39;</span><span class="p">;</span>
+<span class="k">REVOKE</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="p">;</span>
 </code></pre></div>
 
+<p><code>REVOKE</code> стоит после общего <code>GRANT</code>: платежи нельзя удалять даже роли записи, исправление проводят обратной операцией, а не удалением строки. В выводе <code>SHOW GRANTS</code> у <code>dean_write</code> останутся <code>SELECT</code>, <code>INSERT</code> и <code>UPDATE</code>.</p>
+<p>Роль чтения студентов получает две таблицы поимённо. Можно было выдать <code>SELECT</code> на всю базу и отозвать лишнее, но точечная выдача точнее показывает замысел и не открывает новую таблицу сама по себе.</p>
+<h3>Шаг 4. Создайте учётные записи и выдайте роли</h3>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;dean_reader&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;Reader_2026&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;student_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;Student_2026&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;audit_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;Audit_2026&#39;</span><span class="p">;</span>
+
+<span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">dean</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+
+<span class="k">GRANT</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_reader&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="s1">&#39;student_read&#39;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;student_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="s1">&#39;auditor&#39;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;audit_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+
+<span class="k">SET</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;dean_reader&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;student_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;audit_user&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dean_app&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Прямые права, выданные приложению в практике 1, нужно снять. Иначе они останутся в силе вместе с ролью, и отзыв <code>DELETE</code> у роли ничего не изменит: сервер проверит прямое право и разрешит удаление. После этой команды права <code>dean_app</code> берутся только из роли.</p>
+<p>Пароли учебные и лежат в скрипте. На рабочем стенде их генерируют и хранят вне репозитория: скрипт с паролем в системе контроля версий это утечка.</p>
+<h3>Шаг 5. Проверьте роли и выданные права</h3>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
-<span class="err">\</span><span class="n">du</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_reader&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;dean_read&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>У <code>dean_app</code> в столбце <code>Member of</code> появится <code>dean_write</code>, а через него и <code>dean_read</code>. Войти можно только под <code>dean_app</code>: остальные роли созданы с <code>NOLOGIN</code> и служат группами прав.</p>
-<p>Сделайте скриншот <code>\du</code> с фамилией в первой строке вывода.</p>
-<h3>Шаг 3. Передайте схему владельцу</h3>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">PUBLIC</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">OWNER</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">USAGE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">,</span><span class="w"> </span><span class="n">dean_read</span><span class="p">,</span><span class="w"> </span><span class="n">dean_write</span><span class="p">,</span><span class="w"> </span><span class="n">student_read</span><span class="p">,</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
-<span class="k">REVOKE</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">dean</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">PUBLIC</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">CONNECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">dean</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">,</span><span class="w"> </span><span class="n">dean_read</span><span class="p">,</span><span class="w"> </span><span class="n">dean_write</span><span class="p">,</span><span class="w"> </span><span class="n">student_read</span><span class="p">,</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
+<p>Первая команда показывает выданную роль, вторая права самой роли. Затем войдите как <code>dean_reader</code>.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span>
 </code></pre></div>
 
-<p><code>REVOKE ALL ON DATABASE dean FROM PUBLIC</code> закрывает подключение для всех. Проверьте, что <code>dean_app</code> сохранил вход: он владелец базы и участник <code>dean_write</code>.</p>
-<h3>Шаг 4. Создайте таблицы от имени владельца</h3>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">;</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">specialty</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
-<span class="p">);</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">group_id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">groups</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="n">timestamptz</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">now</span><span class="p">()</span>
-<span class="p">);</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">title</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
-<span class="w">  </span><span class="n">hours</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">hours</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="p">);</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">student_id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="p">,</span>
-<span class="w">  </span><span class="n">course_id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">courses</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-<span class="w">  </span><span class="n">grade</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">grade</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span>
-<span class="w">  </span><span class="n">enrolled_at</span><span class="w"> </span><span class="nb">date</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">current_date</span><span class="p">,</span>
-<span class="w">  </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">course_id</span><span class="p">)</span>
-<span class="p">);</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">student_id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-<span class="w">  </span><span class="n">amount</span><span class="w"> </span><span class="nb">numeric</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">CHECK</span><span class="w"> </span><span class="p">(</span><span class="n">amount</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
-<span class="w">  </span><span class="n">paid_at</span><span class="w"> </span><span class="n">timestamptz</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">now</span><span class="p">()</span>
-<span class="p">);</span>
-
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="n">bigserial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="k">at</span><span class="w"> </span><span class="n">timestamptz</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">now</span><span class="p">(),</span>
-<span class="w">  </span><span class="n">db_user</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">action</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="k">table_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">row_id</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">details</span><span class="w"> </span><span class="n">jsonb</span>
-<span class="p">);</span>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">CURRENT_USER</span><span class="p">(),</span><span class="w"> </span><span class="k">CURRENT_ROLE</span><span class="p">();</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Заполните таблицы набором данных курса: десять студентов, пять курсов, двадцать записей о зачислении, десять платежей и две строки журнала.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;ИС-41&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;09.02.07&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;ИС-42&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;09.02.07&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;ИС-43&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;09.02.07&#39;</span><span class="p">);</span>
-
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Иванов Пётр&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;ivanov@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Смирнова Анна&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;smirnova@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Кузнецов Илья&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;kuznetsov@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Орлова Мария&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;orlova@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Белов Артём&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;belov@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Гусева Ольга&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;guseva@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Морозов Денис&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;morozov@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Павлова Кира&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;pavlova@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Соколов Ян&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;sokolov@example.edu&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Титова Вера&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;titova@example.edu&#39;</span><span class="p">);</span>
-
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">courses</span><span class="w"> </span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">hours</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Базы данных&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">72</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Операционные системы&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">54</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Веб-технологии&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Сети и телекоммуникации&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;Инженерная графика&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">36</span><span class="p">);</span>
-
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">course_id</span><span class="p">,</span><span class="w"> </span><span class="n">grade</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">9</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
-
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">12000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">12000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">9000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">9000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">12000</span><span class="p">.</span><span class="mi">00</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">9000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">12000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">9000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">9</span><span class="p">,</span><span class="mi">12000</span><span class="p">.</span><span class="mi">00</span><span class="p">),(</span><span class="mi">10</span><span class="p">,</span><span class="mi">9000</span><span class="p">.</span><span class="mi">00</span><span class="p">);</span>
-
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span><span class="w"> </span><span class="n">row_id</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;dean_app&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;INSERT&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;students&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;dean_app&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;UPDATE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;enrollments&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">);</span>
+<p>Если <code>CURRENT_ROLE()</code> вернул <code>NONE</code>, роль не активна: выполните <code>SET ROLE 'dean_read';</code> и повторите запрос. Причина в том, что роль по умолчанию не назначена или сервер не включил её при входе.</p>
+<h3>Шаг 6. Пройдите разрешённые и запрещённые запросы</h3>
+<p>Выполняйте пары: сначала разрешённый запрос, потом запрещённый. Ошибка и есть доказательство.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT &#39;Иванов ИС-41&#39;; SELECT COUNT(*) FROM students;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO groups (name, specialty) VALUES (&#39;ИС-44&#39;,&#39;09.02.07&#39;);&quot;</span>
 </code></pre></div>
 
-<h3>Шаг 5. Выдайте права и настройте значения по умолчанию</h3>
-<p>Продолжайте в том же сеансе или выполните <code>SET ROLE dean_owner;</code> в начале шага: права по умолчанию привязаны к роли, которая их настраивает.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_read</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">USAGE</span><span class="p">,</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="n">SEQUENCES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-
-<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">courses</span><span class="p">,</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">student_read</span><span class="p">;</span>
-<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
-
-<span class="k">REVOKE</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-
-<span class="k">ALTER</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span>
-<span class="w">  </span><span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_read</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span>
-<span class="w">  </span><span class="k">GRANT</span><span class="w"> </span><span class="k">INSERT</span><span class="p">,</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">,</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-<span class="k">ALTER</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span>
-<span class="w">  </span><span class="k">GRANT</span><span class="w"> </span><span class="k">USAGE</span><span class="p">,</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">SEQUENCES</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<p>Второй запрос вернёт <code>ERROR 1142 (42000): INSERT command denied to user 'dean_reader'@'localhost' for table 'groups'</code>.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;DELETE FROM payments WHERE id = 1;&quot;</span>
 </code></pre></div>
 
-<p><code>REVOKE DELETE ON payments</code> стоит после общего <code>GRANT</code>, иначе общее правило вернёт право обратно. Платежи нельзя удалять даже роли записи: исправление проводят обратной операцией, а не удалением строки.</p>
-<p><code>GRANT USAGE ON SEQUENCES</code> нужен для <code>INSERT</code>: без него <code>nextval</code> не сработает, и вставка упадёт, хотя право на таблицу есть.</p>
-<h3>Шаг 6. Проверьте права по умолчанию</h3>
-<p>Создайте новую таблицу от владельца и убедитесь, что права появились без отдельного <code>GRANT</code>.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">;</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rooms</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">serial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">);</span>
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">rooms</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;204&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;311&#39;</span><span class="p">);</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
-
-<span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_read</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rooms_visible</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">rooms</span><span class="p">;</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<p>Первый запрос проходит, второй возвращает <code>ERROR 1142</code> на таблицу <code>payments</code>: приложение получило права <code>dean_write</code>, но не право удаления.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT title FROM courses;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT full_name FROM students;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT COUNT(*) FROM audit_log;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO audit_log (db_user, action) VALUES (&#39;audit_user&#39;,&#39;DELETE&#39;);&quot;</span>
 </code></pre></div>
 
-<p>Если запрос вернул <code>2</code>, правило <code>ALTER DEFAULT PRIVILEGES</code> работает. Если получено <code>permission denied</code>, проверьте, что таблицу создавал именно <code>dean_owner</code>: для объектов другой роли правило не действует.</p>
-<h3>Шаг 7. Пройдите проверки от имени каждой роли</h3>
-<p>Выполняйте пары запросов: разрешённый и запрещённый. Ошибка и есть доказательство.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_read</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;ИС-44&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;09.02.07&#39;</span><span class="p">);</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<p><code>student_user</code> видит только справочники, <code>audit_user</code> читает журнал и не может в него писать. Сделайте скриншоты успешного и запрещённого запроса: в кадре должны быть команда, имя учётной записи и текст ошибки.</p>
+<h3>Шаг 7. Проверьте доступ из phpMyAdmin</h3>
+<p>Войдите в phpMyAdmin по очереди каждой учётной записью. В дереве видно, какие таблицы доступны: у <code>student_user</code> только <code>courses</code> и <code>groups</code>, у <code>audit_user</code> только <code>audit_log</code>. Выполните запрещённый запрос на вкладке <code>SQL</code> и приложите красное сообщение об ошибке. Список баз в phpMyAdmin тоже полезен: у приложения видна только <code>dean</code>.</p>
+<h3>Шаг 8. Проверьте доступ из .NET</h3>
+<p>Добавьте в <code>DeanAdmin</code> выбор учётной записи и обработку ошибки.</p>
+<div class="codehilite" data-lang="csharp"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="nn">MySqlConnector</span><span class="p">;</span>
 
-<span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_write</span><span class="p">;</span>
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">specialty</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;ИС-44&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;09.02.07&#39;</span><span class="p">);</span>
-<span class="k">UPDATE</span><span class="w"> </span><span class="n">enrollments</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">grade</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
-<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payments</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<span class="kt">string</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">.</span><span class="n">Length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dean_app&quot;</span><span class="p">;</span>
+<span class="kt">string</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Environment</span><span class="p">.</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s">&quot;DEAN_DB_PASSWORD&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
 
-<span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">student_read</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">hours</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">courses</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">full_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySqlConnectionStringBuilder</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dean&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">UserID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">user</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">password</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CharacterSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;utf8mb4&quot;</span>
+<span class="p">};</span>
 
-<span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">auditor</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span><span class="p">;</span>
-<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">audit_log</span><span class="w"> </span><span class="p">(</span><span class="n">db_user</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;auditor&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DELETE&#39;</span><span class="p">);</span>
-<span class="k">RESET</span><span class="w"> </span><span class="k">ROLE</span><span class="p">;</span>
+<span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">connection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySqlConnection</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="n">ConnectionString</span><span class="p">);</span>
+<span class="k">await</span><span class="w"> </span><span class="n">connection</span><span class="p">.</span><span class="n">OpenAsync</span><span class="p">();</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">$&quot;Иванов ИС-41, вход: {user}&quot;</span><span class="p">);</span>
+
+<span class="k">try</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySqlCommand</span><span class="p">(</span>
+<span class="w">        </span><span class="s">&quot;INSERT INTO payments (student_id, amount) VALUES (4, 9000.00)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">connection</span><span class="p">);</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">command</span><span class="p">.</span><span class="n">ExecuteNonQueryAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Запись добавлена&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">MySqlException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">$&quot;Отказано: {ex.Number}, {ex.Message}&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre></div>
 
-<p>Ожидаемые результаты: <code>dean_read</code> читает и не пишет, <code>dean_write</code> пишет везде, кроме удаления платежей, <code>student_read</code> видит только справочники, <code>auditor</code> читает журнал и не может в него писать. Затем проверьте приложение от его собственной учётной записи.</p>
-<div class="codehilite" data-lang="bash"><pre><span></span><code>psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean user=dean_app&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);&quot;</span>
-psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean user=dean_app&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DELETE FROM payments WHERE id = 1;&quot;</span>
+<p>Запустите приложение под двумя учётными записями.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nv">$env:DEAN_DB_PASSWORD</span> <span class="p">=</span> <span class="s2">&quot;DeanApp_2026&quot;</span><span class="p">;</span> <span class="n">dotnet</span> <span class="n">run</span> <span class="p">--</span> <span class="n">dean_app</span>
+<span class="nv">$env:DEAN_DB_PASSWORD</span> <span class="p">=</span> <span class="s2">&quot;Reader_2026&quot;</span><span class="p">;</span> <span class="n">dotnet</span> <span class="n">run</span> <span class="p">--</span> <span class="n">dean_reader</span>
 </code></pre></div>
 
-<p>Первый запрос проходит, второй возвращает <code>permission denied for table payments</code>: приложение унаследовало права <code>dean_write</code>, но не получило право удаления.</p>
-<p>Сделайте скриншоты успешного запроса и запрещённого запроса с текстом ошибки.</p>
-<h3>Шаг 8. Соберите матрицу доступа</h3>
-<p>Заполните матрицу по фактическим результатам, а не по тексту скрипта.</p>
+<p>От <code>dean_app</code> приложение печатает «Запись добавлена», от <code>dean_reader</code> печатает код 1142. Код ошибки в отчёте важнее текста: по нему видно, что отказ пришёл от сервера, а не от проверки внутри приложения.</p>
+<h3>Шаг 9. Соберите матрицу прав</h3>
+<p>Заполняйте матрицу по фактическим результатам, а не по тексту скрипта.</p>
 <table>
 <thead>
 <tr>
@@ -1014,72 +940,124 @@ psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean us
 <th>INSERT</th>
 <th>UPDATE</th>
 <th>DELETE</th>
+<th>Объекты</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>dean_read</code></td>
-<td>Все таблицы <code>public</code></td>
+<td>Да</td>
 <td>Нет</td>
 <td>Нет</td>
 <td>Нет</td>
+<td>Все таблицы <code>dean</code></td>
 </tr>
 <tr>
 <td><code>dean_write</code></td>
-<td>Все таблицы <code>public</code></td>
-<td>Все таблицы</td>
-<td>Все таблицы</td>
-<td>Все, кроме <code>payments</code></td>
+<td>Да</td>
+<td>Да</td>
+<td>Да</td>
+<td>Нет</td>
+<td>Все таблицы, кроме удаления в <code>payments</code></td>
 </tr>
 <tr>
 <td><code>student_read</code></td>
+<td>Да</td>
+<td>Нет</td>
+<td>Нет</td>
+<td>Нет</td>
 <td><code>groups</code>, <code>courses</code></td>
-<td>Нет</td>
-<td>Нет</td>
-<td>Нет</td>
 </tr>
 <tr>
 <td><code>auditor</code></td>
+<td>Да</td>
+<td>Нет</td>
+<td>Нет</td>
+<td>Нет</td>
 <td><code>audit_log</code></td>
-<td>Нет</td>
-<td>Нет</td>
-<td>Нет</td>
 </tr>
 <tr>
 <td><code>dean_app</code></td>
-<td>Как <code>dean_write</code></td>
-<td>Как <code>dean_write</code></td>
-<td>Как <code>dean_write</code></td>
+<td>Да</td>
+<td>Да</td>
+<td>Да</td>
+<td>Нет</td>
 <td>Как <code>dean_write</code></td>
 </tr>
 </tbody>
 </table>
-<h3>Шаг 9. Сверьте матрицу с каталогом</h3>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SET</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">dean_owner</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
-
-<span class="k">SELECT</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">,</span>
-<span class="w">       </span><span class="n">string_agg</span><span class="p">(</span><span class="n">privilege_type</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;, &#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">privilege_type</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">privileges</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">role_table_grants</span>
-<span class="k">WHERE</span><span class="w"> </span><span class="n">table_schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;public&#39;</span>
-<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">grantee</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;dean_read&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dean_write&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;student_read&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;auditor&#39;</span><span class="p">)</span>
-<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">grantee</span><span class="p">,</span><span class="w"> </span><span class="k">table_name</span><span class="p">;</span>
-
-<span class="err">\</span><span class="n">dp</span><span class="w"> </span><span class="k">public</span><span class="p">.</span><span class="o">*</span>
-</code></pre></div>
-
-<p>Запрос выполняется от <code>dean_owner</code>, потому что <code>role_table_grants</code> показывает права, где текущая роль выступает выдавшим или получателем. От имени <code>postgres</code> вы увидите пустой список и решите, что прав нет.</p>
-<p>Сделайте скриншот <code>\dp</code> и результата запроса к <code>role_table_grants</code>.</p>
+<h3>Шаг 10. Сверьте матрицу с проверками</h3>
+<table>
+<thead>
+<tr>
+<th>Учётная запись</th>
+<th>Запрос</th>
+<th>Ожидаемо</th>
+<th>Фактически</th>
+<th>Код</th>
+<th>Скриншот</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dean_reader</code></td>
+<td><code>SELECT</code> из <code>students</code></td>
+<td>Успех</td>
+<td></td>
+<td></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>dean_reader</code></td>
+<td><code>INSERT</code> в <code>groups</code></td>
+<td>Отказ</td>
+<td></td>
+<td>1142</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>dean_app</code></td>
+<td><code>INSERT</code> в <code>payments</code></td>
+<td>Успех</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>dean_app</code></td>
+<td><code>DELETE</code> из <code>payments</code></td>
+<td>Отказ</td>
+<td></td>
+<td>1142</td>
+<td></td>
+</tr>
+<tr>
+<td><code>student_user</code></td>
+<td><code>SELECT</code> из <code>students</code></td>
+<td>Отказ</td>
+<td></td>
+<td>1142</td>
+<td></td>
+</tr>
+<tr>
+<td><code>audit_user</code></td>
+<td><code>INSERT</code> в <code>audit_log</code></td>
+<td>Отказ</td>
+<td></td>
+<td>1142</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3>Требования к отчёту</h3>
-<p>Отчёт содержит скрипт <code>roles.sql</code>, матрицу доступа, таблицу проверок с ожидаемым и фактическим результатом, скриншоты <code>\du</code>, <code>\dp</code>, успешного и запрещённого запроса. В выводе объясните, почему <code>dean_app</code> не суперпользователь, зачем нужна отдельная роль владельца и какое право вы бы выдали осторожнее.</p>
+<p>Отчёт содержит скрипт <code>roles.sql</code>, матрицу прав, таблицу проверок и скриншоты успешного и запрещённого запроса. В выводе объясните, почему приложение работает не под <code>root</code>, зачем нужна отдельная роль чтения и какое право выдавать опаснее всего. Скриншоты шапки отчёта и текста теории не нужны: доказательствами служат только результаты запросов.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
-<li>SQL-скрипт создания ролей, схемы, таблиц и выдачи прав.</li>
-<li>Матрицу доступа по пяти ролям и четырём операциям.</li>
+<li>SQL-скрипт создания ролей, учётных записей и выдачи прав.</li>
+<li>Матрицу доступа по четырём ролям и четырём операциям.</li>
 <li>Таблицу проверок с ожидаемым и фактическим результатом.</li>
-<li>Скриншоты <code>\du</code>, <code>\dp</code>, успешного и запрещённого запроса.</li>
-<li>Вывод о минимальных привилегиях и о роли владельца объектов.</li>
+<li>Скриншоты успешного и запрещённого запроса с текстом ошибки.</li>
+<li>Вывод о минимальных привилегиях и об опасных правах.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
 <table>
@@ -1092,42 +1070,43 @@ psql<span class="w"> </span><span class="s2">&quot;host=127.0.0.1 dbname=dean us
 </thead>
 <tbody>
 <tr>
-<td>Роли и владелец</td>
+<td>Роли</td>
 <td>20</td>
-<td>Пять ролей, у <code>dean_owner</code> нет входа, объекты принадлежат ему</td>
+<td>Четыре роли созданы, права выданы на нужные объекты</td>
 </tr>
 <tr>
-<td>Права на объекты</td>
-<td>25</td>
-<td>Схема, таблицы и последовательности закрыты, права выданы по задачам</td>
+<td>Учётные записи</td>
+<td>20</td>
+<td>У каждой роли своя запись, роли назначены и активны</td>
 </tr>
 <tr>
-<td>Права по умолчанию</td>
-<td>15</td>
-<td>Новая таблица доступна роли чтения без отдельного <code>GRANT</code></td>
+<td>Отзыв прав</td>
+<td>20</td>
+<td><code>DELETE</code> на <code>payments</code> отозван и подтверждён ошибкой</td>
 </tr>
 <tr>
-<td>Проверки доступа</td>
-<td>25</td>
+<td>Проверки</td>
+<td>30</td>
 <td>Каждая роль проверена разрешённым и запрещённым запросом</td>
 </tr>
 <tr>
 <td>Матрица и отчёт</td>
-<td>15</td>
-<td>Матрица совпадает с каталогом и фактическими результатами</td>
+<td>10</td>
+<td>Матрица совпадает с фактическими результатами</td>
 </tr>
 </tbody>
 </table>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
-<li>Почему владельцем таблиц сделали роль без права входа, а не <code>dean_app</code>?</li>
-<li>Что произойдёт с доступом <code>dean_app</code>, если отозвать у неё <code>dean_write</code>, хотя <code>dean_read</code> выдана только роли <code>dean_write</code>?</li>
-<li>Почему <code>GRANT USAGE ON SEQUENCES</code> обязателен для вставки строк?</li>
-<li>Чем <code>ALTER DEFAULT PRIVILEGES</code> отличается от <code>GRANT ON ALL TABLES</code>?</li>
-<li>Почему <code>role_table_grants</code> под <code>postgres</code> показал пустой список и как это исправить?</li>
+<li>Почему права выдают роли, а не каждой учётной записи отдельно?</li>
+<li>Что произойдёт, если выполнить <code>REVOKE DELETE</code> до общего <code>GRANT</code> на <code>dean.*</code>?</li>
+<li>Почему проверка под <code>root</code> не доказывает права приложения?</li>
+<li>Чем право на <code>dean.*</code> отличается от права на <code>dean.payments</code> для новой таблицы?</li>
+<li>Что означает <code>CURRENT_ROLE() = NONE</code> и как включить роль в сеансе?</li>
+<li>Почему код ошибки 1142 убедительнее текста сообщения?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="05-lek-04.html"><span>← Предыдущее занятие</span>Лекция 4. Пользователи и роли</a><a class="next" style="text-align:right;margin-left:auto" href="07-lek-05.html"><span>Следующее занятие →</span>Лекция 5. Резервное копирование</a></nav></main>
+</div></article><nav class="pager"><a class="" href="05-lek-04.html"><span>← Предыдущее занятие</span>Пользователи и роли MySQL</a><a class="next" style="text-align:right;margin-left:auto" href="07-lek-05.html"><span>Следующее занятие →</span>Резервное копирование MySQL</a></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

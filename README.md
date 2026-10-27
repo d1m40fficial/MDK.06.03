@@ -15,7 +15,7 @@
 - **МАПО** (МДК.03.01), 3 курс: 26 занятий;
 - **Сертификация информационной системы** (МДК.07.02), 4 курс: 18 занятий;
 - **Управление и автоматизация баз данных** (МДК.07.01), 4 курс: 29 занятий,
-  PostgreSQL в учебной Linux VM.
+  MySQL в XAMPP, phpMyAdmin, .NET SDK 10 и Visual Studio 2022.
 
 Остальные дисциплины имеют учебные планы и ждут написания занятий.
 
@@ -56,17 +56,17 @@ https://bom.firpo.ru/Public/6506.
 
 - Excel, Word, PowerPoint;
 - VS Code с Python;
-- Visual Studio 2022 Community;
+- Visual Studio 2022 Community с рабочей нагрузкой .NET desktop;
 - Postman;
-- XAMPP 8.5.12;
+- XAMPP 8.5.12 с MySQL/MariaDB и phpMyAdmin;
+- .NET SDK 10;
 - VirtualBox с учебными Linux и Windows 10;
-- PostgreSQL 16 внутри учебной Linux VM;
 - браузер с draw.io и sqliteonline.com;
 - GitHub, Kaggle, Colab и Google Docs;
 - PowerShell и терминал Linux.
 
-PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, MySQL и PostgreSQL на
-хосте в требованиях не используются. PostgreSQL ставится внутри учебной Linux VM.
+PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, отдельный сервер MySQL
+или PostgreSQL в требованиях не используются. MySQL для МДК.07.01 работает из XAMPP.
 Настройки учебных ПК ограничены администратором, поэтому системные работы
 выполняются в VirtualBox.
 

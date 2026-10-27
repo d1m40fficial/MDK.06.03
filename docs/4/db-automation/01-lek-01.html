@@ -793,284 +793,302 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Управление и автоматизация БД</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn rail-warn" data-warn data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 1</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Управление и автоматизация БД</h1><p class="dek">Администратор отвечает за доступ, сохранность и скорость данных, а автоматизация убирает ручную работу только там, где есть регламент и проверка.</p></div>
-<div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Различать задачи администратора БД и разработчика</li><li>Называть регламентные операции обслуживания</li><li>Выбирать операции, которые стоит автоматизировать</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#жизненный-цикл-базы">Жизненный цикл базы</a></li><li><a href="#кто-за-что-отвечает">Кто за что отвечает</a></li><li><a href="#регламентные-операции">Регламентные операции</a></li><li><a href="#что-автоматизировать-в-первую-очередь">Что автоматизировать в первую очередь</a></li><li><a href="#границы-автоматизации">Границы автоматизации</a></li><li><a href="#rpo-rto-и-доступность">RPO, RTO и доступность</a></li><li><a href="#postgresql-в-учебной-vm">PostgreSQL в учебной VM</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итог">Итог</a></li><li><a href="#тест-по-лекции">Тест по лекции</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
-<p>Утро понедельника, деканат, восемь сорок. Секретарь не может открыть ведомость: приложение отвечает ошибкой, а в журнале сервера написано, что база недоступна. Выясняется, что в пятницу вечером кто-то поправил данные прямо в таблице, в субботу обновление снесло часть строк, а копия сделана в прошлый понедельник и её ни разу не восстанавливали. Формально база работала. Фактически её никто не администрировал.</p>
-<p><strong>Администрирование базы это ответственность за три вещи: кто имеет доступ, целы ли данные и успевает ли база отвечать.</strong> Автоматизация здесь нужна, но она не отменяет ответственность. Скрипт выполняет шаг быстрее и одинаковее, а решение о том, какой шаг и когда, остаётся за человеком.</p>
-<h2 id="жизненный-цикл-базы"><span class="num">02</span>Жизненный цикл базы</h2>
-<p>База живёт дольше приложения, которое её использует. Приложение переписывают раз в два года, данные живут десять лет. Поэтому администратор смотрит не на сегодняшний запрос, а на весь путь базы.</p>
-<ol>
-<li><strong>Проект.</strong> Решают, какие данные нужны, какие ограничения их защищают, какой объём ожидается через год. Ошибка здесь стоит дороже всего: внешний ключ, добавленный позже, придётся наполнять вручную.</li>
-<li><strong>Установка.</strong> Ставят СУБД, создают кластер, настраивают память, порт и доступ. Работа разовая, но её результат влияет на всё дальнейшее.</li>
-<li><strong>Ввод в эксплуатацию.</strong> Создают базу, роли, схему, загружают начальные данные, включают копирование и наблюдение. Пока копирования нет, база считается нерабочей, даже если запросы уже идут.</li>
-<li><strong>Эксплуатация.</strong> Самый долгий этап: копии, обслуживание, наблюдение, разбор инцидентов, выдача прав.</li>
-<li><strong>Обновление.</strong> Переносят версию СУБД или меняют схему. Требуется проверка на копии и план отката.</li>
-<li><strong>Вывод.</strong> Базу переводят в режим только для чтения, делают последнюю копию, архивируют и удаляют по правилам хранения.</li>
-</ol>
-<figure class="diagram">
-<svg viewBox="0 0 680 300" role="img" aria-label="Жизненный цикл базы данных и цикл регламентных операций">
-  <defs><marker id="lc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
-  <g font-family="Inter, sans-serif">
-    <rect x="16" y="20" width="140" height="54" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
-    <text x="86" y="42" text-anchor="middle" font-size="13.5" fill="var(--ink)">Проект</text>
-    <text x="86" y="61" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">схема и требования</text>
-    <rect x="178" y="20" width="140" height="54" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
-    <text x="248" y="42" text-anchor="middle" font-size="13.5" fill="var(--ink)">Установка</text>
-    <text x="248" y="61" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">кластер и доступ</text>
-    <rect x="340" y="20" width="140" height="54" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.8"/>
-    <text x="410" y="42" text-anchor="middle" font-size="13.5" fill="var(--ink)">Эксплуатация</text>
-    <text x="410" y="61" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">регламент</text>
-    <rect x="502" y="20" width="162" height="54" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
-    <text x="583" y="42" text-anchor="middle" font-size="13.5" fill="var(--ink)">Вывод</text>
-    <text x="583" y="61" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">архив и удаление</text>
-    <line x1="156" y1="47" x2="174" y2="47" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#lc)"/>
-    <line x1="318" y1="47" x2="336" y2="47" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#lc)"/>
-    <line x1="480" y1="47" x2="498" y2="47" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#lc)"/>
-    <line x1="410" y1="74" x2="410" y2="96" stroke="var(--rule)" stroke-width="1.4" stroke-dasharray="4 4"/>
-    <text x="340" y="114" text-anchor="middle" font-size="12" fill="var(--ink-3)">эксплуатация это повторяющийся цикл</text>
-    <rect x="16" y="126" width="150" height="44" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
-    <text x="91" y="153" text-anchor="middle" font-size="12.5" fill="var(--ink)">Копии</text>
-    <rect x="186" y="126" width="150" height="44" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
-    <text x="261" y="153" text-anchor="middle" font-size="12.5" fill="var(--ink)">VACUUM и статистика</text>
-    <rect x="356" y="126" width="150" height="44" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
-    <text x="431" y="153" text-anchor="middle" font-size="12.5" fill="var(--ink)">Журналы</text>
-    <rect x="526" y="126" width="150" height="44" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.4"/>
-    <text x="601" y="153" text-anchor="middle" font-size="12.5" fill="var(--ink)">Мониторинг</text>
-    <line x1="166" y1="148" x2="182" y2="148" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#lc)"/>
-    <line x1="336" y1="148" x2="352" y2="148" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#lc)"/>
-    <line x1="506" y1="148" x2="522" y2="148" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#lc)"/>
-    <path d="M601,170 V198 H91 V174" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#lc)"/>
-    <text x="346" y="222" text-anchor="middle" font-size="12" fill="var(--ink-3)">шаги повторяются по расписанию, а не по настроению</text>
-    <text x="340" y="262" text-anchor="middle" font-size="12" fill="var(--ink-3)">автоматика выполняет шаг, человек задаёт правило и проверяет результат</text>
-  </g>
-</svg>
-<figcaption>Жизненный цикл базы: эксплуатация занимает почти всё время и состоит из повторяющихся операций.</figcaption>
-</figure>
-
-<p>На рисунке видно, почему эксплуатация занимает почти всё место. Первые этапы проходят один раз, последний тоже, а четвёртый повторяется каждый день. Внутри него одни и те же операции идут по кругу: копия, обслуживание, проверка журналов, наблюдение. Если этот круг держится на памяти человека, он рано или поздно разорвётся в самый неподходящий момент.</p>
-<p>Вывод из эксплуатации тоже требует порядка: сначала проверяют, что архивная копия читается, данные переданы в новую систему, а учётные записи закрыты. Иначе на диске останется папка, о которой через полгода никто ничего не вспомнит.</p>
-<div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Кто ещё отвечает за базу, кроме администратора?</span></button></p>
-<div class="gate-content" hidden><h2 id="кто-за-что-отвечает"><span class="num">03</span>Кто за что отвечает</h2>
-<p>Слово «администратор» в вакансиях означает разное. В небольшой организации один человек ставит сервер, обновляет пакеты и делает копии. В крупной это три роли, и путать их дорого: пропуск в своей зоне заканчивается потерей данных или простоем.</p>
-<p><strong>Разработчик отвечает за смысл данных и код, который их меняет.</strong> Он проектирует таблицы, ограничения и индексы под конкретные запросы, пишет приложение и миграции в среде разработки. Он знает, что означает каждая строка, но не обязан помнить, что диск на сервере заполнен на 92 процента.</p>
-<p><strong>Системный администратор отвечает за среду.</strong> Виртуальная машина, процессор, память, диск, сеть, обновления операционной системы, доступ по SSH. Он даёт базе место и ресурсы, но не решает, каким ролям разрешено читать таблицу <code>payments</code>.</p>
-<p><strong>Администратор БД отвечает за данные в работающей системе.</strong> Доступ, сохранность, восстановление, производительность, регламент обслуживания. Его вопрос не «как написать запрос», а «что будет, если этот запрос запустят сто человек одновременно и упадёт питание».</p>
+<div class="hero-panel"><h1>Управление и автоматизация БД</h1><p class="dek">Администратор MySQL отвечает за доступ, сохранность и скорость данных, а автоматизация на C# убирает ручные шаги.</p></div>
+<div class="glyph" aria-hidden="true">Л1</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Различать задачи администратора БД и разработчика</li><li>Называть регламентные операции обслуживания MySQL</li><li>Выбирать операции для автоматизации на C#</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#одна-идея">Одна идея</a></li><li><a href="#чем-администратор-отличается-от-разработчика">Чем администратор отличается от разработчика</a></li><li><a href="#жизненный-цикл-базы">Жизненный цикл базы</a></li><li><a href="#регламентные-операции-mysql">Регламентные операции MySQL</a></li><li><a href="#что-автоматизировать">Что автоматизировать</a></li><li><a href="#инструменты-учебного-стенда">Инструменты учебного стенда</a></li><li><a href="#rpo-и-rto">RPO и RTO</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#проверьте-себя">Проверьте себя</a></li><li><a href="#итоги">Итоги</a></li></ol></nav><article class="prose"><h2 id="одна-идея"><span class="num">01</span>Одна идея</h2>
+<p>Понедельник, восемь сорок, деканат. Секретарь открывает ведомость, приложение отвечает ошибкой, а в журнале MySQL появляется строка о недоступной базе. В пятницу кто-то поправил оценки прямо в phpMyAdmin, в субботу на диск с данными записали учебные видео, а копия делалась один раз перед началом семестра и ни разу не восстанавливалась. Формально сервер работал все выходные. Фактически базу никто не администрировал.</p>
+<p><strong>Администрирование базы это ответственность за три вещи: кто имеет доступ, целы ли данные и успевает ли база отвечать.</strong> В MySQL это учётные записи и привилегии, резервные копии и журналы, буферный пул и индексы. Автоматизация выполняет повторяющийся шаг быстрее и с одинаковым результатом, но решение о том, какой шаг и когда запускать, остаётся за человеком.</p>
+<h2 id="чем-администратор-отличается-от-разработчика"><span class="num">02</span>Чем администратор отличается от разработчика</h2>
+<p>Разработчик меняет поведение системы: добавляет таблицы, пишет запросы, собирает приложение на C#. Администратор отвечает за состояние сервера: чтобы приложение могло подключиться, данные пережили сбой, а запрос уложился в разумное время.</p>
 <table>
 <thead>
 <tr>
-<th>Задача</th>
+<th>Вопрос</th>
 <th>Разработчик</th>
-<th>Системный администратор</th>
-<th>Администратор БД</th>
+<th>Администратор</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Схема таблиц и ограничения</td>
-<td>проектирует</td>
-<td>нет</td>
-<td>оценивает влияние на нагрузку</td>
+<td>Что меняет</td>
+<td>код и схему под задачу</td>
+<td>состояние сервера и данные</td>
 </tr>
 <tr>
-<td>Код приложения и запросы</td>
-<td>пишет</td>
-<td>нет</td>
-<td>смотрит планы тяжёлых запросов</td>
+<td>Критерий успеха</td>
+<td>функция работает</td>
+<td>данные доступны и целы</td>
 </tr>
 <tr>
-<td>Операционная система и диск</td>
-<td>нет</td>
-<td>ставит и обслуживает</td>
-<td>сообщает требования к месту и памяти</td>
+<td>Инструмент</td>
+<td>Visual Studio 2022, миграции</td>
+<td>phpMyAdmin, mysql, mysqldump</td>
 </tr>
 <tr>
-<td>Установка СУБД</td>
-<td>помогает</td>
-<td>готовит машину и сеть</td>
-<td>настраивает кластер</td>
-</tr>
-<tr>
-<td>Роли и доступ</td>
-<td>просит нужные права</td>
-<td>нет</td>
-<td>выдаёт и отзывает</td>
-</tr>
-<tr>
-<td>Копии и восстановление</td>
-<td>нет</td>
-<td>даёт место для хранения</td>
-<td>планирует, проверяет, восстанавливает</td>
-</tr>
-<tr>
-<td>Обновление версии</td>
-<td>проверяет совместимость кода</td>
-<td>обновляет пакеты</td>
-<td>переносит данные и проверяет</td>
+<td>Цена ошибки</td>
+<td>неверный результат</td>
+<td>потеря данных или доступа</td>
 </tr>
 </tbody>
 </table>
-<p>Граница проходит не по людям, а по вопросам. Вопрос «что должно храниться и почему» решают разработчик и аналитик. Вопрос «где это лежит и работает ли машина» решает системный администратор. Вопрос «кто это может прочитать, цело ли это и успеваем ли мы» решает администратор БД. В учебной работе вы совмещаете все три роли, и полезно каждый раз называть, какую именно роль сейчас играете.</p>
-<h2 id="регламентные-операции"><span class="num">04</span>Регламентные операции</h2>
-<p>Регламент это список операций с расписанием и проверкой. Отличие от «сделаю, когда вспомню» принципиальное: у каждой операции есть владелец, время запуска и признак, по которому видно, что она прошла успешно.</p>
+<p>Граница проходит не по командам, а по последствиям. Разработчик пишет <code>ALTER TABLE students ADD COLUMN phone VARCHAR(20)</code>. Администратор спрашивает, сколько времени таблица будет заблокирована, есть ли копия, что делать при откате, хватит ли места на диске. Синтаксис один и тот же, но за простой и целостность отвечает администратор.</p>
+<p>В небольшой организации обе роли совмещает один человек. Разница не исчезает: пока он пишет код, он оптимизирует доставку функции, а когда проверяет копию, он оптимизирует выживание данных.</p>
+<h2 id="жизненный-цикл-базы"><span class="num">03</span>Жизненный цикл базы</h2>
+<p>База живёт дольше приложения: код переписывают раз в два года, данные деканата нужны десять лет. Поэтому администратор смотрит на весь путь базы.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 230" role="img" aria-label="Шесть этапов жизненного цикла базы данных">
+  <defs><marker id="l1lc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <rect x="20" y="26" width="196" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="34" y="60" font-size="13.5" fill="var(--ink)">1. Проект</text>
+    <rect x="240" y="26" width="196" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="254" y="60" font-size="13.5" fill="var(--ink)">2. Установка</text>
+    <rect x="460" y="26" width="200" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="474" y="60" font-size="13.5" fill="var(--ink)">3. Ввод в работу</text>
+    <rect x="20" y="140" width="196" height="56" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="1.8"/>
+    <text x="34" y="174" font-size="13.5" fill="var(--ink)">4. Эксплуатация</text>
+    <rect x="240" y="140" width="196" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="254" y="174" font-size="13.5" fill="var(--ink)">5. Обновление</text>
+    <rect x="460" y="140" width="200" height="56" rx="10" fill="var(--card)" stroke="var(--rule)" stroke-width="1.4"/>
+    <text x="474" y="174" font-size="13.5" fill="var(--ink)">6. Вывод</text>
+    <line x1="218" y1="54" x2="236" y2="54" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#l1lc)"/>
+    <line x1="438" y1="54" x2="456" y2="54" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#l1lc)"/>
+    <path d="M560 84 V106 H118 V136" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#l1lc)"/>
+    <line x1="218" y1="168" x2="236" y2="168" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#l1lc)"/>
+    <line x1="438" y1="168" x2="456" y2="168" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#l1lc)"/>
+    <text x="340" y="220" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">этап 4 повторяется каждый день, остальные наступают редко</text>
+  </g>
+</svg>
+<figcaption>Путь базы: пока не сделана проверенная копия, этап ввода в работу не закончен.</figcaption>
+</figure>
+
+<ol>
+<li><strong>Проект.</strong> Определяют данные и ограничения деканата: группы, студенты, курсы, записи, платежи. Внешний ключ, добавленный позже, придётся заполнять вручную.</li>
+<li><strong>Установка.</strong> Разворачивают сервер, задают порт, кодировку и память.</li>
+<li><strong>Ввод в работу.</strong> Создают базу <code>dean</code> в <code>utf8mb4</code>, таблицы, пользователя приложения, копирование и наблюдение.</li>
+<li><strong>Эксплуатация.</strong> Дампы, обслуживание таблиц, разбор инцидентов, выдача прав, контроль диска.</li>
+<li><strong>Обновление.</strong> Версию или схему меняют сначала на копии, с обратным скриптом.</li>
+<li><strong>Вывод.</strong> База работает только на чтение, затем последняя копия, архив и удаление.</li>
+</ol>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что администратор обязан сделать до того, как приложение начнёт писать в базу?</span></button></p>
+<div class="gate-content" hidden><h2 id="регламентные-операции-mysql"><span class="num">04</span>Регламентные операции MySQL</h2>
+<p>Регламент это список операций, у каждой из которых есть период, команда, проверка результата и ответственный. Без проверки регламент превращается в ритуал: скрипт запускается, файл появляется, а восстанавливать из него нечего.</p>
 <table>
 <thead>
 <tr>
 <th>Операция</th>
-<th>Зачем</th>
-<th>Как часто</th>
-<th>Признак проблемы</th>
+<th>Команда</th>
+<th>Период</th>
+<th>Что проверяем</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Копия базы</td>
-<td>вернуть данные после сбоя</td>
-<td>по расписанию, обычно ежедневно</td>
-<td>последняя копия старше суток</td>
-</tr>
-<tr>
-<td>Проверка копии</td>
-<td>убедиться, что она восстанавливается</td>
-<td>после каждой полной копии</td>
-<td>восстановление падает или данные не сходятся</td>
-</tr>
-<tr>
-<td>VACUUM</td>
-<td>освободить место от мёртвых строк</td>
-<td>автоматически, вручную для крупных таблиц</td>
-<td>таблица растёт без роста данных</td>
-</tr>
-<tr>
-<td>ANALYZE</td>
-<td>обновить статистику для планов</td>
-<td>после массовой загрузки</td>
-<td>план перестал использовать индекс</td>
-</tr>
-<tr>
-<td>Журналы сервера</td>
-<td>заметить ошибки и медленные запросы</td>
+<td>Логический дамп</td>
+<td><code>mysqldump</code></td>
 <td>ежедневно</td>
-<td>ошибки входа, долгие запросы</td>
+<td>файл восстанавливается в тестовую базу</td>
 </tr>
 <tr>
-<td>Мониторинг</td>
-<td>увидеть тренд до отказа</td>
+<td>Статистика индексов</td>
+<td><code>ANALYZE TABLE</code></td>
+<td>после массовой загрузки</td>
+<td><code>EXPLAIN</code> видит новые оценки</td>
+</tr>
+<tr>
+<td>Пересборка таблицы</td>
+<td><code>OPTIMIZE TABLE</code></td>
+<td>после удаления большой доли строк</td>
+<td>размер файла и <code>CHECK TABLE</code></td>
+</tr>
+<tr>
+<td>Проверка целостности</td>
+<td><code>mysqlcheck</code></td>
+<td>еженедельно</td>
+<td>статус <code>OK</code> у всех таблиц</td>
+</tr>
+<tr>
+<td>Журналы</td>
+<td>error log, slow log</td>
 <td>постоянно</td>
-<td>соединения у предела, диск кончается</td>
+<td>ошибки и долгие запросы</td>
 </tr>
 <tr>
-<td>Права и учётные записи</td>
-<td>не оставить лишний доступ</td>
-<td>при приёме и увольнении</td>
-<td>роль без владельца, лишний суперпользователь</td>
+<td>Метрики</td>
+<td><code>SHOW STATUS</code></td>
+<td>каждые несколько минут</td>
+<td>соединения, диск, блокировки</td>
 </tr>
 </tbody>
 </table>
-<p>Обратите внимание на вторую строку. Копия без проверки это не копия, а надежда. Файл может быть нужного размера и при этом обрезанным, потому что диск кончился в середине записи. Поэтому в регламент входит не только создание, но и восстановление в отдельную базу со сверкой числа строк.</p>
-<p>Вторая особенность регламента в том, что он не заканчивается командой. После <code>VACUUM</code> смотрят, уменьшилось ли число мёртвых строк. После <code>ANALYZE</code> проверяют план тяжёлого запроса. После копии читают код возврата. Операция без проверки результата это ритуал, а не обслуживание.</p>
-<h2 id="что-автоматизировать-в-первую-очередь"><span class="num">05</span>Что автоматизировать в первую очередь</h2>
-<p>Автоматизация стоит усилий, поэтому начинают с операций, которые одновременно обладают пятью свойствами:</p>
-<ul>
-<li><strong>Повторяются.</strong> Делаются ежедневно или ежечасно, а не раз в год.</li>
-<li><strong>Описаны правилами.</strong> Нет места для решения «на глаз».</li>
-<li><strong>Проверяемы.</strong> Результат можно сверить: файл есть, код возврата ноль, число строк совпало.</li>
-<li><strong>Обратимы или безопасны при сбое.</strong> Ошибка не уничтожает данные.</li>
-<li><strong>Нуждаются в журнале.</strong> Важно знать, когда шаг выполнялся и чем закончился.</li>
-</ul>
-<p>По этим свойствам первыми в очередь попадают копирование, проверка копий, сбор метрик, ротация журналов и напоминания о заполнении диска. Часть работы PostgreSQL уже автоматизирует сам: <code>autovacuum</code> запускает очистку и сбор статистики, <code>checkpointer</code> сбрасывает страницы на диск, архив WAL можно включить одной настройкой. Администратор не дублирует это вручную, а проверяет, что механизм работает.</p>
-<p>Позже на очереди миграции, выдача типовых прав и отчёты. С миграциями осторожнее: скрипт применяет изменение, но проверку и откат готовит человек.</p></div>
+<p>Копия это не файл, а проверенная процедура. Команды для учебной базы выглядят так:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="s2">&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span><span class="w"> </span>-u<span class="w"> </span>dean_backup<span class="w"> </span>-p<span class="w"> </span>--single-transaction<span class="w"> </span>--routines<span class="w"> </span>--triggers<span class="w"> </span>--default-character-set<span class="o">=</span>utf8mb4<span class="w"> </span>--result-file<span class="o">=</span>C:<span class="se">\b</span>ackup<span class="se">\d</span>ean.sql<span class="w"> </span>dean
+<span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;ANALYZE TABLE dean.students, dean.enrollments;&quot;</span>
+<span class="s2">&quot;C:\xampp\mysql\bin\mysqlcheck.exe&quot;</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>--check<span class="w"> </span>dean
+</code></pre></div>
+
+<p><code>ANALYZE TABLE</code> пересчитывает распределение значений в индексах. На эту статистику опирается оптимизатор, когда выбирает порядок соединения таблиц. Если после загрузки десяти тысяч студентов статистика устарела, <code>EXPLAIN</code> может показать сканирование всей таблицы вместо поиска по индексу. Операция дешёвая, её запускают после каждой крупной загрузки.</p>
+<p><code>OPTIMIZE TABLE</code> в InnoDB пересобирает таблицу и возвращает освободившееся место файловой системе. Операция тяжёлая: она переписывает все страницы, требует свободного места примерно на размер таблицы и на время пересборки ограничивает запись. Её применяют после удаления большой доли строк, а не ежедневно «для порядка».</p>
+<p>Журналы отвечают на вопрос, что случилось, когда приложение уже не отвечает. В XAMPP журнал ошибок лежит в <code>C:\xampp\mysql\data\mysql_error.log</code>. Журнал медленных запросов включается переменными <code>slow_query_log</code> и <code>long_query_time</code>. Двоичный журнал хранит изменения данных и нужен для восстановления на момент сбоя; его включают в <code>my.ini</code> строками <code>log-bin=mysql-bin</code> и <code>server-id=1</code>.</p></div>
 </div>
 
 <div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что автоматика не должна делать без человека?</span></button></p>
-<div class="gate-content" hidden><h2 id="границы-автоматизации"><span class="num">06</span>Границы автоматизации</h2>
-<p>Автоматика хороша там, где ошибку видно сразу. Она опасна там, где одно действие нельзя отменить. Вот список действий, которые не отдают скрипту без точки возврата и второго подтверждения:</p>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какие операции можно доверить скрипту без человека?</span></button></p>
+<div class="gate-content" hidden><h2 id="что-автоматизировать"><span class="num">05</span>Что автоматизировать</h2>
+<p>Автоматизация переносит риск, а не убирает его. Скрипт, который каждую ночь делает дамп и не смотрит на код возврата, может месяц создавать пустые файлы, а отчёт об успешной копии уже отправлен.</p>
+<p>Операцию стоит автоматизировать, если она проходит четыре проверки:</p>
 <ul>
-<li><code>DROP DATABASE</code>, <code>DROP TABLE</code>, <code>TRUNCATE</code> на рабочей базе;</li>
-<li><code>UPDATE</code> или <code>DELETE</code> без условия <code>WHERE</code>;</li>
-<li>восстановление копии поверх работающей базы;</li>
-<li>правка <code>pg_hba.conf</code> и <code>postgresql.conf</code> без копии файла;</li>
-<li>автоматическое переключение на резервный узел без проверки, что он догнал основной;</li>
-<li>смена владельца объектов и массовый <code>GRANT</code>.</li>
+<li><strong>Повторяется.</strong> Шаг выполняется по расписанию или после каждого события.</li>
+<li><strong>Детерминирована.</strong> При одинаковых входных данных получается одинаковый результат.</li>
+<li><strong>Проверяема.</strong> Успех подтверждается запросом, размером файла или кодом возврата.</li>
+<li><strong>Безопасна.</strong> Ошибка не уничтожает данные мгновенно, либо перед опасным шагом стоит копия.</li>
 </ul>
-<p>Общее правило: <strong>автоматика не должна делать необратимое без человека.</strong> Скрипт готовит команду, показывает её, пишет в журнал и останавливается. Человек подтверждает запуск. Это защита от опечатки в одной строке.</p>
-<p>Второе правило: у автоматики есть «стоп-кран». Копирование проверяет свободное место, удаление старых копий оставляет хотя бы одну свежую и проверенную, смена настроек пишет старое значение.</p>
-<p>Третье правило: автоматика обязана отчитываться. Если задание упало молча, автоматизация хуже ручной работы: человек хотя бы помнит, что шаг не сделан.</p></div>
-</div>
+<p>Под эти критерии попадают дамп, восстановление в отдельную базу, <code>ANALYZE TABLE</code>, ротация журналов, сбор метрик и сверка числа строк. Не попадают операции, где неверный параметр необратим: <code>DROP DATABASE</code>, восстановление поверх рабочей базы, изменение схемы на живой базе, выдача прав. Их можно готовить скриптом, но запускать должен человек, который видит контекст.</p>
+<p>Простейший каркас автоматизации на C# выглядит так:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="nn">System.Diagnostics</span><span class="p">;</span>
 
-<div class="gate-step" data-gate>
-<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Чем измеряется готовность базы к сбою?</span></button></p>
-<div class="gate-content" hidden><h2 id="rpo-rto-и-доступность"><span class="num">07</span>RPO, RTO и доступность</h2>
-<p>Два числа описывают готовность базы к сбою, и оба измеряются временем.</p>
-<p><strong>RPO</strong> (recovery point objective) это сколько данных допустимо потерять. Если RPO равен пятнадцати минутам, после аварии разрешено потерять изменения за последние пятнадцать минут. <strong>RTO</strong> (recovery time objective) это за сколько база должна снова работать. Если RTO равен часу, через час после сбоя пользователи обязаны войти.</p>
-<p>Числа задают технику. RPO в пятнадцать минут требует архива журнала WAL с интервалом не больше пяти минут: тогда потеря ограничена пятью минутами. RPO в сутки достаточно ежедневной логической копии. RTO в час требует, чтобы копия восстанавливалась за сорок минут с запасом, а это проверяется только тренировкой.</p>
-<p>С доступностью связана отдельная арифметика. Год это 8760 часов, и один процент от них это почти четыре дня простоя.</p>
+<span class="kt">var</span><span class="w"> </span><span class="n">dump</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">cnf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Environment</span><span class="p">.</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s">&quot;DEAN_DB_CNF&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">@&quot;C:\backup\dean.cnf&quot;</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">$&quot;--defaults-extra-file={cnf} --single-transaction --routines &quot;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">           </span><span class="s">&quot;--triggers --default-character-set=utf8mb4 --result-file=C:\\backup\\dean.sql dean&quot;</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ProcessStartInfo</span><span class="p">(</span><span class="n">dump</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">UseShellExecute</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span><span class="w"> </span><span class="p">});</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">WaitForExit</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">ExitCode</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">Environment</span><span class="p">.</span><span class="n">Exit</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">ExitCode</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Пароль не передают аргументом: его видно в списке процессов и в истории команд. Для этого у <code>mysqldump</code> есть файл параметров, который подключают через <code>--defaults-extra-file</code>. Приложение берёт путь к нему из переменной <code>DEAN_DB_CNF</code>, а сам файл лежит вне репозитория. В файле <code>dean.cnf</code> в секции <code>[client]</code> указаны пользователь и пароль.</p>
+<h2 id="инструменты-учебного-стенда"><span class="num">06</span>Инструменты учебного стенда</h2>
 <table>
 <thead>
 <tr>
-<th>Доступность</th>
-<th>Допустимый простой в год</th>
+<th>Инструмент</th>
+<th>Для чего</th>
+<th>Ограничение</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>99 %</td>
-<td>3 дня 15 часов</td>
+<td>XAMPP Control Panel</td>
+<td>запуск MySQL и Apache, порт, журнал, <code>my.ini</code></td>
+<td>не умеет расписание</td>
 </tr>
 <tr>
-<td>99,9 %</td>
-<td>8 часов 46 минут</td>
+<td>phpMyAdmin</td>
+<td>просмотр таблиц, SQL, экспорт, пользователи</td>
+<td>ручная работа, не для регламента</td>
 </tr>
 <tr>
-<td>99,95 %</td>
-<td>4 часа 23 минуты</td>
+<td>mysql CLI</td>
+<td>точный вывод, скрипты, коды возврата</td>
+<td>требует знания синтаксиса</td>
 </tr>
 <tr>
-<td>99,99 %</td>
-<td>53 минуты</td>
+<td>Visual Studio 2022</td>
+<td>проект C#, отладка, WinForms</td>
+<td>не заменяет CLI при аварии</td>
+</tr>
+<tr>
+<td>.NET SDK 10</td>
+<td><code>dotnet new</code>, <code>dotnet add package</code>, <code>dotnet run</code></td>
+<td>нет графического интерфейса</td>
 </tr>
 </tbody>
 </table>
-<p>Для учебной базы деканата достаточно ежедневной копии и RTO в несколько часов. Для системы с платежами пятнадцати минут потери уже много. Выбор зависит от цены простоя и цены потерянной строки, а не от моды на отказоустойчивость.</p>
-<h2 id="postgresql-в-учебной-vm"><span class="num">08</span>PostgreSQL в учебной VM</h2>
-<p>Весь курс идёт на PostgreSQL 16 в учебной Ubuntu Server внутри VirtualBox. На хост ничего не ставится и права администратора Windows не нужны. Внутри машины доступны <code>sudo apt</code>, <code>psql</code>, <code>pg_dump</code>, <code>pg_basebackup</code>, <code>systemd</code> и <code>cron</code>.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>postgresql@16-main
-psql<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-U<span class="w"> </span>dean_app<span class="w"> </span>-d<span class="w"> </span>dean
-pg_dump<span class="w"> </span>-Fc<span class="w"> </span>-d<span class="w"> </span>dean<span class="w"> </span>-f<span class="w"> </span>/srv/backup/dean.dump
+<p>XAMPP Control Panel запускает сервер и показывает, занят ли порт 3306. phpMyAdmin удобен, когда нужно посмотреть таблицу или выполнить одну команду. Консольный клиент <code>mysql</code> даёт тот же результат, но его вывод можно сохранить в файл и сравнить, а код возврата использовать в скрипте. Visual Studio 2022 и .NET SDK 10 нужны для приложения обслуживания: одно и то же решение собирают в графической среде или командами в терминале.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="n">dotnet</span> <span class="p">-</span><span class="n">-list-sdks</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="p">-</span><span class="n">-version</span>
+<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;SELECT VERSION(), @@character_set_server;&quot;</span>
 </code></pre></div>
 
-<p>Подключение с хоста идёт через проброс порта: <code>127.0.0.1:5432</code> на хосте ведёт в гостевой <code>5432</code>. Это удобно и опасно: открытый порт видят и другие программы, поэтому <code>listen_addresses</code> и <code>pg_hba.conf</code> настраивают узко.</p>
-<p>В учебной базе <code>dean</code> суперпользователь <code>postgres</code> нужен только для первоначальной настройки. Объекты принадлежат роли <code>dean_owner</code>, приложение ходит под <code>dean_app</code>, чтение идёт через <code>dean_read</code>, а <code>auditor</code> видит журнал. Такое разделение придумано не для красоты: оно показывает, как выглядит ответственность в действии.</p>
-<h2 id="типичные-ошибки"><span class="num">09</span>Типичные ошибки</h2>
-<p><strong>Ручная правка данных без транзакции.</strong> Студент запускает <code>update students set group_id = 2;</code> без <code>where</code> и меняет всех студентов. Симптом: приложение показывает неверные группы, а исходных значений никто не запомнил. Лечение: любая правка в транзакции, с <code>select count(*)</code> до и после, с явным условием.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">begin</span><span class="p">;</span>
-<span class="k">select</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-<span class="k">update</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">group_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span>
-<span class="k">commit</span><span class="p">;</span>
-</code></pre></div>
+<p>Сервер в сборке XAMPP собран на MariaDB и совместим с MySQL 8 по основным командам дисциплины. Версия в выводе будет выглядеть как <code>10.4.x-MariaDB</code>, и это нормально: <code>CREATE USER</code>, <code>GRANT</code>, <code>mysqldump</code> и <code>binary log</code> работают так же.</p>
+<h2 id="rpo-и-rto"><span class="num">07</span>RPO и RTO</h2>
+<p>Два числа превращают разговор о копиях из пожелания в требование. <strong>RPO</strong> показывает, сколько данных допустимо потерять, и измеряется временем до сбоя. <strong>RTO</strong> показывает, за сколько база должна снова обслуживать пользователей.</p>
+<figure class="diagram">
+<svg viewBox="0 0 680 240" role="img" aria-label="Окно потери данных и время восстановления между копией и сбоем">
+  <defs><marker id="l1ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+  <g font-family="Inter, sans-serif">
+    <line x1="40" y1="150" x2="640" y2="150" stroke="var(--rule)" stroke-width="1.6"/>
+    <line x1="100" y1="142" x2="100" y2="158" stroke="var(--accent)" stroke-width="2"/>
+    <text x="100" y="180" text-anchor="middle" font-size="12" fill="var(--ink)">02:00</text>
+    <text x="100" y="196" text-anchor="middle" font-size="11" fill="var(--ink-3)">дамп</text>
+    <line x1="430" y1="142" x2="430" y2="158" stroke="var(--accent)" stroke-width="2"/>
+    <text x="430" y="180" text-anchor="middle" font-size="12" fill="var(--ink)">14:20</text>
+    <text x="430" y="196" text-anchor="middle" font-size="11" fill="var(--ink-3)">сбой</text>
+    <line x1="600" y1="142" x2="600" y2="158" stroke="var(--accent)" stroke-width="2"/>
+    <text x="600" y="180" text-anchor="middle" font-size="12" fill="var(--ink)">14:46</text>
+    <text x="600" y="196" text-anchor="middle" font-size="11" fill="var(--ink-3)">работа</text>
+    <line x1="104" y1="96" x2="426" y2="96" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#l1ar)"/>
+    <text x="265" y="86" text-anchor="middle" font-size="12" fill="var(--ink)">потеря до 12 ч 20 мин</text>
+    <text x="265" y="120" text-anchor="middle" font-size="11" fill="var(--ink-3)">binary log сокращает окно до секунд</text>
+    <line x1="434" y1="60" x2="596" y2="60" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#l1ar)"/>
+    <text x="515" y="50" text-anchor="middle" font-size="12" fill="var(--ink)">RTO 26 мин</text>
+    <text x="340" y="226" text-anchor="middle" font-size="11" fill="var(--ink-3)">схема не в масштабе: важны границы окна, а не расстояния</text>
+  </g>
+</svg>
+<figcaption>RPO измеряет окно между копией и сбоем, RTO измеряет путь от сбоя до работающего сервиса.</figcaption>
+</figure>
 
-<p><strong>Один суперпользователь на всё.</strong> Приложение подключается под <code>postgres</code>, потому что так быстрее настроить. Симптом: ошибка в коде может удалить таблицу, а журнал не покажет, кто именно это сделал. Лечение: отдельные роли с минимальными правами, суперпользователь только для установки и аварийных работ.</p>
-<p><strong>Копия без проверки.</strong> Файл создаётся каждую ночь, но его ни разу не восстанавливали. Симптом: в день аварии выясняется, что архив пустой или не читается. Лечение: раз в неделю восстанавливать копию в отдельную базу и сверять число строк в ключевых таблицах.</p>
-<p><strong>Настройка без записи.</strong> Параметр меняют, перезапускают сервер и забывают, зачем. Через месяц никто не может объяснить, почему <code>work_mem</code> равен 256 мегабайтам. Лечение: журнал изменений с датой, причиной и автором.</p>
-<h2 id="проверьте-себя"><span class="num">10</span>Проверьте себя</h2>
-<details class="check"><summary><span>Чем задача администратора БД отличается от задачи разработчика на примере таблицы <code>payments</code>?</span></summary><div><p>Разработчик решает, какие поля нужны и как приложение их пишет. Администратор решает, кому разрешено читать и менять строки, как часто делать копию и что делать при сбое.</p></div></details>
+<p>Дамп сделан в 02:00, сбой произошёл в 14:20. Без двоичного журнала восстановление вернёт базу к 02:00, и деканат потеряет 12 часов 20 минут работы. С журналом база восстанавливается из дампа, а затем журнал проигрывается до 14:19: потеря около одной минуты.</p>
+<p>RTO считается по всей процедуре. Восстановление дампа заняло 12 минут, проигрывание журнала 4 минуты, проверка counts и связей 10 минут. Итого 26 минут, и это укладывается в требование вернуть деканат за час. Если бы проверка не была отрепетирована, двадцать шесть минут превратились бы в неопределённость.</p>
+<table>
+<thead>
+<tr>
+<th>Вариант копирования</th>
+<th>RPO</th>
+<th>RTO</th>
+<th>Где годится</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Дамп раз в сутки без журнала</td>
+<td>до 24 часов</td>
+<td>часы</td>
+<td>учебная база</td>
+</tr>
+<tr>
+<td>Дамп раз в сутки плюс binary log</td>
+<td>минуты</td>
+<td>десятки минут</td>
+<td>рабочая база деканата</td>
+</tr>
+<tr>
+<td>Реплика плюс binary log</td>
+<td>секунды</td>
+<td>минуты</td>
+<td>система без простоя</td>
+</tr>
+</tbody>
+</table></div>
+</div>
 
-<details class="check"><summary><span>Почему копия, сделанная ежедневно, не даёт RPO в пятнадцать минут?</span></summary><div><p>Потому что между копиями проходит до суток. При аварии вернётся состояние на момент копии, и все изменения за сутки исчезнут. Для RPO в пятнадцать минут нужен непрерывный архив журнала WAL.</p></div></details>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какие ошибки чаще всего превращают копию в бесполезный файл?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки"><span class="num">08</span>Типичные ошибки</h2>
+<p><strong>root без пароля.</strong> В XAMPP учётная запись <code>root</code> создаётся без пароля. Для учебного компьютера это удобно, но приложение, которое подключается как <code>root</code>, получает право удалить любую базу. Ошибка в коде или SQL-инъекция в таком приложении означает полный контроль над сервером. Рабочая настройка начинается с отдельного пользователя <code>dean_app</code> и пароля.</p>
+<p><strong>Ручные правки в phpMyAdmin.</strong> <code>UPDATE students SET group_id = 3;</code> без условия <code>WHERE</code> меняет всех студентов. Подтверждение проходит одним нажатием, транзакция не открывается, аудита нет. Если правка нужна, её оформляют скриптом с условием, проверкой <code>SELECT</code> до и после и записью в журнал.</p>
+<p><strong>Копии без проверки.</strong> Файл существует, весит два мегабайта и открывается в блокноте. Это не значит, что из него можно восстановить базу: дамп мог оборваться, кодировка могла не совпасть. Копия считается сделанной только после восстановления в отдельную базу и сверки числа строк.</p>
+<p><strong>Копия на том же диске.</strong> Диск с данными и диск с копиями не должны отказывать одновременно. Папка <code>C:\backup</code> лежит на другом носителе или в облачном хранилище, а не рядом с <code>C:\xampp\mysql\data</code>.</p>
+<p><strong>Нет двоичного журнала.</strong> Без него нельзя восстановить базу на момент сбоя, только на момент последнего дампа. Журнал включают заранее, задним числом он не появляется.</p>
+<div class="callout pitfall"><span class="label">Успешный запуск не равен успешной копии</span><p>Скрипт вернул код 0, файл создан, отчёт отправлен. Через месяц выясняется, что в дампе нет таблицы <code>payments</code>, потому что у <code>dean_backup</code> не было на неё прав. Проверка восстанавливает копию в <code>dean_restore</code> и сравнивает counts по всем таблицам.</p></div>
 
-<details class="check"><summary><span>Какое действие вы не отдадите автоматике без подтверждения и почему?</span></summary><div><p>Например, удаление старых копий. Ошибка в условии отбора может стереть единственную проверенную копию, а отменить удаление файла нельзя. Скрипт должен показать список и остановиться.</p></div></details>
+<h2 id="проверьте-себя"><span class="num">09</span>Проверьте себя</h2>
+<details class="check"><summary><span>Приложение работает, запросы идут, ошибок нет. База введена в эксплуатацию?</span></summary><div><p>Нет. Пока нет проверенной копии и наблюдения, первый сбой диска или ошибочный <code>DELETE</code> окажется необратимым.</p></div></details>
 
-<h2 id="итог"><span class="num">11</span>Итог</h2>
+<details class="check"><summary><span>Почему <code>OPTIMIZE TABLE</code> не ставят в ежедневный регламент?</span></summary><div><p>Операция пересобирает таблицу целиком, требует свободного места и ограничивает запись. Её применяют после удаления большой доли строк, когда нужно вернуть место.</p></div></details>
+
+<details class="check"><summary><span>Дамп делается каждые 15 минут, RTO равно часу. Этого достаточно?</span></summary><div><p>Нет. Частота дампа задаёт только RPO. RTO зависит от времени восстановления, и его нужно измерить на проверке.</p></div></details>
+
+<h2 id="итоги"><span class="num">10</span>Итоги</h2>
 <ul>
-<li>Администратор БД отвечает за доступ, сохранность и скорость данных, а не за код приложения.</li>
-<li>Жизненный цикл базы длиннее жизни приложения, и почти всё время занимает эксплуатация.</li>
-<li>Регламент это операция плюс расписание плюс проверка результата.</li>
-<li>Автоматизируют повторяемое, описанное правилами и проверяемое; необратимое оставляют человеку.</li>
-<li>RPO и RTO переводят разговор о надёжности в минуты и часы, которые можно проверить.</li>
+<li>Администратор отвечает за доступ, сохранность и скорость данных, разработчик за поведение приложения.</li>
+<li>Регламент MySQL включает дампы, статистику, проверку таблиц, журналы и метрики, и у каждого шага есть проверка.</li>
+<li>Автоматизируют повторяемые, детерминированные, проверяемые и безопасные операции.</li>
+<li>RPO задаёт допустимую потерю данных, RTO задаёт время восстановления, оба числа проверяются на практике.</li>
 </ul>
-<h2 id="тест-по-лекции"><span class="num">12</span>Тест по лекции</h2>
-<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Кто отвечает за место на диске, сеть и обновления операционной системы виртуальной машины?</p><div class="opts"><label class="opt"><input type="radio" name="q173_0" value="3"><span>Пользователь базы</span></label><label class="opt"><input type="radio" name="q173_0" value="0" data-ok><span>Системный администратор</span></label><label class="opt"><input type="radio" name="q173_0" value="2"><span>Аналитик</span></label><label class="opt"><input type="radio" name="q173_0" value="1"><span>Разработчик приложения</span></label></div><p class="quiz-why" hidden>Среда, диск и сеть относятся к зоне системного администратора.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какие свойства делают операцию хорошим кандидатом на автоматизацию?</p><div class="opts"><label class="opt"><input type="checkbox" name="q173_1" value="3"><span>Она выполняется раз в год по решению руководителя</span></label><label class="opt"><input type="checkbox" name="q173_1" value="2" data-ok><span>Её результат можно проверить</span></label><label class="opt"><input type="checkbox" name="q173_1" value="0" data-ok><span>Она повторяется регулярно</span></label><label class="opt"><input type="checkbox" name="q173_1" value="4"><span>Она каждый раз требует нового решения человека</span></label><label class="opt"><input type="checkbox" name="q173_1" value="1" data-ok><span>Её правила описаны однозначно</span></label></div><p class="quiz-why" hidden>Автоматизируют повторяемое, описанное правилами и проверяемое.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Как называют допустимый объём потери данных при сбое?</p><input type="text" class="short-answer" data-answers="[&quot;RPO&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называют допустимый объём потери данных при сбое?"><p class="quiz-why" hidden>RPO задаёт границу потери данных во времени.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Что означает RPO?</p><div class="opts"><label class="opt"><input type="radio" name="q173_3" value="2"><span>Число одновременных соединений с базой</span></label><label class="opt"><input type="radio" name="q173_3" value="0" data-ok><span>Допустимый объём потерянных данных, выраженный во времени</span></label><label class="opt"><input type="radio" name="q173_3" value="1"><span>Время, за которое база должна быть восстановлена</span></label><label class="opt"><input type="radio" name="q173_3" value="3"><span>Размер журнала транзакций на диске</span></label></div><p class="quiz-why" hidden>RPO задаёт, сколько данных допустимо потерять при сбое.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>За что отвечает администратор базы данных в первую очередь?</p><div class="opts"><label class="opt"><input type="radio" name="q173_4" value="3"><span>За проектирование пользовательских экранов</span></label><label class="opt"><input type="radio" name="q173_4" value="1"><span>За вёрстку отчётов и интерфейса приложения</span></label><label class="opt"><input type="radio" name="q173_4" value="0" data-ok><span>За доступ, сохранность и скорость работы данных</span></label><label class="opt"><input type="radio" name="q173_4" value="2"><span>За выбор языка программирования</span></label></div><p class="quiz-why" hidden>Администратор отвечает за доступ, сохранность и производительность данных.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="4" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какие операции относятся к регламентным?</p><div class="opts"><label class="opt"><input type="checkbox" name="q173_5" value="3" data-ok><span>Наблюдение за числом соединений</span></label><label class="opt"><input type="checkbox" name="q173_5" value="5"><span>Смена темы оформления сайта</span></label><label class="opt"><input type="checkbox" name="q173_5" value="2" data-ok><span>Просмотр журналов сервера</span></label><label class="opt"><input type="checkbox" name="q173_5" value="0" data-ok><span>Создание резервной копии</span></label><label class="opt"><input type="checkbox" name="q173_5" value="4"><span>Переименование учебного проекта</span></label><label class="opt"><input type="checkbox" name="q173_5" value="1" data-ok><span>Обновление статистики через ANALYZE</span></label></div><p class="quiz-why" hidden>Регламент включает копирование, обслуживание, проверку журналов и мониторинг.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Какую операцию стоит автоматизировать в первую очередь?</p><div class="opts"><label class="opt"><input type="radio" name="q173_6" value="1"><span>Удаление старых таблиц по усмотрению скрипта</span></label><label class="opt"><input type="radio" name="q173_6" value="2"><span>Смену владельца всех объектов</span></label><label class="opt"><input type="radio" name="q173_6" value="3"><span>Восстановление копии поверх рабочей базы</span></label><label class="opt"><input type="radio" name="q173_6" value="0" data-ok><span>Создание копии по расписанию с записью в журнал</span></label></div><p class="quiz-why" hidden>Копирование повторяется, описывается правилами и проверяется по коду возврата.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Как называют набор повторяющихся операций обслуживания с расписанием и проверкой?</p><input type="text" class="short-answer" data-answers="[&quot;регламент&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называют набор повторяющихся операций обслуживания с расписанием и проверкой?"><p class="quiz-why" hidden>Регламент связывает операцию, расписание и признак успешного выполнения.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Зачем проверять копию восстановлением в отдельную базу?</p><div class="opts"><label class="opt"><input type="radio" name="q173_8" value="3"><span>Чтобы обновить статистику планировщика</span></label><label class="opt"><input type="radio" name="q173_8" value="0" data-ok><span>Файл может быть целым по размеру, но непригодным для восстановления</span></label><label class="opt"><input type="radio" name="q173_8" value="1"><span>Чтобы ускорить работу основной базы</span></label><label class="opt"><input type="radio" name="q173_8" value="2"><span>Чтобы уменьшить размер журнала WAL</span></label></div><p class="quiz-why" hidden>Только восстановление показывает, что копия действительно читается и содержит нужные данные.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Что даёт регламент обслуживания?</p><div class="opts"><label class="opt"><input type="checkbox" name="q173_9" value="3"><span>Отменяет необходимость резервных копий</span></label><label class="opt"><input type="checkbox" name="q173_9" value="2" data-ok><span>Возможность проверить результат по признаку</span></label><label class="opt"><input type="checkbox" name="q173_9" value="4"><span>Снимает ответственность с администратора</span></label><label class="opt"><input type="checkbox" name="q173_9" value="1" data-ok><span>Запись о том, когда и чем закончилась операция</span></label><label class="opt"><input type="checkbox" name="q173_9" value="0" data-ok><span>Одинаковый порядок выполнения операций</span></label></div><p class="quiz-why" hidden>Регламент делает работу повторяемой и проверяемой, но ответственность остаётся на человеке.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Что означает доступность 99,9 процента?</p><div class="opts"><label class="opt"><input type="radio" name="q173_10" value="3"><span>Полное отсутствие простоев</span></label><label class="opt"><input type="radio" name="q173_10" value="0" data-ok><span>Простой около 8 часов 46 минут в год</span></label><label class="opt"><input type="radio" name="q173_10" value="1"><span>Простой около 53 минут в год</span></label><label class="opt"><input type="radio" name="q173_10" value="2"><span>Простой около 3 дней 15 часов в год</span></label></div><p class="quiz-why" hidden>99,9 процента от 8760 часов даёт примерно 8 часов 46 минут.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Почему опасно отдавать автоматике удаление данных без подтверждения?</p><div class="opts"><label class="opt"><input type="radio" name="q173_11" value="2"><span>PostgreSQL не поддерживает удаление по расписанию</span></label><label class="opt"><input type="radio" name="q173_11" value="3"><span>После удаления нельзя сделать копию</span></label><label class="opt"><input type="radio" name="q173_11" value="0" data-ok><span>Ошибку нельзя отменить, а копия может оказаться негодной</span></label><label class="opt"><input type="radio" name="q173_11" value="1"><span>Удаление всегда занимает слишком много времени</span></label></div><p class="quiz-why" hidden>Необратимое действие требует точки возврата и решения человека.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Как называют время, за которое база должна быть восстановлена после сбоя?</p><input type="text" class="short-answer" data-answers="[&quot;RTO&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называют время, за которое база должна быть восстановлена после сбоя?"><p class="quiz-why" hidden>RTO задаёт предельное время восстановления.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какие действия опасны без точки возврата?</p><div class="opts"><label class="opt"><input type="checkbox" name="q173_13" value="2" data-ok><span>Восстановление копии поверх работающей базы</span></label><label class="opt"><input type="checkbox" name="q173_13" value="4"><span>EXPLAIN для тяжёлого запроса</span></label><label class="opt"><input type="checkbox" name="q173_13" value="3"><span>SELECT с условием по ключу</span></label><label class="opt"><input type="checkbox" name="q173_13" value="0" data-ok><span>UPDATE без условия WHERE</span></label><label class="opt"><input type="checkbox" name="q173_13" value="1" data-ok><span>DROP TABLE на рабочей базе</span></label></div><p class="quiz-why" hidden>Эти действия меняют или уничтожают данные, поэтому требуют копии и подтверждения.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Что означает RTO?</p><div class="opts"><label class="opt"><input type="radio" name="q173_14" value="1"><span>Объём данных, который можно потерять</span></label><label class="opt"><input type="radio" name="q173_14" value="3"><span>Срок хранения архивных копий</span></label><label class="opt"><input type="radio" name="q173_14" value="0" data-ok><span>Допустимое время восстановления работы после сбоя</span></label><label class="opt"><input type="radio" name="q173_14" value="2"><span>Время создания полной копии</span></label></div><p class="quiz-why" hidden>RTO задаёт, за какое время база обязана снова работать.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
-</div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-lek-02.html"><span>Следующее занятие →</span>Лекция 2. Архитектура PostgreSQL</a></nav></main>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Дамп сделан в 02:00, сбой в 14:20, binary log не включён. Чему равен RPO?</p><div class="opts"><label class="opt"><input type="radio" name="q139_0" value="2"><span>2 часа</span></label><label class="opt"><input type="radio" name="q139_0" value="0" data-ok><span>12 часов 20 минут</span></label><label class="opt"><input type="radio" name="q139_0" value="3"><span>0 минут</span></label><label class="opt"><input type="radio" name="q139_0" value="1"><span>20 минут</span></label></div><p class="quiz-why" hidden>Без журнала восстановление вернёт базу к моменту дампа.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какие операции относятся к регламентным в MySQL?</p><div class="opts"><label class="opt"><input type="checkbox" name="q139_1" value="4"><span>Ручное редактирование строк в phpMyAdmin</span></label><label class="opt"><input type="checkbox" name="q139_1" value="2" data-ok><span>Проверка журнала ошибок</span></label><label class="opt"><input type="checkbox" name="q139_1" value="3"><span>Перезапуск Apache по расписанию</span></label><label class="opt"><input type="checkbox" name="q139_1" value="1" data-ok><span>Обновление статистики через ANALYZE TABLE</span></label><label class="opt"><input type="checkbox" name="q139_1" value="0" data-ok><span>Логический дамп через mysqldump</span></label></div><p class="quiz-why" hidden>Регламент включает копии, статистику, проверки и наблюдение.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что произойдёт, если хранить единственную копию на диске с данными?</p><div class="opts"><label class="opt"><input type="radio" name="q139_2" value="3"><span>Восстановление ускорится</span></label><label class="opt"><input type="radio" name="q139_2" value="0" data-ok><span>При отказе диска пропадут и база, и копия</span></label><label class="opt"><input type="radio" name="q139_2" value="2"><span>MySQL автоматически сделает вторую копию</span></label><label class="opt"><input type="radio" name="q139_2" value="1"><span>Копия станет создаваться быстрее</span></label></div><p class="quiz-why" hidden>Копия должна пережить отказ носителя с данными.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Как называется показатель, задающий время возврата базы к работе после сбоя?</p><input type="text" class="short-answer" data-answers="[&quot;RTO&quot;, &quot;recovery time objective&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется показатель, задающий время возврата базы к работе после сбоя?"><p class="quiz-why" hidden>RTO задаёт допустимое время восстановления сервиса.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что означает показатель RPO?</p><div class="opts"><label class="opt"><input type="radio" name="q139_4" value="1"><span>Время, за которое база вернётся к работе</span></label><label class="opt"><input type="radio" name="q139_4" value="2"><span>Размер файла дампа</span></label><label class="opt"><input type="radio" name="q139_4" value="0" data-ok><span>Допустимый объём данных, который можно потерять при сбое</span></label><label class="opt"><input type="radio" name="q139_4" value="3"><span>Число одновременных соединений</span></label></div><p class="quiz-why" hidden>RPO измеряется временем до сбоя и задаёт допустимую потерю.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Какие инструменты входят в учебный стенд дисциплины?</p><div class="opts"><label class="opt"><input type="checkbox" name="q139_5" value="4"><span>Microsoft Access</span></label><label class="opt"><input type="checkbox" name="q139_5" value="2" data-ok><span>Visual Studio 2022</span></label><label class="opt"><input type="checkbox" name="q139_5" value="0" data-ok><span>XAMPP Control Panel</span></label><label class="opt"><input type="checkbox" name="q139_5" value="3"><span>Oracle SQL Developer</span></label><label class="opt"><input type="checkbox" name="q139_5" value="1" data-ok><span>phpMyAdmin</span></label></div><p class="quiz-why" hidden>Стенд собран на XAMPP с MySQL и phpMyAdmin.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Что делает ANALYZE TABLE?</p><div class="opts"><label class="opt"><input type="radio" name="q139_6" value="3"><span>Удаляет дублирующиеся строки</span></label><label class="opt"><input type="radio" name="q139_6" value="0" data-ok><span>Обновляет статистику индексов для оптимизатора</span></label><label class="opt"><input type="radio" name="q139_6" value="2"><span>Создаёт резервную копию базы</span></label><label class="opt"><input type="radio" name="q139_6" value="1"><span>Пересобирает таблицу и освобождает место</span></label></div><p class="quiz-why" hidden>ANALYZE TABLE пересчитывает распределение значений для EXPLAIN.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Чем OPTIMIZE TABLE отличается от ANALYZE TABLE?</p><div class="opts"><label class="opt"><input type="radio" name="q139_7" value="3"><span>Выполняется мгновенно на любой таблице</span></label><label class="opt"><input type="radio" name="q139_7" value="0" data-ok><span>Пересобирает таблицу, а не только пересчитывает статистику</span></label><label class="opt"><input type="radio" name="q139_7" value="1"><span>Работает только с таблицами MyISAM</span></label><label class="opt"><input type="radio" name="q139_7" value="2"><span>Не требует свободного места на диске</span></label></div><p class="quiz-why" hidden>OPTIMIZE TABLE переписывает страницы и возвращает место файловой системе.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какие операции нельзя отдавать скрипту без проверки человеком?</p><div class="opts"><label class="opt"><input type="checkbox" name="q139_8" value="2" data-ok><span>Изменение схемы на живой базе</span></label><label class="opt"><input type="checkbox" name="q139_8" value="0" data-ok><span>Восстановление поверх рабочей базы</span></label><label class="opt"><input type="checkbox" name="q139_8" value="3"><span>Сбор метрик каждые несколько минут</span></label><label class="opt"><input type="checkbox" name="q139_8" value="1" data-ok><span>DROP DATABASE</span></label><label class="opt"><input type="checkbox" name="q139_8" value="4"><span>Проверка размера файла дампа</span></label></div><p class="quiz-why" hidden>Необратимые операции требуют решения человека и копии.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Какой этап жизненного цикла нельзя завершить без проверенной копии?</p><div class="opts"><label class="opt"><input type="radio" name="q139_9" value="2"><span>Установка XAMPP</span></label><label class="opt"><input type="radio" name="q139_9" value="0" data-ok><span>Ввод в эксплуатацию</span></label><label class="opt"><input type="radio" name="q139_9" value="1"><span>Проектирование схемы</span></label><label class="opt"><input type="radio" name="q139_9" value="3"><span>Вывод из эксплуатации</span></label></div><p class="quiz-why" hidden>Пока копирования нет, база не готова к работе.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Почему root без пароля в XAMPP опасен даже на учебном компьютере?</p><div class="opts"><label class="opt"><input type="radio" name="q139_10" value="2"><span>phpMyAdmin не открывается</span></label><label class="opt"><input type="radio" name="q139_10" value="0" data-ok><span>Любой клиент на этом компьютере получает полный доступ</span></label><label class="opt"><input type="radio" name="q139_10" value="1"><span>MySQL перестаёт запускаться</span></label><label class="opt"><input type="radio" name="q139_10" value="3"><span>Дампы становятся больше</span></label></div><p class="quiz-why" hidden>Пустой пароль root даёт локальному клиенту полный контроль над сервером.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Какая утилита из XAMPP создаёт логический дамп базы?</p><input type="text" class="short-answer" data-answers="[&quot;mysqldump&quot;, &quot;mysqldump.exe&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Какая утилита из XAMPP создаёт логический дамп базы?"><p class="quiz-why" hidden>mysqldump выгружает структуру и данные в SQL-скрипт.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Что относится к задаче администратора базы, а не разработчика?</p><div class="opts"><label class="opt"><input type="radio" name="q139_12" value="2"><span>Написание бизнес-логики на C#</span></label><label class="opt"><input type="radio" name="q139_12" value="1"><span>Проектирование формы ввода в приложении</span></label><label class="opt"><input type="radio" name="q139_12" value="0" data-ok><span>Настройка резервного копирования и прав доступа</span></label><label class="opt"><input type="radio" name="q139_12" value="3"><span>Вёрстка отчёта в WinForms</span></label></div><p class="quiz-why" hidden>Администратор отвечает за доступ, сохранность и работоспособность базы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>По каким признакам операцию стоит автоматизировать?</p><div class="opts"><label class="opt"><input type="checkbox" name="q139_13" value="1" data-ok><span>Результат можно проверить запросом или файлом</span></label><label class="opt"><input type="checkbox" name="q139_13" value="0" data-ok><span>Она повторяется по расписанию</span></label><label class="opt"><input type="checkbox" name="q139_13" value="3"><span>Она удаляет данные без возможности отмены</span></label><label class="opt"><input type="checkbox" name="q139_13" value="2" data-ok><span>Параметры не меняются от запуска к запуску</span></label><label class="opt"><input type="checkbox" name="q139_13" value="4"><span>Решение требует оценки ситуации человеком</span></label></div><p class="quiz-why" hidden>Автоматизируют повторяемые, детерминированные и проверяемые шаги.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Что нужно проверить у скрипта после запуска mysqldump?</p><div class="opts"><label class="opt"><input type="radio" name="q139_14" value="3"><span>Версию Apache</span></label><label class="opt"><input type="radio" name="q139_14" value="2"><span>Число строк в самом скрипте</span></label><label class="opt"><input type="radio" name="q139_14" value="0" data-ok><span>Код возврата и возможность восстановления файла</span></label><label class="opt"><input type="radio" name="q139_14" value="1"><span>Цвет вывода в консоли</span></label></div><p class="quiz-why" hidden>Копия считается сделанной только после восстановления и сверки.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><span></span><a class="next" style="text-align:right;margin-left:auto" href="02-lek-02.html"><span>Следующее занятие →</span>Архитектура MySQL и InnoDB</a></nav></main>
 <div class="modal" data-modal="warn" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>

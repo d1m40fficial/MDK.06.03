@@ -86,9 +86,11 @@ def build_course(root: Path) -> Path:
 
     n_ch = len(c.get("chapters", []))
     slots = lesson_slots(c.get("chapters", []))
-    meta = " · ".join(x for x in [spec_line(c, slots * 2),
-                                  f"{slots} {plural_lessons(slots)}" if slots else None,
-                                  summary(c, availability)] if x)
+    meta = " · ".join(x for x in [
+        f"{slots} {plural_lessons(slots)}" if slots else None,
+        esc(c.get("assessment", "")),
+        summary(c, availability),
+    ] if x)
     outcomes = ""
     if c.get("outcomes"):
         outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(
