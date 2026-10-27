@@ -16,6 +16,9 @@ Anatomy + Visualise, он описывает план дисциплин, нап
   часть практик по 180 минут. Число занятий фиксировано; баланс лекций и практик
   меняется только по запросу.
 - `courses/4/uifis/`: УФИС, 42 занятия и 84 ч.
+- `courses/4/db-automation/`: МДК.07.01, 29 занятий и 66 ч, PostgreSQL в учебной
+  Linux VM в VirtualBox.
+- `courses/4/is-certification/`: МДК.07.02, 18 занятий и 42 ч.
 - `courses/<year>/<slug>/chapters/<nn-slug>/`: занятие: `chapter.md` + `figures/<fig-id>/`.
 - `site.json`: специальности и карточки курсов для landing.
 - `availability.txt`: сколько лекций и практик открыто для каждой дисциплины.
@@ -45,9 +48,10 @@ https://bom.firpo.ru/Public/6506.
 - Компетенции: ПК 2.2-2.4, 5.1-5.4, 7.1-7.4, 11.1-11.5 и ОК 01, 02, 04, 09.
 - Доступное ПО: Excel, Word, PowerPoint, VS Code с Python, Visual Studio 2026
   Community, Postman, VirtualBox с учебными Linux и Windows 10, браузер с draw.io,
-  sqliteonline.com, GitHub, Kaggle, Colab и Google Docs. Не требовать PlantUML,
-  StarUML, Enterprise Architect, Visio, PyCharm, MySQL или PostgreSQL и платные
-  сервисы.
+  sqliteonline.com, GitHub, Kaggle, Colab и Google Docs. PostgreSQL для МДК.07.01
+  устанавливается внутри учебной Linux VM, на хосте ничего не требуется. Не
+  требовать PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, MySQL,
+  PostgreSQL на хосте и платные сервисы.
 - Настройки учебных ПК ограничены администратором. Лабы по ОС и системным настройкам
   выполняются в VirtualBox; не требовать прав администратора, host-only сети или
   изменений Windows на хосте. Для SSH использовать NAT и проброс порта.
