@@ -56,8 +56,9 @@ https://bom.firpo.ru/Public/6506.
 
 - Excel, Word, PowerPoint;
 - VS Code с Python;
-- Visual Studio 2026 Community;
+- Visual Studio 2022 Community;
 - Postman;
+- XAMPP 8.5.12;
 - VirtualBox с учебными Linux и Windows 10;
 - PostgreSQL 16 внутри учебной Linux VM;
 - браузер с draw.io и sqliteonline.com;

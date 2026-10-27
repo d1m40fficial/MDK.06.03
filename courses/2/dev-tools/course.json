@@ -2,7 +2,7 @@
   "slug": "dev-tools",
   "code": "МДК.02.02",
   "title": "Инструментальные средства разработки ПО",
-  "tagline": "VS Code, Visual Studio 2026, Git, Postman и автоматизация проверок.",
+  "tagline": "VS Code, Visual Studio 2022, Git, Postman и автоматизация проверок.",
   "level": "СПО",
   "hours": 76,
   "languages": [
@@ -24,7 +24,7 @@
     "Основы алгоритмизации и программирования"
   ],
   "outcomes": [
-    "Настраивать VS Code и Visual Studio 2026",
+    "Настраивать VS Code и Visual Studio 2022",
     "Работать с Git, сборкой и виртуальными окружениями",
     "Использовать отладчик, линтер и статический анализ",
     "Проверять API в Postman и работать с SQLiteOnline"
@@ -84,7 +84,7 @@
       "n": 3,
       "dir": "02-prakt-01",
       "slug": "prakt-01",
-      "title": "Практика 1. Настройка VS Code; Настройка Visual Studio 2026",
+      "title": "Практика 1. Настройка VS Code; Настройка Visual Studio 2022",
       "summary": "Настраиваете обе среды под Python и C#: тема, шрифт, расширения, интерпретатор, набор инструментов C++ и сдаёте скриншоты настроек с коротким пояснением.",
       "minutes": 180,
       "level": "СПО",
@@ -108,7 +108,7 @@
       "n": 4,
       "dir": "05-lek-03",
       "slug": "lek-03",
-      "title": "Лекция 3. Visual Studio 2026 Community",
+      "title": "Лекция 3. Visual Studio 2022 Community",
       "summary": "Разбираете устройство Visual Studio: решение и проект, обозреватель решений, конструктор форм и окна отладки для C#.",
       "minutes": 90,
       "level": "СПО",

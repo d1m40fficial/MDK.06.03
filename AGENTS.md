@@ -46,12 +46,12 @@ https://bom.firpo.ru/Public/6506.
   обработкой данных, коллекция Postman с тестами 200, 500 и валидации JSON,
   документация API по шаблону.
 - Компетенции: ПК 2.2-2.4, 5.1-5.4, 7.1-7.4, 11.1-11.5 и ОК 01, 02, 04, 09.
-- Доступное ПО: Excel, Word, PowerPoint, VS Code с Python, Visual Studio 2026
-  Community, Postman, VirtualBox с учебными Linux и Windows 10, браузер с draw.io,
-  sqliteonline.com, GitHub, Kaggle, Colab и Google Docs. PostgreSQL для МДК.07.01
-  устанавливается внутри учебной Linux VM, на хосте ничего не требуется. Не
-  требовать PlantUML, StarUML, Enterprise Architect, Visio, PyCharm, MySQL,
-  PostgreSQL на хосте и платные сервисы.
+- Доступное ПО: Excel, Word, PowerPoint, VS Code с Python, Visual Studio 2022
+  Community, Postman, XAMPP 8.5.12, VirtualBox с учебными Linux и Windows 10,
+  браузер с draw.io, sqliteonline.com, GitHub, Kaggle, Colab и Google Docs.
+  PostgreSQL для МДК.07.01 устанавливается внутри учебной Linux VM, на хосте ничего
+  не требуется. Не требовать PlantUML, StarUML, Enterprise Architect, Visio,
+  PyCharm, MySQL, PostgreSQL на хосте и платные сервисы.
 - Настройки учебных ПК ограничены администратором. Лабы по ОС и системным настройкам
   выполняются в VirtualBox; не требовать прав администратора, host-only сети или
   изменений Windows на хосте. Для SSH использовать NAT и проброс порта.
