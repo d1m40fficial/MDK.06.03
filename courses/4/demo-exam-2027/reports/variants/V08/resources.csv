@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Фетр,material,м²,"0,18",1,650
+Подошва,material,шт,2,1,90
+Стелька,material,шт,2,1,35
+Раскрой и стачивание,operation,ч,1,"0,35",800
+Приклеивание,operation,ч,1,"0,2",700

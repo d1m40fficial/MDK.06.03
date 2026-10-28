@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Кожа,material,дм²,"1,2",1,90
+Нить вощёная,material,м,2,1,12
+Кнопка,material,шт,1,1,25
+Раскрой,operation,ч,1,"0,15",800
+Прошивка,operation,ч,1,"0,4",950

@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, code_class, esc, lesson_slots, load_course, page, plural_lessons, rail, ASSETS  # noqa: E402
+from _pages import accent_vars, code_class, esc, is_cards, lesson_slots, load_course, page, plural_lessons, plural_sections, rail, ASSETS  # noqa: E402
 from availability import is_open, load_availability, summary  # noqa: E402
 from plan_xlsx import plan_filename, write_plan_xlsx  # noqa: E402
 
@@ -47,13 +47,17 @@ def build_course(root: Path) -> Path:
     dist = root / "dist"
     dist.mkdir(exist_ok=True)
     availability = load_availability(root)
+    cards = is_cards(c)
     items, written = [], 0
     slot = 1
     for ch in c.get("chapters", []):
-        pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
-        lesson = f"{slot}" if pairs == 1 else f"{slot}<br>-<br>{slot + pairs - 1}"
-        slot += pairs
         dirname = chapter_dir(ch)
+        if cards:
+            lesson = f'{int(ch.get("n") or len(items) + 1):02d}'
+        else:
+            pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
+            lesson = f"{slot}" if pairs == 1 else f"{slot}<br>-<br>{slot + pairs - 1}"
+            slot += pairs
         d = root / "chapters" / dirname
         md = d / "chapter.md"
         open_ = is_open(c, dirname, availability)
@@ -77,8 +81,16 @@ def build_course(root: Path) -> Path:
             status = "" if link else f' · {esc(ST.get(ch.get("status", "planned"), ch.get("status", "план")))}'
         title = esc(ch["title"])
         cls = ' class="locked"' if locked else ""
+        if cards:
+            label = ch.get("label") or (
+                "Справочник" if ch.get("role") == "info"
+                else "Варианты" if ch.get("role") == "variants"
+                else "Методичка")
+            mins = esc(label) + status
+        else:
+            mins = f'{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}'
         inner = (f'<div class="n">{lesson}</div><h3>{title}</h3>'
-                 f'<div class="mins">{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}</div>'
+                 f'<div class="mins">{mins}</div>'
                  f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div>')
         card = (f'<a class="lesson-card" href="{link}">{inner}</a>' if link
                 else f'<div class="lesson-card lesson-card-static">{inner}</div>')
@@ -86,18 +98,27 @@ def build_course(root: Path) -> Path:
 
     n_ch = len(c.get("chapters", []))
     slots = lesson_slots(c.get("chapters", []))
-    meta = " · ".join(x for x in [
-        f"{slots} {plural_lessons(slots)}" if slots else None,
-        esc(c.get("assessment", "")),
-        summary(c, availability),
-    ] if x)
+    if cards:
+        meta = " · ".join(x for x in [
+            f"{n_ch} {plural_sections(n_ch)}" if n_ch else None,
+            esc(c.get("assessment", "")),
+            summary(c, availability),
+        ] if x)
+    else:
+        meta = " · ".join(x for x in [
+            f"{slots} {plural_lessons(slots)}" if slots else None,
+            esc(c.get("assessment", "")),
+            summary(c, availability),
+        ] if x)
     outcomes = ""
     if c.get("outcomes"):
-        outcomes = '<section class="outcomes"><b>В результате обучения вы сможете</b><ul>' + "".join(
+        outcomes_title = "Что вы освоите" if cards else "В результате обучения вы сможете"
+        outcomes = f'<section class="outcomes"><b>{outcomes_title}</b><ul>' + "".join(
             f"<li>{esc(o)}</li>" for o in c["outcomes"]) + "</ul></section>"
     prereq = ""
     if c.get("prerequisites"):
-        prereq = '<section class="outcomes"><b>Требуется предварительно</b><ul>' + "".join(
+        prereq_title = "Что нужно знать заранее" if cards else "Требуется предварительно"
+        prereq = f'<section class="outcomes"><b>{prereq_title}</b><ul>' + "".join(
             f"<li>{esc(o)}</li>" for o in c["prerequisites"]) + "</ul></section>"
     price_pill = f'<span class="pill">{esc(price(c))}</span>' if price(c) else ""
     code = c.get("code", "")
@@ -108,6 +129,15 @@ def build_course(root: Path) -> Path:
         stale.unlink()
     plan_name = plan_filename(c)
     write_plan_xlsx(c, dist / plan_name)
+    if cards:
+        plan_heading = "Разделы подготовки"
+        plan_intro = ('<article class="prose"><p>Материалы собраны в разделы: общая информация '
+                      'об экзамене, методички по шести заданиям и варианты для практики. '
+                      'В каждой методичке указано, что открыть, какие файлы создать и какие '
+                      'команды выполнить.</p></article>')
+    else:
+        plan_heading = "Учебный план"
+        plan_intro = ""
     body = f"""<main class="page">{rail(back="#year", excel=plan_name)}
 <header class="hero hero-course" data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>
@@ -115,7 +145,8 @@ def build_course(root: Path) -> Path:
 <h1>{esc(c['title'])}</h1><p class="dek">{esc(c.get('tagline', ''))}</p>
 <div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></header>
     {outcomes}{prereq}
-<article class="prose"><h2 class="nonum" style="margin-top:36px">Учебный план</h2></article>
+<article class="prose"><h2 class="nonum" style="margin-top:36px">{plan_heading}</h2></article>
+{plan_intro}
 <ol class="syllabus">{''.join(items)}</ol></main>"""
     out = dist / "index.html"
     out.write_text(page(c["title"], body, accent_vars(c), "", SHADER_JS), encoding="utf-8")

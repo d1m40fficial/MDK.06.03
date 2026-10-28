@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Основание,material,шт,1,1,480
+Патрон,material,шт,1,1,95
+Кабель с выключателем,material,шт,1,1,180
+Монтаж,operation,ч,1,"0,25",1000
+Электрическая проверка,operation,ч,1,"0,1",1200

@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Мука ржаная,material,кг,"0,32",1,65
+Закваска,material,кг,"0,08",1,100
+Пакет,material,шт,1,1,4
+Замес и формование,operation,ч,1,"0,04",500
+Выпечка,operation,ч,1,"0,02",700

@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Серебряная заготовка,material,г,"3,2",1,130
+Соединительное кольцо,material,шт,1,1,45
+Футляр,material,шт,1,1,110
+Пайка,operation,ч,1,"0,3",1600
+Полировка,operation,ч,1,"0,25",1300

@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Стекло цветное,material,м²,"0,03",1,3200
+Медная лента,material,м,"1,5",1,45
+Припой,material,кг,"0,02",1,2900
+Резка,operation,ч,1,"0,25",1100
+Сборка и пайка,operation,ч,1,"0,5",1200

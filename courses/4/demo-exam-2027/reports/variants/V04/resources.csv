@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Бумага А4,material,лист,24,1,"1,2"
+Картон обложки,material,лист,2,1,8
+Пружина,material,шт,1,1,12
+Печать,operation,ч,1,"0,03",1200
+Резка и сборка,operation,ч,1,"0,08",700

@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Фанера,material,м²,"0,006",1,950
+Магнитная лента,material,м,"0,08",1,160
+Фотобумага,material,лист,"0,1",1,30
+Печать и резка,operation,ч,1,"0,03",1200
+Сборка,operation,ч,1,"0,04",650

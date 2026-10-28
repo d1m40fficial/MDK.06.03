@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Смесь бетонная,material,кг,"0,8",1,90
+Пигмент,material,кг,"0,01",1,1200
+Лак,material,л,"0,02",1,650
+Заливка,operation,ч,1,"0,12",650
+Шлифование и покрытие,operation,ч,1,"0,2",750

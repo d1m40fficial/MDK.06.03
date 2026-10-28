@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Игровое поле,material,шт,1,1,120
+Фишка,material,шт,4,1,18
+Коробка,material,шт,1,1,85
+Печать правил,operation,ч,1,"0,04",1000
+Комплектация,operation,ч,1,"0,12",600

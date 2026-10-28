@@ -143,12 +143,30 @@ def code_class(code) -> str:
     return "code-xl"
 
 
+def is_cards(course: dict) -> bool:
+    """A course without lectures and practicals: the plan is a set of sections."""
+    return str(course.get("format", "")).lower() == "cards"
+
+
 def lesson_slots(chapters) -> int:
     """Total lesson slots: a 180-minute chapter counts as two slots of 90 minutes each."""
     total = 0
     for ch in chapters or []:
         total += max(1, round(int(ch.get("minutes") or 90) / 90))
     return total
+
+
+def plural_sections(n: int) -> str:
+    """Correct Russian plural form of «раздел» for a count."""
+    n = abs(int(n)) % 100
+    if 11 <= n <= 14:
+        return "разделов"
+    n %= 10
+    if n == 1:
+        return "раздел"
+    if n in (2, 3, 4):
+        return "раздела"
+    return "разделов"
 
 
 def plural_lessons(n: int) -> str:

@@ -31,7 +31,7 @@ import yaml
 from pygments.formatters import HtmlFormatter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _pages import accent_vars, esc, find_course_json, load_course, page, rail, FALLBACK, ASSETS  # noqa: E402
+from _pages import accent_vars, esc, find_course_json, is_cards, load_course, page, rail, FALLBACK, ASSETS  # noqa: E402
 from availability import is_open, load_availability  # noqa: E402
 
 SHADER_JS = (ASSETS / "shader.js").read_text(encoding="utf-8")
@@ -784,9 +784,12 @@ def main():
     html_body = label_code_blocks(pre, html_body)
 
     ch = fm.get("chapter")
-    label = lesson_label(cj, base.name)
+    cards = is_cards(course)
+    label = None if cards else lesson_label(cj, base.name)
     pills = []
-    if label:
+    if cards:
+        pills.append(f'<span class="pill dark">{esc(ch or "Раздел")}</span>')
+    elif label:
         word = "Занятие" if "-" not in label else "Занятия"
         pills.append(f'<span class="pill dark">{word} {label}</span>')
     elif ch is not None:
@@ -811,11 +814,13 @@ def main():
 
     outcomes = ""
     if fm.get("outcomes"):
-        outcomes = '<section class="outcomes"><b>После этого занятия вы сможете</b><ul>' + "".join(
+        outcomes_title = "Что вы разберёте в этом разделе" if cards else "После этого занятия вы сможете"
+        outcomes = f'<section class="outcomes"><b>{outcomes_title}</b><ul>' + "".join(
             f"<li>{md(str(o))[3:-4]}</li>" for o in fm["outcomes"]) + "</ul></section>"
     toc_html = ""
     if len(toc) >= 4:
-        toc_html = '<nav class="toc"><b>Содержание занятия</b><ol>' + "".join(
+        toc_title = "Содержание раздела" if cards else "Содержание занятия"
+        toc_html = f'<nav class="toc"><b>{toc_title}</b><ol>' + "".join(
             f'<li><a href="#{h}">{esc(t)}</a></li>' for h, t in toc) + "</ol></nav>"
 
     pager = ""
@@ -845,8 +850,10 @@ def main():
                     return f'<a class="{cls}" href="{s}.html"><span>{lab}</span>{esc(c["title"])}</a>'
                 return f'<span class="pager-off {cls}" aria-disabled="true"><span>{lab}</span>Пока недоступно</span>'
 
-            pager = (f'<nav class="pager">{pager_item(prev_, slugs[k-1] if prev_ else "", "← Предыдущее занятие")}'
-                     f'{pager_item(next_, slugs[k+1] if next_ else "", "Следующее занятие →", "next")}</nav>')
+            prev_label = "← Предыдущий раздел" if cards else "← Предыдущее занятие"
+            next_label = "Следующий раздел →" if cards else "Следующее занятие →"
+            pager = (f'<nav class="pager">{pager_item(prev_, slugs[k-1] if prev_ else "", prev_label)}'
+                     f'{pager_item(next_, slugs[k+1] if next_ else "", next_label, "next")}</nav>')
             pager = pager.replace('class="next"', 'class="next" style="text-align:right;margin-left:auto"')
 
     dark_fmt = HtmlFormatter(style="github-dark")

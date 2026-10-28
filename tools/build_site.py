@@ -34,7 +34,7 @@ KS = HERE / "ks" / "scripts"
 ASSETS = HERE / "ks" / "assets"
 sys.path.insert(0, str(KS))
 
-from _pages import code_class, esc, lesson_slots, load_course, page, plural_lessons, rail  # noqa: E402
+from _pages import code_class, esc, is_cards, lesson_slots, load_course, page, plural_lessons, plural_sections, rail  # noqa: E402
 
 SITE = ROOT / "docs"
 COURSES = ROOT / "courses"
@@ -206,7 +206,7 @@ def copy_course(year: str, course_dir: Path) -> dict:
             target.mkdir(parents=True, exist_ok=True)
             for f in reports.rglob("*"):
                 if f.is_file() and f.suffix.lower() in (
-                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py",
+                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py", ".md",
                     ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif",
                 ) and not f.name.startswith("make_"):
                     rel = f.relative_to(reports)
@@ -238,23 +238,25 @@ def code_key(c: dict):
 
 
 def discipline_card(c: dict) -> str:
-    n = lesson_slots(c.get("chapters", []))
+    cards = is_cards(c)
+    n = len(c.get("chapters", [])) if cards else lesson_slots(c.get("chapters", []))
     avail = c.get("status") == "available"
     code = c.get("code", "")
     spec = " · ".join(x for x in [esc(code),
-                                  f"{n} {plural_lessons(n)}" if n else None,
+                                  f"{n} {plural_sections(n) if cards else plural_lessons(n)}" if n else None,
                                   esc(c.get("assessment", ""))] if x)
     card_class = "course-card shader-card" if avail else "course-card pending shader-card"
     glyph_class = "glyph" + (f" {code_class(code)}" if code_class(code) else "")
     accent = c.get("accent", YEAR_FALLBACK["accent"])
     seed = (sum(ord(ch) for ch in c.get("slug", "")) % 97) / 97.0
+    ch_label = f"{n} разд." if cards else f"{n} зан."
     return (
         f'<a class="{card_class}" href="{esc(c["slug"])}/index.html" style="{card_vars(c)}" '
         f'data-shader data-accent="{esc(accent)}" data-seed="{seed:.3f}">'
         f'<canvas class="shader-bg" width="640" height="360" aria-hidden="true" '
         f'style="background:linear-gradient(135deg,#08090D,{esc(accent)} 58%,#08090D)"></canvas>'
         f'<div class="art"><span class="pill{" dark" if avail else ""}">'
-        f'{"Доступно" if avail else "Не готово"}</span><span class="ch">{n} зан.</span>'
+        f'{"Доступно" if avail else "Не готово"}</span><span class="ch">{ch_label}</span>'
         f'<div class="{glyph_class}" aria-hidden="true">{esc(code)}</div></div>'
         f'<div class="body"><h3>{esc(c["title"])}</h3>'
         f'<p>{esc(c.get("tagline", ""))}</p>'
@@ -290,7 +292,7 @@ def year_page(y: dict, courses: list):
 
 def year_card(y: dict, courses: list) -> str:
     yid = str(y["id"])
-    total = sum(lesson_slots(c.get("chapters", [])) for c in courses)
+    total = sum(lesson_slots(c.get("chapters", [])) for c in courses if not is_cards(c))
     spec = (f'{len(courses)} {plural_disciplines(len(courses))}'
             + (f" · {total} {plural_lessons(total)}" if total else ""))
     return (

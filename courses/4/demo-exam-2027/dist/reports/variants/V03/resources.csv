@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Глина,material,кг,"0,45",1,120
+Глазурь,material,кг,"0,03",1,950
+Коробка,material,шт,1,1,40
+Формовка,operation,ч,1,"0,4",750
+Глазурование и обжиг,operation,ч,1,"0,15",900

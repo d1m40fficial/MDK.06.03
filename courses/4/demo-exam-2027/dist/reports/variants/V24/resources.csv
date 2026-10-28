@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Багетный профиль,material,м,"1,5",1,290
+Стекло,material,м²,"0,12",1,700
+Задник,material,м²,"0,12",1,180
+Резка и соединение,operation,ч,1,"0,2",900
+Сборка,operation,ч,1,"0,15",800

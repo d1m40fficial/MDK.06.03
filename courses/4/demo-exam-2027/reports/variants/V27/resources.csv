@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Корпус деревянный,material,шт,1,1,650
+Комплект язычков,material,компл,1,1,480
+Масло,material,л,"0,02",1,1300
+Монтаж,operation,ч,1,"0,3",1000
+Настройка,operation,ч,1,"0,4",1400

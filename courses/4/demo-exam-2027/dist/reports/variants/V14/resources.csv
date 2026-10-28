@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Акрил,material,м²,"0,04",1,2300
+Плёнка,material,м²,"0,02",1,450
+Держатель,material,шт,2,1,35
+Лазерная резка,operation,ч,1,"0,06",1600
+Нанесение надписи,operation,ч,1,"0,15",900

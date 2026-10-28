@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Бязь,material,м,"0,8",1,280
+Тесьма,material,м,2,1,25
+Нить,material,м,35,1,"0,4"
+Раскрой,operation,ч,1,"0,12",600
+Пошив,operation,ч,1,"0,35",800

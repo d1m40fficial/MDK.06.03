@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Плата контроллера,material,шт,1,1,420
+Термодатчик,material,шт,1,1,90
+Корпус,material,шт,1,1,160
+Монтаж,operation,ч,1,"0,3",1100
+Прошивка и проверка,operation,ч,1,"0,2",1200

@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Ткань,material,м,"0,55",1,520
+Наполнитель,material,кг,"0,3",1,380
+Молния,material,шт,1,1,65
+Раскрой,operation,ч,1,"0,1",650
+Пошив и набивка,operation,ч,1,"0,35",750

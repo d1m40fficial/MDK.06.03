@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Брус берёзовый,material,м³,"0,001",1,42000
+Краска,material,л,"0,03",1,1100
+Мешочек,material,шт,1,1,45
+Распил и шлифование,operation,ч,1,"0,3",850
+Окраска,operation,ч,1,"0,2",750

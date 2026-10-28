@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Жгут латексный,material,м,"1,2",1,250
+Ручка,material,шт,2,1,85
+Зажим,material,шт,2,1,18
+Сборка,operation,ч,1,"0,15",800
+Проверка нагрузки,operation,ч,1,"0,08",950

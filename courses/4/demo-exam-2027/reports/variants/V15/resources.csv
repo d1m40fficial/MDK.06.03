@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Лагурус,material,шт,12,1,18
+Статица,material,шт,5,1,35
+Кашпо,material,шт,1,1,180
+Подбор и сборка,operation,ч,1,"0,35",700
+Упаковка,operation,ч,1,"0,08",550

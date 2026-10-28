@@ -14,7 +14,7 @@ import re
 import zipfile
 from pathlib import Path
 
-from _pages import lesson_slots
+from _pages import is_cards, lesson_slots, plural_sections
 
 CT = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
@@ -98,6 +98,17 @@ def is_practice(ch: dict) -> bool:
 
 def plan_rows(course: dict) -> list:
     rows = []
+    if is_cards(course):
+        for i, ch in enumerate(course.get("chapters", []), 1):
+            rows.append({
+                "number": str(ch.get("n") or i),
+                "kind": "",
+                "title": ch.get("title", ""),
+                "minutes": int(ch.get("minutes") or 90),
+                "summary": ch.get("summary", ""),
+                "topics": ", ".join(ch.get("topics", []) or []),
+            })
+        return rows
     slot = 1
     for ch in course.get("chapters", []):
         pairs = max(1, round(int(ch.get("minutes") or 90) / 90))
@@ -123,7 +134,11 @@ def plan_meta(course: dict) -> str:
     if course.get("hours"):
         bits.append(f'{course["hours"]} ч')
     count = lesson_slots(course.get("chapters", []))
-    if count:
+    if is_cards(course):
+        count = len(course.get("chapters", []))
+        if count:
+            bits.append(f"{count} {plural_sections(count)}")
+    elif count:
         tail = "занятий"
         if count % 10 == 1 and count % 100 != 11:
             tail = "занятие"
@@ -171,6 +186,7 @@ def plural_positions(n: int) -> str:
 
 def sheet_xml(course: dict) -> str:
     rows = plan_rows(course)
+    cards = is_cards(course)
     last = 5 + len(rows)
     total_row = last + 1
     out = []
@@ -178,42 +194,78 @@ def sheet_xml(course: dict) -> str:
     out.append(row_xml(2, [inline("A2", course.get("title", ""), 2)], 24))
     out.append(row_xml(3, [inline("A3", plan_meta(course), 3)], 18))
     out.append('<row r="4" ht="8" customHeight="1"/>')
-    out.append(row_xml(5, [
-        inline("A5", "№", 4), inline("B5", "Тип", 4), inline("C5", "Тема занятия", 4),
-        inline("D5", "Часы", 4), inline("E5", "Содержание", 4),
-        inline("F5", "Ключевые понятия", 4),
-    ], 32))
-    for i, item in enumerate(rows, start=6):
-        length = max(len(item["summary"]) / 74, len(item["topics"]) / 44, len(item["title"]) / 56)
-        height = max(30, min(120, int(15 * (math.ceil(length) + 1))))
-        out.append(row_xml(i, [
-            inline(f"A{i}", item["number"], 6),
-            inline(f"B{i}", item["kind"], 6),
-            inline(f"C{i}", item["title"], 5),
-            number(f"D{i}", item["minutes"] // 45, 6),
-            inline(f"E{i}", item["summary"], 5),
-            inline(f"F{i}", item["topics"], 5),
-        ], height))
-    total = sum(item["minutes"] // 45 for item in rows)
-    out.append(row_xml(total_row, [
-        inline(f"A{total_row}", "Итого", 7),
-        inline(f"B{total_row}", "", 7),
-        inline(f"C{total_row}", "", 7),
-        number(f"D{total_row}", total, 6),
-        inline(f"E{total_row}", f"{len(rows)} {plural_positions(len(rows))}", 6),
-        inline(f"F{total_row}", "", 5),
-    ], 22))
-    cols = ('<cols><col min="1" max="1" width="7" customWidth="1"/>'
-            '<col min="2" max="2" width="12" customWidth="1"/>'
-            '<col min="3" max="3" width="55" customWidth="1"/>'
-            '<col min="4" max="4" width="9" customWidth="1"/>'
-            '<col min="5" max="5" width="70" customWidth="1"/>'
-            '<col min="6" max="6" width="42" customWidth="1"/></cols>')
-    merges = (f'<mergeCells count="4"><mergeCell ref="A1:F1"/><mergeCell ref="A2:F2"/>'
-              f'<mergeCell ref="A3:F3"/><mergeCell ref="A{total_row}:C{total_row}"/></mergeCells>')
+    if cards:
+        out.append(row_xml(5, [
+            inline("A5", "№", 4), inline("B5", "Раздел", 4),
+            inline("C5", "Часы", 4), inline("D5", "Содержание", 4),
+            inline("E5", "Ключевые понятия", 4),
+        ], 32))
+        for i, item in enumerate(rows, start=6):
+            length = max(len(item["summary"]) / 74, len(item["topics"]) / 44, len(item["title"]) / 56)
+            height = max(30, min(120, int(15 * (math.ceil(length) + 1))))
+            out.append(row_xml(i, [
+                inline(f"A{i}", item["number"], 6),
+                inline(f"B{i}", item["title"], 5),
+                number(f"C{i}", item["minutes"] // 45, 6),
+                inline(f"D{i}", item["summary"], 5),
+                inline(f"E{i}", item["topics"], 5),
+            ], height))
+        total = sum(item["minutes"] // 45 for item in rows)
+        out.append(row_xml(total_row, [
+            inline(f"A{total_row}", "Итого", 7),
+            inline(f"B{total_row}", "", 7),
+            number(f"C{total_row}", total, 6),
+            inline(f"D{total_row}", f"{len(rows)} {plural_sections(len(rows))}", 6),
+            inline(f"E{total_row}", "", 5),
+        ], 22))
+        cols = ('<cols><col min="1" max="1" width="7" customWidth="1"/>'
+                '<col min="2" max="2" width="55" customWidth="1"/>'
+                '<col min="3" max="3" width="9" customWidth="1"/>'
+                '<col min="4" max="4" width="70" customWidth="1"/>'
+                '<col min="5" max="5" width="42" customWidth="1"/></cols>')
+        merges = (f'<mergeCells count="4"><mergeCell ref="A1:E1"/><mergeCell ref="A2:E2"/>'
+                  f'<mergeCell ref="A3:E3"/><mergeCell ref="A{total_row}:B{total_row}"/></mergeCells>')
+        dimension = f"A1:E{total_row}"
+        autofilter = f"A5:E{last}"
+    else:
+        out.append(row_xml(5, [
+            inline("A5", "№", 4), inline("B5", "Тип", 4), inline("C5", "Тема занятия", 4),
+            inline("D5", "Часы", 4), inline("E5", "Содержание", 4),
+            inline("F5", "Ключевые понятия", 4),
+        ], 32))
+        for i, item in enumerate(rows, start=6):
+            length = max(len(item["summary"]) / 74, len(item["topics"]) / 44, len(item["title"]) / 56)
+            height = max(30, min(120, int(15 * (math.ceil(length) + 1))))
+            out.append(row_xml(i, [
+                inline(f"A{i}", item["number"], 6),
+                inline(f"B{i}", item["kind"], 6),
+                inline(f"C{i}", item["title"], 5),
+                number(f"D{i}", item["minutes"] // 45, 6),
+                inline(f"E{i}", item["summary"], 5),
+                inline(f"F{i}", item["topics"], 5),
+            ], height))
+        total = sum(item["minutes"] // 45 for item in rows)
+        out.append(row_xml(total_row, [
+            inline(f"A{total_row}", "Итого", 7),
+            inline(f"B{total_row}", "", 7),
+            inline(f"C{total_row}", "", 7),
+            number(f"D{total_row}", total, 6),
+            inline(f"E{total_row}", f"{len(rows)} {plural_positions(len(rows))}", 6),
+            inline(f"F{total_row}", "", 5),
+        ], 22))
+        cols = ('<cols><col min="1" max="1" width="7" customWidth="1"/>'
+                '<col min="2" max="2" width="12" customWidth="1"/>'
+                '<col min="3" max="3" width="55" customWidth="1"/>'
+                '<col min="4" max="4" width="9" customWidth="1"/>'
+                '<col min="5" max="5" width="70" customWidth="1"/>'
+                '<col min="6" max="6" width="42" customWidth="1"/></cols>')
+        merges = (f'<mergeCells count="4"><mergeCell ref="A1:F1"/><mergeCell ref="A2:F2"/>'
+                  f'<mergeCell ref="A3:F3"/><mergeCell ref="A{total_row}:C{total_row}"/></mergeCells>')
+        dimension = f"A1:F{total_row}"
+        autofilter = f"A5:F{last}"
     return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-<dimension ref="A1:F{total_row}"/>
+<dimension ref="{dimension}"/>
 <sheetViews><sheetView tabSelected="1" workbookViewId="0">
 <pane ySplit="5" topLeftCell="A6" activePane="bottomLeft" state="frozen"/>
 <selection pane="bottomLeft" activeCell="A6" sqref="A6"/>
@@ -221,7 +273,7 @@ def sheet_xml(course: dict) -> str:
 <sheetFormatPr defaultRowHeight="15"/>
 {cols}
 <sheetData>{''.join(out)}</sheetData>
-<autoFilter ref="A5:F{last}"/>
+<autoFilter ref="{autofilter}"/>
 {merges}
 <pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
 </worksheet>"""

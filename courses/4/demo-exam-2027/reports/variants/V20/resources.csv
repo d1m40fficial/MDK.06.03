@@ -1,0 +1,6 @@
+name,kind,unit,norm,time,price
+Холст,material,м,"0,7",1,360
+Стропа,material,м,"1,4",1,35
+Термотрансфер,material,шт,1,1,75
+Раскрой и печать,operation,ч,1,"0,18",850
+Пошив,operation,ч,1,"0,3",800
