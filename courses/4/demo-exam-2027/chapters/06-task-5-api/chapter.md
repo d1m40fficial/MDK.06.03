@@ -574,10 +574,12 @@ pm.test("JSON с полем error", () => {
 |---|---|---|
 | `dotnet new webapi -n Dkip.Api` | PowerShell | Создаёт проект ASP.NET Core Web API на .NET 10 |
 | `dotnet add package MySqlConnector` | Папка проекта | Добавляет драйвер MySQL |
+| `dotnet add package Swashbuckle.AspNetCore` | Папка проекта | Добавляет страницу Swagger UI и описание OpenAPI |
 | `dotnet build` | Папка проекта | Проверяет, что код компилируется |
 | `dotnet run --urls http://127.0.0.1:5271` | Папка проекта | Запускает сервер на указанном порту |
 | `Ctrl+C` в консоли | Окно сервера | Останавливает процесс API |
 | `http://127.0.0.1:5271/notes` | Браузер | Показывает ответ в виде текста |
+| `http://127.0.0.1:5271/swagger` | Браузер | Открывает Swagger UI с путями и ответами |
 | `?user_id=abc` | Адрес запроса | Воспроизводит ошибку 400 |
 | `pm.test("Имя", () => ...)` | Вкладка Tests | Объявляет проверку в Postman |
 | `pm.response.to.have.status(200)` | Внутри `pm.test` | Сравнивает код ответа |
