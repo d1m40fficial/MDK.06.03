@@ -361,7 +361,7 @@ html.quiz-pending .pager { display: none; }
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 .quiz-q[hidden] { display: none; }
-.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; overflow-wrap: anywhere; }
 .quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
 .quiz .opts { display: flex; flex-direction: column; gap: 8px; }
 .quiz .opt {
@@ -370,6 +370,7 @@ html.quiz-pending .pager { display: none; }
   transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
 }
 .quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt span { overflow-wrap: anywhere; min-width: 0; }
 .quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
   margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
 }
@@ -436,6 +437,7 @@ html.modal-open { overflow: hidden; }
 /* ---------- practicals: figures, screenshot slots, steps ---------- */
 .diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
 .diagram svg { max-width: 100%; height: auto; }
+.diagram img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto; }
 .diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
 .diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
 .shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }

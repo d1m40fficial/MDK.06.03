@@ -204,11 +204,14 @@ def copy_course(year: str, course_dir: Path) -> dict:
     if reports.exists():
         for target in (dst / "reports", src / "reports"):
             target.mkdir(parents=True, exist_ok=True)
-            for f in reports.iterdir():
+            for f in reports.rglob("*"):
                 if f.is_file() and f.suffix.lower() in (
-                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py"
+                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py",
+                    ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif",
                 ) and not f.name.startswith("make_"):
-                    shutil.copy2(f, target / f.name)
+                    rel = f.relative_to(reports)
+                    (target / rel).parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(f, target / rel)
     return c
 
 

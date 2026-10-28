@@ -1,0 +1,215 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ДЭ 2027 — API заметок",
+    "version": "1.0.0",
+    "description": "КИМ 09.02.07-5-2027, ГИА БУ, задания 5 и 6. Учебный сервер работает локально."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Текущий локальный сервер"
+    }
+  ],
+  "paths": {
+    "/notes": {
+      "get": {
+        "operationId": "getNotes",
+        "summary": "Получить обработанные заметки",
+        "description": "Читает notes и users. Объединяет title и login, сохраняет content, форматирует created_at. user_id — необязательное расширение учебного примера.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "description": "Положительный целочисленный идентификатор автора. Если автора нет, возвращается [].",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Массив заметок, в том числе пустой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Note"
+                  }
+                },
+                "examples": {
+                  "filled": {
+                    "value": [
+                      {
+                        "id": 1,
+                        "title_user": "Заметка 1 - student",
+                        "content": "Содержание заметки 1",
+                        "formatted_date": "15.03.2027"
+                      }
+                    ]
+                  },
+                  "empty": {
+                    "value": []
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный user_id или неизвестный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "user_id должен быть положительным целым числом"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Ошибка БД или обработки",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Ошибка подключения к базе данных или обработки запроса"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes": {
+      "get": {
+        "operationId": "getApiNotes",
+        "summary": "Получить обработанные заметки",
+        "description": "Читает notes и users. Объединяет title и login, сохраняет content, форматирует created_at. user_id — необязательное расширение учебного примера.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "description": "Положительный целочисленный идентификатор автора. Если автора нет, возвращается [].",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Массив заметок, в том числе пустой",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Note"
+                  }
+                },
+                "examples": {
+                  "filled": {
+                    "value": [
+                      {
+                        "id": 1,
+                        "title_user": "Заметка 1 - student",
+                        "content": "Содержание заметки 1",
+                        "formatted_date": "15.03.2027"
+                      }
+                    ]
+                  },
+                  "empty": {
+                    "value": []
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный user_id или неизвестный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "user_id должен быть положительным целым числом"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Ошибка БД или обработки",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Ошибка подключения к базе данных или обработки запроса"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Note": {
+        "type": "object",
+        "required": [
+          "id",
+          "title_user",
+          "content",
+          "formatted_date"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "title_user": {
+            "type": "string",
+            "description": "Заголовок, пробел, дефис, пробел, логин автора",
+            "example": "Заметка 1 - student"
+          },
+          "content": {
+            "type": "string",
+            "example": "Содержание заметки 1"
+          },
+          "formatted_date": {
+            "type": "string",
+            "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$",
+            "example": "15.03.2027"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

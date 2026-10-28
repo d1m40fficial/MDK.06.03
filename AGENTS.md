@@ -19,6 +19,8 @@ Anatomy + Visualise, он описывает план дисциплин, нап
 - `courses/4/db-automation/`: МДК.07.01, 29 занятий и 66 ч, MySQL в XAMPP,
   phpMyAdmin, .NET SDK 10 и Visual Studio 2022.
 - `courses/4/is-certification/`: МДК.07.02, 18 занятий и 42 ч.
+- `courses/4/demo-exam-2027/`: ДЭ-2027, 15 занятий и 40 ч, разбор КИМ
+  09.02.07-5-2027 по материалам `OlgaKraven/2027-dkip-demo`.
 - `courses/<year>/<slug>/chapters/<nn-slug>/`: занятие: `chapter.md` + `figures/<fig-id>/`.
 - `site.json`: специальности и карточки курсов для landing.
 - `availability.txt`: сколько лекций и практик открыто для каждой дисциплины.
