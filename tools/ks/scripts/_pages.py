@@ -84,7 +84,17 @@ THEME_SCRIPT = r"""
   }
   document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
     label(btn);
-    btn.addEventListener('click', function(){ apply(current() === 'dark' ? 'light' : 'dark'); });
+    btn.addEventListener('click', function(){
+      apply(current() === 'dark' ? 'light' : 'dark');
+      var ico = btn.querySelector('.theme-ico');
+      if(!ico) return;
+      ico.classList.remove('is-spinning');
+      void ico.offsetWidth;
+      ico.classList.add('is-spinning');
+      var stop = function(){ ico.classList.remove('is-spinning'); };
+      ico.addEventListener('animationend', stop, {once: true});
+      setTimeout(stop, 700);
+    });
   });
   media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
 })();
