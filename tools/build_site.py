@@ -141,16 +141,16 @@ def all_years(site: dict) -> list:
     return sorted(years, key=lambda y: y.get("order", 99))
 
 
-def plural_courses(n: int) -> str:
+def plural_streams(n: int) -> str:
     n = abs(int(n)) % 100
     if 11 <= n <= 14:
-        return "курсов"
+        return "потоков"
     n %= 10
     if n == 1:
-        return "курс"
+        return "поток"
     if n in (2, 3, 4):
-        return "курса"
-    return "курсов"
+        return "потока"
+    return "потоков"
 
 
 def year_of(course_dir: Path) -> str:
@@ -327,7 +327,7 @@ def landing(site: dict, by_year: dict):
         blocks.append(
             f'<details class="specialty"{open_attr}><summary>'
             f'<span>{esc(specialty.get("title", specialty.get("id", "")))}</span>'
-            f'<span class="spec-count">{len(years)} {plural_courses(len(years))}</span>'
+            f'<span class="spec-count">{len(years)} {plural_streams(len(years))}</span>'
             f'</summary>{body}</details>')
     body = (f'<main class="catalog">{rail()}<header class="hero hero-glass">'
             f'<h1>{esc(site.get("title", "Материалы"))}</h1></header>'

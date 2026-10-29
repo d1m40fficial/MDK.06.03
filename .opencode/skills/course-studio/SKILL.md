@@ -260,6 +260,8 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
 - Practicals may be 90 or 180 minutes. A 180-minute practical counts as two lesson slots,
   keeps the total hours unchanged and reduces the number of graded works. Do not merge a
   written practical without moving its text.
+- A lecture introduces a topic before the practical that uses it. Never place a practical
+  before the lecture that first explains its concepts.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
 - Chapter prose does not state lesson duration or per-step minutes. Duration lives in
