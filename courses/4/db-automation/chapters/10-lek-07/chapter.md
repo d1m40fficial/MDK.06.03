@@ -100,7 +100,7 @@ GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
 Начальную копию снимают с позицией журнала и разворачивают на реплике:
 
 ```powershell
-C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --source-data=2 --result-file=C:\backup\seed.sql dean
+mysqldump -u root --single-transaction --source-data=2 --result-file=.../backup/seed.sql dean
 ```
 
 После импорта реплику направляют на source:

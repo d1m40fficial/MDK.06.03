@@ -1,6 +1,6 @@
 ---
 title: Практика 11. Миграция
-dek: "Добавляем отчество студента в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных."
+dek: "Добавляем отчество вы в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных."
 chapter: "Практика 11"
 minutes: 90
 level: СПО
@@ -22,7 +22,7 @@ outcomes:
 
 - Персональный компьютер с Windows 10 и XAMPP 8.5.12.
 - Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
-- Клиент `C:\xampp\mysql\bin\mysql.exe` и утилита `C:\xampp\mysql\bin\mysqldump.exe`.
+- Клиент `mysql` и утилита `mysqldump`.
 - PowerShell и текстовый редактор для SQL-файлов.
 - Учебная база `dean` с таблицами `students`, `groups`, `enrollments`, `payments` и `schema_version`.
 - Свободное место для дампа и копии базы.
@@ -90,13 +90,13 @@ FROM students;
 Снимите дамп и восстановите его в отдельную базу. Копия нужна, чтобы прогнать миграцию и откат без риска для рабочей базы.
 
 ```powershell
-New-Item -ItemType Directory -Force C:\dean\backup, C:\dean\migrations | Out-Null
+New-Item -ItemType Directory -Force .../dean/backup, .../dean/migrations | Out-Null
 
-& C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers `
-  --default-character-set=utf8mb4 --result-file=C:\dean\backup\dean_before.sql dean
+& mysqldump -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=.../dean/backup/dean_before.sql dean
 
-& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/backup/dean_before.sql"
+& mysql -u root -e "DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+& mysql -u root --default-character-set=utf8mb4 dean_migration -e "source .../dean/backup/dean_before.sql"
 ```
 
 ```sql
@@ -108,7 +108,7 @@ SELECT version FROM dean_migration.schema_version ORDER BY version;
 
 ### Шаг 3. Напишите прямой скрипт
 
-Сохраните файл `C:\dean\migrations\001_add_middle_name_up.sql`. Скрипт не содержит `USE`: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.
+Сохраните файл `.../dean/migrations/001_add_middle_name_up.sql`. Скрипт не содержит `USE`: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.
 
 ```sql
 ALTER TABLE students
@@ -159,7 +159,7 @@ DELETE FROM schema_version WHERE version = 2;
 Запустите прямой скрипт на `dean_migration`. Клиентская команда `source` читает файл без перенаправления PowerShell, поэтому кодировка не портится.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/migrations/001_add_middle_name_up.sql"
+& mysql -u root --default-character-set=utf8mb4 dean_migration -e "source .../dean/migrations/001_add_middle_name_up.sql"
 ```
 
 ```sql
@@ -213,7 +213,7 @@ FROM dean_migration.students;
 Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте. Откат проверяют на той же копии, где прошла миграция: так видно, что скрипт работает поверх изменённой схемы, а не на пустой базе.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_migration -e "source C:/dean/migrations/001_add_middle_name_down.sql"
+& mysql -u root --default-character-set=utf8mb4 dean_migration -e "source .../dean/migrations/001_add_middle_name_down.sql"
 ```
 
 ```sql
@@ -234,7 +234,7 @@ FROM students;
 Повторите прямой скрипт на `dean` и проверьте итог теми же запросами. Перед запуском убедитесь, что копия и откат прошли без ошибок: рабочая база не место для первой попытки.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean -e "source C:/dean/migrations/001_add_middle_name_up.sql"
+& mysql -u root --default-character-set=utf8mb4 dean -e "source .../dean/migrations/001_add_middle_name_up.sql"
 ```
 
 ```sql
@@ -273,15 +273,24 @@ VALUES ('Проверка Совместимости', 1, 'compat@example.ru');
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Прямой скрипт | 20 | Столбец, заполнение, обязательность, ограничение и версия |
-| Обратный скрипт | 20 | Возвращает структуру и версию, запускается без ошибок |
-| Проверка на копии | 20 | Миграция и откат пройдены до рабочей базы |
-| Сверка данных | 20 | Число строк и контрольная сумма совпадают |
-| Совместимость | 10 | Названо влияние на старые запросы и предложена мера |
-| Оформление | 10 | Скриншоты подписаны, версии и значения указаны |
-| **Итого** | **100** | Зачёт от 60 баллов |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Прямой скрипт.** Столбец, заполнение, обязательность, ограничение и версия
+- **Обратный скрипт.** Возвращает структуру и версию, запускается без ошибок
+- **Проверка на копии.** Миграция и откат пройдены до рабочей базы
+- **Сверка данных.** Число строк и контрольная сумма совпадают
+- **Совместимость.** Названо влияние на старые запросы и предложена мера
+- **Оформление.** Скриншоты подписаны, версии и значения указаны
+- ****Итого**.** Зачёт от 60 баллов
 
 ## Контрольные вопросы
 

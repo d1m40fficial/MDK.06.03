@@ -21,7 +21,7 @@ outcomes:
 ## Оборудование и программное обеспечение
 
 - Компьютер с XAMPP 8.5.12 и базой `dean` из практики 1.
-- phpMyAdmin и клиент `C:\xampp\mysql\bin\mysql.exe`.
+- phpMyAdmin и клиент `mysql`.
 - .NET SDK 10 и проект `DeanAdmin` из практики 1.
 - Текстовый редактор для скрипта `roles.sql` и табличный редактор для матрицы.
 
@@ -108,7 +108,7 @@ SHOW GRANTS FOR 'dean_read';
 Первая команда показывает выданную роль, вторая права самой роли. Затем войдите как `dean_reader`.
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean
+& "mysql" -u dean_reader -p dean
 ```
 
 ```sql
@@ -123,24 +123,24 @@ SHOW GRANTS;
 Выполняйте пары: сначала разрешённый запрос, потом запрещённый. Ошибка и есть доказательство.
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean -e "SELECT 'Иванов ИС-41'; SELECT COUNT(*) FROM students;"
-& "C:\xampp\mysql\bin\mysql.exe" -u dean_reader -p dean -e "INSERT INTO groups (name, specialty) VALUES ('ИС-44','09.02.07');"
+& "mysql" -u dean_reader -p dean -e "SELECT 'Иванов ИС-41'; SELECT COUNT(*) FROM students;"
+& "mysql" -u dean_reader -p dean -e "INSERT INTO groups (name, specialty) VALUES ('ИС-44','09.02.07');"
 ```
 
 Второй запрос вернёт `ERROR 1142 (42000): INSERT command denied to user 'dean_reader'@'localhost' for table 'groups'`.
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u dean_app -p dean -e "INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);"
-& "C:\xampp\mysql\bin\mysql.exe" -u dean_app -p dean -e "DELETE FROM payments WHERE id = 1;"
+& "mysql" -u dean_app -p dean -e "INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);"
+& "mysql" -u dean_app -p dean -e "DELETE FROM payments WHERE id = 1;"
 ```
 
 Первый запрос проходит, второй возвращает `ERROR 1142` на таблицу `payments`: приложение получило права `dean_write`, но не право удаления.
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u student_user -p dean -e "SELECT title FROM courses;"
-& "C:\xampp\mysql\bin\mysql.exe" -u student_user -p dean -e "SELECT full_name FROM students;"
-& "C:\xampp\mysql\bin\mysql.exe" -u audit_user -p dean -e "SELECT COUNT(*) FROM audit_log;"
-& "C:\xampp\mysql\bin\mysql.exe" -u audit_user -p dean -e "INSERT INTO audit_log (db_user, action) VALUES ('audit_user','DELETE');"
+& "mysql" -u student_user -p dean -e "SELECT title FROM courses;"
+& "mysql" -u student_user -p dean -e "SELECT full_name FROM students;"
+& "mysql" -u audit_user -p dean -e "SELECT COUNT(*) FROM audit_log;"
+& "mysql" -u audit_user -p dean -e "INSERT INTO audit_log (db_user, action) VALUES ('audit_user','DELETE');"
 ```
 
 `student_user` видит только справочники, `audit_user` читает журнал и не может в него писать. Сделайте скриншоты успешного и запрещённого запроса: в кадре должны быть команда, имя учётной записи и текст ошибки.
@@ -231,13 +231,22 @@ $env:DEAN_DB_PASSWORD = "Reader_2026"; dotnet run -- dean_reader
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Роли | 20 | Четыре роли созданы, права выданы на нужные объекты |
-| Учётные записи | 20 | У каждой роли своя запись, роли назначены и активны |
-| Отзыв прав | 20 | `DELETE` на `payments` отозван и подтверждён ошибкой |
-| Проверки | 30 | Каждая роль проверена разрешённым и запрещённым запросом |
-| Матрица и отчёт | 10 | Матрица совпадает с фактическими результатами |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Роли.** Четыре роли созданы, права выданы на нужные объекты
+- **Учётные записи.** У каждой роли своя запись, роли назначены и активны
+- **Отзыв прав.** `DELETE` на `payments` отозван и подтверждён ошибкой
+- **Проверки.** Каждая роль проверена разрешённым и запрещённым запросом
+- **Матрица и отчёт.** Матрица совпадает с фактическими результатами
 
 ## Контрольные вопросы
 

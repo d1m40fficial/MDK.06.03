@@ -822,7 +822,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <ul>
 <li>Персональный компьютер или ноутбук с Word, PowerPoint и Excel.</li>
 <li>Папка проекта, собранная на предыдущих практиках.</li>
-<li>Папка защиты <code>C:\PM\practice-07</code>.</li>
+<li>Папка защиты <code>.../PM/practice-07</code>.</li>
 </ul>
 <div class="files"><b class="label">Материалы к работе</b>
 <a href="reports/PM_practice-07_report-template.docx" download>Шаблон итогового отчёта в DOCX</a>
@@ -845,8 +845,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <h3>Шаг 1. Подготовьте папку защиты</h3>
 <p>Создайте папку защиты:</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">07</span> <span class="p">|</span> <span class="nb">Out-Null</span>
-<span class="nb">Set-Location</span> <span class="n">C</span><span class="p">:\</span><span class="n">PM</span><span class="p">\</span><span class="n">practice</span><span class="p">-</span><span class="n">07</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">.../</span><span class="n">PM</span><span class="p">/</span><span class="n">practice</span><span class="p">-</span><span class="n">07</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="p">.../</span><span class="n">PM</span><span class="p">/</span><span class="n">practice</span><span class="p">-</span><span class="n">07</span>
 </code></pre></div>
 
 <p>Скачайте в неё оба файла из блока «Материалы к работе» и проверьте имена: <code>PM_practice-07_report-template.docx</code> и <code>PM_practice-07_defense-checklist.csv</code>, а не <code>.docx.docx</code> или <code>.csv.txt</code>. Шаблон откройте в Word и сразу сохраните под своим именем: <code>PM_defense_Иванов.docx</code>.</p>
@@ -1384,11 +1384,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Чек-лист <code>PM_practice-07_defense-checklist.csv</code> с 12 отметками и подписью.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
-<ul>
-<li><strong>5</strong>: в пакете десять документов, числа совпадают, в план-факте пять строк с причиной и выводом, три решения содержат варианты и цену, уроки привязаны к числам и шаблонам, выступление укладывается в регламент, восемь ответов опираются на документы.</li>
-<li><strong>4</strong>: пакет полный, но одно число не сходится между документами, одна строка план-факта без вывода, одно решение без цены или выступление вышло за регламент, а два ответа обошлись без доказательства.</li>
-<li><strong>3</strong>: в пакете семь или восемь документов, план-факт описан по трём показателям, решения пересказаны без вариантов, уроки общие, выступление читается с листа, ответы не опираются на документы.</li>
-</ul>
+<p>Оценка выставляется по шкале от 1 до 5.
+- <strong>5</strong>: в пакете десять документов, числа совпадают, в план-факте пять строк с причиной и выводом, три решения содержат варианты и цену, уроки привязаны к числам и шаблонам, выступление укладывается в регламент, восемь ответов опираются на документы.
+- <strong>4</strong>: пакет полный, но одно число не сходится между документами, одна строка план-факта без вывода, одно решение без цены или выступление вышло за регламент, а два ответа обошлись без доказательства.
+- <strong>3</strong>: в пакете семь или восемь документов, план-факт описан по трём показателям, решения пересказаны без вариантов, уроки общие, выступление читается с листа, ответы не опираются на документы.
+- <strong>2</strong>: работа не выполнена.
+- <strong>1</strong>: работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления.</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
@@ -1398,7 +1399,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Чем урок отличается от оправдания и как проверить, что урок настоящий?</li>
 <li>Что делать, если на вопрос комиссии точного числа нет?</li>
 </ol>
-</div></article><nav class="pager"><a class="" href="16-lek-10.html"><span>← Предыдущее занятие</span>Лекция 10. Agile, Scrum и завершение</a><span></span></nav></main>
+</div></article><nav class="pager"><a class="" href="15-prakt-06.html"><span>← Предыдущее занятие</span>Практика 6. Scrum-доска</a><span></span></nav></main>
 <script>
 (function(){
   var root = document.documentElement;

@@ -104,7 +104,7 @@ SET GLOBAL local_infile = 1;
 Клиент запускают с разрешением локальной загрузки:
 
 ```bash
-C:\xampp\mysql\bin\mysql.exe --local-infile=1 -u root dean
+mysql --local-infile=1 -u root dean
 ```
 
 ## Загрузка CSV через LOAD DATA
@@ -123,7 +123,7 @@ CREATE TABLE students_stage (
 Загрузка задаёт кодировку, разделитель, кавычки и конец строки. Для файла из Windows конец строки это `\r\n`, иначе последнее поле каждой строки получит лишний символ возврата каретки.
 
 ```sql
-LOAD DATA LOCAL INFILE 'C:/xampp/htdocs/import/students.csv'
+LOAD DATA LOCAL INFILE '.../xampp/htdocs/import/students.csv'
 INTO TABLE students_stage
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
@@ -161,7 +161,7 @@ post_max_size = 64M
 max_execution_time = 300
 ```
 
-Правки вносят в `C:\xampp\php\php.ini`, после чего перезапускают Apache. Если файл больше предела, phpMyAdmin либо откажется его принимать, либо оборвёт импорт на середине. Второй случай опаснее: часть строк уже в таблице, и повторная загрузка создаст дубли.
+Правки вносят в `.../xampp/php/php.ini`, после чего перезапускают Apache. Если файл больше предела, phpMyAdmin либо откажется его принимать, либо оборвёт импорт на середине. Второй случай опаснее: часть строк уже в таблице, и повторная загрузка создаст дубли.
 
 > [!PITFALL] Успешный импорт не означает полный
 > Сообщение «Импорт успешно завершён» говорит только о том, что команда не упала. Сколько строк принято, сколько отклонено и почему, phpMyAdmin показывает отдельным блоком, и его нужно читать, а не закрывать.
@@ -234,7 +234,7 @@ CREATE TABLE students_json_stage (
   doc JSON NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOAD DATA LOCAL INFILE 'C:/xampp/htdocs/import/students.jsonl'
+LOAD DATA LOCAL INFILE '.../xampp/htdocs/import/students.jsonl'
 INTO TABLE students_json_stage
 CHARACTER SET utf8mb4
 LINES TERMINATED BY '\r\n'
@@ -262,7 +262,7 @@ JSON не заменяет нормализацию. Хранить в одно�
 ```sql
 SELECT id, full_name, email
 FROM students
-INTO OUTFILE 'C:/xampp/mysql/export/students.csv'
+INTO OUTFILE '.../xampp/mysql/export/students.csv'
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n';
@@ -273,7 +273,7 @@ LINES TERMINATED BY '\r\n';
 Для копии базы целиком используют `mysqldump`, который сохраняет схему, данные и кодировку.
 
 ```bash
-C:\xampp\mysql\bin\mysqldump.exe -u root --default-character-set=utf8mb4 --single-transaction --routines --triggers dean > dean.sql
+mysqldump -u root --default-character-set=utf8mb4 --single-transaction --routines --triggers dean > dean.sql
 ```
 
 phpMyAdmin на вкладке «Экспорт» умеет CSV, JSON и SQL, но для больших таблиц упирается в лимиты PHP и в память браузера. Проверка выгрузки простая: загрузить файл обратно в промежуточную таблицу и сверить число строк.

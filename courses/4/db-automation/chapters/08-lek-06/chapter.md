@@ -71,7 +71,7 @@ Binary log это файл событий, которые сервер прим�
 Дамп снимают с расчётом на такую процедуру:
 
 ```powershell
-C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers --default-character-set=utf8mb4 --source-data=2 --result-file=C:\backup\dean_2026-10-26.sql dean
+mysqldump -u root --single-transaction --routines --triggers --default-character-set=utf8mb4 --source-data=2 --result-file=.../backup/dean_2026-10-26.sql dean
 ```
 
 Флаг `--single-transaction` берёт согласованный снимок InnoDB, не блокируя таблицы на запись. `--routines` и `--triggers` добавляют процедуры и триггеры, без них база восстановится без части логики. `--default-character-set=utf8mb4` сохраняет кириллицу, а `--source-data=2` записывает в начало файла позицию журнала на момент выгрузки. В MariaDB из XAMPP тот же флаг называется `--master-data=2`.
@@ -91,13 +91,13 @@ CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 Дальше файл читает клиент `mysql`. Команда `source` выполняет его построчно и останавливается на первой ошибке, если не указан `--force`:
 
 ```powershell
-C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_restore -e "source C:\backup\dean_2026-10-26.sql"
+mysql -u root --default-character-set=utf8mb4 dean_restore -e "source .../backup/dean_2026-10-26.sql"
 ```
 
 Перед импортом полезно посмотреть первые строки файла:
 
 ```powershell
-Get-Content C:\backup\dean_2026-10-26.sql -TotalCount 25
+Get-Content .../backup/dean_2026-10-26.sql -TotalCount 25
 ```
 
 Если дамп снимали с флагом `--databases`, в нём есть строки `CREATE DATABASE dean` и `USE dean`. Импорт такого файла в `dean_restore` запишет таблицы в `dean`. Поэтому либо снимают дамп без `--databases`, либо правят строку `USE` перед импортом.
@@ -106,7 +106,7 @@ Get-Content C:\backup\dean_2026-10-26.sql -TotalCount 25
 
 ## Binary log: включить и прочитать
 
-Журнал включают заранее, в `C:\xampp\mysql\bin\my.ini`, и перезапускают MySQL из панели XAMPP:
+Журнал включают заранее, в `.../xampp/mysql/bin/my.ini`, и перезапускают MySQL из панели XAMPP:
 
 ```ini
 [mysqld]
@@ -125,12 +125,12 @@ SHOW VARIABLES WHERE Variable_name IN ('log_bin', 'binlog_format', 'server_id');
 SHOW BINARY LOGS;
 ```
 
-Первая команда должна показать `ON`, `ROW` и ненулевой номер, вторая выдаёт список файлов и их размеры. В каталоге `C:\xampp\mysql\data` эти файлы лежат рядом с папками баз.
+Первая команда должна показать `ON`, `ROW` и ненулевой номер, вторая выдаёт список файлов и их размеры. В каталоге `.../xampp/mysql/data` эти файлы лежат рядом с папками баз.
 
 Чтобы найти границу, журнал читают в окне вокруг аварии. `mysqlbinlog` показывает события строками и подписывает позиции:
 
 ```powershell
-C:\xampp\mysql\bin\mysqlbinlog.exe --base64-output=DECODE-ROWS -v --start-datetime="2026-10-26 11:30:00" --stop-datetime="2026-10-26 11:45:00" --result-file=C:\backup\window.sql C:\xampp\mysql\data\mysql-bin.000007
+.../xampp/mysql/bin/mysqlbinlog.exe --base64-output=DECODE-ROWS -v --start-datetime="2026-10-26 11:30:00" --stop-datetime="2026-10-26 11:45:00" --result-file=.../backup/window.sql .../xampp/mysql/data/mysql-bin.000007
 ```
 
 В файле видно событие `UPDATE dean.enrollments`, время `SET TIMESTAMP` и позицию `end_log_pos`. Номер `# at 1720` перед этим событием и есть граница: всё, что раньше, применяем, всё, что позже, отбрасываем. Время и позиция дают две независимые координаты одной и той же точки.
@@ -142,8 +142,8 @@ C:\xampp\mysql\bin\mysqlbinlog.exe --base64-output=DECODE-ROWS -v --start-dateti
 Журнал адресован базе `dean`: события содержат `USE dean`. Репетиция идёт на экземпляре на порту 3307, где база снова называется `dean`.
 
 ```powershell
-C:\xampp\mysql\bin\mysqlbinlog.exe --start-position=154 --stop-datetime="2026-10-26 11:40:00" --result-file=C:\backup\pitr.sql C:\xampp\mysql\data\mysql-bin.000006 C:\xampp\mysql\data\mysql-bin.000007
-C:\xampp\mysql\bin\mysql.exe -u root -h 127.0.0.1 -P 3307 --default-character-set=utf8mb4 -e "source C:\backup\pitr.sql" dean
+.../xampp/mysql/bin/mysqlbinlog.exe --start-position=154 --stop-datetime="2026-10-26 11:40:00" --result-file=.../backup/pitr.sql .../xampp/mysql/data/mysql-bin.000006 .../xampp/mysql/data/mysql-bin.000007
+mysql -u root -h 127.0.0.1 -P 3307 --default-character-set=utf8mb4 -e "source .../backup/pitr.sql" dean
 ```
 
 `--start-position` задаёт первое событие, `--stop-datetime` обрывает чтение на первом событии с указанным временем или позже, поэтому событие 11:40:00 в файл не попадает. Файлы журнала перечисляют по порядку номеров: если авария попала в следующий файл, одного имени мало.
@@ -162,8 +162,8 @@ C:\xampp\mysql\bin\mysql.exe -u root -h 127.0.0.1 -P 3307 --default-character-se
 2. **Остановить запись.** Приложение переводится в режим только чтения или выключается. Пока в базу идут изменения, любая копия устаревает быстрее, чем её проверяют.
 3. **Поднять отдельный экземпляр.** Второй сервер запускают из своего каталога данных на другом порту:
    ```powershell
-   C:\xampp\mysql\bin\mysqld.exe --initialize-insecure --datadir=C:\mysql-restore\data
-   C:\xampp\mysql\bin\mysqld.exe --datadir=C:\mysql-restore\data --port=3307 --console
+   .../xampp/mysql/bin/mysqld.exe --initialize-insecure --datadir=.../mysql-restore/data
+   .../xampp/mysql/bin/mysqld.exe --datadir=.../mysql-restore/data --port=3307 --console
    ```
    В MariaDB первый шаг выполняет `mysql_install_db.exe` с тем же `--datadir`.
 4. **Развернуть дамп.** Создать `dean` с `utf8mb4`, импортировать файл, сверить число таблиц.
@@ -196,7 +196,7 @@ CHECK TABLE students, enrollments, payments;
 Для InnoDB команда читает индексные страницы и сообщает о расхождении. Ответ `status OK` означает, что индексы таблицы согласованы. Ту же проверку из командной строки делает `mysqlcheck`:
 
 ```powershell
-C:\xampp\mysql\bin\mysqlcheck.exe -u root --check dean_restore
+mysqlcheck -u root --check dean_restore
 ```
 
 Кодировку проверяют на данных: `SHOW CREATE TABLE students` должен показать `utf8mb4`, а `SELECT full_name FROM students LIMIT 3` вернуть читаемые фамилии. Строки вида `Ð”ÐµÐºÐ°Ð½Ð°Ñ‚` означают, что файл читали не в той кодировке.

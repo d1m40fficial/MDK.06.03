@@ -78,7 +78,7 @@ Host `%` разрешает подключение с любого адреса,
 
 XAMPP ставит `root` без пароля, чтобы первый запуск phpMyAdmin прошёл без настройки. Для учебного стенда это допустимо на время занятия, но приложение не должно работать под `root` ни при каких условиях.
 
-Порядок действий такой: задать пароль `root`, обновить его в `C:\xampp\phpMyAdmin\config.inc.php`, создать отдельного пользователя приложения и выдать ему минимальные права.
+Порядок действий такой: задать пароль `root`, обновить его в `.../xampp/phpMyAdmin/config.inc.php`, создать отдельного пользователя приложения и выдать ему минимальные права.
 
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'StrongRootPass!';
@@ -167,7 +167,7 @@ var cs = new MySqlConnectionStringBuilder
 Дамп базы содержит все данные и часто лежит в папке загрузок или в общем каталоге. Доступ к нему должен быть не шире, чем к самой базе: отдельный каталог, права только у администратора, шифрование архива и хранение вне учебного компьютера.
 
 ```powershell
-C:\xampp\mysql\bin\mysqldump.exe -u dean_app -p --single-transaction `
+mysqldump -u dean_app -p --single-transaction `
   --routines --triggers --default-character-set=utf8mb4 dean > dean.sql
 ```
 

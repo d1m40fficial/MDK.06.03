@@ -825,9 +825,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>База <code>dean</code> с учебными данными и пользователь <code>dean_app</code> с паролем.</li>
 <li>.NET SDK 10 и Visual Studio 2022 Community, проверка командой <code>dotnet --version</code>.</li>
 <li>Пакет <code>MySqlConnector</code> из NuGet.</li>
-<li><code>C:\xampp\mysql\bin\mysqldump.exe</code> и клиент <code>mysql.exe</code>.</li>
+<li><code>mysqldump</code> и клиент <code>mysql.exe</code>.</li>
 <li>Переменная окружения <code>DEAN_DB_PASSWORD</code> для пароля.</li>
-<li>Каталог <code>C:\dean\maintenance</code> для проекта, копий и журнала.</li>
+<li>Каталог <code>.../dean/maintenance</code> для проекта, копий и журнала.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p><strong>Идемпотентность</strong> это свойство операции давать один и тот же результат при повторном выполнении. Для обслуживания это значит: второй запуск не создаёт дубли строк, не ломает копию и не меняет данные. Копия с меткой времени и <code>ANALYZE TABLE</code> идемпотентны по своей природе, а <code>INSERT</code> без ограничения уникальности и <code>DROP</code> без проверки уже нет.</p>
@@ -840,7 +840,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p><strong>Секрет в окружении.</strong> Пароль не хранят в коде и не передают аргументом командной строки: аргументы видны в списке процессов и остаются в истории. <code>mysqldump</code> читает пароль из переменной <code>MYSQL_PWD</code>, которую приложение передаёт дочернему процессу через <code>ProcessStartInfo.Environment</code>.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Создайте проект</h3>
-<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">cd</span> /d C:\dean\maintenance
+<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">cd</span> /d .../dean/maintenance
 dotnet new console -n DeanMaintenance
 <span class="k">cd</span> DeanMaintenance
 dotnet add package MySqlConnector
@@ -916,7 +916,7 @@ dotnet --version
 
 <span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">psi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProcessStartInfo</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;mysqldump&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="n">RedirectStandardError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">,</span>
 <span class="w">        </span><span class="n">UseShellExecute</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span><span class="p">,</span>
 <span class="w">        </span><span class="n">CreateNoWindow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
@@ -1050,11 +1050,11 @@ DeanMaintenance.exe --dry-run
 
 <h3>Шаг 6. Запустите приложение второй раз</h3>
 <p>Сначала зафиксируйте число строк, затем повторите запуск и сравните.</p>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean -e &quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;&quot;</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>mysql -u root dean -e <span class="s2">&quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;&quot;</span>
 DeanMaintenance.exe
 <span class="k">echo</span> <span class="nv">%ERRORLEVEL%</span>
 <span class="k">dir</span> backups
-C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean -e &quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;&quot;</span>
+mysql -u root dean -e <span class="s2">&quot;SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;&quot;</span>
 </code></pre></div>
 
 <p>Числа не меняются, а копий становится две. Это и есть идемпотентность обслуживания: повторный запуск создаёт новый снимок, но не трогает данные. Имя копии содержит метку времени до секунды, поэтому два запуска подряд в одну секунду дадут одно имя и перезапишут файл. Между запусками подождите секунду.</p>
@@ -1143,42 +1143,43 @@ findstr /C:<span class="s2">&quot;CHECK students=&quot;</span> logs\dean-mainten
 <li>Скриншоты кода, двух запусков, журнала и <code>echo %ERRORLEVEL%</code>.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Приложение</td>
-<td>25</td>
-<td>Аргументы, журнал и коды возврата на месте</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Копия и обслуживание</td>
-<td>20</td>
-<td><code>mysqldump</code> создаёт пригодную копию, <code>ANALYZE TABLE</code> выполняется</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Повторный запуск</td>
-<td>20</td>
-<td>Данные не меняются, копии не перезаписываются</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Коды возврата</td>
-<td>20</td>
-<td>0, 1 и 64 возвращаются в своих случаях</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Безопасность и отчёт</td>
-<td>15</td>
-<td>Пароль в переменной окружения, журнал читается, таблица заполнена</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Приложение.</strong> Аргументы, журнал и коды возврата на месте
+- <strong>Копия и обслуживание.</strong> <code>mysqldump</code> создаёт пригодную копию, <code>ANALYZE TABLE</code> выполняется
+- <strong>Повторный запуск.</strong> Данные не меняются, копии не перезаписываются
+- <strong>Коды возврата.</strong> 0, 1 и 64 возвращаются в своих случаях
+- <strong>Безопасность и отчёт.</strong> Пароль в переменной окружения, журнал читается, таблица заполнена</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

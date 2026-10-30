@@ -22,7 +22,7 @@ outcomes:
 
 - Персональный компьютер с Windows 10 и XAMPP 8.5.12.
 - Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
-- Клиент `C:\xampp\mysql\bin\mysql.exe` и конфигурация `C:\xampp\mysql\bin\my.ini`.
+- Клиент `mysql` и конфигурация `.../xampp/mysql/bin/my.ini`.
 - .NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».
 - Пакет `MySqlConnector` для подключения к MySQL из C#.
 - Планировщик Windows (`taskschd.msc`) и оснастка служб для проверки запуска.
@@ -85,19 +85,19 @@ SELECT VERSION() AS server_version;
 ```
 
 ```powershell
-New-Item -ItemType Directory -Force C:\dean\log, C:\dean\src, C:\dean\secret | Out-Null
-[System.IO.File]::WriteAllText("C:\dean\secret\db_password.txt", "пароль_пользователя_dean_app")
-icacls C:\dean\secret\db_password.txt /inheritance:r /grant:r "$($env:USERNAME):(R)"
+New-Item -ItemType Directory -Force .../dean/log, .../dean/src, .../dean/secret | Out-Null
+[System.IO.File]::WriteAllText(".../dean/secret/db_password.txt", "пароль_пользователя_dean_app")
+icacls .../dean/secret/db_password.txt /inheritance:r /grant:r "$($env:USERNAME):(R)"
 ```
 
 Пароль приложение читает из файла, а не из кода. Доступ к файлу оставьте только своей учётной записи: тогда задание в планировщике работает без переменных окружения и без пароля в командной строке.
 
 ### Шаг 2. Соберите приложение DeanMaintenance
 
-Создайте консольное приложение и добавьте драйвер. Пароль не храните в коде: приложение читает его из файла `C:\dean\secret\db_password.txt`.
+Создайте консольное приложение и добавьте драйвер. Пароль не храните в коде: приложение читает его из файла `.../dean/secret/db_password.txt`.
 
 ```powershell
-cd C:\dean\src
+cd .../dean/src
 dotnet new console -n DeanMaintenance
 cd DeanMaintenance
 dotnet add package MySqlConnector
@@ -108,7 +108,7 @@ dotnet add package MySqlConnector
 ```csharp
 using MySqlConnector;
 
-var secret = @"C:\dean\secret\db_password.txt";
+var secret = @".../dean/secret/db_password.txt";
 var password = File.Exists(secret) ? File.ReadAllText(secret).Trim() : "";
 
 var cs = new MySqlConnectionStringBuilder
@@ -121,7 +121,7 @@ var cs = new MySqlConnectionStringBuilder
     CharacterSet = "utf8mb4"
 }.ConnectionString;
 
-var log = @"C:\dean\log\maintenance.log";
+var log = @".../dean/log/maintenance.log";
 
 void Write(string line) =>
     File.AppendAllText(log, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {line}{Environment.NewLine}");
@@ -166,7 +166,7 @@ dotnet build -c Release
 ```powershell
 dotnet run -c Release
 Write-Host "exit code: $LASTEXITCODE"
-Get-Content C:\dean\log\maintenance.log -Tail 4
+Get-Content .../dean/log/maintenance.log -Tail 4
 ```
 
 ```sql
@@ -178,12 +178,12 @@ SELECT id, started_at, script, status FROM maintenance_runs ORDER BY id DESC LIM
 Опубликуйте приложение в отдельный каталог и создайте задание. Для проверки поставьте повторение каждую минуту, потом вернёте суточное расписание.
 
 ```powershell
-dotnet publish C:\dean\src\DeanMaintenance -c Release -o C:\dean\bin
-schtasks /Create /TN "DeanMaintenance" /SC MINUTE /MO 1 /TR "C:\dean\bin\DeanMaintenance.exe" /F
+dotnet publish .../dean/src/DeanMaintenance -c Release -o .../dean/bin
+schtasks /Create /TN "DeanMaintenance" /SC MINUTE /MO 1 /TR ".../dean/bin/DeanMaintenance.exe" /F
 schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 ```
 
-В окне `taskschd.msc` откройте свойства задания и проверьте вкладки. На вкладке «Триггеры» видно расписание и повторение, на вкладке «Действия» указана программа `C:\dean\bin\DeanMaintenance.exe`. Рабочую папку задайте как `C:\dean\bin` без кавычек, иначе планировщик воспримет кавычки как часть пути.
+В окне `taskschd.msc` откройте свойства задания и проверьте вкладки. На вкладке «Триггеры» видно расписание и повторение, на вкладке «Действия» указана программа `.../dean/bin/DeanMaintenance.exe`. Рабочую папку задайте как `.../dean/bin` без кавычек, иначе планировщик воспримет кавычки как часть пути.
 
 Приложите скриншот окна свойств задания с вкладкой «Триггеры». В кадре должны быть имя задания, дата начала и повторение. Скриншот пустого списка заданий ничего не доказывает.
 
@@ -193,7 +193,7 @@ schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 
 ```powershell
 Start-Sleep -Seconds 130
-Get-Content C:\dean\log\maintenance.log -Tail 8
+Get-Content .../dean/log/maintenance.log -Tail 8
 schtasks /Query /TN "DeanMaintenance" /V /FO LIST
 ```
 
@@ -254,7 +254,7 @@ ORDER BY metric;
 Создайте проект Windows Forms и добавьте тот же драйвер. Приложение раз в пять секунд читает `SHOW GLOBAL STATUS` и заполняет таблицу.
 
 ```powershell
-cd C:\dean\src
+cd .../dean/src
 dotnet new winforms -n DeanDashboard
 cd DeanDashboard
 dotnet add package MySqlConnector
@@ -340,7 +340,7 @@ public partial class Form1 : Form
 
     private static string ReadPassword()
     {
-        var file = @"C:\dean\secret\db_password.txt";
+        var file = @".../dean/secret/db_password.txt";
         return File.Exists(file) ? File.ReadAllText(file).Trim() : "";
     }
 }
@@ -358,7 +358,7 @@ public partial class Form1 : Form
 | Долгий запрос | Дольше 60 секунд | `SHOW PROCESSLIST`, столбец `Time` | Разобрать план, проверить блокировки, при необходимости `KILL` |
 | `Questions` | Больше 50 в секунду | Два снимка и дельта | Найти частые запросы, добавить кэш или индекс |
 | Буферный пул | Доля попаданий ниже 95 процентов | Прирост `read_requests` и `reads` | Увеличить `innodb_buffer_pool_size` в `my.ini` |
-| `Uptime` | Меньше часа без планового перезапуска | `SHOW GLOBAL STATUS` | Проверить журнал ошибок MySQL в `C:\xampp\mysql\data` |
+| `Uptime` | Меньше часа без планового перезапуска | `SHOW GLOBAL STATUS` | Проверить журнал ошибок MySQL в `.../xampp/mysql/data` |
 
 ### Шаг 9. Смоделируйте инцидент
 
@@ -403,15 +403,24 @@ SHOW PROCESSLIST;
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Задание планировщика | 20 | Триггер, действие, учётная запись и рабочая папка заданы верно |
-| Журнал и код возврата | 20 | Запуск подтверждён журналом и таблицей, сбой виден |
-| Метрики | 20 | Сняты четыре показателя, `PROCESSLIST` и отчёт InnoDB |
-| Приложение WinForms | 20 | Таймер, таблица, пороги и статус работают |
-| Пороги и реакции | 10 | У каждого порога есть проверка и действие |
-| Отчёт наблюдений | 10 | Таблица заполнена, вывод опирается на значения |
-| **Итого** | **100** | Зачёт от 60 баллов |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Задание планировщика.** Триггер, действие, учётная запись и рабочая папка заданы верно
+- **Журнал и код возврата.** Запуск подтверждён журналом и таблицей, сбой виден
+- **Метрики.** Сняты четыре показателя, `PROCESSLIST` и отчёт InnoDB
+- **Приложение WinForms.** Таймер, таблица, пороги и статус работают
+- **Пороги и реакции.** У каждого порога есть проверка и действие
+- **Отчёт наблюдений.** Таблица заполнена, вывод опирается на значения
+- ****Итого**.** Зачёт от 60 баллов
 
 ## Контрольные вопросы
 

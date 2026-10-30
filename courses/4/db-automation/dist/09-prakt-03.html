@@ -822,8 +822,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
 <li>Компьютер с XAMPP 8.5.12 и базой <code>dean</code> после практик 1 и 2.</li>
-<li>Утилиты <code>C:\xampp\mysql\bin\mysqldump.exe</code>, <code>mysql.exe</code>, <code>mysqlbinlog.exe</code>.</li>
-<li>Доступ к файлу <code>C:\xampp\mysql\bin\my.ini</code> и к перезапуску MySQL в Control Panel.</li>
+<li>Утилиты <code>mysqldump</code>, <code>mysql.exe</code>, <code>mysqlbinlog.exe</code>.</li>
+<li>Доступ к файлу <code>.../xampp/mysql/bin/my.ini</code> и к перезапуску MySQL в Control Panel.</li>
 <li>Не менее 200 МБ свободного места под копии.</li>
 <li>Табличный редактор для протокола восстановления.</li>
 </ul>
@@ -854,7 +854,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Запишите результаты в протокол: это эталон для сверки.</p>
 <h3>Шаг 2. Включите binary log</h3>
-<p>Откройте <code>C:\xampp\mysql\bin\my.ini</code> и добавьте строки в существующую секцию <code>[mysqld]</code>.</p>
+<p>Откройте <code>.../xampp/mysql/bin/my.ini</code> и добавьте строки в существующую секцию <code>[mysqld]</code>.</p>
 <div class="codehilite" data-lang="ini"><pre><span></span><code><span class="na">log-bin</span><span class="o">=</span><span class="s">mysql-bin</span>
 <span class="na">server-id</span><span class="o">=</span><span class="s">1</span>
 <span class="na">binlog_format</span><span class="o">=</span><span class="s">ROW</span>
@@ -865,12 +865,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SHOW</span><span class="w"> </span><span class="n">MASTER</span><span class="w"> </span><span class="n">STATUS</span><span class="p">;</span>
 </code></pre></div>
 
-<p><code>log_bin</code> должен быть <code>ON</code>, а <code>SHOW MASTER STATUS</code> вернёт имя файла и позицию. В MySQL 8.4 эта команда называется <code>SHOW BINARY LOG STATUS</code>. Файлы журнала лежат в <code>C:\xampp\mysql\data</code>.</p>
+<p><code>log_bin</code> должен быть <code>ON</code>, а <code>SHOW MASTER STATUS</code> вернёт имя файла и позицию. В MySQL 8.4 эта команда называется <code>SHOW BINARY LOG STATUS</code>. Файлы журнала лежат в <code>.../xampp/mysql/data</code>.</p>
 <h3>Шаг 3. Сделайте дамп</h3>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;C:\backup\dean_full.sql&quot;</span> <span class="n">dean</span>
-<span class="nb">Get-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean_full</span><span class="p">.</span><span class="n">sql</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">LastWriteTime</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">.../</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysqldump&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;.../backup/dean_full.sql&quot;</span> <span class="n">dean</span>
+<span class="nb">Get-Item</span> <span class="p">.../</span><span class="n">backup</span><span class="p">/</span><span class="n">dean_full</span><span class="p">.</span><span class="n">sql</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">LastWriteTime</span>
 </code></pre></div>
 
 <p>Ключ <code>--result-file</code> важен на Windows: перенаправление <code>&gt;</code> в Windows PowerShell 5.1 пишет файл в UTF-16, и <code>mysql</code> потом читает его как мусор.</p>
@@ -879,7 +879,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">dean_restore</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_restore</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE C:\backup\dean_full.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_restore</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE .../backup/dean_full.sql&quot;</span>
 </code></pre></div>
 
 <p>База <code>dean_restore</code> указана в командной строке, потому что в дампе нет <code>USE</code>. Если бы дамп снимали с ключом <code>--databases</code>, эта команда загрузила бы данные в <code>dean</code> и затёрла рабочую базу.</p>
@@ -914,9 +914,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SHOW</span><span class="w"> </span><span class="nb">BINARY</span><span class="w"> </span><span class="n">LOGS</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysqlbinlog.exe&quot;</span> <span class="p">-</span><span class="n">-base64-output</span><span class="p">=</span><span class="n">DECODE-ROWS</span> <span class="n">-v</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;C:\backup\binlog.txt&quot;</span> <span class="s2">&quot;C:\xampp\mysql\data\mysql-bin.000002&quot;</span>
-<span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">C</span><span class="p">:\</span><span class="n">backup</span><span class="p">\</span><span class="n">binlog</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Pattern</span> <span class="s2">&quot;DELETE FROM&quot;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">5</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;.../xampp/mysql/bin/mysqlbinlog.exe&quot;</span> <span class="p">-</span><span class="n">-base64-output</span><span class="p">=</span><span class="n">DECODE-ROWS</span> <span class="n">-v</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;.../backup/binlog.txt&quot;</span> <span class="s2">&quot;.../xampp/mysql/data\mysql-bin.000002&quot;</span>
+<span class="nb">Select-String</span> <span class="n">-Path</span> <span class="p">.../</span><span class="n">backup</span><span class="p">/</span><span class="n">binlog</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Pattern</span> <span class="s2">&quot;DELETE FROM&quot;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">5</span>
 </code></pre></div>
 
 <p>Читайте файл из шага 7, а не самый старый: в нём лежат обе операции. Имя файла возьмите из <code>SHOW MASTER STATUS</code>, в примере это <code>mysql-bin.000002</code>. Ключ <code>-v</code> показывает построчные события как псевдо-SQL, поэтому удаление видно глазами.</p>
@@ -924,18 +924,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Журнал растёт с каждой записью и занимает диск. После проверенной копии старые файлы удаляют командой <code>PURGE BINARY LOGS</code>, но только если дамп снят позже удаляемых файлов: иначе восстанавливать будет нечего.</p>
 <h3>Шаг 9. Верните базу на момент до ошибки</h3>
 <p>Сначала сохраните повреждённое состояние как доказательство, затем восстановите дамп и проиграйте журнал до <code>t_good</code>.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;C:\backup\dean_broken.sql&quot;</span> <span class="n">dean</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysqldump&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;.../backup/dean_broken.sql&quot;</span> <span class="n">dean</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">DROP</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
 <span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">dean</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE C:\backup\dean_full.sql&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysqlbinlog.exe&quot;</span> <span class="p">-</span><span class="n">-start-position</span><span class="p">=</span><span class="n">ПОЗИЦИЯ</span> <span class="p">-</span><span class="n">-stop-datetime</span><span class="p">=</span><span class="s2">&quot;ВРЕМЯ&quot;</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;C:\backup\replay.sql&quot;</span> <span class="s2">&quot;C:\xampp\mysql\data\mysql-bin.000002&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE C:\backup\replay.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE .../backup/dean_full.sql&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;.../xampp/mysql/bin/mysqlbinlog.exe&quot;</span> <span class="p">-</span><span class="n">-start-position</span><span class="p">=</span><span class="n">ПОЗИЦИЯ</span> <span class="p">-</span><span class="n">-stop-datetime</span><span class="p">=</span><span class="s2">&quot;ВРЕМЯ&quot;</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="s2">&quot;.../backup/replay.sql&quot;</span> <span class="s2">&quot;.../xampp/mysql/data\mysql-bin.000002&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">-e</span> <span class="s2">&quot;SOURCE .../backup/replay.sql&quot;</span>
 </code></pre></div>
 
 <p>Вместо <code>ПОЗИЦИЯ</code> подставьте позицию из шага 7, вместо <code>ВРЕМЯ</code> значение <code>t_good</code>, вместо имени файла то, что вернул <code>SHOW MASTER STATUS</code> после <code>FLUSH BINARY LOGS</code>. Проигрывание начинается с начала окна, поэтому чужие события в него не попадут.</p>
@@ -1002,42 +1002,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Вывод о выборе вида копии, RPO и RTO.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Дамп</td>
-<td>20</td>
-<td>Все нужные ключи, файл читается, размер зафиксирован</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Восстановление</td>
-<td>20</td>
-<td>Копия развёрнута в отдельную базу без ошибок</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Сверка</td>
-<td>25</td>
-<td>Число строк и суммы совпали по каждой таблице</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Binary log</td>
-<td>25</td>
-<td>Журнал включён, событие найдено, база возвращена на момент</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Протокол</td>
-<td>10</td>
-<td>Позиция, времена и RPO с RTO записаны</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Дамп.</strong> Все нужные ключи, файл читается, размер зафиксирован
+- <strong>Восстановление.</strong> Копия развёрнута в отдельную базу без ошибок
+- <strong>Сверка.</strong> Число строк и суммы совпали по каждой таблице
+- <strong>Binary log.</strong> Журнал включён, событие найдено, база возвращена на момент
+- <strong>Протокол.</strong> Позиция, времена и RPO с RTO записаны</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

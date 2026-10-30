@@ -155,9 +155,9 @@ SHOW ENGINE INNODB STATUS;
 Резервная копия базы делается логически или физически. Логическая копия это набор SQL-команд, который создаёт mysqldump. Физическая копия это файлы данных, снятые согласованно. Для учебной базы достаточно логической.
 
 ```powershell
-C:\xampp\mysql\bin\mysqldump.exe -u root sklad `
+mysqldump -u root sklad `
   --single-transaction --routines --triggers `
-  --result-file=C:\backup\sklad_2026-10-29.sql
+  --result-file=.../backup/sklad_2026-10-29.sql
 ```
 
 Параметр single-transaction снимает согласованный снимок, не блокируя таблицы на всё время копирования. Без него копия большой базы останавливает работу приложения.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 8. Восстановление; Обновление</title>
+<title>Практика 8. Откат после сбоя и установка обновления</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,39 +812,38 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 8. Восстановление; Обновление</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 8. Откат после сбоя и установка обновления</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 28-29</span><span class="pill">Инженерно-техническая поддержка сопровождения ИС</span></div>
-<div class="hero-panel"><h1>Практика 8. Восстановление; Обновление</h1><p class="dek">Студент восстанавливает учебную базу из копии после смоделированного сбоя, затем ставит обновление на тестовый стенд, проверяет работу и отрабатывает откат.</p></div>
+<div class="hero-panel"><h1>Практика 8. Откат после сбоя и установка обновления</h1><p class="dek">Восстановление учебной базы из копии после смоделированного сбоя, установка обновления на тестовый стенд и проверка работы системы. Результат: протоколы восстановления и обновления.</p></div>
 <div class="glyph" aria-hidden="true">П8</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Восстанавливать базу из копии и проверять целостность данных</li><li>Устанавливать обновление на тестовый стенд по инструкции</li><li>Проверять работу системы после обновления и откатывать при отказе</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Научиться проходить два связанных изменения учебной ИС: восстановление базы после логической ошибки и установку обновления на тестовый стенд с проверкой и откатом.</p>
-<p>Результат работы это два протокола и один план. В протоколе восстановления есть хронология, точка восстановления, таблица сверки и оценка потерь. В протоколе обновления есть чек-лист приёмки с фактами. План отката содержит условие, состав работ и время. Работа считается выполненной, когда оба протокола подтверждены числами.</p>
+<p>Результат работы это два протокола и план отката. В протоколе восстановления есть хронология, точка восстановления, сверка и оценка потерь, в протоколе обновления чек-лист приёмки с фактами. Работа считается выполненной, когда оба протокола подтверждены числами.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Компьютер с Windows 10 или 11, PowerShell и браузером.</li>
+<li>Компьютер с Windows 10 или 11, PowerShell, браузер, Word и Excel.</li>
 <li>XAMPP 8.5.12 с MySQL или MariaDB и phpMyAdmin, панель управления запущена.</li>
 <li>Учебная база sklad с таблицами orders, order_lines, stock, clients и products.</li>
 <li>Учебный комплект обновления «Склад+ 1.4»: архив с файлами приложения и скрипт migration_1.4.sql, выданный преподавателем.</li>
-<li>Рабочая папка приложения C:\sklad_app_test с версией 1.3.</li>
-<li>Папки D:\backup и D:\update, не менее 1 ГБ свободного места.</li>
-<li>Word для протоколов, Excel или калькулятор для сверки сумм.</li>
+<li>Рабочая папка приложения &hellip;/sklad_app_test с версией 1.3.</li>
+<li>Папки &hellip;/backup и &hellip;/update, не менее 1 ГБ свободного места.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p>Логическая ошибка отличается от отказа оборудования тем, что система остаётся доступной. База открывается, приложение отвечает, но часть строк удалена или испорчена неверным запросом. Последняя копия в таком случае уже содержит порчу, поэтому точку восстановления выбирают до ошибочного действия.</p>
-<p>Точка восстановления это конкретные дата и время. Её находят по границе между последней корректной и первой испорченной операцией. В учебном стенде роль журнала изменений играет время создания копии и время выполнения ошибочного запроса.</p>
-<p>Восстановление идёт на отдельную базу. Сначала разворачивается копия под другим именем, затем проверяется целостность, сверяются число строк и суммы, и только потом приложение переключают на восстановленные данные. Такой порядок позволяет откатиться одним переключением.</p>
+<p>Точка восстановления это конкретные дата и время. Её находят по границе между последней корректной и первой испорченной операцией, а в учебном стенде опорой служат время копии и время ошибочного запроса.</p>
+<p>Восстановление идёт на отдельную базу. Сначала разворачивается копия под другим именем, затем проверяется целостность, сверяются число строк и суммы, и только потом приложение переключают на восстановленные данные.</p>
 <p>Обновление проверяют на тестовом стенде, который повторяет конфигурацию рабочей системы. Стенд показывает, запустится ли новая версия, пройдёт ли миграция базы и работают ли ключевые сценарии. План отката пишут до установки и формулируют условие отката измеримо.</p>
-<p>Два изменения связаны. Обновление меняет и файлы приложения, и схему базы, поэтому откат требует двух копий: папки приложения и базы. Если сохранить копию только базы, после отката останутся новые файлы приложения со старой схемой. Если сохранить только файлы, новый код будет читать таблицы, которые уже изменились.</p>
+<p>Два изменения связаны. Обновление меняет и файлы приложения, и схему базы, поэтому откат требует двух копий. Копия только базы оставит новые файлы приложения со старой схемой, копия только файлов даст новый код на изменённых таблицах.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Подготовьте протоколы и папки</h3>
-<p>Создайте в Word два документа: «Протокол восстановления базы sklad» и «Протокол обновления учебного стенда». В шапке каждого укажите дату, фамилию, имя стенда и версию MySQL из phpMyAdmin.</p>
+<p>Создайте в Word два документа: «Протокол восстановления базы sklad» и «Протокол обновления стенда». В шапке каждого укажите дату, фамилию, имя стенда и версию MySQL.</p>
 <p>Создайте папки для копий и для обновления.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="n">D</span><span class="p">:\</span><span class="n">backup</span> <span class="n">-Force</span>
-<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="n">D</span><span class="p">:\</span><span class="n">update</span> <span class="n">-Force</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="p">.../</span><span class="n">backup</span> <span class="n">-Force</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="p">.../</span><span class="n">update</span> <span class="n">-Force</span>
 </code></pre></div>
 
 <h3>Шаг 2. Зафиксируйте эталонное состояние</h3>
-<p>До любых изменений снимите контрольные значения. Они станут эталоном для сверки после восстановления.</p>
+<p>До любых изменений снимите контрольные значения: они станут эталоном для сверки.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;orders&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">tbl</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">cnt</span><span class="p">,</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">total</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_sum</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span>
 <span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;order_lines&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">order_lines</span>
 <span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;stock&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">stock</span><span class="p">;</span>
@@ -853,7 +852,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SELECT</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">last_order</span><span class="p">,</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="n">created_at</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">last_created</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Заполните таблицу эталона. Значения перепишите в протокол, а не оставляйте только на экране.</p>
+<p>Заполните таблицу эталона и перепишите значения в протокол.</p>
 <table>
 <thead>
 <tr>
@@ -890,10 +889,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 3. Снимите копию и смоделируйте сбой</h3>
 <p>Снимите полную копию базы и посчитайте её хеш.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">sklad</span> <span class="p">`</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysqldump</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">sklad</span> <span class="p">`</span>
   <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">D</span><span class="p">:\</span><span class="n">backup</span><span class="p">\</span><span class="n">sklad_before_fault</span><span class="p">.</span><span class="n">sql</span>
-<span class="nb">Get-FileHash</span> <span class="n">D</span><span class="p">:\</span><span class="n">backup</span><span class="p">\</span><span class="n">sklad_before_fault</span><span class="p">.</span><span class="n">sql</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+  <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=.../</span><span class="n">backup</span><span class="p">/</span><span class="n">sklad_before_fault</span><span class="p">.</span><span class="n">sql</span>
+<span class="nb">Get-FileHash</span> <span class="p">.../</span><span class="n">backup</span><span class="p">/</span><span class="n">sklad_before_fault</span><span class="p">.</span><span class="n">sql</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
 </code></pre></div>
 
 <p>Теперь смоделируйте логическую ошибку: удалите заказы за прошлый год, как будто скрипт очистки сработал с неверным условием.</p>
@@ -901,9 +900,17 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Запишите в протокол время выполнения запроса и число оставшихся строк. Разница с эталоном и есть объём порчи.</p>
+<p>Запишите время запроса и число оставшихся строк: разница с эталоном это объём порчи.</p>
 <h3>Шаг 4. Остановите потери и зафиксируйте факты</h3>
-<p>Повторно ничего не удаляйте и не запускайте очистку. Запишите в протокол хронологию: время копии, время ошибочного запроса, время обнаружения, что именно видно в системе.</p>
+<p>Повторно ничего не удаляйте. Соберите хронологию по выпискам, которые остались после работы: журнал копирования, журнал запросов, сообщения пользователей.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>09:02  mysqldump sklad -&gt; sklad_before_fault.sql, 42 МБ
+09:15  DELETE FROM orders WHERE created_at &lt; &#39;2026-01-01&#39;, 312 rows
+09:15  приложение: список заказов открылся, за март пусто
+09:31  бухгалтер: пропали заказы за прошлый год
+09:33  сверка с эталоном: orders 1180 вместо 1492
+</code></pre></div>
+
+<p>Заполните хронологию: одна строка выписки даёт одно событие, источник берите из строки.</p>
 <table>
 <thead>
 <tr>
@@ -915,29 +922,34 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td></td>
-<td>снята полная копия</td>
-<td>журнал копирования</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
-<td>выполнен ошибочный запрос</td>
-<td>журнал запросов</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
-<td>обнаружено расхождение</td>
-<td>сверка с эталоном</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Определите точку восстановления. В учебном стенде это время копии: она снята до ошибочного запроса, поэтому подходит.</p>
+<p>Точку восстановления определите сами по двум границам: последняя корректная операция и первая испорченная. Запишите её с обоснованием в одну фразу и проверьте, что она раньше первой испорченной операции.</p>
 <h3>Шаг 5. Восстановите базу из копии</h3>
 <p>Создайте отдельную базу и загрузите в неё копию. Замерьте время загрузки.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS sklad_restore; CREATE DATABASE sklad_restore;&quot;</span>
-<span class="nb">Measure-Command</span> <span class="p">{</span> <span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe -u root sklad_restore &lt; D:\backup\sklad_before_fault.sql&quot;</span> <span class="p">}</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS sklad_restore; CREATE DATABASE sklad_restore;&quot;</span>
+<span class="nb">Measure-Command</span> <span class="p">{</span> <span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s2">&quot;mysql -u root sklad_restore &lt; .../backup/sklad_before_fault.sql&quot;</span> <span class="p">}</span>
 </code></pre></div>
 
-<p>Запишите время в таблицу этапов. Если загрузка остановилась с ошибкой, прочитайте номер строки: чаще всего это отсутствующая таблица или несовпадение кодировки.</p>
+<p>Запишите время в таблицу этапов. Если загрузка остановилась с ошибкой, прочитайте номер строки: обычно это отсутствующая таблица или несовпадение кодировки.</p>
 <table>
 <thead>
 <tr>
@@ -970,7 +982,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 6. Проверьте целостность и сверьте данные</h3>
 <p>Проверьте таблицы и связи, затем сравните восстановленную базу с эталоном.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqlcheck</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-check</span> <span class="n">sklad_restore</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysqlcheck</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-check</span> <span class="n">sklad_restore</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">orphan_lines</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">order_lines</span><span class="w"> </span><span class="n">ol</span>
@@ -1023,7 +1035,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <h3>Шаг 7. Оцените потери и оформите вывод</h3>
-<p>Потеря данных это разница между моментом сбоя и точкой восстановления. Посчитайте, сколько заказов удалено и какие документы придётся вводить заново.</p>
+<p>Потеря данных это разница между моментом сбоя и точкой восстановления. Посчитайте, сколько заказов удалено и что придётся вводить заново.</p>
 <table>
 <thead>
 <tr>
@@ -1054,10 +1066,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Вывод формулируется с числами: «Копия 9,2 ГБ восстановлена за 1 минуту 40 секунд, число строк и суммы совпали по трём таблицам, потеряны заказы за период с 01:00 до 09:20, их 14».</p>
+<p>Вывод соберите из своих чисел: размер копии, время восстановления, результат сверки, период и число потерянных заказов. Пример формы на другом сбое: «Копия 310 МБ восстановлена за 2 минуты, строки совпали, потеряны заказы за 40 минут, их 6, повторный ввод займёт около часа».</p>
 <h3>Шаг 8. Подготовьте тестовый стенд к обновлению</h3>
-<p>Стенд это восстановленная база sklad_restore и отдельная папка приложения. Скопируйте папку версии 1.3, чтобы откат был возможен.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">sklad_app_test</span> <span class="n">-Destination</span> <span class="n">D</span><span class="p">:\</span><span class="n">backup</span><span class="p">\</span><span class="n">sklad_app_1</span><span class="p">.</span><span class="n">3</span> <span class="n">-Recurse</span>
+<p>Стенд это база sklad_restore и отдельная папка приложения. Скопируйте папку версии 1.3: без неё откат невозможен.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.../</span><span class="n">sklad_app_test</span> <span class="n">-Destination</span> <span class="p">.../</span><span class="n">backup</span><span class="p">/</span><span class="n">sklad_app_1</span><span class="p">.</span><span class="n">3</span> <span class="n">-Recurse</span>
 </code></pre></div>
 
 <p>Заполните таблицу готовности стенда.</p>
@@ -1082,7 +1094,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>копия папки приложения</td>
-<td>есть в D:\backup</td>
+<td>есть в &hellip;/backup</td>
 <td></td>
 </tr>
 <tr>
@@ -1099,11 +1111,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 9. Установите обновление и проверьте сценарии</h3>
 <p>Распакуйте архив обновления и примените миграцию базы.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Expand-Archive</span> <span class="n">D</span><span class="p">:\</span><span class="n">update</span><span class="p">\</span><span class="n">sklad_app_1</span><span class="p">.</span><span class="n">4</span><span class="p">.</span><span class="n">zip</span> <span class="n">-DestinationPath</span> <span class="n">C</span><span class="p">:\</span><span class="n">sklad_app_test</span> <span class="n">-Force</span>
-<span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe -u root sklad_restore &lt; D:\update\migration_1.4.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Expand-Archive</span> <span class="p">.../</span><span class="n">update</span><span class="p">/</span><span class="n">sklad_app_1</span><span class="p">.</span><span class="n">4</span><span class="p">.</span><span class="n">zip</span> <span class="n">-DestinationPath</span> <span class="p">.../</span><span class="n">sklad_app_test</span> <span class="n">-Force</span>
+<span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s2">&quot;mysql -u root sklad_restore &lt; .../update/migration_1.4.sql&quot;</span>
 </code></pre></div>
 
-<p>Пройдите чек-лист приёмки. Каждый пункт отмечайте фактом, а не галочкой без записи.</p>
+<p>Пройдите чек-лист приёмки. Каждый пункт отмечайте фактом, а не галочкой.</p>
 <table>
 <thead>
 <tr>
@@ -1152,9 +1164,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Если проверка не пройдена, зафиксируйте, какой именно пункт отказал. Это условие для перехода к откату.</p>
+<p>Если проверка не пройдена, зафиксируйте, какой пункт отказал: это условие перехода к откату.</p>
 <h3>Шаг 10. Составьте план отката и выполните откат</h3>
-<p>Заполните план отката до принятия решения.</p>
+<p>Заполните план отката до принятия решения. Первая строка это образец формы, остальные строки относятся к этому обновлению.</p>
 <table>
 <thead>
 <tr>
@@ -1166,26 +1178,38 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>файлы приложения</td>
-<td>вернуть папку из D:\backup\sklad_app_1.3</td>
+<td>служба печати на сервере</td>
+<td>перезапустить службу Spooler</td>
+<td>2 минуты</td>
+<td>инженер второй линии</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>схема базы</td>
-<td>развернуть копию sklad_before_fault.sql</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>настройки</td>
-<td>вернуть файл конфигурации</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p>Смоделируйте отказ: измените в тестовой базе обязательное поле так, чтобы создание заказа перестало проходить, и убедитесь, что приёмка этого не пропускает. Затем выполните откат по плану: остановите приложение, верните папку, восстановите базу, запустите и повторите проверку.</p>
+<p>Что и откуда вернуть, возьмите из шагов 3 и 8. Время оцените по фактам шага 5. Условие отката сформулируйте до установки: какой пункт приёмки должен отказать, чтобы работа была отменена.</p>
+<p>Смоделируйте отказ. Пример: ограничьте поле status двумя символами и сохраните заказ.</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">sklad_restore</span><span class="p">.</span><span class="n">orders</span><span class="w"> </span><span class="k">MODIFY</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">sklad_restore</span><span class="p">.</span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;new&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1200</span><span class="p">.</span><span class="mi">00</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Вторая команда вернёт ошибку «Data too long for column &lsquo;status&rsquo;», создание заказа перестанет проходить. Повторите опыт на поле total: задайте тип DECIMAL(4,2) и сохраните заказ на 48200. Убедитесь, что приёмка ловит отказ, затем выполните откат: остановите приложение, верните папку, восстановите базу, запустите и повторите проверку.</p>
 <table>
 <thead>
 <tr>
@@ -1228,14 +1252,44 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Результат отката с подтверждением, что создание заказа снова работает.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
-<ul>
-<li>Копия снята до сбоя, хеш посчитан и записан, до 15 баллов.</li>
-<li>Точка восстановления обоснована временем, до 15 баллов.</li>
-<li>Восстановление выполнено на отдельную базу, время замерено, до 20 баллов.</li>
-<li>Целостность проверена, сверка по числу строк и суммам выполнена, до 20 баллов.</li>
-<li>Обновление установлено, приёмка пройдена по шести пунктам, до 20 баллов.</li>
-<li>План отката содержит измеримое условие, откат выполнен и проверен, до 10 баллов.</li>
-</ul>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
+<table>
+<thead>
+<tr>
+<th>Оценка</th>
+<th>Условие</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
+</tr>
+</tbody>
+</table>
+<p>Что проверяется:
+- Копия снята до сбоя, хеш посчитан и записан.
+- Точка восстановления обоснована временем.
+- Восстановление выполнено на отдельную базу, время замерено.
+- Целостность проверена, сверка по числу строк и суммам выполнена.
+- Обновление установлено, приёмка пройдена по шести пунктам.
+- План отката содержит измеримое условие, откат выполнен и проверен.</p>
 <p>Работа без сверки данных или без плана отката возвращается на доработку.</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">

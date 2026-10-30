@@ -21,8 +21,8 @@ outcomes:
 ## Оборудование и программное обеспечение
 
 - Компьютер с XAMPP 8.5.12 и базой `dean` после практик 1 и 2.
-- Утилиты `C:\xampp\mysql\bin\mysqldump.exe`, `mysql.exe`, `mysqlbinlog.exe`.
-- Доступ к файлу `C:\xampp\mysql\bin\my.ini` и к перезапуску MySQL в Control Panel.
+- Утилиты `mysqldump`, `mysql.exe`, `mysqlbinlog.exe`.
+- Доступ к файлу `.../xampp/mysql/bin/my.ini` и к перезапуску MySQL в Control Panel.
 - Не менее 200 МБ свободного места под копии.
 - Табличный редактор для протокола восстановления.
 
@@ -68,7 +68,7 @@ CHECKSUM TABLE groups, students, courses, enrollments, payments, audit_log;
 
 ### Шаг 2. Включите binary log
 
-Откройте `C:\xampp\mysql\bin\my.ini` и добавьте строки в существующую секцию `[mysqld]`.
+Откройте `.../xampp/mysql/bin/my.ini` и добавьте строки в существующую секцию `[mysqld]`.
 
 ```ini
 log-bin=mysql-bin
@@ -83,15 +83,15 @@ SHOW VARIABLES WHERE Variable_name IN ('log_bin', 'server_id', 'binlog_format', 
 SHOW MASTER STATUS;
 ```
 
-`log_bin` должен быть `ON`, а `SHOW MASTER STATUS` вернёт имя файла и позицию. В MySQL 8.4 эта команда называется `SHOW BINARY LOG STATUS`. Файлы журнала лежат в `C:\xampp\mysql\data`.
+`log_bin` должен быть `ON`, а `SHOW MASTER STATUS` вернёт имя файла и позицию. В MySQL 8.4 эта команда называется `SHOW BINARY LOG STATUS`. Файлы журнала лежат в `.../xampp/mysql/data`.
 
 ### Шаг 3. Сделайте дамп
 
 ```powershell
-New-Item -ItemType Directory -Force C:\backup | Out-Null
-& "C:\xampp\mysql\bin\mysqldump.exe" -u root --single-transaction --routines --triggers `
-  --default-character-set=utf8mb4 --result-file="C:\backup\dean_full.sql" dean
-Get-Item C:\backup\dean_full.sql | Select-Object Name, Length, LastWriteTime
+New-Item -ItemType Directory -Force .../backup | Out-Null
+& "mysqldump" -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=".../backup/dean_full.sql" dean
+Get-Item .../backup/dean_full.sql | Select-Object Name, Length, LastWriteTime
 ```
 
 Ключ `--result-file` важен на Windows: перенаправление `>` в Windows PowerShell 5.1 пишет файл в UTF-16, и `mysql` потом читает его как мусор.
@@ -105,7 +105,7 @@ CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 dean_restore -e "SOURCE C:\backup\dean_full.sql"
+& "mysql" -u root --default-character-set=utf8mb4 dean_restore -e "SOURCE .../backup/dean_full.sql"
 ```
 
 База `dean_restore` указана в командной строке, потому что в дампе нет `USE`. Если бы дамп снимали с ключом `--databases`, эта команда загрузила бы данные в `dean` и затёрла рабочую базу.
@@ -155,9 +155,9 @@ SHOW BINARY LOGS;
 ```
 
 ```powershell
-& "C:\xampp\mysql\bin\mysqlbinlog.exe" --base64-output=DECODE-ROWS -v `
-  --result-file="C:\backup\binlog.txt" "C:\xampp\mysql\data\mysql-bin.000002"
-Select-String -Path C:\backup\binlog.txt -Pattern "DELETE FROM" | Select-Object -First 5
+& ".../xampp/mysql/bin/mysqlbinlog.exe" --base64-output=DECODE-ROWS -v `
+  --result-file=".../backup/binlog.txt" ".../xampp/mysql/data\mysql-bin.000002"
+Select-String -Path .../backup/binlog.txt -Pattern "DELETE FROM" | Select-Object -First 5
 ```
 
 Читайте файл из шага 7, а не самый старый: в нём лежат обе операции. Имя файла возьмите из `SHOW MASTER STATUS`, в примере это `mysql-bin.000002`. Ключ `-v` показывает построчные события как псевдо-SQL, поэтому удаление видно глазами.
@@ -171,8 +171,8 @@ Select-String -Path C:\backup\binlog.txt -Pattern "DELETE FROM" | Select-Object 
 Сначала сохраните повреждённое состояние как доказательство, затем восстановите дамп и проиграйте журнал до `t_good`.
 
 ```powershell
-& "C:\xampp\mysql\bin\mysqldump.exe" -u root --single-transaction `
-  --default-character-set=utf8mb4 --result-file="C:\backup\dean_broken.sql" dean
+& "mysqldump" -u root --single-transaction `
+  --default-character-set=utf8mb4 --result-file=".../backup/dean_broken.sql" dean
 ```
 
 ```sql
@@ -181,10 +181,10 @@ CREATE DATABASE dean CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 ```powershell
-& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 dean -e "SOURCE C:\backup\dean_full.sql"
-& "C:\xampp\mysql\bin\mysqlbinlog.exe" --start-position=ПОЗИЦИЯ --stop-datetime="ВРЕМЯ" `
-  --result-file="C:\backup\replay.sql" "C:\xampp\mysql\data\mysql-bin.000002"
-& "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4 -e "SOURCE C:\backup\replay.sql"
+& "mysql" -u root --default-character-set=utf8mb4 dean -e "SOURCE .../backup/dean_full.sql"
+& ".../xampp/mysql/bin/mysqlbinlog.exe" --start-position=ПОЗИЦИЯ --stop-datetime="ВРЕМЯ" `
+  --result-file=".../backup/replay.sql" ".../xampp/mysql/data\mysql-bin.000002"
+& "mysql" -u root --default-character-set=utf8mb4 -e "SOURCE .../backup/replay.sql"
 ```
 
 Вместо `ПОЗИЦИЯ` подставьте позицию из шага 7, вместо `ВРЕМЯ` значение `t_good`, вместо имени файла то, что вернул `SHOW MASTER STATUS` после `FLUSH BINARY LOGS`. Проигрывание начинается с начала окна, поэтому чужие события в него не попадут.
@@ -229,13 +229,22 @@ CHECKSUM TABLE students, enrollments, payments;
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Дамп | 20 | Все нужные ключи, файл читается, размер зафиксирован |
-| Восстановление | 20 | Копия развёрнута в отдельную базу без ошибок |
-| Сверка | 25 | Число строк и суммы совпали по каждой таблице |
-| Binary log | 25 | Журнал включён, событие найдено, база возвращена на момент |
-| Протокол | 10 | Позиция, времена и RPO с RTO записаны |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Дамп.** Все нужные ключи, файл читается, размер зафиксирован
+- **Восстановление.** Копия развёрнута в отдельную базу без ошибок
+- **Сверка.** Число строк и суммы совпали по каждой таблице
+- **Binary log.** Журнал включён, событие найдено, база возвращена на момент
+- **Протокол.** Позиция, времена и RPO с RTO записаны
 
 ## Контрольные вопросы
 

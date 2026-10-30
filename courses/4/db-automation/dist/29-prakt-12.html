@@ -823,7 +823,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <ul>
 <li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
 <li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
-<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и утилита <code>mysqldump.exe</code>.</li>
+<li>Клиент <code>mysql</code> и утилита <code>mysqldump.exe</code>.</li>
 <li>.NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».</li>
 <li>Приложение <code>DeanMaintenance</code> из практики 9 и пакет <code>MySqlConnector</code>.</li>
 <li>Скрипты предыдущих практик: схема, роли, индексы, данные, обслуживание.</li>
@@ -893,10 +893,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>В <code>schema.sql</code> включите таблицу <code>maintenance_runs</code> из практики 9, таблицу <code>audit_log</code> и триггеры из практики 10, столбец <code>middle_name</code> и строку версии 2 из практики 11.</p>
 <h3>Шаг 2. Соберите базу на чистом месте</h3>
 <p>Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. В <code>roles.sql</code> указывайте полные имена объектов <code>dean_final.*</code>: скрипт выполняется без выбранной базы.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$f</span> <span class="k">in</span> <span class="s2">&quot;schema.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;roles.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;indexes.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;data.sql&quot;</span><span class="p">)</span> <span class="p">{</span>
-  <span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/final/$f&quot;</span>
+  <span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/final/$f&quot;</span>
   <span class="k">if</span> <span class="p">(</span><span class="nv">$LASTEXITCODE</span> <span class="o">-ne</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Write-Host</span> <span class="s2">&quot;stop at $f&quot;</span><span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -927,7 +927,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Проверьте запрет от имени учебного пользователя. Ошибка прав и есть доказательство того, что мера работает.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">student_ro</span> <span class="n">-p</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO students(full_name, email) VALUES (&#39;Тест&#39;, &#39;deny@example.ru&#39;);&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">student_ro</span> <span class="n">-p</span> <span class="n">dean_final</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO students(full_name, email) VALUES (&#39;Тест&#39;, &#39;deny@example.ru&#39;);&quot;</span>
 </code></pre></div>
 
 <p>Приложите скриншот <code>SHOW GRANTS</code>: в кадре видно, что права <code>dean_app</code> выданы по таблицам базы <code>dean_final</code>, а на <code>audit_log</code> их нет. Скриншот ошибки доступа приложите в отчёт отдельным кадром или строкой протокола.</p>
@@ -946,13 +946,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Приложите скриншот <code>SHOW INDEX</code> и план запроса. В плане смотрите столбцы <code>type</code>, <code>key</code>, <code>rows</code> и <code>Extra</code>. Если планировщик выбрал полное сканирование, объясните почему: на десяти строках это нормально и не означает, что индекс лишний.</p>
 <h3>Шаг 6. Снимите и восстановите копию</h3>
 <p>Копия проверяется восстановлением, а не размером файла.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean_final</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean_final</span>
+<span class="p">&amp;</span> <span class="n">mysqldump</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean_final</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean_final</span>
 
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_restore</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/backup/dean_final.sql&quot;</span>
+<span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+<span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_restore</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/backup/dean_final.sql&quot;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;source&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">side</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_final</span><span class="p">.</span><span class="n">students</span>
@@ -967,7 +967,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Приложению из практики 9 нужно передать имя базы, иначе оно всегда работает с <code>dean</code>. Добавьте разбор аргумента.</p>
 <div class="codehilite" data-lang="csharp"><pre><span></span><code><span class="kt">var</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">.</span><span class="n">Length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dean&quot;</span><span class="p">;</span>
 
-<span class="kt">var</span><span class="w"> </span><span class="n">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;C:\dean\secret\db_password.txt&quot;</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@&quot;.../dean/secret/db_password.txt&quot;</span><span class="p">;</span>
 <span class="kt">var</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="n">secret</span><span class="p">).</span><span class="n">Trim</span><span class="p">()</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
 
 <span class="kt">var</span><span class="w"> </span><span class="n">cs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySqlConnectionStringBuilder</span>
@@ -981,11 +981,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="p">}.</span><span class="n">ConnectionString</span><span class="p">;</span>
 </code></pre></div>
 
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">dotnet</span> <span class="n">publish</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\</span><span class="n">DeanMaintenance</span> <span class="n">-c</span> <span class="n">Release</span> <span class="n">-o</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">bin</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">dotnet</span> <span class="n">publish</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">src</span><span class="p">/</span><span class="n">DeanMaintenance</span> <span class="n">-c</span> <span class="n">Release</span> <span class="n">-o</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">bin</span>
 
-<span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">DeanMaintenance</span><span class="p">.</span><span class="n">exe</span> <span class="n">dean_final</span>
+<span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">bin</span><span class="p">/</span><span class="n">DeanMaintenance</span><span class="p">.</span><span class="n">exe</span> <span class="n">dean_final</span>
 <span class="nb">Write-Host</span> <span class="s2">&quot;exit code: $LASTEXITCODE&quot;</span>
-<span class="nb">Get-Content</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">log</span><span class="p">\</span><span class="n">maintenance</span><span class="p">.</span><span class="n">log</span> <span class="n">-Tail</span> <span class="n">3</span>
+<span class="nb">Get-Content</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">log</span><span class="p">/</span><span class="n">maintenance</span><span class="p">.</span><span class="n">log</span> <span class="n">-Tail</span> <span class="n">3</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">started_at</span><span class="p">,</span><span class="w"> </span><span class="n">script</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_final</span><span class="p">.</span><span class="n">maintenance_runs</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
@@ -1212,52 +1212,45 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Протокол приёмки, вывод о слабых местах и мерах.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Сборка из скриптов</td>
-<td>20</td>
-<td>База создаётся на чистом месте без ручных правок</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Схема и ограничения</td>
-<td>20</td>
-<td>Ключи, проверки и обязательные поля на месте</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Роли и права</td>
-<td>20</td>
-<td>Минимальные привилегии, запреты доказаны</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Индексы</td>
-<td>10</td>
-<td>Индексы обоснованы запросами</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Копия и обслуживание</td>
-<td>20</td>
-<td>Восстановление и запуск приложения подтверждены</td>
-</tr>
-<tr>
-<td>Чек-лист и протокол</td>
-<td>10</td>
-<td>Пункты заполнены, свидетельства указаны</td>
-</tr>
-<tr>
-<td><strong>Итого</strong></td>
-<td><strong>100</strong></td>
-<td>Зачёт от 60 баллов</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Сборка из скриптов.</strong> База создаётся на чистом месте без ручных правок
+- <strong>Схема и ограничения.</strong> Ключи, проверки и обязательные поля на месте
+- <strong>Роли и права.</strong> Минимальные привилегии, запреты доказаны
+- <strong>Индексы.</strong> Индексы обоснованы запросами
+- <strong>Копия и обслуживание.</strong> Восстановление и запуск приложения подтверждены
+- <strong>Чек-лист и протокол.</strong> Пункты заполнены, свидетельства указаны
+- <strong><em>*Итого</em>*.</strong> Зачёт от 60 баллов</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

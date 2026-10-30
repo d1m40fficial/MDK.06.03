@@ -823,7 +823,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <ul>
 <li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
 <li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
-<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code>, утилита <code>mysqldump.exe</code>, конфигурация <code>C:\xampp\mysql\bin\my.ini</code>.</li>
+<li>Клиент <code>mysql</code>, утилита <code>mysqldump.exe</code>, конфигурация <code>.../xampp/mysql/bin/my.ini</code>.</li>
 <li>PowerShell и текстовый редактор.</li>
 <li>Учебная база <code>dean</code> с таблицами <code>students</code>, <code>enrollments</code>, <code>payments</code> и <code>audit_log</code>.</li>
 <li>Пользователи <code>root</code> и <code>dean_app</code>, роли <code>dean_read</code>, <code>dean_write</code>, <code>student_read</code>, <code>auditor</code>.</li>
@@ -859,7 +859,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tr>
 <td>Журнал ошибок MySQL</td>
 <td>Сбои сервера и запуск</td>
-<td>Файл в <code>C:\xampp\mysql\data</code></td>
+<td>Файл в <code>.../xampp/mysql/data</code></td>
 <td>Не содержит операторов клиентов</td>
 </tr>
 </tbody>
@@ -871,7 +871,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Журнал аудита защищают тремя мерами. Первая: отдельная роль <code>auditor</code> только на чтение. Вторая: запрет <code>UPDATE</code> и <code>DELETE</code> для приложения. Третья: отсутствие прямого <code>INSERT</code> у приложения, запись идёт через триггер с правами владельца. Если приложение может править журнал, аудит не доказывает ничего.</p>
 <h3>Доступ, секреты и копии</h3>
 <p>В XAMPP пользователь <code>root</code> по умолчанию входит без пароля. Это удобно на учебной машине и опасно на любой другой: полный доступ получает любой процесс и любой человек за этим компьютером. Приложение должно ходить в базу под <code>dean_app</code>, а <code>root</code> нужен только администратору.</p>
-<p>Строка подключения с паролем в коде, в <code>appsettings.json</code> или в истории PowerShell это утечка при первом копировании проекта. Дамп тоже секрет: файл в <code>C:\xampp\htdocs</code> открывается по адресу <code>http://localhost/dean.sql</code> без пароля.</p>
+<p>Строка подключения с паролем в коде, в <code>appsettings.json</code> или в истории PowerShell это утечка при первом копировании проекта. Дамп тоже секрет: файл в <code>.../xampp/htdocs</code> открывается по адресу <code>http://localhost/dean.sql</code> без пароля.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <p>Первой строкой каждого вывода печатайте фамилию и группу: в MySQL это <code>SELECT 'Иванов И.И., ИС-41' AS student;</code>, в PowerShell <code>Write-Host "Иванов И.И., ИС-41"</code>.</p>
 <h3>Шаг 1. Включите general log</h3>
@@ -883,7 +883,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;log_output&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Чтобы настройка пережила перезапуск, добавьте строки в секцию <code>[mysqld]</code> файла <code>C:\xampp\mysql\bin\my.ini</code> и перезапустите MySQL из панели XAMPP.</p>
+<p>Чтобы настройка пережила перезапуск, добавьте строки в секцию <code>[mysqld]</code> файла <code>.../xampp/mysql/bin/my.ini</code> и перезапустите MySQL из панели XAMPP.</p>
 <div class="codehilite" data-lang="ini"><pre><span></span><code><span class="k">[mysqld]</span>
 <span class="na">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
 <span class="na">log_output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">TABLE</span>
@@ -949,7 +949,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <h3>Шаг 4. Выполните тестовые изменения</h3>
 <p>Сделайте три операции от имени приложения. Для проверки нужен пользователь, у которого есть права на <code>students</code>, но нет права менять <code>audit_log</code>.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">students</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span>
@@ -989,7 +989,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Запись в журнал продолжит работать, потому что триггер выполняется с правами владельца и приложению прямой <code>INSERT</code> в <code>audit_log</code> не нужен. Проверьте запрет от имени приложения: ошибка прав и есть доказательство того, что мера работает.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;UPDATE audit_log SET action = &#39;x&#39; WHERE id = 1;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;UPDATE audit_log SET action = &#39;x&#39; WHERE id = 1;&quot;</span>
 </code></pre></div>
 
 <p>Ожидаемый ответ: <code>ERROR 1142 (42000): UPDATE command denied to user 'dean_app'@'localhost' for table 'audit_log'</code>. Затем повторите <code>INSERT</code> в <code>students</code> от <code>dean_app</code> и убедитесь, что изменение прошло, а событие появилось.</p>
@@ -1051,26 +1051,26 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 7. Проверьте вход root без пароля</h3>
 <p>Попробуйте подключиться без пароля. Успешный вход означает, что любая программа на машине получает полный доступ к серверу.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;SELECT CURRENT_USER() AS who, VERSION() AS version;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;SELECT CURRENT_USER() AS who, VERSION() AS version;&quot;</span>
 </code></pre></div>
 
-<p>Если соединение установилось, зафиксируйте риск и предложите меру: задать пароль командой <code>ALTER USER 'root'@'localhost' IDENTIFIED BY '...';</code> и прописать его в <code>C:\xampp\phpMyAdmin\config.inc.php</code>, иначе phpMyAdmin перестанет подключаться. Пароль администратора не храните в отчёте.</p>
+<p>Если соединение установилось, зафиксируйте риск и предложите меру: задать пароль командой <code>ALTER USER 'root'@'localhost' IDENTIFIED BY '...';</code> и прописать его в <code>.../xampp/phpMyAdmin/config.inc.php</code>, иначе phpMyAdmin перестанет подключаться. Пароль администратора не храните в отчёте.</p>
 <p>Приложите скриншот одного подтверждённого риска: вход <code>root</code> без пароля или дамп, открытый по HTTP. Кадр должен показывать сам факт доступа, а не только текст команды.</p>
 <h3>Шаг 8. Проверьте доступ к дампам</h3>
 <p>Снимите дамп базы в отдельный каталог и посмотрите, кто может его прочитать. Ключ записи в файл надёжнее перенаправления вывода: PowerShell записал бы файл в UTF-16 и сломал кодировку.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="p">&amp;</span> <span class="n">mysqldump</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
 
-<span class="nb">Get-ChildItem</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">LastWriteTime</span>
-<span class="n">icacls</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
-<span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">-Pattern</span> <span class="s1">&#39;INSERT INTO&#39;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">3</span>
+<span class="nb">Get-ChildItem</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">LastWriteTime</span>
+<span class="n">icacls</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
+<span class="nb">Select-String</span> <span class="n">-Path</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">-Pattern</span> <span class="s1">&#39;INSERT INTO&#39;</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">3</span>
 </code></pre></div>
 
-<p>Проверьте, что дамп содержит данные: строки <code>INSERT INTO</code> с почтой студентов это подтверждают. Затем проверьте доступ через веб-сервер: скопируйте файл в <code>C:\xampp\htdocs</code> и откройте <code>http://localhost/dean.sql</code>. Если браузер показывает текст дампа, это критический риск. После проверки удалите копию из <code>htdocs</code>.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
+<p>Проверьте, что дамп содержит данные: строки <code>INSERT INTO</code> с почтой студентов это подтверждают. Затем проверьте доступ через веб-сервер: скопируйте файл в <code>.../xampp/htdocs</code> и откройте <code>http://localhost/dean.sql</code>. Если браузер показывает текст дампа, это критический риск. После проверки удалите копию из <code>htdocs</code>.</p>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span> <span class="p">.../</span><span class="n">xampp</span><span class="p">/</span><span class="n">htdocs</span><span class="p">/</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
 <span class="nb">Start-Process</span> <span class="s2">&quot;http://localhost/dean.sql&quot;</span>
-<span class="nb">Remove-Item</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
+<span class="nb">Remove-Item</span> <span class="p">.../</span><span class="n">xampp</span><span class="p">/</span><span class="n">htdocs</span><span class="p">\</span><span class="n">dean</span><span class="p">.</span><span class="n">sql</span>
 </code></pre></div>
 
 <h3>Шаг 9. Составьте список рисков</h3>
@@ -1146,7 +1146,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <p>Поиск секретов выполните по проекту.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\*\*.</span><span class="n">cs</span><span class="p">,</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">src</span><span class="p">\*\*.</span><span class="n">json</span> <span class="n">-Pattern</span> <span class="s1">&#39;Password|Pwd|secret|token&#39;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">Select-String</span> <span class="n">-Path</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">src</span><span class="p">/*/*.</span><span class="n">cs</span><span class="p">,</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">src</span><span class="p">/*/*.</span><span class="n">json</span> <span class="n">-Pattern</span> <span class="s1">&#39;Password|Pwd|secret|token&#39;</span>
 </code></pre></div>
 
 <p>Каждую находку внесите в список рисков. Если пароль лежит в <code>appsettings.json</code> открытым текстом, мера это переменная окружения или файл вне репозитория, а не переименование поля.</p>
@@ -1171,52 +1171,45 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Список рисков с мерами и остаточным риском, вывод.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Настройка общего журнала</td>
-<td>15</td>
-<td>Запись в таблицу включена, события прочитаны и объяснены</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Триггерный аудит</td>
-<td>25</td>
-<td>Три события, пользователь, старые и новые значения</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Защита журнала</td>
-<td>20</td>
-<td>Права ограничены, запрет доказан ошибкой доступа</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Проверка привилегий</td>
-<td>20</td>
-<td><code>SHOW GRANTS</code>, роли и расхождения описаны</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Риски доступа и дампов</td>
-<td>10</td>
-<td>Риски подтверждены проверкой, меры конкретны</td>
-</tr>
-<tr>
-<td>Список рисков и отчёт</td>
-<td>10</td>
-<td>Остаточный риск оценён, вывод опирается на находки</td>
-</tr>
-<tr>
-<td><strong>Итого</strong></td>
-<td><strong>100</strong></td>
-<td>Зачёт от 60 баллов</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Настройка общего журнала.</strong> Запись в таблицу включена, события прочитаны и объяснены
+- <strong>Триггерный аудит.</strong> Три события, пользователь, старые и новые значения
+- <strong>Защита журнала.</strong> Права ограничены, запрет доказан ошибкой доступа
+- <strong>Проверка привилегий.</strong> <code>SHOW GRANTS</code>, роли и расхождения описаны
+- <strong>Риски доступа и дампов.</strong> Риски подтверждены проверкой, меры конкретны
+- <strong>Список рисков и отчёт.</strong> Остаточный риск оценён, вывод опирается на находки
+- <strong><em>*Итого</em>*.</strong> Зачёт от 60 баллов</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

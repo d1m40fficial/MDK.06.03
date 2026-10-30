@@ -22,7 +22,7 @@ outcomes:
 
 - Персональный компьютер с Windows 10 и XAMPP 8.5.12.
 - Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
-- Клиент `C:\xampp\mysql\bin\mysql.exe` и утилита `mysqldump.exe`.
+- Клиент `mysql` и утилита `mysqldump.exe`.
 - .NET SDK 10 и Visual Studio 2022 Community с рабочей нагрузкой «Разработка классических приложений .NET».
 - Приложение `DeanMaintenance` из практики 9 и пакет `MySqlConnector`.
 - Скрипты предыдущих практик: схема, роли, индексы, данные, обслуживание.
@@ -75,10 +75,10 @@ outcomes:
 Создайте пустую базу и примените скрипты по порядку. Остановка при первой ошибке обязательна: иначе сборка продолжится на неполной схеме. В `roles.sql` указывайте полные имена объектов `dean_final.*`: скрипт выполняется без выбранной базы.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+& mysql -u root -e "DROP DATABASE IF EXISTS dean_final; CREATE DATABASE dean_final CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 foreach ($f in "schema.sql", "roles.sql", "indexes.sql", "data.sql") {
-  & C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_final -e "source C:/dean/final/$f"
+  & mysql -u root --default-character-set=utf8mb4 dean_final -e "source .../dean/final/$f"
   if ($LASTEXITCODE -ne 0) { Write-Host "stop at $f"; break }
 }
 ```
@@ -119,7 +119,7 @@ SHOW GRANTS FOR 'student_ro'@'localhost';
 Проверьте запрет от имени учебного пользователя. Ошибка прав и есть доказательство того, что мера работает.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u student_ro -p dean_final -e "INSERT INTO students(full_name, email) VALUES ('Тест', 'deny@example.ru');"
+& mysql -u student_ro -p dean_final -e "INSERT INTO students(full_name, email) VALUES ('Тест', 'deny@example.ru');"
 ```
 
 Приложите скриншот `SHOW GRANTS`: в кадре видно, что права `dean_app` выданы по таблицам базы `dean_final`, а на `audit_log` их нет. Скриншот ошибки доступа приложите в отчёт отдельным кадром или строкой протокола.
@@ -146,13 +146,13 @@ WHERE s.group_id = 1;
 Копия проверяется восстановлением, а не размером файла.
 
 ```powershell
-New-Item -ItemType Directory -Force C:\dean\backup | Out-Null
+New-Item -ItemType Directory -Force .../dean/backup | Out-Null
 
-& C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers `
-  --default-character-set=utf8mb4 --result-file=C:\dean\backup\dean_final.sql dean_final
+& mysqldump -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=.../dean/backup/dean_final.sql dean_final
 
-& C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-& C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dean_restore -e "source C:/dean/backup/dean_final.sql"
+& mysql -u root -e "DROP DATABASE IF EXISTS dean_restore; CREATE DATABASE dean_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+& mysql -u root --default-character-set=utf8mb4 dean_restore -e "source .../dean/backup/dean_final.sql"
 ```
 
 ```sql
@@ -172,7 +172,7 @@ SELECT version FROM dean_restore.schema_version ORDER BY version;
 ```csharp
 var database = args.Length > 0 ? args[0] : "dean";
 
-var secret = @"C:\dean\secret\db_password.txt";
+var secret = @".../dean/secret/db_password.txt";
 var password = File.Exists(secret) ? File.ReadAllText(secret).Trim() : "";
 
 var cs = new MySqlConnectionStringBuilder
@@ -187,11 +187,11 @@ var cs = new MySqlConnectionStringBuilder
 ```
 
 ```powershell
-dotnet publish C:\dean\src\DeanMaintenance -c Release -o C:\dean\bin
+dotnet publish .../dean/src/DeanMaintenance -c Release -o .../dean/bin
 
-C:\dean\bin\DeanMaintenance.exe dean_final
+.../dean/bin/DeanMaintenance.exe dean_final
 Write-Host "exit code: $LASTEXITCODE"
-Get-Content C:\dean\log\maintenance.log -Tail 3
+Get-Content .../dean/log/maintenance.log -Tail 3
 ```
 
 ```sql
@@ -283,15 +283,24 @@ LIMIT 5;
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Сборка из скриптов | 20 | База создаётся на чистом месте без ручных правок |
-| Схема и ограничения | 20 | Ключи, проверки и обязательные поля на месте |
-| Роли и права | 20 | Минимальные привилегии, запреты доказаны |
-| Индексы | 10 | Индексы обоснованы запросами |
-| Копия и обслуживание | 20 | Восстановление и запуск приложения подтверждены |
-| Чек-лист и протокол | 10 | Пункты заполнены, свидетельства указаны |
-| **Итого** | **100** | Зачёт от 60 баллов |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Сборка из скриптов.** База создаётся на чистом месте без ручных правок
+- **Схема и ограничения.** Ключи, проверки и обязательные поля на месте
+- **Роли и права.** Минимальные привилегии, запреты доказаны
+- **Индексы.** Индексы обоснованы запросами
+- **Копия и обслуживание.** Восстановление и запуск приложения подтверждены
+- **Чек-лист и протокол.** Пункты заполнены, свидетельства указаны
+- ****Итого**.** Зачёт от 60 баллов
 
 ## Контрольные вопросы
 

@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Склад+ · учебный прототип</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1d1f;--muted:#6b6b70;--line:#ddd7cc;--accent:#2f6f5e;--accent2:#e8f1ed;--bad:#b42318;--warn:#9a6700}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.login{max-width:420px;margin:8vh auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:0 18px 50px -30px #0006}
+.login h1{margin:0 0 6px;font-size:26px}.login p{margin:0 0 18px;color:var(--muted)}
+label{display:block;font-weight:600;margin:12px 0 6px}input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:600}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{color:var(--bad);border-color:#e5b8b3}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1;min-width:140px}
+.hint{font-size:13px;color:var(--muted)}.error{color:var(--bad);font-weight:600;margin-top:10px}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.side{background:#102a24;color:#e9f3ef;padding:18px}.side h2{font-size:18px;margin:0 0 4px}.side p{font-size:12px;color:#a9c5bb;margin:0 0 18px}
+.side a{display:block;color:#dcebe5;text-decoration:none;padding:9px 10px;border-radius:8px;margin:2px 0}.side a:hover,.side a.active{background:#1d463b;color:#fff}
+.side .who{font-size:12px;color:#a9c5bb;margin-top:18px;border-top:1px solid #2a5146;padding-top:12px}
+.main{padding:24px 28px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.top h1{margin:0;font-size:24px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}.card b{display:block;font-size:26px;margin-top:4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:var(--accent2);color:var(--accent);font-size:12px;font-weight:700}
+.pill.bad{background:#fde8e6;color:var(--bad)}.pill.warn{background:#fff4d6;color:var(--warn)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:5px 8px;font-size:12px}
+.hidden{display:none!important}.muted{color:var(--muted)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap}.side h2,.side p,.side .who{width:100%}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login">
+  <h1>Склад+</h1>
+  <p>Учебный прототип ИС для практикума. Данные хранятся в браузере.</p>
+  <label for="login">Логин</label>
+  <input id="login" autocomplete="username" value="admin">
+  <label for="password">Пароль</label>
+  <input id="password" type="password" autocomplete="current-password" value="admin">
+  <div class="row" style="margin-top:16px"><button class="btn primary" id="signIn">Войти</button></div>
+  <p class="hint">Демо-доступы: admin / admin, manager / manager, storekeeper / storekeeper.</p>
+  <div id="loginError" class="error hidden"></div>
+</div>
+
+<div id="appView" class="shell hidden">
+  <aside class="side">
+    <h2>Склад+</h2>
+    <p id="companyName"></p>
+    <a href="#" data-page="dashboard" class="active">Сводка</a>
+    <a href="#" data-page="orders">Заказы</a>
+    <a href="#" data-page="products">Номенклатура</a>
+    <a href="#" data-page="users" id="usersLink">Пользователи</a>
+    <a href="#" data-page="settings" id="settingsLink">Настройки</a>
+    <div class="who"><span id="whoName"></span><br><span id="whoRole"></span></div>
+    <a href="#" id="logout" style="margin-top:12px">Выйти</a>
+  </aside>
+  <main class="main">
+    <div class="top"><h1 id="pageTitle">Сводка</h1><span class="pill" id="rolePill"></span></div>
+
+    <section id="page-dashboard">
+      <div class="cards">
+        <div class="card">Заказов<b id="statOrders">0</b></div>
+        <div class="card">Сумма заказов<b id="statTotal">0</b></div>
+        <div class="card">Пользователей<b id="statUsers">0</b></div>
+      </div>
+      <div class="panel"><h3>Последние заказы</h3><div id="recentOrders"></div></div>
+    </section>
+
+    <section id="page-orders" class="hidden">
+      <div class="panel">
+        <h3>Новый заказ</h3>
+        <div class="row">
+          <div><label for="orderCustomer">Заказчик</label><input id="orderCustomer" placeholder="ООО «СтройМаркет»"></div>
+          <div><label for="orderWarehouse">Склад</label><select id="orderWarehouse"></select></div>
+          <div><label for="orderProduct">Товар</label><select id="orderProduct"></select></div>
+          <div><label for="orderQty">Количество</label><input id="orderQty" type="number" min="1" value="1"></div>
+          <div><button class="btn primary" id="createOrder">Создать</button></div>
+        </div>
+        <p class="hint">Менеджер и администратор создают заказы, кладовщик меняет статус.</p>
+      </div>
+      <div class="panel"><h3>Заказы</h3><div id="ordersTable"></div></div>
+    </section>
+
+    <section id="page-products" class="hidden">
+      <div class="panel"><h3>Номенклатура</h3><div id="productsTable"></div></div>
+    </section>
+
+    <section id="page-users" class="hidden">
+      <div class="panel">
+        <h3>Новый пользователь</h3>
+        <div class="row">
+          <div><label for="newLogin">Логин</label><input id="newLogin"></div>
+          <div><label for="newName">Имя</label><input id="newName"></div>
+          <div><label for="newRole">Роль</label><select id="newRole"><option value="manager">Менеджер</option><option value="storekeeper">Кладовщик</option><option value="admin">Администратор</option></select></div>
+          <div><label for="newPassword">Пароль</label><input id="newPassword" type="password"></div>
+          <div><button class="btn primary" id="createUser">Добавить</button></div>
+        </div>
+      </div>
+      <div class="panel"><h3>Пользователи</h3><div id="usersTable"></div></div>
+    </section>
+
+    <section id="page-settings" class="hidden">
+      <div class="panel">
+        <h3>Организация</h3>
+        <div class="row"><div><label for="companyInput">Название</label><input id="companyInput"></div><div><button class="btn primary" id="saveCompany">Сохранить</button></div></div>
+        <label for="warehousesInput">Склады, по одному в строке</label><textarea id="warehousesInput" rows="4" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px"></textarea>
+        <label for="statusesInput">Статусы заказа, по одному в строке</label><textarea id="statusesInput" rows="5" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px"></textarea>
+        <div class="row" style="margin-top:12px"><button class="btn primary" id="saveSettings">Сохранить настройки</button></div>
+      </div>
+      <div class="panel">
+        <h3>Данные</h3>
+        <div class="actions">
+          <button class="btn" id="exportData">Экспорт JSON</button>
+          <label class="btn" style="display:inline-block">Импорт JSON<input id="importFile" type="file" accept="application/json" class="hidden"></label>
+          <button class="btn danger" id="resetData">Сбросить демо-данные</button>
+        </div>
+        <p class="hint">Экспорт и импорт помогают перенести настройки на другой компьютер.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const KEY = "sklad_plus_kit_v1";
+const seed = {
+  company: "ООО «Северный склад»",
+  warehouses: ["Москва", "Тверь", "Тула", "Калуга"],
+  statuses: ["Новый", "Подтверждён", "Зарезервирован", "Отгружен", "Отменён"],
+  users: [
+    {id: 1, login: "admin", password: "admin", name: "Администратор ИС", role: "admin", blocked: false},
+    {id: 2, login: "manager", password: "manager", name: "Менеджер по продажам", role: "manager", blocked: false},
+    {id: 3, login: "storekeeper", password: "storekeeper", name: "Кладовщик", role: "storekeeper", blocked: false}
+  ],
+  products: [
+    {id: 1, code: "ЦЕМ-500", name: "Цемент М500, мешок 50 кг", unit: "меш", price: 420},
+    {id: 2, code: "КИР-01", name: "Кирпич керамический", unit: "шт", price: 28},
+    {id: 3, code: "ПЕС-01", name: "Песок строительный", unit: "т", price: 950},
+    {id: 4, code: "ГКЛ-12", name: "Гипсокартон 12,5 мм", unit: "лист", price: 640},
+    {id: 5, code: "ПРФ-60", name: "Профиль CD-60", unit: "шт", price: 310},
+    {id: 6, code: "СМР-35", name: "Саморез 3,5×35, упаковка", unit: "уп", price: 190}
+  ],
+  orders: [
+    {id: 1, number: "SO-10481", date: "2026-10-20", customer: "ООО «СтройМаркет»", warehouse: "Тверь", productId: 1, qty: 120, status: "Отгружен", total: 50400},
+    {id: 2, number: "SO-10482", date: "2026-10-22", customer: "ООО «Ремонт-Сервис»", warehouse: "Москва", productId: 4, qty: 80, status: "Зарезервирован", total: 51200},
+    {id: 3, number: "SO-10483", date: "2026-10-24", customer: "ИП Соколов", warehouse: "Тула", productId: 2, qty: 1500, status: "Новый", total: 42000}
+  ]
+};
+
+let db = load();
+let current = null;
+let page = "dashboard";
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return structuredClone(seed);
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+function money(n) { return new Intl.NumberFormat("ru-RU").format(n) + " ₽"; }
+function roleName(role) { return role === "admin" ? "Администратор" : role === "manager" ? "Менеджер" : "Кладовщик"; }
+function product(id) { return db.products.find(p => p.id === id); }
+function byId(id) { return document.getElementById(id); }
+
+function show(view) {
+  byId("loginView").classList.toggle("hidden", view !== "login");
+  byId("appView").classList.toggle("hidden", view !== "app");
+}
+
+function signIn() {
+  const login = byId("login").value.trim();
+  const password = byId("password").value;
+  const user = db.users.find(u => u.login === login && u.password === password);
+  if (!user) return fail("Неверный логин или пароль");
+  if (user.blocked) return fail("Учётная запись заблокирована. Обратитесь к администратору");
+  current = user;
+  byId("loginError").classList.add("hidden");
+  show("app");
+  byId("companyName").textContent = db.company;
+  byId("whoName").textContent = user.name;
+  byId("whoRole").textContent = roleName(user.role);
+  byId("rolePill").textContent = roleName(user.role);
+  byId("usersLink").classList.toggle("hidden", user.role !== "admin");
+  byId("settingsLink").classList.toggle("hidden", user.role !== "admin");
+  go("dashboard");
+}
+function fail(text) { const e = byId("loginError"); e.textContent = text; e.classList.remove("hidden"); }
+
+function go(name) {
+  page = name;
+  document.querySelectorAll(".side a[data-page]").forEach(a => a.classList.toggle("active", a.dataset.page === name));
+  document.querySelectorAll("main > section").forEach(s => s.classList.add("hidden"));
+  byId("page-" + name).classList.remove("hidden");
+  const titles = {dashboard: "Сводка", orders: "Заказы", products: "Номенклатура", users: "Пользователи", settings: "Настройки"};
+  byId("pageTitle").textContent = titles[name] || "Склад+";
+  if (name === "dashboard") renderDashboard();
+  if (name === "orders") renderOrders();
+  if (name === "products") renderProducts();
+  if (name === "users") renderUsers();
+  if (name === "settings") renderSettings();
+}
+
+function renderDashboard() {
+  byId("statOrders").textContent = db.orders.length;
+  byId("statTotal").textContent = money(db.orders.reduce((s, o) => s + Number(o.total || 0), 0));
+  byId("statUsers").textContent = db.users.length;
+  const rows = [...db.orders].slice(-4).reverse().map(o => `<tr><td>${o.number}</td><td>${o.customer}</td><td>${o.status}</td><td>${money(o.total)}</td></tr>`).join("");
+  byId("recentOrders").innerHTML = `<table><thead><tr><th>Заказ</th><th>Заказчик</th><th>Статус</th><th>Сумма</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderOrders() {
+  byId("orderWarehouse").innerHTML = db.warehouses.map(w => `<option>${w}</option>`).join("");
+  byId("orderProduct").innerHTML = db.products.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  const canCreate = current.role === "admin" || current.role === "manager";
+  byId("createOrder").disabled = !canCreate;
+  const rows = db.orders.map(o => {
+    const p = product(o.productId);
+    const options = db.statuses.map(s => `<option ${s === o.status ? "selected" : ""}>${s}</option>`).join("");
+    const canChange = current.role === "admin" || current.role === "storekeeper" || current.role === "manager";
+    return `<tr><td>${o.number}<br><span class="muted">${o.date}</span></td><td>${o.customer}</td><td>${o.warehouse}</td><td>${p ? p.name : "?"}</td><td>${o.qty}</td><td>${money(o.total)}</td><td><span class="pill">${o.status}</span></td><td>${canChange ? `<select data-status="${o.id}">${options}</select>` : ""}</td></tr>`;
+  }).join("");
+  byId("ordersTable").innerHTML = `<table><thead><tr><th>Заказ</th><th>Заказчик</th><th>Склад</th><th>Товар</th><th>Кол-во</th><th>Сумма</th><th>Статус</th><th>Изменить</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.querySelectorAll("[data-status]").forEach(sel => sel.onchange = () => {
+    const order = db.orders.find(o => o.id === Number(sel.dataset.status));
+    if (order) { order.status = sel.value; save(); renderOrders(); renderDashboard(); }
+  });
+}
+
+function renderProducts() {
+  const rows = db.products.map(p => `<tr><td>${p.code}</td><td>${p.name}</td><td>${p.unit}</td><td>${money(p.price)}</td></tr>`).join("");
+  byId("productsTable").innerHTML = `<table><thead><tr><th>Код</th><th>Наименование</th><th>Ед.</th><th>Цена</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderUsers() {
+  if (current.role !== "admin") return;
+  const rows = db.users.map(u => `<tr><td>${u.login}</td><td>${u.name}</td><td>${roleName(u.role)}</td><td>${u.blocked ? '<span class="pill bad">Заблокирован</span>' : '<span class="pill">Активен</span>'}</td><td class="actions"><button class="btn" data-block="${u.id}">${u.blocked ? "Разблокировать" : "Заблокировать"}</button><button class="btn" data-role="${u.id}">Сменить роль</button></td></tr>`).join("");
+  byId("usersTable").innerHTML = `<table><thead><tr><th>Логин</th><th>Имя</th><th>Роль</th><th>Статус</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.querySelectorAll("[data-block]").forEach(b => b.onclick = () => {
+    const u = db.users.find(x => x.id === Number(b.dataset.block));
+    if (u) { u.blocked = !u.blocked; save(); renderUsers(); }
+  });
+  document.querySelectorAll("[data-role]").forEach(b => b.onclick = () => {
+    const u = db.users.find(x => x.id === Number(b.dataset.role));
+    if (!u) return;
+    const roles = ["manager", "storekeeper", "admin"];
+    u.role = roles[(roles.indexOf(u.role) + 1) % roles.length];
+    save(); renderUsers();
+  });
+}
+
+function renderSettings() {
+  byId("companyInput").value = db.company;
+  byId("warehousesInput").value = db.warehouses.join("\n");
+  byId("statusesInput").value = db.statuses.join("\n");
+}
+
+function createOrder() {
+  if (!(current.role === "admin" || current.role === "manager")) return;
+  const customer = byId("orderCustomer").value.trim();
+  const productId = Number(byId("orderProduct").value);
+  const qty = Number(byId("orderQty").value);
+  if (!customer || !qty) return alert("Заполните заказчика и количество");
+  const p = product(productId);
+  const id = Math.max(0, ...db.orders.map(o => o.id)) + 1;
+  db.orders.push({id, number: "SO-" + (10483 + id), date: new Date().toISOString().slice(0, 10), customer, warehouse: byId("orderWarehouse").value, productId, qty, status: db.statuses[0], total: (p ? p.price : 0) * qty});
+  save(); renderOrders(); renderDashboard(); byId("orderCustomer").value = "";
+}
+
+function createUser() {
+  if (current.role !== "admin") return;
+  const login = byId("newLogin").value.trim();
+  const name = byId("newName").value.trim();
+  const role = byId("newRole").value;
+  const password = byId("newPassword").value;
+  if (!login || !name || !password) return alert("Заполните логин, имя и пароль");
+  if (db.users.some(u => u.login === login)) return alert("Такой логин уже существует");
+  db.users.push({id: Math.max(0, ...db.users.map(u => u.id)) + 1, login, password, name, role, blocked: false});
+  save(); renderUsers(); byId("newLogin").value = ""; byId("newName").value = ""; byId("newPassword").value = "";
+}
+
+function saveCompany() {
+  db.company = byId("companyInput").value.trim() || db.company;
+  byId("companyName").textContent = db.company;
+  save(); alert("Название сохранено");
+}
+function saveSettings() {
+  db.warehouses = byId("warehousesInput").value.split("\n").map(s => s.trim()).filter(Boolean);
+  db.statuses = byId("statusesInput").value.split("\n").map(s => s.trim()).filter(Boolean);
+  save(); alert("Настройки сохранены");
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sklad-plus-data.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { db = JSON.parse(reader.result); save(); alert("Данные импортированы"); go(page); }
+    catch (e) { alert("Не удалось прочитать JSON"); }
+  };
+  reader.readAsText(file);
+}
+
+byId("signIn").onclick = signIn;
+byId("password").addEventListener("keydown", e => { if (e.key === "Enter") signIn(); });
+byId("logout").onclick = e => { e.preventDefault(); current = null; show("login"); };
+document.querySelectorAll(".side a[data-page]").forEach(a => a.onclick = e => { e.preventDefault(); go(a.dataset.page); });
+byId("createOrder").onclick = createOrder;
+byId("createUser").onclick = createUser;
+byId("saveCompany").onclick = saveCompany;
+byId("saveSettings").onclick = saveSettings;
+byId("exportData").onclick = exportData;
+byId("importFile").onchange = e => { if (e.target.files[0]) importData(e.target.files[0]); };
+byId("resetData").onclick = () => { if (confirm("Сбросить данные к демонстрационным?")) { db = structuredClone(seed); save(); go("dashboard"); } };
+show("login");
+</script>
+</body>
+</html>

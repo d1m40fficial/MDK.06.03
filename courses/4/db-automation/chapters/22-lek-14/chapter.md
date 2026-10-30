@@ -94,7 +94,7 @@ ORDER BY time DESC;
 
 ## performance_schema
 
-`performance_schema` это таблицы с инструментированными событиями: выполнения запросов, ожидания, блокировки, чтения файлов. Проверить сбор можно запросом `SELECT @@performance_schema;`. Если вернулся ноль, в `C:\xampp\mysql\bin\my.ini` добавляют строку `performance_schema=ON` и перезапускают MySQL.
+`performance_schema` это таблицы с инструментированными событиями: выполнения запросов, ожидания, блокировки, чтения файлов. Проверить сбор можно запросом `SELECT @@performance_schema;`. Если вернулся ноль, в `.../xampp/mysql/bin/my.ini` добавляют строку `performance_schema=ON` и перезапускают MySQL.
 
 ```sql
 SELECT DIGEST_TEXT,
@@ -132,7 +132,7 @@ SHOW VARIABLES LIKE 'log_bin';
 SHOW BINARY LOGS;
 ```
 
-В XAMPP файлы лежат в `C:\xampp\mysql\data\` и называются `mysql-bin.000001`, `mysql-bin.000002`. Чистят журнал командой `PURGE BINARY LOGS BEFORE DATE_SUB(NOW(), INTERVAL 7 DAY);` или настройкой `binlog_expire_logs_seconds`. Перед очисткой проверяют свежую копию: без binary log базу между дампами не восстановить.
+В XAMPP файлы лежат в `.../xampp/mysql/data\` и называются `mysql-bin.000001`, `mysql-bin.000002`. Чистят журнал командой `PURGE BINARY LOGS BEFORE DATE_SUB(NOW(), INTERVAL 7 DAY);` или настройкой `binlog_expire_logs_seconds`. Перед очисткой проверяют свежую копию: без binary log базу между дампами не восстановить.
 
 ## Buffer pool
 

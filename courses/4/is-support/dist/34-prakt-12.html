@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 12. Метрики</title>
+<title>Практика 12. Сводка обращений и соблюдение сроков</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,10 +812,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 12. Метрики</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 12. Сводка обращений и соблюдение сроков</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 40</span><span class="pill">Инженерно-техническая поддержка сопровождения ИС</span></div>
-<div class="hero-panel"><h1>Практика 12. Метрики</h1><p class="dek">Студент считает метрики поддержки по журналу обращений, собирает сводную таблицу, строит графики и формулирует выводы с предложениями.</p></div>
+<div class="hero-panel"><h1>Практика 12. Сводка обращений и соблюдение сроков</h1><p class="dek">Сбор метрик поддержки за период: число обращений, время реакции и решения, доля выполненных SLA. Результат: сводная таблица и графики с выводами.</p></div>
 <div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Собирать данные обращений для расчёта метрик</li><li>Считать время реакции и время решения по журналу</li><li>Строить сводку и график динамики обращений</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Научиться превращать журнал обращений в набор метрик поддержки: объём, время реакции, время решения, доля первой линии, повторные обращения и соблюдение SLA. Собрать сводную таблицу, построить графики, сформулировать выводы и предложения для сервисного менеджера.</p>
 <p>Результат работы это книга Excel с четырьмя листами и короткий вывод на листе «Выводы»: какие показатели в норме, какие вышли за норму и что предложить заказчику.</p>
@@ -1092,13 +1092,50 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <h3>Шаг 2. Проверьте данные</h3>
-<p>До расчётов убедитесь, что журнал пригоден. Проверьте три вещи: все ли ячейки времени заполнены, нет ли ответа раньше регистрации и нет ли повторяющихся номеров.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>Число строк: 24.
-Ответ не раньше регистрации: разница положительная во всех строках.
-Номера уникальны: 1 до 24 без повторов.
-</code></pre></div>
-
-<p>Если проверка не прошла, исправьте данные до формул: метрика по грязному журналу выглядит убедительно и врёт.</p>
+<p>До расчётов проверьте журнал: заполнены ли ячейки времени, нет ли ответа раньше регистрации и повторяющихся номеров. Результат каждой проверки запишите в протокол.</p>
+<table>
+<thead>
+<tr>
+<th>Что проверить</th>
+<th>Как проверить</th>
+<th>Результат</th>
+<th>Найдены проблемы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>лишние пустые строки в конце листа</td>
+<td>прокрутить лист до последней записи</td>
+<td>пустых строк нет</td>
+<td>нет</td>
+</tr>
+<tr>
+<td>число строк</td>
+<td>=СЧЁТЗ(Журнал!A2:A25)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ответ не раньше регистрации</td>
+<td>=(C2-B2) и =(D2-B2) по всем строкам</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>уникальность номеров</td>
+<td>=СЧЁТЕСЛИ(Журнал!A2:A25;A2) и протянуть вниз</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>формат даты и времени</td>
+<td>выравнивание ячейки и вид записи в строке формул</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Если проверка не прошла, исправьте данные до формул: метрика по грязному журналу врёт.</p>
 <h3>Шаг 3. Посчитайте время реакции и решения</h3>
 <p>Добавьте два столбца. Время реакции считайте в минутах, время решения в часах.</p>
 <div class="codehilite" data-lang="text"><pre><span></span><code>I2: =(C2-B2)*1440
@@ -1114,7 +1151,7 @@ L2: =ЕСЛИ(J2&lt;=K2;&quot;да&quot;;&quot;нет&quot;)
 </code></pre></div>
 
 <p>Для времени реакции добавьте столбец M «Ответ в срок» с формулой =ЕСЛИ(I2&lt;=15;&rdquo;да&rdquo;;&rdquo;нет&rdquo;).</p>
-<p>В рабочем журнале есть незакрытые обращения, и их нельзя считать выполненными в срок.</p>
+<p>В рабочем журнале незакрытые обращения нельзя считать выполненными в срок.</p>
 <h3>Шаг 5. Сведите объём и приоритеты</h3>
 <p>На листе «Сводка» постройте таблицу объёма. Число обращений считайте функцией СЧЁТЗ, распределение по приоритетам функцией СЧЁТЕСЛИ.</p>
 <div class="codehilite" data-lang="text"><pre><span></span><code>Всего обращений: =СЧЁТЗ(Журнал!A2:A25)
@@ -1241,10 +1278,11 @@ L2: =ЕСЛИ(J2&lt;=K2;&quot;да&quot;;&quot;нет&quot;)
 <li>Линейчатая диаграмма распределения по приоритетам. Покажите, что критических обращений меньше всего.</li>
 <li>Гистограмма времени решения с интервалами 0 до 1, 1 до 2, 2 до 4, 4 до 8 и больше 8 часов. Для неё добавьте столбец «Интервал» и посчитайте частоты функцией СЧЁТЕСЛИМН.</li>
 </ol>
-<p>Гистограмма показывает хвост, которого не видно в среднем: два и более обращения дольше 8 часов дают повод для вывода.</p>
+<p>Гистограмма показывает хвост, которого не видно в среднем: обращения дольше 8 часов дают повод для вывода.</p>
 <h3>Шаг 9. Сформулируйте выводы и предложения</h3>
-<p>На листе «Выводы» напишите пять пунктов: число, норма, вывод.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>1. Объём: 24 обращения за 6 дней, это около 28 в неделю при норме 34.
+<p>На листе «Выводы» напишите пять пунктов: число, норма, вывод. Нулевая строка показывает формат записи и взята из другого отчёта.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>0. Образец: загрузка инженеров 78 процентов при норме не выше 80, отклонения нет.
+1. Объём: ___ обращений за 6 дней, это около ___ в неделю при норме 34.
 2. Скорость: медиана решения ___ часа, 90-й процентиль ___ часа.
 3. Сроки: SLA выполнен в ___ процентах случаев при норме 95.
 4. Качество: повторных ___ процентов при норме 10.
@@ -1252,7 +1290,7 @@ L2: =ЕСЛИ(J2&lt;=K2;&quot;да&quot;;&quot;нет&quot;)
 </code></pre></div>
 
 <p>Число в выводе без нормы ничего не значит: рядом стоит, сколько должно быть.</p>
-<p>Предложения формулируются от причины, а не от показателя. «Повысить SLA» предложением не является. «Разобрать причину двух нарушений по высокому приоритету и добавить инженера в часы приёмки» является.</p>
+<p>Предложения формулируются от причины, а не от показателя. «Повысить SLA» не предложение. Нужна запись с действием, эффектом и сроком, например «сократить согласование заявок на доступ до одного дня, ввести шаблон заявки».</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
 <li>Книгу Excel «Метрики поддержки, октябрь» с листами «Журнал», «Сводка», «Графики», «Выводы».</li>
@@ -1263,15 +1301,45 @@ L2: =ЕСЛИ(J2&lt;=K2;&quot;да&quot;;&quot;нет&quot;)
 <li>Пять выводов с числами и три предложения с указанием причины.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
-<ul>
-<li>Журнал перенесён без ошибок, форматы даты и времени корректны, до 15 баллов.</li>
-<li>Время реакции и решения посчитано формулами, а не вручную, до 20 баллов.</li>
-<li>Нормы по приоритетам заданы формулой, признак выполнения посчитан, до 15 баллов.</li>
-<li>Среднее, медиана и 90-й процентиль посчитаны и объяснены, до 20 баллов.</li>
-<li>SLA, доля первой линии и повторные обращения сведены в таблицу, до 15 баллов.</li>
-<li>Графики построены, гистограмма показывает хвост, до 10 баллов.</li>
-<li>Выводы содержат числа, нормы и предложения по причинам, до 5 баллов.</li>
-</ul>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
+<table>
+<thead>
+<tr>
+<th>Оценка</th>
+<th>Условие</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
+</tr>
+</tbody>
+</table>
+<p>Что проверяется:
+- Журнал перенесён без ошибок, форматы даты и времени корректны.
+- Время реакции и решения посчитано формулами, а не вручную.
+- Нормы по приоритетам заданы формулой, признак выполнения посчитан.
+- Среднее, медиана и 90-й процентиль посчитаны и объяснены.
+- SLA, доля первой линии и повторные обращения сведены в таблицу.
+- Графики построены, гистограмма показывает хвост.
+- Выводы содержат числа, нормы и предложения по причинам.</p>
 <p>Работа без формул возвращается на доработку: ручные значения нельзя пересчитать.</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">

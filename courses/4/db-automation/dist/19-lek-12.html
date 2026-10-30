@@ -1021,7 +1021,7 @@ dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w">
 </code></pre></div>
 
 <p>Три правила журнала: писать начало и конец, писать числа, не писать пароль. Строка <code>password=...</code> в журнале сводит защиту на нет.</p>
-<p>Путь к журналу строится от каталога программы, а не от текущего каталога. Планировщик запускает задание из <code>C:\Windows\System32</code>, и относительный путь <code>logs\dean-admin.log</code> окажется совсем не там, где его ищут. <code>AppContext.BaseDirectory</code> всегда указывает на папку с <code>DeanAdmin.exe</code>.</p>
+<p>Путь к журналу строится от каталога программы, а не от текущего каталога. Планировщик запускает задание из <code>.../Windows/System32</code>, и относительный путь <code>logs/dean-admin.log</code> окажется совсем не там, где его ищут. <code>AppContext.BaseDirectory</code> всегда указывает на папку с <code>DeanAdmin.exe</code>.</p>
 <p>Журнал растёт, поэтому раз в месяц его стоит чистить или переименовывать по дате. Простая ротация: если файл больше десяти мегабайт, он получает имя с датой, а новый начинается с пустого. Без ротации через год в одном файле будет миллион строк и поиск по нему займёт больше времени, чем сама работа.</p>
 <h2 id="обработка-ошибок-и-коды-возврата"><span class="num">08</span>Обработка ошибок и коды возврата</h2>
 <p>Ошибки делятся на четыре группы, и каждой соответствует свой код.</p>
@@ -1105,7 +1105,7 @@ dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w">
 </code></pre></div>
 
 <p>Сама копия делается внешней программой, потому что <code>mysqldump</code> умеет то, чего не умеет обычный SQL-запрос: выгрузить схему, данные и триггеры в один согласованный файл. Приложение запускает её как процесс и направляет вывод в файл.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="kt">var</span><span class="w"> </span><span class="n">psi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProcessStartInfo</span><span class="p">(</span><span class="s">@&quot;C:\xampp\mysql\bin\mysqldump.exe&quot;</span><span class="p">)</span>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="kt">var</span><span class="w"> </span><span class="n">psi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProcessStartInfo</span><span class="p">(</span><span class="s">@&quot;mysqldump&quot;</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">RedirectStandardOutput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">,</span>
 <span class="w">    </span><span class="n">UseShellExecute</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span>
@@ -1137,7 +1137,7 @@ dotnet<span class="w"> </span>run<span class="w"> </span>--<span class="w"> </sp
 </code></pre></div>
 
 <p>Для Планировщика нужен готовый файл, а не исходники.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-o<span class="w"> </span>C:<span class="se">\D</span>eanAdmin<span class="se">\p</span>ublish
+<div class="codehilite" data-lang="text"><pre><span></span><code>dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-o<span class="w"> </span>.../DeanAdmin/publish
 </code></pre></div>
 
 <p>В каталоге <code>publish</code> появится <code>DeanAdmin.exe</code> и рядом библиотеки. Именно этот путь указывают в задании, потому что <code>dotnet run</code> требует SDK и рабочего каталога с исходниками.</p>

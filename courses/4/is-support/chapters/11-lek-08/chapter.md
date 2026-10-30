@@ -154,7 +154,7 @@ outcomes:
 Читать файл целиком бессмысленно: в рабочем журнале десятки тысяч строк. Поиск сужают в три шага: окно времени, затем уровень или код, затем текст.
 
 ```powershell
-Select-String -Path C:\sklad\logs\sklad.log -Pattern 'request=8f3c1a'
+Select-String -Path .../sklad/logs\sklad.log -Pattern 'request=8f3c1a'
 Get-WinEvent -FilterHashtable @{LogName='System'; StartTime=(Get-Date).AddHours(-2)} |
   Where-Object { $_.Id -in 41, 1074, 7036 } |
   Select-Object TimeCreated, Id, ProviderName

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 10. Безопасность</title>
+<title>Практика 10. Аудит учётных записей и прав</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,10 +812,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 10. Безопасность</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 10. Аудит учётных записей и прав</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 35</span><span class="pill">Внедрение информационных систем</span></div>
-<div class="hero-panel"><h1>Практика 10. Безопасность</h1><p class="dek">Студент проверяет учебную ИС по чек-листу безопасности и оформляет перечень слабых мест с приоритетом устранения.</p></div>
+<div class="hero-panel"><h1>Практика 10. Аудит учётных записей и прав</h1><p class="dek">Проверка учебной ИС по чек-листу безопасности: учётные записи, пароли, права, журналы и резервные копии. Результат: чек-лист и перечень слабых мест.</p></div>
 <div class="glyph" aria-hidden="true">П10</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Проверять настройки учётных записей и паролей по чек-листу</li><li>Находить избыточные права у ролей учебной ИС</li><li>Оформлять перечень слабых мест с приоритетом устранения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Научиться проверять безопасность учебной ИС по единому чек-листу и превращать результат проверки в понятный список слабых мест. Вы просматриваете учётные записи «Склад+», проверяете парольную политику, сравниваете права ролей с матрицей доступа, смотрите журналы и резервные копии. Итог работы это заполненный чек-лист и перечень находок с приоритетом, владельцем и сроком устранения.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
@@ -827,6 +827,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Word для итогового документа.</li>
 <li>Раздаточный файл с матрицей доступа и описанием ролей.</li>
 </ul>
+<p><strong>Комплект «Склад+».</strong> <a href="reports/kit/sklad-plus-kit.zip">Скачать архив</a> и распаковать в папку работы. Внутри: <code>app/index.html</code> (учебный прототип, открывается в браузере), <code>database/schema.sql</code> и <code>database/seed.sql</code> (импорт в phpMyAdmin), <code>data/</code> (CSV и JSON для импорта), <code>templates/</code> (шаблоны отчётов). Демо-доступы прототипа: <code>admin / admin</code>, <code>manager / manager</code>, <code>storekeeper / storekeeper</code>.</p>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p>Проверка безопасности отвечает на три вопроса: кто имеет доступ, что этот доступ позволяет и остаётся ли след. Ответы ищут не в интервью, а в настройках системы и журналах.</p>
 <p>Принцип минимальных привилегий означает, что роль получает только нужные операции. Проверка начинается с матрицы доступа: для каждой роли выписывают объекты и действия, а затем сравнивают с тем, что реально выдано в системе. Расхождение в сторону большего это избыточное право.</p>
@@ -834,7 +835,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Парольная политика задаёт длину, сложность, срок жизни, историю и блокировку после неудачных попыток. Журнал фиксирует входы, смену прав, критические операции и выгрузки, а сам должен быть защищён от правки. Резервная копия хранится отдельно, шифруется и проверяется восстановлением.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Составьте чек-лист проверки</h3>
-<p>Заполните таблицу по шести разделам. В колонке «Результат» ставят «да», «нет» или «частично», в колонке «Доказательство» указывают, где это видно.</p>
+<p>Заполните таблицу по шести разделам. В колонке «Результат» ставят «да», «нет» или «частично», в колонке «Доказательство» указывают, где это видно. Если проверить пункт нельзя, пишут «нет данных» и указывают, что нужно, чтобы проверить.</p>
 <table>
 <thead>
 <tr>
@@ -883,15 +884,15 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Чек-лист заполняют по факту, а не по памяти. Если проверить пункт нельзя, пишут «нет данных» и указывают, что нужно, чтобы проверить.</p>
+<p>Чек-лист заполняют по факту, а не по памяти.</p>
 <h3>Шаг 2. Проверьте учётные записи</h3>
-<p>Откройте phpMyAdmin, выберите базу учебной ИС и выполните запрос к таблице пользователей.</p>
+<p>Откройте phpMyAdmin и выполните запрос к таблице пользователей.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">login</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="k">role</span><span class="p">,</span><span class="w"> </span><span class="n">is_active</span><span class="p">,</span><span class="w"> </span><span class="n">last_login</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">users</span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">role</span><span class="p">,</span><span class="w"> </span><span class="n">login</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Сверьте список с данными о сотрудниках.</p>
+<p>Результат запроса к таблице пользователей.</p>
 <table>
 <thead>
 <tr>
@@ -975,9 +976,106 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Найдите минимум три проблемы. Общая запись «sklad_tver» не позволяет установить автора операции. Волков уволился в феврале, но запись активна. Тестовая запись с правами администратора осталась после настройки. Запишите каждую находку отдельной строкой.</p>
+<p>Сверьте список с кадровыми данными. Ниже выписка из штатного расписания и приказов.</p>
+<table>
+<thead>
+<tr>
+<th>Сотрудник</th>
+<th>Должность</th>
+<th>Подразделение</th>
+<th>Принят</th>
+<th>Уволен</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Иванов А.</td>
+<td>менеджер по продажам</td>
+<td>Москва</td>
+<td>03.2023</td>
+<td></td>
+</tr>
+<tr>
+<td>Орлов Д.</td>
+<td>менеджер по продажам</td>
+<td>Тула</td>
+<td>07.2024</td>
+<td></td>
+</tr>
+<tr>
+<td>Волков С.</td>
+<td>менеджер по продажам</td>
+<td>Калуга</td>
+<td>09.2022</td>
+<td>14.02.2026</td>
+</tr>
+<tr>
+<td>Соколов И.</td>
+<td>кладовщик</td>
+<td>Тверь</td>
+<td>02.2021</td>
+<td></td>
+</tr>
+<tr>
+<td>Гусев П.</td>
+<td>кладовщик</td>
+<td>Тула</td>
+<td>05.2023</td>
+<td></td>
+</tr>
+<tr>
+<td>Ким С.</td>
+<td>кладовщик</td>
+<td>Калуга</td>
+<td>11.2024</td>
+<td></td>
+</tr>
+<tr>
+<td>Петрова М.</td>
+<td>бухгалтер</td>
+<td>Москва</td>
+<td>01.2020</td>
+<td></td>
+</tr>
+<tr>
+<td>вакансия</td>
+<td>кладовщик</td>
+<td>Тверь</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Смирнов К.</td>
+<td>администратор ИС, подрядчик</td>
+<td>Москва</td>
+<td>01.2026</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Сопоставьте таблицы по логину и фамилии: у каждого ли действующего сотрудника есть запись, нет ли записей без сотрудника, совпадает ли роль с должностью, заблокированы ли уволенные. Найдите не меньше трёх расхождений и запишите каждое отдельно: что видно в системе, с чем не сходится, чем грозит.</p>
 <h3>Шаг 3. Проверьте парольную политику</h3>
-<p>Откройте параметры безопасности системы и выпишите фактические значения.</p>
+<p>Откройте параметры безопасности системы и выпишите фактические значения. Сравнивать нужно с регламентом, а не с общими представлениями.</p>
+<p>Фрагмент регламента информационной безопасности «Северного склада», раздел 4.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>4.1. Минимальная длина пароля 12 символов.
+4.2. В пароле не меньше трёх групп символов: строчные, заглавные, цифры, знаки.
+4.3. Срок жизни пароля 180 дней.
+4.4. История хранит 5 последних паролей.
+4.5. Блокировка после 5 неудачных попыток на 15 минут.
+4.6. При первом входе и после сброса пароль меняется принудительно.
+</code></pre></div>
+
+<p>Выписка с экрана «Безопасность», вкладка «Пароли», снята администратором.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>Длина пароля, символов .............. 6
+Проверка групп символов ............. выключена
+Срок действия пароля, дней .......... 30
+Запомненных паролей ................. 1
+Попыток до блокировки ............... не ограничено
+Смена при первом входе .............. выключена
+Блокировка экрана после простоя, мин  10
+</code></pre></div>
+
+<p>Заполните таблицу: в колонке «Факт» значение из выписки, в колонке «Вывод» одно из слов «соответствует», «частично», «не соответствует».</p>
 <table>
 <thead>
 <tr>
@@ -989,46 +1087,52 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>Минимальная длина</td>
-<td>12 символов</td>
-<td>6 символов</td>
-<td>не соответствует</td>
+<td>Блокировка экрана после простоя</td>
+<td>в регламенте не задана</td>
+<td>10 минут</td>
+<td>вне регламента, отметить отдельно</td>
 </tr>
 <tr>
-<td>Сложность</td>
-<td>три группы символов</td>
-<td>только буквы и цифры</td>
-<td>частично</td>
+<td>Минимальная длина</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Группы символов</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Срок жизни</td>
-<td>180 дней</td>
-<td>30 дней</td>
-<td>избыточно часто</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>История</td>
-<td>5 паролей</td>
-<td>1 пароль</td>
-<td>не соответствует</td>
+<td>История паролей</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Блокировка</td>
-<td>5 попыток, 15 минут</td>
-<td>нет блокировки</td>
-<td>не соответствует</td>
+<td>Блокировка после неудачных попыток</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Смена при первом входе</td>
-<td>обязательна</td>
-<td>не требуется</td>
-<td>не соответствует</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 <p>Проверьте на учебной записи, что временный пароль действительно требует смены. Если система пускает с временным паролем повторно, это находка.</p>
 <h3>Шаг 4. Сравните права ролей с матрицей</h3>
-<p>Выполните запрос к таблице прав и посмотрите, какие операции выданы ролям.</p>
+<p>Выполните запрос к таблице прав.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">role_name</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">permission_code</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">description</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">role_permissions</span><span class="w"> </span><span class="n">rp</span>
 <span class="k">JOIN</span><span class="w"> </span><span class="n">roles</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">role_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rp</span><span class="p">.</span><span class="n">role_id</span>
@@ -1036,53 +1140,216 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">role_name</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">permission_code</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Сравните результат с матрицей доступа из раздаточного файла и найдите лишнее.</p>
+<p>Сравните результат с матрицей доступа. Фрагмент матрицы, раздел 3.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>менеджер: view_orders, create_order, edit_own_order, export_own, view_stock
+кладовщик: view_stock, create_shipment, edit_own_shipment, view_task
+бухгалтер: view_invoices, create_invoice, export_invoice, view_orders
+site_user: create_order, view_catalog
+администратор: users_manage, roles_manage, backup_run, view_audit
+</code></pre></div>
+
+<p>Фрагмент результата запроса.</p>
+<table>
+<thead>
+<tr>
+<th>Роль</th>
+<th>Право</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>администратор</td>
+<td>users_manage</td>
+<td>управление пользователями</td>
+</tr>
+<tr>
+<td>бухгалтер</td>
+<td>create_invoice</td>
+<td>создание счёта</td>
+</tr>
+<tr>
+<td>бухгалтер</td>
+<td>edit_orders</td>
+<td>изменение заказов</td>
+</tr>
+<tr>
+<td>бухгалтер</td>
+<td>export_invoice</td>
+<td>выгрузка счетов</td>
+</tr>
+<tr>
+<td>бухгалтер</td>
+<td>view_invoices</td>
+<td>просмотр счетов</td>
+</tr>
+<tr>
+<td>кладовщик</td>
+<td>create_shipment</td>
+<td>создание отгрузки</td>
+</tr>
+<tr>
+<td>кладовщик</td>
+<td>delete_shipment</td>
+<td>удаление отгрузки</td>
+</tr>
+<tr>
+<td>кладовщик</td>
+<td>edit_own_shipment</td>
+<td>правка своей отгрузки</td>
+</tr>
+<tr>
+<td>кладовщик</td>
+<td>view_purchase_prices</td>
+<td>просмотр закупочных цен</td>
+</tr>
+<tr>
+<td>кладовщик</td>
+<td>view_stock</td>
+<td>просмотр остатков</td>
+</tr>
+<tr>
+<td>менеджер</td>
+<td>create_order</td>
+<td>создание заказа</td>
+</tr>
+<tr>
+<td>менеджер</td>
+<td>edit_own_order</td>
+<td>правка своего заказа</td>
+</tr>
+<tr>
+<td>менеджер</td>
+<td>export_all</td>
+<td>выгрузка всех заказов</td>
+</tr>
+<tr>
+<td>менеджер</td>
+<td>export_own</td>
+<td>выгрузка своих заказов</td>
+</tr>
+<tr>
+<td>site_user</td>
+<td>admin_panel</td>
+<td>вход в панель администратора</td>
+</tr>
+<tr>
+<td>site_user</td>
+<td>create_order</td>
+<td>создание заказа</td>
+</tr>
+</tbody>
+</table>
+<p>Отберите права, которых нет в матрице. Для каждого укажите, какое право нужно оставить вместо лишнего: например, менеджеру достаточно <code>export_own</code>, кладовщику <code>view_stock</code> своего склада.</p>
 <table>
 <thead>
 <tr>
 <th>Роль</th>
 <th>Лишнее право</th>
 <th>Чем опасно</th>
+<th>Чем заменить</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>менеджер</td>
-<td>export_all</td>
-<td>выгрузка всех заказов и цен конкурентам</td>
-</tr>
-<tr>
 <td>кладовщик</td>
-<td>view_purchase_prices</td>
-<td>видит закупочные цены поставщиков</td>
+<td>view_stock</td>
+<td>право есть в матрице, лишним не является</td>
+<td>переносить не нужно</td>
 </tr>
 <tr>
-<td>кладовщик</td>
-<td>delete_shipment</td>
-<td>удаление отгрузки без следа в остатках</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>бухгалтер</td>
-<td>edit_orders</td>
-<td>изменение заказов после отгрузки</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>site_user</td>
-<td>admin_panel</td>
-<td>сервисная запись с полным доступом</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Для каждой находки укажите, какое право нужно оставить вместо лишнего. Например, менеджеру достаточно export_own, кладовщику view_stock своего склада.</p>
 <h3>Шаг 5. Проверьте журналы</h3>
-<p>Откройте таблицу журнала и убедитесь, что в ней есть записи о входе, смене прав и критичных операциях.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">event_time</span><span class="p">,</span><span class="w"> </span><span class="n">login</span><span class="p">,</span><span class="w"> </span><span class="n">event_type</span><span class="p">,</span><span class="w"> </span><span class="n">object_type</span><span class="p">,</span><span class="w"> </span><span class="n">object_id</span><span class="p">,</span><span class="w"> </span><span class="n">details</span>
-<span class="k">FROM</span><span class="w"> </span><span class="n">audit_log</span>
-<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">event_time</span><span class="w"> </span><span class="k">DESC</span>
-<span class="k">LIMIT</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Проверьте четыре вещи. Записывается ли неудачная попытка входа. Виден ли автор при проведении документа. Есть ли записи о смене прав. Совпадает ли срок хранения с регламентом.</p>
+<p>Откройте таблицу журнала и посмотрите последние записи.</p>
+<table>
+<thead>
+<tr>
+<th>Время</th>
+<th>Логин</th>
+<th>Событие</th>
+<th>Объект</th>
+<th>Подробности</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12.05 09:02</td>
+<td>ivanov_a</td>
+<td>вход</td>
+<td>сеанс</td>
+<td>успешно</td>
+</tr>
+<tr>
+<td>12.05 09:14</td>
+<td>ivanov_a</td>
+<td>проведение</td>
+<td>отгрузка 3312</td>
+<td>статус «отгружено»</td>
+</tr>
+<tr>
+<td>12.05 09:20</td>
+<td>sklad_tver</td>
+<td>проведение</td>
+<td>приёмка 512</td>
+<td>статус «принято»</td>
+</tr>
+<tr>
+<td>12.05 10:05</td>
+<td>petrova_m</td>
+<td>выгрузка</td>
+<td>счета за апрель</td>
+<td>214 строк</td>
+</tr>
+<tr>
+<td>12.05 11:30</td>
+<td>admin</td>
+<td>смена прав</td>
+<td>роль «менеджер»</td>
+<td>добавлено export_all</td>
+</tr>
+<tr>
+<td>12.05 12:10</td>
+<td>gusev_p</td>
+<td>вход</td>
+<td>сеанс</td>
+<td>успешно</td>
+</tr>
+<tr>
+<td>12.05 15:44</td>
+<td>orlov_d</td>
+<td>выход</td>
+<td>сеанс</td>
+<td></td>
+</tr>
+<tr>
+<td>12.05 18:00</td>
+<td>admin</td>
+<td>обслуживание</td>
+<td>журнал</td>
+<td>записи старше 30 дней удалены</td>
+</tr>
+</tbody>
+</table>
+<p>Администратор сообщил: кнопка «Очистить журнал» работает без подтверждения и без записи о самом действии.</p>
+<p>Заполните таблицу проверки по этим данным. В колонке «Комментарий» укажите, на какую строку журнала или на чьи слова вы опираетесь.</p>
 <table>
 <thead>
 <tr>
@@ -1093,35 +1360,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>Вход и выход</td>
-<td>есть</td>
-<td>логин и время пишутся</td>
+<td>Записывается ли вход и выход</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Неудачный вход</td>
-<td>нет</td>
-<td>попытки не фиксируются</td>
+<td>Записывается ли неудачная попытка входа</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Смена прав</td>
-<td>есть</td>
-<td>автор указан</td>
+<td>Виден ли автор при проведении документа</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Проведение документа</td>
-<td>есть</td>
-<td>но автор «sklad_tver»</td>
+<td>Есть ли записи о смене прав</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Срок хранения</td>
-<td>30 дней</td>
-<td>по регламенту 12 месяцев</td>
+<td>Совпадает ли срок хранения с регламентом 12 месяцев</td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Если журнал можно очистить из интерфейса администратора, отметьте это как отдельную находку высокого приоритета.</p>
 <h3>Шаг 6. Проверьте резервные копии</h3>
-<p>Откройте папку с копиями и ответьте на пять вопросов: где лежит копия, зашифрована ли она, кто имеет к ней доступ, как часто создаётся и когда последний раз проверялась.</p>
+<p>Откройте папку с копиями, путь выдаёт преподаватель. Ответьте на пять вопросов: где лежит копия, зашифрована ли она, кто имеет к ней доступ, как часто создаётся и когда последний раз проверялась.</p>
+<p>Что видно в папке и в настройках.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>sklad_2026-05-05.sql   418 МБ
+sklad_2026-05-06.sql   421 МБ
+sklad_2026-05-07.sql   419 МБ
+
+Папка лежит на диске сервера приложений, отдельного хранилища нет.
+Права на папку: группа «Пользователи» чтение, группа «Администраторы» изменение.
+Задача планировщика SkladBackup: ежедневно в 23:00, последний результат «выполнена».
+Архивы не шифруются, пароль на файлы не ставится.
+Записей о проверке восстановления в журнале задач нет.
+</code></pre></div>
+
 <table>
 <thead>
 <tr>
@@ -1133,34 +1411,34 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td>Где хранится</td>
-<td>диск D на том же сервере</td>
-<td>не соответствует</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Шифрование</td>
-<td>архива нет, папка открыта</td>
-<td>не соответствует</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Доступ</td>
-<td>все сотрудники офиса</td>
-<td>не соответствует</td>
+<td>Кто имеет доступ</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Расписание</td>
-<td>ежедневно в 23:00</td>
-<td>соответствует</td>
+<td>Как часто создаётся</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Проверка восстановления</td>
-<td>не проводилась</td>
-<td>не соответствует</td>
+<td>Когда проверялась</td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Не выполняйте восстановление на рабочей базе. Проверку делают на копии или тестовом стенде, если преподаватель дал отдельную базу.</p>
+<p>Не выполняйте восстановление на рабочей базе: проверку делают на копии или тестовом стенде.</p>
 <h3>Шаг 7. Оформите перечень слабых мест</h3>
-<p>Соберите находки в таблицу и расставьте приоритеты. Критичный приоритет у того, что даёт доступ к чужим данным или уничтожает след. Высокий у того, что расширяет права. Обычный у неудобств и расхождений с регламентом.</p>
+<p>Соберите находки из шагов 2, 3, 4, 5 и 6 в одну таблицу и расставьте приоритеты. Критичный приоритет у того, что даёт доступ к чужим данным или уничтожает след. Высокий у того, что расширяет права. Обычный у неудобств и расхождений с регламентом. Первая строка заполнена как образец, остальные добавьте по своим находкам.</p>
 <table>
 <thead>
 <tr>
@@ -1175,72 +1453,65 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td>1</td>
-<td>общая запись sklad_tver</td>
-<td>нельзя установить автора</td>
+<td>журнал очищается без подтверждения и без следа</td>
+<td>нельзя доказать факт удаления записей</td>
 <td>критичный</td>
 <td>администратор ИС</td>
-<td>1 день</td>
+<td>3 дня</td>
 </tr>
 <tr>
 <td>2</td>
-<td>активная запись уволенного</td>
-<td>вход от чужого имени</td>
-<td>критичный</td>
-<td>администратор ИС</td>
-<td>1 день</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>3</td>
-<td>test_admin с полным доступом</td>
-<td>скрытый вход в систему</td>
-<td>критичный</td>
-<td>администратор ИС</td>
-<td>1 день</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>4</td>
-<td>права export_all у менеджера</td>
-<td>утечка цен и заказов</td>
-<td>высокий</td>
-<td>владелец системы</td>
-<td>3 дня</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>5</td>
-<td>нет блокировки после попыток</td>
-<td>подбор пароля</td>
-<td>высокий</td>
-<td>администратор ИС</td>
-<td>3 дня</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>6</td>
-<td>журнал хранится 30 дней</td>
-<td>нельзя разобрать инцидент</td>
-<td>высокий</td>
-<td>администратор ИС</td>
-<td>7 дней</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>7</td>
-<td>копия на том же диске без пароля</td>
-<td>потеря данных и утечка</td>
-<td>критичный</td>
-<td>администратор ИС</td>
-<td>2 дня</td>
-</tr>
-<tr>
-<td>8</td>
-<td>политика пароля 6 символов</td>
-<td>слабые пароли</td>
-<td>высокий</td>
-<td>владелец системы</td>
-<td>7 дней</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Для каждой строки проверьте, что срок реальный, а владелец может это исправить. Слабое место без владельца не будет устранено.</p>
-<p>В конце добавьте раздел «Что проверить повторно» с тремя пунктами: блокировка уволенных, срок хранения журнала, проверка восстановления копии. Повторную проверку назначают через месяц после устранения.</p>
+<p>Строк должно быть не меньше семи, каждая опирается на находку.</p>
+<p>Проверьте, что срок реальный, а владелец может это исправить: слабое место без владельца не будет устранено.</p>
+<p>В конце добавьте раздел «Что проверить повторно»: три находки, которые нельзя подтвердить без повторной проверки, и дата проверки через месяц.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
 <li>Заполненный чек-лист по шести разделам с доказательствами.</li>
@@ -1252,14 +1523,44 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Раздел «Что проверить повторно» с тремя пунктами.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
-<ul>
-<li>Чек-лист заполнен по факту и содержит доказательства, до 15 баллов.</li>
-<li>Проблемы учётных записей найдены и описаны, до 15 баллов.</li>
-<li>Парольная политика проверена по всем параметрам, до 15 баллов.</li>
-<li>Избыточные права найдены и заменены на достаточные, до 20 баллов.</li>
-<li>Журнал и копии проверены по заданным вопросам, до 15 баллов.</li>
-<li>Перечень слабых мест имеет приоритет, владельца и срок, до 20 баллов.</li>
-</ul>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
+<table>
+<thead>
+<tr>
+<th>Оценка</th>
+<th>Условие</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
+</tr>
+</tbody>
+</table>
+<p>Что проверяется:
+- Чек-лист заполнен по факту и содержит доказательства.
+- Проблемы учётных записей найдены и описаны.
+- Парольная политика проверена по всем параметрам.
+- Избыточные права найдены и заменены на достаточные.
+- Журнал и копии проверены по заданным вопросам.
+- Перечень слабых мест имеет приоритет, владельца и срок.</p>
 <p>Перечень без владельцев и сроков возвращается на доработку: находка без исполнителя остаётся описанием, а не планом.</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">

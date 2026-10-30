@@ -868,7 +868,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">general_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">ON</span><span class="p">;</span>
 </code></pre></div>
 
-<p><code>log_output</code> задаёт, куда писать: <code>FILE</code>, <code>TABLE</code>, <code>NONE</code> или их комбинацию через запятую. В XAMPP удобнее <code>TABLE</code>: события попадают в таблицу, и их можно читать обычным запросом из phpMyAdmin, не открывая файлы на диске. Файловый режим пишет в <code>C:\xampp\mysql\data\</code> и требует доступа к каталогу.</p>
+<p><code>log_output</code> задаёт, куда писать: <code>FILE</code>, <code>TABLE</code>, <code>NONE</code> или их комбинацию через запятую. В XAMPP удобнее <code>TABLE</code>: события попадают в таблицу, и их можно читать обычным запросом из phpMyAdmin, не открывая файлы на диске. Файловый режим пишет в <code>.../xampp/mysql/data\</code> и требует доступа к каталогу.</p>
 <p>Проверить, что журнал включён, можно так:</p>
 <div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">@@</span><span class="n">general_log</span><span class="p">,</span><span class="w"> </span><span class="o">@@</span><span class="n">log_output</span><span class="p">,</span><span class="w"> </span><span class="o">@@</span><span class="n">general_log_file</span><span class="p">;</span>
 </code></pre></div>

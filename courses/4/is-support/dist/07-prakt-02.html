@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 2. Инцидент; Проблема</title>
+<title>Практика 2. Разбор серии сбоев и корневая причина</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,10 +812,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 2. Инцидент; Проблема</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 2. Разбор серии сбоев и корневая причина</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 8-9</span><span class="pill">Инженерно-техническая поддержка сопровождения ИС</span></div>
-<div class="hero-panel"><h1>Практика 2. Инцидент; Проблема</h1><p class="dek">Разбираем серию утренних сбоев «Склад+», отделяем инциденты от шума, находим общую причину и оформляем карточку проблемы с планом устранения.</p></div>
+<div class="hero-panel"><h1>Практика 2. Разбор серии сбоев и корневая причина</h1><p class="dek">Обработка серии инцидентов в учебной системе, поиск общей причины и оформление проблемы. Результат: журнал инцидентов и карточка проблемы с планом устранения.</p></div>
 <div class="glyph" aria-hidden="true">П2</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Регистрировать и решать инциденты по приоритетам</li><li>Находить общую причину серии инцидентов</li><li>Оформлять карточку проблемы с планом устранения</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Научиться видеть за потоком отдельных обращений одну проблему. Вы разберёте журнал обращений сервис-деска «Сервис-ИТ» за сентябрь, назначите приоритеты и проверите сроки, выделите серию сбоев ИС «Склад+» на тверском складе, проведёте анализ корневой причины и оформите карточку проблемы с обходным решением и планом постоянного исправления.</p>
 <p>Результат работы это два документа: журнал инцидентов с приоритетами и отметкой о соблюдении SLA и карточка проблемы, по которой другой инженер сможет продолжить работу.</p>
@@ -1017,8 +1017,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Приоритет обоснуйте одной фразой в комментарии: что именно остановлено и сколько пользователей затронуто. Для серии в Твери это высокий приоритет: склад не работает, но остальные три склада продолжают отгрузку.</p>
-<p>Проверьте, где норматив нарушен. В серии таких случаев два, и оба по времени первого ответа. Отметьте их отдельно: нарушение реакции не равно нарушению решения, и разбираются они по-разному.</p>
+<p>Приоритет обоснуйте одной фразой в комментарии: что именно остановлено и сколько пользователей затронуто. Обоснование должно опираться на строку таблицы, а не на название склада.</p>
+<p>Проверьте, где норматив нарушен. Посчитайте отдельно нарушения по времени реакции и по времени решения, назовите ID и покажите расчёт. Нарушение реакции не равно нарушению решения, и разбираются они по-разному.</p>
 <h3>Шаг 3. Сформулируйте проблему</h3>
 <p>Заполните границы проблемы, прежде чем искать причину.</p>
 <table>
@@ -1057,7 +1057,22 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>Границы нужны, чтобы не чинить принтер в Москве вместе с базой в Твери. Если границы размыты, анализ причины превращается в перебор всех жалоб месяца.</p>
 <h3>Шаг 4. Проведите анализ корневой причины</h3>
-<p>Заполните таблицу пяти вопросов. Каждый следующий вопрос задавайте к ответу предыдущего, а не к исходному симптому.</p>
+<p>Инженер второй линии успел собрать материалы по серии. Это сырые факты, связи между ними ещё нет.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>журнал приложения, 10.09 09:15:02
+ERROR db.connect pool exhausted: 50 of 50 connections busy, wait 30s
+
+журнал MySQL, 10.09 09:14:58
+[Warning] Aborted connection 4182 to db: &#39;sklad&#39; user: &#39;sklad_app&#39; (Got timeout reading communication packets)
+
+настройка MySQL: max_connections = 50
+расписание задач: 08:50 ежедневная выгрузка прайса на сайт, длительность 12-18 минут
+приказ №47 от 01.09: подключён четвёртый склад в Калуге, плюс 18 пользователей
+замер на стенде: отчёт по остаткам при 14 параллельных пользователях выполняется 4,8 с
+память сервера: 32 ГБ, свободно 9 ГБ в момент сбоя
+канал в Тверь: 20 Мбит/с, потери пакетов 0 процентов
+</code></pre></div>
+
+<p>Заполните таблицу пяти вопросов. Первый вопрос дан как образец, остальные четыре постройте сами: каждый следующий задавайте к ответу предыдущего, а не к исходному симптому.</p>
 <p><strong>Таблица 3. Анализ пяти вопросов</strong></p>
 <table>
 <thead>
@@ -1069,27 +1084,27 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>Почему «Склад+» недоступен утром?</td>
+<td>Почему «Склад+» не открывается утром в Твери?</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Почему служба приложения не отвечает?</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td>Почему закончились свободные соединения с базой?</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Почему запрос выполняется так долго?</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Почему это проявилось в сентябре?</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1164,7 +1179,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <p>В связанных инцидентах перечислите только те ID, которые действительно относятся к проблеме. Влияние опишите числами: сколько пользователей, сколько минут простоя, сколько нарушений SLA.</p>
 <h3>Шаг 6. Выберите и проверьте обходное решение</h3>
-<p>Рассмотрите три варианта и выберите один или два. Третий вариант оцените отдельно, даже если не выбираете.</p>
+<p>В переписке смены обсуждали три меры. Заполните по каждой, что она даёт, чем рискует и годится ли как обход.</p>
 <table>
 <thead>
 <tr>
@@ -1195,7 +1210,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Для выбранного варианта опишите проверку: что запускаете, что смотрите в журнале, какой результат считаете успешным. Обход без проверки не принимается, потому что его влияние на утренний пик неизвестно.</p>
+<p>Выберите один или два варианта и объясните отказ от остальных. Для выбранного варианта опишите проверку: что запускаете, что смотрите в журнале, какой результат считаете успешным. Обход без проверки не принимается, потому что его влияние на утренний пик неизвестно.</p>
 <p>Отдельно укажите срок действия обхода и условие отмены. Если обход останется навсегда, он превратится в скрытый способ работы.</p>
 <h3>Шаг 7. Составьте план постоянного устранения</h3>
 <p>Опишите изменение, которое убирает причину. План должен быть выполнимым на учебном стенде и обратимым.</p>
@@ -1266,57 +1281,46 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Файлы назовите по схеме <code>П2_Фамилия_журнал-инцидентов.xlsx</code> и <code>П2_Фамилия_карточка-проблемы.docx</code>.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Журнал инцидентов</td>
-<td>20</td>
-<td>Все восемь обращений, приоритет обоснован</td>
-</tr>
-<tr>
-<td>Расчёт SLA</td>
-<td>15</td>
-<td>Сроки реакции и решения посчитаны раздельно, нарушения найдены</td>
-</tr>
-<tr>
-<td>Границы проблемы</td>
-<td>10</td>
-<td>Серия отделена от шума по проверяемому признаку</td>
-</tr>
-<tr>
-<td>Пять вопросов</td>
-<td>20</td>
-<td>Цепочка логична, у каждого ответа есть источник</td>
-</tr>
-<tr>
-<td>Карточка проблемы</td>
-<td>20</td>
-<td>Поля заполнены, связанные инциденты точны</td>
-</tr>
-<tr>
-<td>Обход и план</td>
-<td>10</td>
-<td>Есть проверка, срок, откат</td>
-</tr>
-<tr>
-<td>Оформление</td>
 <td>5</td>
-<td>Документы читаемы, термины едины</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td><strong>Итого</strong></td>
-<td><strong>100</strong></td>
-<td>Зачёт от 60 баллов</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Журнал инцидентов.</strong> Все восемь обращений, приоритет обоснован
+- <strong>Расчёт SLA.</strong> Сроки реакции и решения посчитаны раздельно, нарушения найдены
+- <strong>Границы проблемы.</strong> Серия отделена от шума по проверяемому признаку
+- <strong>Пять вопросов.</strong> Цепочка логична, у каждого ответа есть источник
+- <strong>Карточка проблемы.</strong> Поля заполнены, связанные инциденты точны
+- <strong>Обход и план.</strong> Есть проверка, срок, откат
+- <strong>Оформление.</strong> Документы читаемы, термины едины
+- <strong><em>*Итого</em>*.</strong> Зачёт от 60 баллов</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

@@ -23,10 +23,10 @@ outcomes:
 - Персональный компьютер с Windows 10, XAMPP 8.5.12 и запущенными Apache и MySQL.
 - База `dean` в кодировке `utf8mb4` с учебными данными.
 - phpMyAdmin по адресу `http://localhost/phpmyadmin`.
-- Клиенты `C:\xampp\mysql\bin\mysql.exe` и `C:\xampp\mysql\bin\mysqldump.exe`.
+- Клиенты `mysql` и `mysqldump`.
 - Пользователь `root` или `dean_app` с правом `SELECT` и привилегией `FILE`.
 - PowerShell для проверки байтов файла.
-- Каталог `C:\dean\export` для файлов и скриптов.
+- Каталог `.../dean/export` для файлов и скриптов.
 
 ## Краткие теоретические сведения
 
@@ -49,8 +49,8 @@ outcomes:
 ### Шаг 1. Проверьте каталог, кодировку и разрешённый путь
 
 ```bat
-mkdir C:\dean\export
-C:\xampp\mysql\bin\mysql.exe -u root dean
+mkdir .../dean/export
+mysql -u root dean
 ```
 
 ```sql
@@ -64,7 +64,7 @@ SELECT @@local_infile;
 
 ### Шаг 2. Выгрузите группы в CSV через phpMyAdmin
 
-Откройте базу `dean`, таблицу `groups`, вкладку «Экспорт». Выберите формат CSV, разделитель `,`, кавычки `"`, кодировку `utf-8` и включите строку с именами столбцов. Сохраните файл как `groups_phpmyadmin.csv` в `C:\dean\export`.
+Откройте базу `dean`, таблицу `groups`, вкладку «Экспорт». Выберите формат CSV, разделитель `,`, кавычки `"`, кодировку `utf-8` и включите строку с именами столбцов. Сохраните файл как `groups_phpmyadmin.csv` в `.../dean/export`.
 
 Приложите скриншот открытого файла: в нём видно заголовок `id,name,specialty` и кириллицу в названиях групп. Скриншот настроек экспорта без файла доказательством не является.
 
@@ -79,7 +79,7 @@ SELECT s.id, s.full_name, g.name AS group_name, s.email, s.created_at
 FROM students s
 LEFT JOIN groups g ON g.id = s.group_id
 ORDER BY s.id
-INTO OUTFILE 'C:/dean/export/students.csv'
+INTO OUTFILE '.../dean/export/students.csv'
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n';
 ```
@@ -89,7 +89,7 @@ LINES TERMINATED BY '\r\n';
 Заголовок `INTO OUTFILE` не пишет. Добавьте его отдельной командой.
 
 ```bat
-cd /d C:\dean\export
+cd /d .../dean/export
 echo id,full_name,group_name,email,created_at> students_with_header.csv
 type students.csv>> students_with_header.csv
 ```
@@ -114,7 +114,7 @@ SELECT JSON_OBJECT(
 FROM students s
 LEFT JOIN groups g ON g.id = s.group_id
 ORDER BY s.id
-INTO OUTFILE 'C:/dean/export/students.json';
+INTO OUTFILE '.../dean/export/students.json';
 ```
 
 Каждая строка файла это самостоятельный объект, то есть JSON Lines. Такой формат читается потоком и совпадает с тем, что разбирался при импорте.
@@ -122,15 +122,15 @@ INTO OUTFILE 'C:/dean/export/students.json';
 ### Шаг 5. Снимите схему через mysqldump
 
 ```bat
-C:\xampp\mysql\bin\mysqldump.exe -u root --no-data --routines --triggers ^
-  --default-character-set=utf8mb4 --result-file=C:\dean\export\schema.sql dean
+mysqldump -u root --no-data --routines --triggers ^
+  --default-character-set=utf8mb4 --result-file=.../dean/export/schema.sql dean
 ```
 
 Опция `--result-file` важна: перенаправление `>` в PowerShell пишет файл в UTF-16, и такой дамп не загрузится. Проверьте содержимое.
 
 ```bat
-powershell -Command "Select-String -Path C:\dean\export\schema.sql -Pattern 'CREATE TABLE' | Measure-Object"
-powershell -Command "Select-String -Path C:\dean\export\schema.sql -Pattern 'INSERT INTO' | Measure-Object"
+powershell -Command "Select-String -Path .../dean/export/schema.sql -Pattern 'CREATE TABLE' | Measure-Object"
+powershell -Command "Select-String -Path .../dean/export/schema.sql -Pattern 'INSERT INTO' | Measure-Object"
 ```
 
 Первая команда покажет число таблиц, вторая должна показать ноль. Если `INSERT` нашлись, опция `--no-data` не применилась.
@@ -138,9 +138,9 @@ powershell -Command "Select-String -Path C:\dean\export\schema.sql -Pattern 'INS
 ### Шаг 6. Проверьте файлы и кодировку
 
 ```bat
-powershell -Command "Get-Content C:\dean\export\students.csv -TotalCount 3"
-powershell -Command "[System.IO.File]::ReadAllBytes('C:\dean\export\students.csv')[0..2]"
-powershell -Command "Get-ChildItem C:\dean\export | Select-Object Name, Length"
+powershell -Command "Get-Content .../dean/export/students.csv -TotalCount 3"
+powershell -Command "[System.IO.File]::ReadAllBytes('.../dean/export/students.csv')[0..2]"
+powershell -Command "Get-ChildItem .../dean/export | Select-Object Name, Length"
 ```
 
 Байты `239 187 191` означают BOM: для загрузки в MySQL его нужно убрать. Размер файла не должен быть нулевым. Приложите скриншот первых строк файла и списка файлов с размерами.
@@ -158,7 +158,7 @@ CREATE TABLE chk_students_flat (
   email VARCHAR(128), created_at TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOAD DATA LOCAL INFILE 'C:/dean/export/students_with_header.csv'
+LOAD DATA LOCAL INFILE '.../dean/export/students_with_header.csv'
 INTO TABLE chk_students_flat
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n'
@@ -208,7 +208,7 @@ FROM chk_students_flat;
 DROP TABLE IF EXISTS chk_students_json;
 CREATE TABLE chk_students_json (data JSON) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOAD DATA LOCAL INFILE 'C:/dean/export/students.json'
+LOAD DATA LOCAL INFILE '.../dean/export/students.json'
 INTO TABLE chk_students_json
 LINES TERMINATED BY '\n';
 
@@ -223,9 +223,9 @@ WHERE COALESCE(JSON_LENGTH(JSON_EXTRACT(data, '$.courses')), 0) = 0;
 ### Шаг 10. Разверните схему в отдельной базе
 
 ```bat
-C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-C:\xampp\mysql\bin\mysql.exe -u root dean_check -e "source C:/dean/export/schema.sql"
-C:\xampp\mysql\bin\mysql.exe -u root -e "SELECT table_name FROM information_schema.tables WHERE table_schema = 'dean_check' ORDER BY table_name;"
+mysql -u root -e "DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root dean_check -e "source .../dean/export/schema.sql"
+mysql -u root -e "SELECT table_name FROM information_schema.tables WHERE table_schema = 'dean_check' ORDER BY table_name;"
 ```
 
 Команда `source` читает файл внутри клиента и не зависит от перенаправления оболочки. Сравните список таблиц с базой `dean`: он должен совпасть. Пустой список чаще всего означает, что дамп не создался из-за ошибки прав или прерванного выполнения.
@@ -242,13 +242,22 @@ C:\xampp\mysql\bin\mysql.exe -u root -e "SELECT table_name FROM information_sche
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Выгрузка | 25 | CSV и JSON содержат нужные столбцы, заголовок и порядок строк |
-| Кодировка | 15 | UTF-8 подтверждена, BOM проверен, дамп читается |
-| Обратная загрузка | 25 | Файлы загружаются без ошибок и дают те же строки |
-| Сверка | 20 | Число строк и контрольные суммы совпадают |
-| Схема и отчёт | 15 | `mysqldump` разворачивается, таблица сверки заполнена |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Выгрузка.** CSV и JSON содержат нужные столбцы, заголовок и порядок строк
+- **Кодировка.** UTF-8 подтверждена, BOM проверен, дамп читается
+- **Обратная загрузка.** Файлы загружаются без ошибок и дают те же строки
+- **Сверка.** Число строк и контрольные суммы совпадают
+- **Схема и отчёт.** `mysqldump` разворачивается, таблица сверки заполнена
 
 ## Контрольные вопросы
 

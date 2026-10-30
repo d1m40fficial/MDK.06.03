@@ -815,7 +815,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Управление и автоматизация баз данных</a><span>/</span><span>Практика 11. Миграция</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#8E5BC8" data-seed="0.732">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#8E5BC8 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 32</span><span class="pill">Управление и автоматизация баз данных</span></div>
-<div class="hero-panel"><h1>Практика 11. Миграция</h1><p class="dek">Добавляем отчество студента в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных.</p></div>
+<div class="hero-panel"><h1>Практика 11. Миграция</h1><p class="dek">Добавляем отчество вы в MySQL: прямой и обратный скрипт, версия схемы, проверка на копии и сверка данных.</p></div>
 <div class="glyph" aria-hidden="true">П11</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Писать прямой и обратный скрипт миграции MySQL</li><li>Заполнять новый столбец и закрывать его ограничением</li><li>Проверять миграцию и откат на копии базы</li><li>Сверять данные до и после изменения схемы</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Миграция меняет схему на работающей базе, поэтому ошибка стоит дороже, чем в учебном задании. Цель работы: добавить в таблицу <code>students</code> отчество, заполнить его, закрыть обязательностью и ограничением, провести изменение через версию схемы и доказать, что данные не потеряны.</p>
 <p>Работа идёт на копии базы, затем на рабочей базе. Обратный скрипт продумывают до запуска прямого: в MySQL изменение структуры нельзя откатить командой <code>ROLLBACK</code>, и если откат придумывают после сбоя, данных для него уже может не быть.</p>
@@ -823,7 +823,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <ul>
 <li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
 <li>Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
-<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и утилита <code>C:\xampp\mysql\bin\mysqldump.exe</code>.</li>
+<li>Клиент <code>mysql</code> и утилита <code>mysqldump</code>.</li>
 <li>PowerShell и текстовый редактор для SQL-файлов.</li>
 <li>Учебная база <code>dean</code> с таблицами <code>students</code>, <code>groups</code>, <code>enrollments</code>, <code>payments</code> и <code>schema_version</code>.</li>
 <li>Свободное место для дампа и копии базы.</li>
@@ -867,13 +867,13 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Приложите скриншот <code>DESCRIBE students</code> и результата сверки. Эти значения станут точкой сравнения, запишите их в отчёт.</p>
 <h3>Шаг 2. Сделайте копию базы</h3>
 <p>Снимите дамп и восстановите его в отдельную базу. Копия нужна, чтобы прогнать миграцию и откат без риска для рабочей базы.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">,</span> <span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">migrations</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">,</span> <span class="p">.../</span><span class="n">dean</span><span class="p">/</span><span class="n">migrations</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysqldump</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
-  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=</span><span class="n">C</span><span class="p">:\</span><span class="n">dean</span><span class="p">\</span><span class="n">backup</span><span class="p">\</span><span class="n">dean_before</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
+<span class="p">&amp;</span> <span class="n">mysqldump</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-single-transaction</span> <span class="p">-</span><span class="n">-routines</span> <span class="p">-</span><span class="n">-triggers</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="p">-</span><span class="n">-result</span><span class="o">-file</span><span class="p">=.../</span><span class="n">dean</span><span class="p">/</span><span class="n">backup</span><span class="p">/</span><span class="n">dean_before</span><span class="p">.</span><span class="n">sql</span> <span class="n">dean</span>
 
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
-<span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/backup/dean_before.sql&quot;</span>
+<span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="n">-e</span> <span class="s2">&quot;DROP DATABASE IF EXISTS dean_migration; CREATE DATABASE dean_migration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+<span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/backup/dean_before.sql&quot;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">students_in_copy</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">.</span><span class="n">students</span><span class="p">;</span>
@@ -882,7 +882,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Число строк в копии должно совпасть с исходным. Если дамп не восстановился, разберите ошибку до миграции, а не после.</p>
 <h3>Шаг 3. Напишите прямой скрипт</h3>
-<p>Сохраните файл <code>C:\dean\migrations\001_add_middle_name_up.sql</code>. Скрипт не содержит <code>USE</code>: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.</p>
+<p>Сохраните файл <code>.../dean/migrations/001_add_middle_name_up.sql</code>. Скрипт не содержит <code>USE</code>: база выбирается при запуске, поэтому один и тот же файл применяется к копии и к рабочей базе.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span>
 <span class="w">  </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">middle_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">AFTER</span><span class="w"> </span><span class="n">full_name</span><span class="p">;</span>
 
@@ -922,7 +922,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Если сервер не понимает <code>DROP CONSTRAINT</code>, используйте форму <code>ALTER TABLE students DROP CHECK chk_students_middle_name;</code>. Обе формы снимают проверку, различие только в версии сервера.</p>
 <h3>Шаг 5. Прогоните миграцию на копии</h3>
 <p>Запустите прямой скрипт на <code>dean_migration</code>. Клиентская команда <code>source</code> читает файл без перенаправления PowerShell, поэтому кодировка не портится.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_up.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/migrations/001_add_middle_name_up.sql&quot;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">;</span>
@@ -1005,7 +1005,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </table>
 <h3>Шаг 7. Проверьте откат на копии</h3>
 <p>Запустите обратный скрипт и убедитесь, что столбец исчез, версия вернулась к единице, а данные остались на месте. Откат проверяют на той же копии, где прошла миграция: так видно, что скрипт работает поверх изменённой схемы, а не на пустой базе.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_down.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean_migration</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/migrations/001_add_middle_name_down.sql&quot;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean_migration</span><span class="p">;</span>
@@ -1021,7 +1021,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Приложите скриншот <code>DESCRIBE students</code> без столбца <code>middle_name</code>, скриншот версии <code>1</code> и контрольную сумму. Сумма должна совпасть с исходной.</p>
 <h3>Шаг 8. Примените миграцию к рабочей базе</h3>
 <p>Повторите прямой скрипт на <code>dean</code> и проверьте итог теми же запросами. Перед запуском убедитесь, что копия и откат прошли без ошибок: рабочая база не место для первой попытки.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">mysql</span><span class="p">\</span><span class="n">bin</span><span class="p">\</span><span class="n">mysql</span><span class="p">.</span><span class="n">exe</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;source C:/dean/migrations/001_add_middle_name_up.sql&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="n">mysql</span> <span class="n">-u</span> <span class="n">root</span> <span class="p">-</span><span class="n">-default-character-set</span><span class="p">=</span><span class="n">utf8mb4</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;source .../dean/migrations/001_add_middle_name_up.sql&quot;</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="n">USE</span><span class="w"> </span><span class="n">dean</span><span class="p">;</span>
@@ -1051,52 +1051,45 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Вывод о совместимости со старым приложением и выбранную меру.</li>
 </ol>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Прямой скрипт</td>
-<td>20</td>
-<td>Столбец, заполнение, обязательность, ограничение и версия</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Обратный скрипт</td>
-<td>20</td>
-<td>Возвращает структуру и версию, запускается без ошибок</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Проверка на копии</td>
-<td>20</td>
-<td>Миграция и откат пройдены до рабочей базы</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Сверка данных</td>
-<td>20</td>
-<td>Число строк и контрольная сумма совпадают</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Совместимость</td>
-<td>10</td>
-<td>Названо влияние на старые запросы и предложена мера</td>
-</tr>
-<tr>
-<td>Оформление</td>
-<td>10</td>
-<td>Скриншоты подписаны, версии и значения указаны</td>
-</tr>
-<tr>
-<td><strong>Итого</strong></td>
-<td><strong>100</strong></td>
-<td>Зачёт от 60 баллов</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Прямой скрипт.</strong> Столбец, заполнение, обязательность, ограничение и версия
+- <strong>Обратный скрипт.</strong> Возвращает структуру и версию, запускается без ошибок
+- <strong>Проверка на копии.</strong> Миграция и откат пройдены до рабочей базы
+- <strong>Сверка данных.</strong> Число строк и контрольная сумма совпадают
+- <strong>Совместимость.</strong> Названо влияние на старые запросы и предложена мера
+- <strong>Оформление.</strong> Скриншоты подписаны, версии и значения указаны
+- <strong><em>*Итого</em>*.</strong> Зачёт от 60 баллов</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

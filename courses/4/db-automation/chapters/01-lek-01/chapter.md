@@ -88,16 +88,16 @@ outcomes:
 Копия это не файл, а проверенная процедура. Команды для учебной базы выглядят так:
 
 ```bash
-"C:\xampp\mysql\bin\mysqldump.exe" -u dean_backup -p --single-transaction --routines --triggers --default-character-set=utf8mb4 --result-file=C:\backup\dean.sql dean
-"C:\xampp\mysql\bin\mysql.exe" -u root -e "ANALYZE TABLE dean.students, dean.enrollments;"
-"C:\xampp\mysql\bin\mysqlcheck.exe" -u root --check dean
+"mysqldump" -u dean_backup -p --single-transaction --routines --triggers --default-character-set=utf8mb4 --result-file=backup/dean.sql dean
+"mysql" -u root -e "ANALYZE TABLE dean.students, dean.enrollments;"
+"mysqlcheck" -u root --check dean
 ```
 
 `ANALYZE TABLE` пересчитывает распределение значений в индексах. На эту статистику опирается оптимизатор, когда выбирает порядок соединения таблиц. Если после загрузки десяти тысяч студентов статистика устарела, `EXPLAIN` может показать сканирование всей таблицы вместо поиска по индексу. Операция дешёвая, её запускают после каждой крупной загрузки.
 
 `OPTIMIZE TABLE` в InnoDB пересобирает таблицу и возвращает освободившееся место файловой системе. Операция тяжёлая: она переписывает все страницы, требует свободного места примерно на размер таблицы и на время пересборки ограничивает запись. Её применяют после удаления большой доли строк, а не ежедневно «для порядка».
 
-Журналы отвечают на вопрос, что случилось, когда приложение уже не отвечает. В XAMPP журнал ошибок лежит в `C:\xampp\mysql\data\mysql_error.log`. Журнал медленных запросов включается переменными `slow_query_log` и `long_query_time`. Двоичный журнал хранит изменения данных и нужен для восстановления на момент сбоя; его включают в `my.ini` строками `log-bin=mysql-bin` и `server-id=1`.
+Журналы отвечают на вопрос, что случилось, когда приложение уже не отвечает. В XAMPP журнал ошибок лежит в `.../xampp/mysql/data\mysql_error.log`. Журнал медленных запросов включается переменными `slow_query_log` и `long_query_time`. Двоичный журнал хранит изменения данных и нужен для восстановления на момент сбоя; его включают в `my.ini` строками `log-bin=mysql-bin` и `server-id=1`.
 
 ::/gate
 
@@ -121,10 +121,10 @@ outcomes:
 ```csharp
 using System.Diagnostics;
 
-var dump = @"C:\xampp\mysql\bin\mysqldump.exe";
-var cnf = Environment.GetEnvironmentVariable("DEAN_DB_CNF") ?? @"C:\backup\dean.cnf";
+var dump = "mysqldump";
+var cnf = Environment.GetEnvironmentVariable("DEAN_DB_CNF") ?? @".../backup/dean.cnf";
 var args = $"--defaults-extra-file={cnf} --single-transaction --routines " +
-           "--triggers --default-character-set=utf8mb4 --result-file=C:\\backup\\dean.sql dean";
+           "--triggers --default-character-set=utf8mb4 --result-file=.../backup/dean.sql dean";
 var p = Process.Start(new ProcessStartInfo(dump, args) { UseShellExecute = false });
 if (p is null) return;
 p.WaitForExit();
@@ -147,8 +147,8 @@ XAMPP Control Panel запускает сервер и показывает, з�
 
 ```powershell
 dotnet --list-sdks
-& "C:\xampp\mysql\bin\mysql.exe" --version
-& "C:\xampp\mysql\bin\mysql.exe" -u root -e "SELECT VERSION(), @@character_set_server;"
+& "mysql" --version
+& "mysql" -u root -e "SELECT VERSION(), @@character_set_server;"
 ```
 
 Сервер в сборке XAMPP собран на MariaDB и совместим с MySQL 8 по основным командам дисциплины. Версия в выводе будет выглядеть как `10.4.x-MariaDB`, и это нормально: `CREATE USER`, `GRANT`, `mysqldump` и `binary log` работают так же.
@@ -204,7 +204,7 @@ RTO считается по всей процедуре. Восстановле�
 
 **Копии без проверки.** Файл существует, весит два мегабайта и открывается в блокноте. Это не значит, что из него можно восстановить базу: дамп мог оборваться, кодировка могла не совпасть. Копия считается сделанной только после восстановления в отдельную базу и сверки числа строк.
 
-**Копия на том же диске.** Диск с данными и диск с копиями не должны отказывать одновременно. Папка `C:\backup` лежит на другом носителе или в облачном хранилище, а не рядом с `C:\xampp\mysql\data`.
+**Копия на том же диске.** Диск с данными и диск с копиями не должны отказывать одновременно. Папка `.../backup` лежит на другом носителе или в облачном хранилище, а не рядом с `.../xampp/mysql/data`.
 
 **Нет двоичного журнала.** Без него нельзя восстановить базу на момент сбоя, только на момент последнего дампа. Журнал включают заранее, задним числом он не появляется.
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 5. Диагностика</title>
+<title>Практика 5. Дерево проверок недоступного сервиса</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,10 +812,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 5. Диагностика</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Инженерно-техническая поддержка сопровождения ИС</a><span>/</span><span>Практика 5. Дерево проверок недоступного сервиса</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#2F6F5E" data-seed="0.948">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятие 17</span><span class="pill">Инженерно-техническая поддержка сопровождения ИС</span></div>
-<div class="hero-panel"><h1>Практика 5. Диагностика</h1><p class="dek">Дерево проверок доводит от сообщения «ошибка 500» до остановленной службы СУБД.</p></div>
+<div class="hero-panel"><h1>Практика 5. Дерево проверок недоступного сервиса</h1><p class="dek">Диагностика сбоя учебного сервера по шагам: доступность, сеть, диск, службы и приложение. Результат: карта диагностики с найденной причиной.</p></div>
 <div class="glyph" aria-hidden="true">П5</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Проверять доступность сервера и сетевых служб по порядку</li><li>Определять узкое место по показаниям датчиков и журналов</li><li>Оформлять карту диагностики с найденной причиной</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>В среду 28 октября в 09:07 в поддержку «Сервис-ИТ» поступило три обращения из тульского склада «Северного склада». «Склад+» открывается, но при входе появляется «Ошибка 500». К 09:12 такие же сообщения пришли из Москвы, значит проблема не в одном рабочем месте. Система не работала до 09:46.</p>
 <p>Цель работы: пройти путь от симптома до причины по слоям, проверить доступность сервера, портов и служб, найти узкое место по журналам и оформить карту диагностики. Результат работы это дерево проверок, протокол команд с результатами и карточка причины.</p>
@@ -827,7 +827,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Python 3 из комплекта VS Code для создания файлов стенда.</li>
 <li>VS Code для страницы проверки и заметок.</li>
 <li>Word или draw.io для карты диагностики.</li>
-<li>Рабочая папка <code>C:\sklad\incident</code>.</li>
+<li>Рабочая папка <code>.../sklad/incident</code>.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p><strong>Диагностика</strong> это последовательное исключение версий. Симптом описывает, что видит пользователь, причина объясняет, что сломалось. Между ними слои: рабочее место, сеть, имя, порт, служба, ресурсы сервера, приложение, данные. Проверка идёт по пути запроса, а не по списку удобных команд.</p>
@@ -842,10 +842,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p><strong>Время обнаружения</strong> это промежуток от первого сообщения до момента, когда причина названа. Оно зависит не от сложности команд, а от порядка проверок. Дерево, построенное заранее, сокращает это время сильнее, чем знание редких утилит.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Разберите обращение</h3>
-<p>Создайте папку <code>C:\sklad\incident</code> и файл <code>make_incident.py</code>. Скрипт запишет обращение, журнал СУБД, снимок проверок, сценарий резервного копирования и историю задачи.</p>
+<p>Создайте папку <code>.../sklad/incident</code> и файл <code>make_incident.py</code>. Скрипт запишет обращение, журнал СУБД, снимок проверок, сценарий резервного копирования и историю задачи.</p>
 <div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">base</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\sklad\incident&quot;</span><span class="p">)</span>
+<span class="n">base</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.../sklad/incident&quot;</span><span class="p">)</span>
 <span class="n">base</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
@@ -872,9 +872,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
 <span class="s2">&quot;backup.bat&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">@echo off</span>
-<span class="s2">C:</span><span class="se">\\</span><span class="s2">xampp</span><span class="se">\\</span><span class="s2">mysql</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2">mysqladmin.exe -u root shutdown</span>
-<span class="s2">start /b robocopy C:</span><span class="se">\\</span><span class="s2">xampp</span><span class="se">\\</span><span class="s2">mysql</span><span class="se">\\</span><span class="s2">data D:</span><span class="se">\\</span><span class="s2">backup</span><span class="se">\\</span><span class="s2">mysql /MIR /R:1 /W:1</span>
-<span class="s2">start /b C:</span><span class="se">\\</span><span class="s2">xampp</span><span class="se">\\</span><span class="s2">mysql</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2">mysqld.exe --standalone</span>
+<span class="s2">mysqladmin -u root shutdown</span>
+<span class="s2">start /b robocopy .../xampp/mysql/data .../backup/mysql /MIR /R:1 /W:1</span>
+<span class="s2">start /b mysqld --standalone</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
 <span class="s2">&quot;task_history.txt&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">28.10.2026 09:04:55 Задача SkladBackup запущена</span>
@@ -889,7 +889,12 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Прочитайте <code>ticket.txt</code> и выпишите границы: что работает, что нет, кто затронут, когда началось. Главная страница открывается, значит веб-сервер отвечает, и версия «сервер выключен» маловероятна.</p>
 <h3>Шаг 2. Постройте дерево проверок</h3>
-<p>Заполните таблицу до выполнения команд. В колонке «Признак сбоя» укажите, какой результат направит дальше по дереву.</p>
+<p>Дерево строят до выполнения команд. Ниже слои, которые нужно пройти, и набор инструментов, которыми располагает служба. Сопоставьте их сами: какой инструмент отвечает на вопрос каждого слоя.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>Слои: рабочее место, сеть, порт веб-сервера, приложение, порт СУБД, служба СУБД, журнал.
+Инструменты: ipconfig, ping, Test-NetConnection, curl.exe -i, Get-Process mysqld, файл mysql_error.log.
+</code></pre></div>
+
+<p>Заполните таблицу. В колонке «Признак сбоя» укажите, какой результат направит дальше по дереву. Первая строка дана как образец.</p>
 <table>
 <thead>
 <tr>
@@ -909,52 +914,52 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>адрес <code>169.254.x.x</code></td>
 </tr>
 <tr>
-<td>Сеть</td>
-<td>доступность сервера</td>
-<td><code>ping</code></td>
-<td>ответ есть</td>
-<td>нет ответа</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Порт веб-сервера</td>
-<td>приём соединений</td>
-<td><code>Test-NetConnection -Port 80</code></td>
-<td>True</td>
-<td>False</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Приложение</td>
-<td>ответ страницы</td>
-<td><code>curl -i</code></td>
-<td>200</td>
-<td>500 или таймаут</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Порт СУБД</td>
-<td>приём соединений</td>
-<td><code>Test-NetConnection -Port 3306</code></td>
-<td>True</td>
-<td>False</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Служба СУБД</td>
-<td>процесс запущен</td>
-<td><code>Get-Process mysqld</code></td>
-<td>процесс есть</td>
-<td>процесса нет</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Журнал</td>
-<td>причина отказа</td>
-<td><code>mysql_error.log</code></td>
-<td>ошибок нет</td>
-<td>код ошибки</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 <p>Порядок в таблице обязателен: сверху вниз. Если проверка слоя дала норму, переходят к следующему. Если дала сбой, дальше не идут, пока не объяснят результат.</p>
 <h3>Шаг 3. Подготовьте страницу проверки</h3>
-<p>Создайте <code>C:\xampp\htdocs\sklad\check_db.php</code>. Страница пытается подключиться к MySQL и возвращает 500, если соединения нет.</p>
+<p>Создайте <code>.../xampp/htdocs\sklad\check_db.php</code>. Страница пытается подключиться к MySQL и возвращает 500, если соединения нет.</p>
 <div class="codehilite" data-lang="php"><pre><span></span><code><span class="cp">&lt;?php</span>
 <span class="nv">$db</span> <span class="o">=</span> <span class="o">@</span><span class="k">new</span> <span class="nx">mysqli</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
 <span class="k">if</span> <span class="p">(</span><span class="nv">$db</span><span class="o">-&gt;</span><span class="na">connect_errno</span><span class="p">)</span> <span class="p">{</span>
@@ -969,7 +974,15 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-i</span> <span class="n">-m</span> <span class="n">5</span> <span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">/</span><span class="n">sklad</span><span class="p">/</span><span class="n">check_db</span><span class="p">.</span><span class="n">php</span>
 </code></pre></div>
 
-<p>Запишите код ответа. Он понадобится для сравнения со снимком стенда.</p>
+<p>Вывод команды выглядит так.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 06:12:03 GMT
+Content-Length: 2
+
+OK
+</code></pre></div>
+
+<p>Первая строка содержит код ответа, дальше идут заголовки, после пустой строки начинается тело. Ключ <code>-i</code> показывает и заголовки, и тело, ключ <code>-m 5</code> ограничивает ожидание пятью секундами. Запишите код ответа: он понадобится для сравнения со снимком стенда.</p>
 <h3>Шаг 4. Проверьте рабочее место, сеть и порты</h3>
 <p>Выполните команды на своём компьютере и запишите результат. Эти проверки нужны, чтобы освоить порядок, а не чтобы воспроизвести сбой стенда.</p>
 <div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">ipconfig</span>
@@ -978,7 +991,14 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="nb">Test-NetConnection</span> <span class="n">localhost</span> <span class="n">-Port</span> <span class="n">3306</span>
 </code></pre></div>
 
-<p>Сравните с <code>checks_0907.txt</code>. На стенде ping проходил, порт 80 был открыт, порт 3306 закрыт, а страница входа отдавала 500. Такая картина означает: сеть и веб-сервер работают, приложение отвечает, но СУБД недоступна.</p>
+<p>Команда <code>Test-NetConnection</code> печатает несколько строк, решение принимают по одной.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>ComputerName     : localhost
+RemotePort       : 80
+TcpTestSucceeded : True
+</code></pre></div>
+
+<p><code>True</code> означает, что процесс принимает соединения на этом порту, <code>False</code> означает, что соединение не установилось. Остальные строки показывают, куда именно шло подключение.</p>
+<p>Сравните свои результаты с <code>checks_0907.txt</code>. На стенде ping проходил, порт 80 был открыт, порт 3306 закрыт, а страница входа отдавала 500. Такую картину нужно объяснить словами: какие версии она исключает и какая остаётся.</p>
 <h3>Шаг 5. Воспроизведите симптом</h3>
 <p>Остановите MySQL в XAMPP Control Panel кнопкой Stop. Подождите несколько секунд и повторите проверки.</p>
 <div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-i</span> <span class="n">-m</span> <span class="n">5</span> <span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">/</span><span class="n">sklad</span><span class="p">/</span><span class="n">check_db</span><span class="p">.</span><span class="n">php</span>
@@ -986,10 +1006,11 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="nb">Get-Process</span> <span class="n">mysqld</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
 </code></pre></div>
 
-<p>Ожидается код 500, <code>TcpTestSucceeded False</code> и отсутствие процесса. Это тот же набор признаков, что в снимке стенда. Запишите результаты в протокол, затем запустите MySQL снова и убедитесь, что страница вернула 200.</p>
+<p>Запишите три результата в протокол. Сравните их со снимком стенда: набор признаков должен совпасть. Затем запустите MySQL снова и убедитесь, что страница вернула 200.</p>
 <p>Симптом воспроизведён, но причина ещё не найдена. Остановка вручную объясняет текущее состояние учебного ПК, а не события на стенде. Причину дают журналы.</p>
 <h3>Шаг 6. Прочитайте журналы и найдите причину</h3>
 <p>Откройте <code>mysql_error.log</code> и найдите первую ошибку. Обратите внимание на время: остановка началась в 09:04:58, а попытка запуска в 09:05:11 завершилась ошибкой 32.</p>
+<p>Заполните таблицу по журналу: не меньше трёх событий, время, код и смысл каждой записи.</p>
 <table>
 <thead>
 <tr>
@@ -1001,26 +1022,26 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </thead>
 <tbody>
 <tr>
-<td>09:04:58</td>
-<td>начало остановки MySQL</td>
-<td>нет</td>
-<td>штатное завершение</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>09:05:11</td>
-<td>не удалось заблокировать <code>ibdata1</code></td>
-<td>32</td>
-<td>файл занят другим процессом</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>09:05:11</td>
-<td>запуск прерван</td>
-<td>нет</td>
-<td>СУБД не поднялась</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Теперь прочитайте <code>backup.bat</code> и <code>task_history.txt</code>. Сценарий останавливает MySQL, запускает копирование в фоне и сразу пытается запустить <code>mysqld</code>. Копирование ещё держит файлы, поэтому запуск прерывается. Задача при этом сообщает код 0, потому что последняя команда вернула управление сразу.</p>
+<p>Теперь прочитайте <code>backup.bat</code> и <code>task_history.txt</code> и ответьте на вопросы по файлам.</p>
 <table>
 <thead>
 <tr>
@@ -1047,7 +1068,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>Причина: резервное копирование запускало <code>mysqld</code>, пока копирование держало файлы данных. СУБД завершилась с ошибкой 32, а сценарий не проверил порт после запуска.</p>
+<p>Сформулируйте причину одним предложением и подкрепите её двумя фактами: строкой журнала и строкой сценария. Формулировка «MySQL не запустилась» причиной не является, она повторяет симптом.</p>
 <h3>Шаг 7. Восстановите работу и проверьте</h3>
 <p>На стенде администратор остановил копирование, дождался освобождения файлов и запустил MySQL через панель XAMPP. Время восстановления составило 41 минуту, из них 39 минут ушло на обнаружение причины.</p>
 <p>На учебном ПК выполните те же действия: запустите MySQL, дождитесь состояния Running, проверьте порт и страницу.</p>
@@ -1160,7 +1181,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 </tbody>
 </table>
-<p>В мерах укажите три пункта: заменить копирование файлов на <code>mysqldump</code>, проверять порт 3306 после запуска и оповещать о недоступности порта. Первая мера устраняет причину, две другие сокращают время обнаружения.</p>
+<p>В мерах укажите три пункта: одна мера устраняет причину, две сокращают время обнаружения. Для каждой напишите, какой признак сбоя она поймает и на каком слое дерева.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
 <li>Дерево проверок на семь слоёв с признаками нормы и сбоя.</li>
@@ -1170,47 +1191,44 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Краткий вывод о том, какие версии были исключены и на каком шаге.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Дерево проверок</td>
-<td>20</td>
-<td>Слои идут по порядку, признаки сформулированы</td>
-</tr>
-<tr>
-<td>Проверки сети и портов</td>
-<td>20</td>
-<td>Команды выполнены, результаты записаны</td>
-</tr>
-<tr>
-<td>Воспроизведение симптома</td>
-<td>15</td>
-<td>Код 500 и закрытый порт подтверждены</td>
-</tr>
-<tr>
-<td>Разбор журналов</td>
-<td>25</td>
-<td>Найдены время, код 32 и причина в сценарии</td>
-</tr>
-<tr>
-<td>Карточка причины</td>
-<td>15</td>
-<td>Причина доказана, меры конкретны</td>
-</tr>
-<tr>
-<td>Оформление</td>
 <td>5</td>
-<td>Протокол читается, выводы не противоречат данным</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Дерево проверок.</strong> Слои идут по порядку, признаки сформулированы
+- <strong>Проверки сети и портов.</strong> Команды выполнены, результаты записаны
+- <strong>Воспроизведение симптома.</strong> Код 500 и закрытый порт подтверждены
+- <strong>Разбор журналов.</strong> Найдены время, код 32 и причина в сценарии
+- <strong>Карточка причины.</strong> Причина доказана, меры конкретны
+- <strong>Оформление.</strong> Протокол читается, выводы не противоречат данным</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

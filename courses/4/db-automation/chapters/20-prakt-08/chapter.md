@@ -24,9 +24,9 @@ outcomes:
 - База `dean` с учебными данными и пользователь `dean_app` с паролем.
 - .NET SDK 10 и Visual Studio 2022 Community, проверка командой `dotnet --version`.
 - Пакет `MySqlConnector` из NuGet.
-- `C:\xampp\mysql\bin\mysqldump.exe` и клиент `mysql.exe`.
+- `mysqldump` и клиент `mysql.exe`.
 - Переменная окружения `DEAN_DB_PASSWORD` для пароля.
-- Каталог `C:\dean\maintenance` для проекта, копий и журнала.
+- Каталог `.../dean/maintenance` для проекта, копий и журнала.
 
 ## Краткие теоретические сведения
 
@@ -51,7 +51,7 @@ outcomes:
 ### Шаг 1. Создайте проект
 
 ```bat
-cd /d C:\dean\maintenance
+cd /d .../dean/maintenance
 dotnet new console -n DeanMaintenance
 cd DeanMaintenance
 dotnet add package MySqlConnector
@@ -131,7 +131,7 @@ try
 
     var psi = new ProcessStartInfo
     {
-        FileName = @"C:\xampp\mysql\bin\mysqldump.exe",
+        FileName = @"mysqldump",
         RedirectStandardError = true,
         UseShellExecute = false,
         CreateNoWindow = true
@@ -249,11 +249,11 @@ FLUSH PRIVILEGES;
 Сначала зафиксируйте число строк, затем повторите запуск и сравните.
 
 ```bat
-C:\xampp\mysql\bin\mysql.exe -u root dean -e "SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;"
+mysql -u root dean -e "SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;"
 DeanMaintenance.exe
 echo %ERRORLEVEL%
 dir backups
-C:\xampp\mysql\bin\mysql.exe -u root dean -e "SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;"
+mysql -u root dean -e "SELECT COUNT(*) FROM students; SELECT COUNT(*) FROM enrollments;"
 ```
 
 Числа не меняются, а копий становится две. Это и есть идемпотентность обслуживания: повторный запуск создаёт новый снимок, но не трогает данные. Имя копии содержит метку времени до секунды, поэтому два запуска подряд в одну секунду дадут одно имя и перезапишут файл. Между запусками подождите секунду.
@@ -308,13 +308,22 @@ findstr /C:"CHECK students=" logs\dean-maintenance.log
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Приложение | 25 | Аргументы, журнал и коды возврата на месте |
-| Копия и обслуживание | 20 | `mysqldump` создаёт пригодную копию, `ANALYZE TABLE` выполняется |
-| Повторный запуск | 20 | Данные не меняются, копии не перезаписываются |
-| Коды возврата | 20 | 0, 1 и 64 возвращаются в своих случаях |
-| Безопасность и отчёт | 15 | Пароль в переменной окружения, журнал читается, таблица заполнена |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Приложение.** Аргументы, журнал и коды возврата на месте
+- **Копия и обслуживание.** `mysqldump` создаёт пригодную копию, `ANALYZE TABLE` выполняется
+- **Повторный запуск.** Данные не меняются, копии не перезаписываются
+- **Коды возврата.** 0, 1 и 64 возвращаются в своих случаях
+- **Безопасность и отчёт.** Пароль в переменной окружения, журнал читается, таблица заполнена
 
 ## Контрольные вопросы
 

@@ -98,8 +98,8 @@ outcomes:
 Шаг 5 часто недооценивают. Копия базы возвращает данные, но не возвращает файлы программы и настройки. Если новая версия заменила конфигурационный файл, откат без его копии превращается в восстановление по памяти.
 
 ```powershell
-Copy-Item -Path C:\sklad_app -Destination D:\backup\sklad_app_before_4.8 -Recurse
-Copy-Item -Path C:\xampp\apache\conf\extra\httpd-vhosts.conf -Destination D:\backup\
+Copy-Item -Path .../sklad_app -Destination .../backup/sklad_app_before_4.8 -Recurse
+Copy-Item -Path .../xampp/apache/conf\extra\httpd-vhosts.conf -Destination .../backup/
 ```
 
 Копию базы снимают перед остановкой служб, но после остановки запись прекращается, и данные больше не меняются. Если между копией и остановкой прошло время, в базе могли появиться новые документы, и их нужно учесть.

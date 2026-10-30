@@ -822,7 +822,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
 <li>Компьютер с XAMPP 8.5.12 и базой <code>dean</code> из практики 1.</li>
-<li>phpMyAdmin и клиент <code>C:\xampp\mysql\bin\mysql.exe</code>.</li>
+<li>phpMyAdmin и клиент <code>mysql</code>.</li>
 <li>.NET SDK 10 и проект <code>DeanAdmin</code> из практики 1.</li>
 <li>Текстовый редактор для скрипта <code>roles.sql</code> и табличный редактор для матрицы.</li>
 </ul>
@@ -884,7 +884,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Первая команда показывает выданную роль, вторая права самой роли. Затем войдите как <code>dean_reader</code>.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">CURRENT_USER</span><span class="p">(),</span><span class="w"> </span><span class="k">CURRENT_ROLE</span><span class="p">();</span>
@@ -894,20 +894,20 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Если <code>CURRENT_ROLE()</code> вернул <code>NONE</code>, роль не активна: выполните <code>SET ROLE 'dean_read';</code> и повторите запрос. Причина в том, что роль по умолчанию не назначена или сервер не включил её при входе.</p>
 <h3>Шаг 6. Пройдите разрешённые и запрещённые запросы</h3>
 <p>Выполняйте пары: сначала разрешённый запрос, потом запрещённый. Ошибка и есть доказательство.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT &#39;Иванов ИС-41&#39;; SELECT COUNT(*) FROM students;&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO groups (name, specialty) VALUES (&#39;ИС-44&#39;,&#39;09.02.07&#39;);&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT &#39;Иванов ИС-41&#39;; SELECT COUNT(*) FROM students;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_reader</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO groups (name, specialty) VALUES (&#39;ИС-44&#39;,&#39;09.02.07&#39;);&quot;</span>
 </code></pre></div>
 
 <p>Второй запрос вернёт <code>ERROR 1142 (42000): INSERT command denied to user 'dean_reader'@'localhost' for table 'groups'</code>.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;DELETE FROM payments WHERE id = 1;&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO payments (student_id, amount) VALUES (4, 9000.00);&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;DELETE FROM payments WHERE id = 1;&quot;</span>
 </code></pre></div>
 
 <p>Первый запрос проходит, второй возвращает <code>ERROR 1142</code> на таблицу <code>payments</code>: приложение получило права <code>dean_write</code>, но не право удаления.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT title FROM courses;&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT full_name FROM students;&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT COUNT(*) FROM audit_log;&quot;</span>
-<span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO audit_log (db_user, action) VALUES (&#39;audit_user&#39;,&#39;DELETE&#39;);&quot;</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT title FROM courses;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">student_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT full_name FROM students;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;SELECT COUNT(*) FROM audit_log;&quot;</span>
+<span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">audit_user</span> <span class="n">-p</span> <span class="n">dean</span> <span class="n">-e</span> <span class="s2">&quot;INSERT INTO audit_log (db_user, action) VALUES (&#39;audit_user&#39;,&#39;DELETE&#39;);&quot;</span>
 </code></pre></div>
 
 <p><code>student_user</code> видит только справочники, <code>audit_user</code> читает журнал и не может в него писать. Сделайте скриншоты успешного и запрещённого запроса: в кадре должны быть команда, имя учётной записи и текст ошибки.</p>
@@ -1082,42 +1082,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Вывод о минимальных привилегиях и об опасных правах.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Роли</td>
-<td>20</td>
-<td>Четыре роли созданы, права выданы на нужные объекты</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Учётные записи</td>
-<td>20</td>
-<td>У каждой роли своя запись, роли назначены и активны</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Отзыв прав</td>
-<td>20</td>
-<td><code>DELETE</code> на <code>payments</code> отозван и подтверждён ошибкой</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Проверки</td>
-<td>30</td>
-<td>Каждая роль проверена разрешённым и запрещённым запросом</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Матрица и отчёт</td>
-<td>10</td>
-<td>Матрица совпадает с фактическими результатами</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Роли.</strong> Четыре роли созданы, права выданы на нужные объекты
+- <strong>Учётные записи.</strong> У каждой роли своя запись, роли назначены и активны
+- <strong>Отзыв прав.</strong> <code>DELETE</code> на <code>payments</code> отозван и подтверждён ошибкой
+- <strong>Проверки.</strong> Каждая роль проверена разрешённым и запрещённым запросом
+- <strong>Матрица и отчёт.</strong> Матрица совпадает с фактическими результатами</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

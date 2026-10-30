@@ -94,7 +94,7 @@ outcomes:
 Get-Service -Name sklad-export | Select-Object Status, StartType
 Restart-Service -Name sklad-export
 Start-Sleep -Seconds 10
-Get-Content D:\logs\export.log -Tail 20
+Get-Content .../logs/export.log -Tail 20
 ```
 
 Шаг проверки здесь обязателен. Без него инженер перезапустит службу, увидит зелёный статус и уйдёт, а выгрузка всё равно не заработает, потому что причина была в другом. Проверка по журналу показывает, появилась ли новая запись об успешной отправке.

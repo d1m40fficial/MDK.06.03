@@ -824,10 +824,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Персональный компьютер с Windows 10, XAMPP 8.5.12 и запущенными Apache и MySQL.</li>
 <li>База <code>dean</code> в кодировке <code>utf8mb4</code> с учебными данными.</li>
 <li>phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
-<li>Клиенты <code>C:\xampp\mysql\bin\mysql.exe</code> и <code>C:\xampp\mysql\bin\mysqldump.exe</code>.</li>
+<li>Клиенты <code>mysql</code> и <code>mysqldump</code>.</li>
 <li>Пользователь <code>root</code> или <code>dean_app</code> с правом <code>SELECT</code> и привилегией <code>FILE</code>.</li>
 <li>PowerShell для проверки байтов файла.</li>
-<li>Каталог <code>C:\dean\export</code> для файлов и скриптов.</li>
+<li>Каталог <code>.../dean/export</code> для файлов и скриптов.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p><strong>Формат обмена</strong> выбирают по приёмной стороне. CSV понимают табличные редакторы, бухгалтерские программы и почти любая система импорта. JSON удобен, когда данные вложенные: студент вместе со списком курсов не раскладывается в плоскую таблицу без потерь. Схема в виде SQL-файла нужна, чтобы развернуть структуру на новом месте.</p>
@@ -839,8 +839,8 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p><strong>Кодировка.</strong> Файл без BOM открывается в Excel с испорченной кириллицей, поэтому для обмена с табличным редактором BOM добавляют, а для загрузки в СУБД его быть не должно. Проверяют байты до загрузки: <code>EF BB BF</code> в начале файла ломает первый столбец.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Проверьте каталог, кодировку и разрешённый путь</h3>
-<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">mkdir</span> C:\dean\export
-C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">mkdir</span> .../dean/export
+mysql -u root dean
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов И.И., ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
@@ -851,7 +851,7 @@ C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span
 
 <p><code>character_set_server</code> должен быть <code>utf8mb4</code>. Значение <code>secure_file_priv</code> задаёт единственный каталог, куда сервер пишет файлы; пустое значение разрешает любой путь. Запишите его, он понадобится на шаге 3.</p>
 <h3>Шаг 2. Выгрузите группы в CSV через phpMyAdmin</h3>
-<p>Откройте базу <code>dean</code>, таблицу <code>groups</code>, вкладку «Экспорт». Выберите формат CSV, разделитель <code>,</code>, кавычки <code>"</code>, кодировку <code>utf-8</code> и включите строку с именами столбцов. Сохраните файл как <code>groups_phpmyadmin.csv</code> в <code>C:\dean\export</code>.</p>
+<p>Откройте базу <code>dean</code>, таблицу <code>groups</code>, вкладку «Экспорт». Выберите формат CSV, разделитель <code>,</code>, кавычки <code>"</code>, кодировку <code>utf-8</code> и включите строку с именами столбцов. Сохраните файл как <code>groups_phpmyadmin.csv</code> в <code>.../dean/export</code>.</p>
 <p>Приложите скриншот открытого файла: в нём видно заголовок <code>id,name,specialty</code> и кириллицу в названиях групп. Скриншот настроек экспорта без файла доказательством не является.</p>
 <h3>Шаг 3. Выгрузите студентов через INTO OUTFILE</h3>
 <p>Запрос в скобках задаёт столбцы и порядок строк. Название группы добавляется соединением: приёмной стороне нужно читаемое значение, а не номер.</p>
@@ -861,14 +861,14 @@ C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
-<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.csv&#39;</span>
+<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;.../dean/export/students.csv&#39;</span>
 <span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
 <span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Путь подставьте из <code>secure_file_priv</code>, если переменная не пуста. Ошибка 1086 означает, что файл уже есть: удалите его и повторите. Ошибка 1227 означает, что у пользователя нет привилегии <code>FILE</code>.</p>
 <p>Заголовок <code>INTO OUTFILE</code> не пишет. Добавьте его отдельной командой.</p>
-<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">cd</span> /d C:\dean\export
+<div class="codehilite" data-lang="bat"><pre><span></span><code><span class="k">cd</span> /d .../dean/export
 <span class="k">echo</span> id,full_name,group_name,email,created_at<span class="p">&gt;</span> students_with_header.csv
 <span class="k">type</span> students.csv<span class="p">&gt;&gt;</span> students_with_header.csv
 </code></pre></div>
@@ -889,25 +889,25 @@ C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="n">s</span>
 <span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="k">g</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">g</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">group_id</span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">id</span>
-<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.json&#39;</span><span class="p">;</span>
+<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;.../dean/export/students.json&#39;</span><span class="p">;</span>
 </code></pre></div>
 
 <p>Каждая строка файла это самостоятельный объект, то есть JSON Lines. Такой формат читается потоком и совпадает с тем, что разбирался при импорте.</p>
 <h3>Шаг 5. Снимите схему через mysqldump</h3>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysqldump.exe</span><span class="c1"> -u root --no-data --routines --triggers ^</span>
-  --default-character-set=utf8mb4 --result-file=C:\dean\export\schema.sql dean
+<div class="codehilite" data-lang="bat"><pre><span></span><code>mysqldump -u root --no-data --routines --triggers <span class="se">^</span>
+<span class="se"> </span> --default-character-set=utf8mb4 --result-file=.../dean/export/schema.sql dean
 </code></pre></div>
 
 <p>Опция <code>--result-file</code> важна: перенаправление <code>&gt;</code> в PowerShell пишет файл в UTF-16, и такой дамп не загрузится. Проверьте содержимое.</p>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Select-String -Path C:\dean\export\schema.sql -Pattern &#39;CREATE TABLE&#39; | Measure-Object&quot;</span>
-powershell -Command <span class="s2">&quot;Select-String -Path C:\dean\export\schema.sql -Pattern &#39;INSERT INTO&#39; | Measure-Object&quot;</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Select-String -Path .../dean/export/schema.sql -Pattern &#39;CREATE TABLE&#39; | Measure-Object&quot;</span>
+powershell -Command <span class="s2">&quot;Select-String -Path .../dean/export/schema.sql -Pattern &#39;INSERT INTO&#39; | Measure-Object&quot;</span>
 </code></pre></div>
 
 <p>Первая команда покажет число таблиц, вторая должна показать ноль. Если <code>INSERT</code> нашлись, опция <code>--no-data</code> не применилась.</p>
 <h3>Шаг 6. Проверьте файлы и кодировку</h3>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Get-Content C:\dean\export\students.csv -TotalCount 3&quot;</span>
-powershell -Command <span class="s2">&quot;[System.IO.File]::ReadAllBytes(&#39;C:\dean\export\students.csv&#39;)[0..2]&quot;</span>
-powershell -Command <span class="s2">&quot;Get-ChildItem C:\dean\export | Select-Object Name, Length&quot;</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>powershell -Command <span class="s2">&quot;Get-Content .../dean/export/students.csv -TotalCount 3&quot;</span>
+powershell -Command <span class="s2">&quot;[System.IO.File]::ReadAllBytes(&#39;.../dean/export/students.csv&#39;)[0..2]&quot;</span>
+powershell -Command <span class="s2">&quot;Get-ChildItem .../dean/export | Select-Object Name, Length&quot;</span>
 </code></pre></div>
 
 <p>Байты <code>239 187 191</code> означают BOM: для загрузки в MySQL его нужно убрать. Размер файла не должен быть нулевым. Приложите скриншот первых строк файла и списка файлов с размерами.</p>
@@ -921,7 +921,7 @@ powershell -Command <span class="s2">&quot;Get-ChildItem C:\dean\export | Select
 <span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
 <span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
 
-<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students_with_header.csv&#39;</span>
+<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;.../dean/export/students_with_header.csv&#39;</span>
 <span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_flat</span>
 <span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
 <span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span>
@@ -994,7 +994,7 @@ powershell -Command <span class="s2">&quot;Get-ChildItem C:\dean\export | Select
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">chk_students_json</span><span class="p">;</span>
 <span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_json</span><span class="w"> </span><span class="p">(</span><span class="k">data</span><span class="w"> </span><span class="n">JSON</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
 
-<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/dean/export/students.json&#39;</span>
+<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;.../dean/export/students.json&#39;</span>
 <span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">chk_students_json</span>
 <span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="p">;</span>
 
@@ -1006,9 +1006,9 @@ powershell -Command <span class="s2">&quot;Get-ChildItem C:\dean\export | Select
 
 <p>Первое число равно числу студентов. Второе показывает, у скольких нет ни одного курса, и проверяет вложенный массив: если у всех ноль, массив потерялся при выгрузке. Удалите таблицы проверки командой <code>DROP TABLE chk_students_flat, chk_groups, chk_students_json</code>.</p>
 <h3>Шаг 10. Разверните схему в отдельной базе</h3>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root -e &quot;DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
-C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean_check -e &quot;source C:/dean/export/schema.sql&quot;</span>
-C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root -e &quot;SELECT table_name FROM information_schema.tables WHERE table_schema = &#39;dean_check&#39; ORDER BY table_name;&quot;</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>mysql -u root -e <span class="s2">&quot;DROP DATABASE IF EXISTS dean_check; CREATE DATABASE dean_check CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;&quot;</span>
+mysql -u root dean_check -e <span class="s2">&quot;source .../dean/export/schema.sql&quot;</span>
+mysql -u root -e <span class="s2">&quot;SELECT table_name FROM information_schema.tables WHERE table_schema = &#39;dean_check&#39; ORDER BY table_name;&quot;</span>
 </code></pre></div>
 
 <p>Команда <code>source</code> читает файл внутри клиента и не зависит от перенаправления оболочки. Сравните список таблиц с базой <code>dean</code>: он должен совпасть. Пустой список чаще всего означает, что дамп не создался из-за ошибки прав или прерванного выполнения.</p>
@@ -1022,42 +1022,43 @@ C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span
 <li>Скриншоты файла, обратной загрузки и счётчиков.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Выгрузка</td>
-<td>25</td>
-<td>CSV и JSON содержат нужные столбцы, заголовок и порядок строк</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Кодировка</td>
-<td>15</td>
-<td>UTF-8 подтверждена, BOM проверен, дамп читается</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Обратная загрузка</td>
-<td>25</td>
-<td>Файлы загружаются без ошибок и дают те же строки</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Сверка</td>
-<td>20</td>
-<td>Число строк и контрольные суммы совпадают</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Схема и отчёт</td>
-<td>15</td>
-<td><code>mysqldump</code> разворачивается, таблица сверки заполнена</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Выгрузка.</strong> CSV и JSON содержат нужные столбцы, заголовок и порядок строк
+- <strong>Кодировка.</strong> UTF-8 подтверждена, BOM проверен, дамп читается
+- <strong>Обратная загрузка.</strong> Файлы загружаются без ошибок и дают те же строки
+- <strong>Сверка.</strong> Число строк и контрольные суммы совпадают
+- <strong>Схема и отчёт.</strong> <code>mysqldump</code> разворачивается, таблица сверки заполнена</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

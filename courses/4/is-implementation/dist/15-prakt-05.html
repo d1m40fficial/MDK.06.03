@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 5. Интеграция; Тестирование</title>
+<title>Практика 5. Обмен с сайтом и проверка сценариев</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,10 +812,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 5. Интеграция; Тестирование</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 5. Обмен с сайтом и проверка сценариев</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 17-18</span><span class="pill">Внедрение информационных систем</span></div>
-<div class="hero-panel"><h1>Практика 5. Интеграция; Тестирование</h1><p class="dek">Отгрузка уходит во внешний сервис доставки, а протокол тестов показывает, что будет при отказе и неверных данных.</p></div>
+<div class="hero-panel"><h1>Практика 5. Обмен с сайтом и проверка сценариев</h1><p class="dek">Настройка обмена между учебной ИС и внешним сервисом, проверка успешного обмена, отказа сервиса и неверных данных. Результат: схема обмена и протокол тестов.</p></div>
 <div class="glyph" aria-hidden="true">П5</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Настраивать обмен данными между учебной ИС и внешним сервисом</li><li>Проверять обмен тестами успешного и аварийного сценария</li><li>Оформлять протокол тестирования с ожидаемым и фактическим результатом</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>«Северный склад» передаёт собранные заказы в службу доставки «ТрансЛогистик». Сервис принимает отгрузку по API и возвращает номер трека. Если сервис недоступен, отгрузка не должна потеряться, а если данные неверны, склад должен получить понятную причину отказа.</p>
 <p>Цель работы: настроить обмен между учебной ИС и внешним сервисом, проверить его успешным и аварийными сценариями и оформить протокол тестирования. Результат работы это схема обмена, скрипт отправки, журнал обмена и протокол с карточкой дефекта.</p>
@@ -825,9 +825,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Запущенные Apache и MySQL, phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
 <li>Python 3 из комплекта VS Code, стандартные модули <code>http.server</code>, <code>urllib</code>, <code>json</code>, <code>csv</code>.</li>
 <li>VS Code, Postman для ручных запросов, браузер с draw.io для схемы.</li>
-<li>Рабочая папка <code>C:\sklad\integration</code>, база <code>sklad</code> из предыдущей практики.</li>
+<li>Рабочая папка <code>sklad\integration</code> внутри папки практики, база <code>sklad</code> из предыдущей практики.</li>
 <li>Свободный локальный порт 8081.</li>
 </ul>
+<p><strong>Комплект «Склад+».</strong> <a href="reports/kit/sklad-plus-kit.zip">Скачать архив</a> и распаковать в папку работы. Внутри: <code>app/index.html</code> (учебный прототип, открывается в браузере), <code>database/schema.sql</code> и <code>database/seed.sql</code> (импорт в phpMyAdmin), <code>data/</code> (CSV и JSON для импорта), <code>templates/</code> (шаблоны отчётов). Демо-доступы прототипа: <code>admin / admin</code>, <code>manager / manager</code>, <code>storekeeper / storekeeper</code>.</p>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p><strong>Точка интеграции</strong> это место, где данные переходят из одной системы в другую. У неё есть направление, формат, протокол и ответственный. Для отгрузки точка одна: «Склад+» отправляет JSON, сервис доставки отвечает кодом и номером трека.</p>
 <p><strong>Контракт обмена</strong> фиксирует поля, типы и коды ответа. <code>201</code> означает, что отгрузка принята, <code>422</code> что данные неверны, <code>503</code> что сервис временно недоступен. Коды делят ошибки на две группы: <code>422</code> не повторяют, <code>503</code> повторяют с паузой.</p>
@@ -1017,10 +1018,19 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Ожидается одна строка со значением <code>copies = 1</code>. Если появилось две, значит скрипт или сервис создаёт новую отгрузку на каждый запрос, и идемпотентность не работает.</p>
-<p>Импортируйте накопленный <code>exchange_log.csv</code> в таблицу <code>exchange_log</code>: phpMyAdmin, вкладка «Импорт», формат CSV, разделитель <code>;</code>, первая строка содержит имена столбцов. Дальше считайте по таблице.</p>
-<p>Затем отправьте двадцать запросов подряд. Оберните вызов <code>send(payload)</code> в цикл <code>for n in range(20)</code> и посчитайте среднее и максимальное время из журнала. Запишите оба числа и объясните, почему для критерия приёмки важнее максимальное и девяносто пятый перцентиль, а не среднее.</p>
+<p>Импортируйте накопленный <code>exchange_log.csv</code> в таблицу <code>exchange_log</code>: phpMyAdmin, вкладка «Импорт», формат CSV, разделитель <code>;</code>, первая строка содержит имена столбцов. Дальше считайте по таблице. Разобранный пример для отгрузки <code>SH-2026-0452</code>:</p>
+<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span>
+<span class="w">       </span><span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">duration_ms</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">avg_ms</span><span class="p">,</span>
+<span class="w">       </span><span class="k">MAX</span><span class="p">(</span><span class="n">duration_ms</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">max_ms</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">exchange_log</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">shipment_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SH-2026-0452&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>Результат такой запрос даёт одной строкой: <code>attempts</code> это число попыток, <code>avg_ms</code> среднее время в миллисекундах, <code>max_ms</code> худшее время. Например, три попытки со значениями 28, 39 и 56 дают <code>attempts = 3</code>, <code>avg_ms = 41</code>, <code>max_ms = 56</code>.</p>
+<p>Затем отправьте двадцать запросов подряд. Оберните вызов <code>send(payload)</code> в цикл <code>for n in range(20)</code> и посчитайте те же три числа для <code>SH-2026-0451</code>. Запишите среднее и максимум и объясните, почему для критерия приёмки важнее максимальное и девяносто пятый перцентиль, а не среднее.</p>
 <p>Двадцать запросов это не нагрузочный тест, а замер отклика одного обмена. Полноценная нагрузка требует десятков одновременных отправителей и хотя бы получаса работы. Но и короткий замер показывает, не растёт ли время от запроса к запросу: рост означает, что сервис или скрипт накапливает состояние.</p>
 <h3>Шаг 10. Заполните протокол и карточку дефекта</h3>
+<p>Заполните протокол по шести сценариям. Ожидаемый результат постройте по контракту обмена из теоретической части: какой код, какой статус отгрузки и сколько попыток должно быть. Фактический результат возьмите из ответов сервиса и журнала. Первая строка дана как образец.</p>
 <table>
 <thead>
 <tr>
@@ -1045,7 +1055,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>TC-02</td>
 <td>Сервис недоступен</td>
 <td><code>fail.flag</code>, <code>SH-2026-0451</code></td>
-<td><code>503</code>, <code>pending</code>, три попытки</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1053,7 +1063,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>TC-03</td>
 <td>Восстановление</td>
 <td>без <code>fail.flag</code></td>
-<td><code>201</code>, <code>sent</code></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1061,7 +1071,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>TC-04</td>
 <td>Нет города</td>
 <td>без <code>city</code></td>
-<td><code>422</code>, <code>rejected</code>, одна попытка</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1069,7 +1079,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>TC-05</td>
 <td>Повтор с тем же ключом</td>
 <td><code>SH-2026-0451</code> дважды</td>
-<td>тот же номер трека, одна запись</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1077,7 +1087,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td>TC-06</td>
 <td>Замер времени</td>
 <td>20 запросов</td>
-<td>среднее и максимум записаны</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -1136,42 +1146,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Карточку дефекта, если расхождение найдено, и вывод о готовности обмена.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Схема и паспорт</td>
-<td>20</td>
-<td>Направление, владелец, формат, коды и ключ указаны</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Отправка</td>
-<td>25</td>
-<td>Запрос формируется по контракту, ключ передаётся</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Обработка отказа</td>
-<td>25</td>
-<td><code>503</code> даёт повтор, <code>422</code> не повторяется, данные не теряются</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Протокол</td>
-<td>20</td>
-<td>Ожидаемый и фактический результат заполнены для всех кейсов</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Вывод и дефект</td>
-<td>10</td>
-<td>Готовность обмена оценена, дефект оформлен по правилам</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Схема и паспорт.</strong> Направление, владелец, формат, коды и ключ указаны
+- <strong>Отправка.</strong> Запрос формируется по контракту, ключ передаётся
+- <strong>Обработка отказа.</strong> <code>503</code> даёт повтор, <code>422</code> не повторяется, данные не теряются
+- <strong>Протокол.</strong> Ожидаемый и фактический результат заполнены для всех кейсов
+- <strong>Вывод и дефект.</strong> Готовность обмена оценена, дефект оформлен по правилам</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

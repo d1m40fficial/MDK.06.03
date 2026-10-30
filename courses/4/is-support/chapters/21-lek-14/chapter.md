@@ -134,7 +134,7 @@ CHECK TABLE users;
 Для базы целиком удобнее утилита mysqlcheck, которая проходит по всем таблицам и возвращает статус каждой.
 
 ```powershell
-& C:\xampp\mysql\bin\mysqlcheck.exe -u root --check sklad_restore
+& mysqlcheck -u root --check sklad_restore
 ```
 
 Ответ OK означает, что структура таблицы читается. Ответ с пометкой corrupt означает повреждение, и такую копию нужно заменить.

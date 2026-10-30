@@ -206,7 +206,7 @@ def copy_course(year: str, course_dir: Path) -> dict:
             target.mkdir(parents=True, exist_ok=True)
             for f in reports.rglob("*"):
                 if f.is_file() and f.suffix.lower() in (
-                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py", ".md",
+                    ".docx", ".csv", ".pdf", ".xlsx", ".sql", ".json", ".yaml", ".yml", ".py", ".md", ".zip",
                     ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif",
                 ) and not f.name.startswith("make_"):
                     rel = f.relative_to(reports)

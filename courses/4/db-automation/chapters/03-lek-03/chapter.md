@@ -89,10 +89,10 @@ SELECT @@character_set_server, @@collation_server;
 
 ```powershell
 netstat -ano | findstr :3306
-& "C:\xampp\mysql\bin\mysql.exe" -u root -e "SHOW VARIABLES LIKE 'port';"
+& "mysql" -u root -e "SHOW VARIABLES LIKE 'port';"
 ```
 
-Настройки сервера лежат в `C:\xampp\mysql\bin\my.ini`. Файл читают при старте, поэтому правки делают только при остановленном MySQL, а затем запускают сервер заново. Минимальный набор для учебной базы выглядит так:
+Настройки сервера лежат в `.../xampp/mysql/bin/my.ini`. Файл читают при старте, поэтому правки делают только при остановленном MySQL, а затем запускают сервер заново. Минимальный набор для учебной базы выглядит так:
 
 ```ini
 [mysqld]
@@ -315,7 +315,7 @@ Q: Какой порт MySQL используется в XAMPP по умолча
 
 Q: Как называется файл настроек сервера MySQL в XAMPP?
 = my.ini
-! Настройки сервера лежат в C:\xampp\mysql\bin\my.ini.
+! Настройки сервера лежат в .../xampp/mysql/bin/my.ini.
 
 Q: Что делает команда dotnet run в папке проекта?
 + Собирает проект и запускает приложение

@@ -74,9 +74,9 @@ outcomes:
 Копия снимается так, чтобы не блокировать таблицы.
 
 ```powershell
-C:\xampp\mysql\bin\mysqldump.exe -u backup_operator sklad `
+mysqldump -u backup_operator sklad `
   --single-transaction --routines --triggers --events `
-  --result-file=D:\backup\sklad_full_2026-11-01.sql
+  --result-file=.../backup/sklad_full_2026-11-01.sql
 ```
 
 Параметр single-transaction даёт согласованный снимок данных без остановки записи. Без него копия большой таблицы останавливает приёмку на всё время работы скрипта, и это замечают пользователи.

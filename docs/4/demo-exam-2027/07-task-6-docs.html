@@ -1086,7 +1086,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="n">dotnet</span> <span class="n">run</span> <span class="p">-</span><span class="n">-urls</span> <span class="n">http</span><span class="p">://</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">5281</span>
 </code></pre></div>
 
-<p>В третьем окне выполните <code>curl.exe -s -i "http://127.0.0.1:5281/notes" -o .\examples\notes-500.txt</code>. В файле должны быть код 500 и объект <code>{"error": "..."}</code> без строки подключения и трассировки. После проверки закройте только тестовый процесс.</p>
+<p>В третьем окне выполните <code>curl.exe -s -i "http://127.0.0.1:5281/notes" -o ./examples/notes-500.txt</code>. В файле должны быть код 500 и объект <code>{"error": "..."}</code> без строки подключения и трассировки. После проверки закройте только тестовый процесс.</p>
 <h3>Шаг 5. Заполните базовый URL</h3>
 <p>Вернитесь в Word. Щёлкните по пустой ячейке справа от надписи «Базовый URL» и введите <code>http://127.0.0.1:5271</code>. Проверьте, что путь <code>/notes</code> в ячейку не попал.</p>
 <p>Порт должен совпадать с тем, что показывает консоль сервера. Если вы запускали API на другом порту, впишите его. Локальный адрес действует только на вашем компьютере, поэтому рядом полезно добавить короткую пометку, что адрес относится к учебному стенду.</p>

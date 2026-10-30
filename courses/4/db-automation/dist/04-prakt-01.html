@@ -829,14 +829,14 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Права администратора Windows не нужны: настройки и данные лежат внутри каталога XAMPP.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<p><strong>XAMPP</strong> это набор Apache, MySQL, PHP и phpMyAdmin в каталоге <code>C:\xampp</code>. Службы запускает Control Panel. Apache нужен phpMyAdmin, потому что тот работает через веб-сервер. MySQL слушает порт 3306 и от Apache не зависит: к базе можно подключиться, даже когда веб-сервер остановлен.</p>
+<p><strong>XAMPP</strong> это набор Apache, MySQL, PHP и phpMyAdmin в каталоге <code>.../xampp</code>. Службы запускает Control Panel. Apache нужен phpMyAdmin, потому что тот работает через веб-сервер. MySQL слушает порт 3306 и от Apache не зависит: к базе можно подключиться, даже когда веб-сервер остановлен.</p>
 <p><strong>Кодировка</strong> задаётся на трёх уровнях: сервер, база и соединение. <code>utf8mb4</code> это полный UTF-8 до четырёх байт на символ, а старое имя <code>utf8</code> в MySQL означает три байта и не вмещает эмодзи. Сравнение <code>utf8mb4_unicode_ci</code> не различает регистр. Кодировка базы задаёт значение по умолчанию для новых таблиц, но не отменяет кодировку соединения: если клиент объявил однобайтовую кодировку, сервер перекодирует текст и вернёт вопросительные знаки.</p>
 <p><strong>Учётная запись</strong> в MySQL это пара «имя и хост»: <code>'dean_app'@'localhost'</code>. Одно имя на разных хостах даёт разные записи с разными паролями и правами. В XAMPP пользователь <code>root</code> создан без пароля: для стенда удобно, для приложения недопустимо. Приложение получает свою запись с паролем и только нужные права.</p>
 <p><strong>Строка подключения</strong> перечисляет сервер, базу, пользователя, пароль и кодировку. Пароль не хранят в коде: его читают из переменной окружения. <code>MySqlConnector</code> это управляемый драйвер MySQL для .NET.</p>
 <p><strong>Проверка</strong> состоит из двух запросов: <code>SELECT VERSION()</code> показывает версию сервера, <code>SELECT @@character_set_database</code> кодировку текущей базы. Если второй вернул <code>utf8mb4</code>, база создана правильно.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Запустите службы</h3>
-<p>Откройте <code>C:\xampp\xampp-control.exe</code> и нажмите <code>Start</code> у Apache и у MySQL. В строке службы появится зелёная надпись <code>Running</code> и занятый порт: 80 у Apache, 3306 у MySQL.</p>
+<p>Откройте <code>.../xampp/xampp-control.exe</code> и нажмите <code>Start</code> у Apache и у MySQL. В строке службы появится зелёная надпись <code>Running</code> и занятый порт: 80 у Apache, 3306 у MySQL.</p>
 <p>Если служба не поднимается, кнопка <code>Netstat</code> в Control Panel покажет процесс, занявший порт. Второй MySQL на машине запускать не нужно: два сервера на одном порту не уживаются.</p>
 <p>Сделайте первый скриншот: окно Control Panel, где обе службы запущены.</p>
 <h3>Шаг 2. Создайте базу dean</h3>
@@ -972,7 +972,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Права выданы на базу <code>dean</code>, а не на весь сервер: приложение не должно видеть чужие базы. <code>DROP</code> и <code>ALTER</code> не выданы, поэтому структуру меняет только администратор. <code>FLUSH PRIVILEGES</code> не нужна: она требуется после прямой правки таблиц привилегий.</p>
 <h3>Шаг 6. Проверьте вход в phpMyAdmin и MySQL CLI</h3>
 <p>Выйдите из phpMyAdmin и войдите как <code>dean_app</code>. В дереве останется только <code>dean</code>: остальные базы скрыты, потому что прав на них нет.</p>
-<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span>
+<div class="codehilite" data-lang="powershell"><pre><span></span><code><span class="p">&amp;</span> <span class="s2">&quot;mysql&quot;</span> <span class="n">-u</span> <span class="n">dean_app</span> <span class="n">-p</span> <span class="n">dean</span>
 </code></pre></div>
 
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;Иванов ИС-41&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">student</span><span class="p">;</span>
@@ -1125,42 +1125,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Вывод о трёх уровнях кодировки и о правах учётной записи приложения.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Службы и база</td>
-<td>20</td>
-<td>Apache и MySQL запущены, база <code>dean</code> в <code>utf8mb4_unicode_ci</code></td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Схема и данные</td>
-<td>25</td>
-<td>Семь таблиц InnoDB, внешние ключи, верные объёмы данных</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Учётная запись</td>
-<td>20</td>
-<td><code>dean_app</code> с паролем и четырьмя правами только на <code>dean</code></td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Подключение из .NET</td>
-<td>25</td>
-<td>Приложение печатает версию, кодировку и число студентов</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Протокол</td>
-<td>10</td>
-<td>Шаги можно повторить на другом стенде</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Службы и база.</strong> Apache и MySQL запущены, база <code>dean</code> в <code>utf8mb4_unicode_ci</code>
+- <strong>Схема и данные.</strong> Семь таблиц InnoDB, внешние ключи, верные объёмы данных
+- <strong>Учётная запись.</strong> <code>dean_app</code> с паролем и четырьмя правами только на <code>dean</code>
+- <strong>Подключение из .NET.</strong> Приложение печатает версию, кодировку и число студентов
+- <strong>Протокол.</strong> Шаги можно повторить на другом стенде</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

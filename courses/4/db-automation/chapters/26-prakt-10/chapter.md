@@ -22,7 +22,7 @@ outcomes:
 
 - Персональный компьютер с Windows 10 и XAMPP 8.5.12.
 - Панель XAMPP Control Panel с запущенными Apache и MySQL, phpMyAdmin по адресу `http://localhost/phpmyadmin`.
-- Клиент `C:\xampp\mysql\bin\mysql.exe`, утилита `mysqldump.exe`, конфигурация `C:\xampp\mysql\bin\my.ini`.
+- Клиент `mysql`, утилита `mysqldump.exe`, конфигурация `.../xampp/mysql/bin/my.ini`.
 - PowerShell и текстовый редактор.
 - Учебная база `dean` с таблицами `students`, `enrollments`, `payments` и `audit_log`.
 - Пользователи `root` и `dean_app`, роли `dean_read`, `dean_write`, `student_read`, `auditor`.
@@ -42,7 +42,7 @@ SQL-команды выполняются в phpMyAdmin или в клиенте
 |---|---|---|---|
 | General log | Подключения, операторы, ошибки | Таблица `mysql.general_log` | Нет старых и новых значений, растёт быстро |
 | Триггерная таблица | Изменения строк с деталями | Таблица `audit_log` | Нужен триггер на каждую таблицу |
-| Журнал ошибок MySQL | Сбои сервера и запуск | Файл в `C:\xampp\mysql\data` | Не содержит операторов клиентов |
+| Журнал ошибок MySQL | Сбои сервера и запуск | Файл в `.../xampp/mysql/data` | Не содержит операторов клиентов |
 
 ### Что делает событие пригодным для разбора
 
@@ -58,7 +58,7 @@ SQL-команды выполняются в phpMyAdmin или в клиенте
 
 В XAMPP пользователь `root` по умолчанию входит без пароля. Это удобно на учебной машине и опасно на любой другой: полный доступ получает любой процесс и любой человек за этим компьютером. Приложение должно ходить в базу под `dean_app`, а `root` нужен только администратору.
 
-Строка подключения с паролем в коде, в `appsettings.json` или в истории PowerShell это утечка при первом копировании проекта. Дамп тоже секрет: файл в `C:\xampp\htdocs` открывается по адресу `http://localhost/dean.sql` без пароля.
+Строка подключения с паролем в коде, в `appsettings.json` или в истории PowerShell это утечка при первом копировании проекта. Дамп тоже секрет: файл в `.../xampp/htdocs` открывается по адресу `http://localhost/dean.sql` без пароля.
 
 ## Ход работы
 
@@ -76,7 +76,7 @@ SHOW VARIABLES LIKE 'general_log%';
 SHOW VARIABLES LIKE 'log_output';
 ```
 
-Чтобы настройка пережила перезапуск, добавьте строки в секцию `[mysqld]` файла `C:\xampp\mysql\bin\my.ini` и перезапустите MySQL из панели XAMPP.
+Чтобы настройка пережила перезапуск, добавьте строки в секцию `[mysqld]` файла `.../xampp/mysql/bin/my.ini` и перезапустите MySQL из панели XAMPP.
 
 ```ini
 [mysqld]
@@ -160,7 +160,7 @@ WHERE event_object_schema = 'dean' AND event_object_table = 'students';
 Сделайте три операции от имени приложения. Для проверки нужен пользователь, у которого есть права на `students`, но нет права менять `audit_log`.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u dean_app -p --default-character-set=utf8mb4 dean
+& mysql -u dean_app -p --default-character-set=utf8mb4 dean
 ```
 
 ```sql
@@ -210,7 +210,7 @@ GRANT SELECT ON dean.audit_log TO auditor;
 Запись в журнал продолжит работать, потому что триггер выполняется с правами владельца и приложению прямой `INSERT` в `audit_log` не нужен. Проверьте запрет от имени приложения: ошибка прав и есть доказательство того, что мера работает.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u dean_app -p dean -e "UPDATE audit_log SET action = 'x' WHERE id = 1;"
+& mysql -u dean_app -p dean -e "UPDATE audit_log SET action = 'x' WHERE id = 1;"
 ```
 
 Ожидаемый ответ: `ERROR 1142 (42000): UPDATE command denied to user 'dean_app'@'localhost' for table 'audit_log'`. Затем повторите `INSERT` в `students` от `dean_app` и убедитесь, что изменение прошло, а событие появилось.
@@ -240,10 +240,10 @@ SELECT user, host FROM mysql.user ORDER BY user, host;
 Попробуйте подключиться без пароля. Успешный вход означает, что любая программа на машине получает полный доступ к серверу.
 
 ```powershell
-& C:\xampp\mysql\bin\mysql.exe -u root -e "SELECT CURRENT_USER() AS who, VERSION() AS version;"
+& mysql -u root -e "SELECT CURRENT_USER() AS who, VERSION() AS version;"
 ```
 
-Если соединение установилось, зафиксируйте риск и предложите меру: задать пароль командой `ALTER USER 'root'@'localhost' IDENTIFIED BY '...';` и прописать его в `C:\xampp\phpMyAdmin\config.inc.php`, иначе phpMyAdmin перестанет подключаться. Пароль администратора не храните в отчёте.
+Если соединение установилось, зафиксируйте риск и предложите меру: задать пароль командой `ALTER USER 'root'@'localhost' IDENTIFIED BY '...';` и прописать его в `.../xampp/phpMyAdmin/config.inc.php`, иначе phpMyAdmin перестанет подключаться. Пароль администратора не храните в отчёте.
 
 Приложите скриншот одного подтверждённого риска: вход `root` без пароля или дамп, открытый по HTTP. Кадр должен показывать сам факт доступа, а не только текст команды.
 
@@ -252,21 +252,21 @@ SELECT user, host FROM mysql.user ORDER BY user, host;
 Снимите дамп базы в отдельный каталог и посмотрите, кто может его прочитать. Ключ записи в файл надёжнее перенаправления вывода: PowerShell записал бы файл в UTF-16 и сломал кодировку.
 
 ```powershell
-New-Item -ItemType Directory -Force C:\dean\backup | Out-Null
-& C:\xampp\mysql\bin\mysqldump.exe -u root --single-transaction --routines --triggers `
-  --default-character-set=utf8mb4 --result-file=C:\dean\backup\dean.sql dean
+New-Item -ItemType Directory -Force .../dean/backup | Out-Null
+& mysqldump -u root --single-transaction --routines --triggers `
+  --default-character-set=utf8mb4 --result-file=.../dean/backup/dean.sql dean
 
-Get-ChildItem C:\dean\backup\dean.sql | Select-Object Name, Length, LastWriteTime
-icacls C:\dean\backup\dean.sql
-Select-String -Path C:\dean\backup\dean.sql -Pattern 'INSERT INTO' | Select-Object -First 3
+Get-ChildItem .../dean/backup/dean.sql | Select-Object Name, Length, LastWriteTime
+icacls .../dean/backup/dean.sql
+Select-String -Path .../dean/backup/dean.sql -Pattern 'INSERT INTO' | Select-Object -First 3
 ```
 
-Проверьте, что дамп содержит данные: строки `INSERT INTO` с почтой студентов это подтверждают. Затем проверьте доступ через веб-сервер: скопируйте файл в `C:\xampp\htdocs` и откройте `http://localhost/dean.sql`. Если браузер показывает текст дампа, это критический риск. После проверки удалите копию из `htdocs`.
+Проверьте, что дамп содержит данные: строки `INSERT INTO` с почтой студентов это подтверждают. Затем проверьте доступ через веб-сервер: скопируйте файл в `.../xampp/htdocs` и откройте `http://localhost/dean.sql`. Если браузер показывает текст дампа, это критический риск. После проверки удалите копию из `htdocs`.
 
 ```powershell
-Copy-Item C:\dean\backup\dean.sql C:\xampp\htdocs\dean.sql
+Copy-Item .../dean/backup/dean.sql .../xampp/htdocs/dean.sql
 Start-Process "http://localhost/dean.sql"
-Remove-Item C:\xampp\htdocs\dean.sql
+Remove-Item .../xampp/htdocs\dean.sql
 ```
 
 ### Шаг 9. Составьте список рисков
@@ -286,7 +286,7 @@ Remove-Item C:\xampp\htdocs\dean.sql
 Поиск секретов выполните по проекту.
 
 ```powershell
-Select-String -Path C:\dean\src\*\*.cs, C:\dean\src\*\*.json -Pattern 'Password|Pwd|secret|token'
+Select-String -Path .../dean/src/*/*.cs, .../dean/src/*/*.json -Pattern 'Password|Pwd|secret|token'
 ```
 
 Каждую находку внесите в список рисков. Если пароль лежит в `appsettings.json` открытым текстом, мера это переменная окружения или файл вне репозитория, а не переименование поля.
@@ -317,15 +317,24 @@ LIMIT 50;
 
 ## Критерии оценки
 
-| Критерий | Баллы | Что проверяется |
-|---|---|---|
-| Настройка общего журнала | 15 | Запись в таблицу включена, события прочитаны и объяснены |
-| Триггерный аудит | 25 | Три события, пользователь, старые и новые значения |
-| Защита журнала | 20 | Права ограничены, запрет доказан ошибкой доступа |
-| Проверка привилегий | 20 | `SHOW GRANTS`, роли и расхождения описаны |
-| Риски доступа и дампов | 10 | Риски подтверждены проверкой, меры конкретны |
-| Список рисков и отчёт | 10 | Остаточный риск оценён, вывод опирается на находки |
-| **Итого** | **100** | Зачёт от 60 баллов |
+Оценка выставляется по шкале от 1 до 5.
+
+| Оценка | Условие |
+|---|---|
+| 5 | Работа выполнена полностью и самостоятельно, все пункты ниже выполнены |
+| 4 | Работа выполнена, есть 1 или 2 незначительных замечания |
+| 3 | Работа выполнена частично, есть существенные замечания |
+| 2 | Работа не выполнена |
+| 1 | Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления |
+
+Что проверяется:
+- **Настройка общего журнала.** Запись в таблицу включена, события прочитаны и объяснены
+- **Триггерный аудит.** Три события, пользователь, старые и новые значения
+- **Защита журнала.** Права ограничены, запрет доказан ошибкой доступа
+- **Проверка привилегий.** `SHOW GRANTS`, роли и расхождения описаны
+- **Риски доступа и дампов.** Риски подтверждены проверкой, меры конкретны
+- **Список рисков и отчёт.** Остаточный риск оценён, вывод опирается на находки
+- ****Итого**.** Зачёт от 60 баллов
 
 ## Контрольные вопросы
 

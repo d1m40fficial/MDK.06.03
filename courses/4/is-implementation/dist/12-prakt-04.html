@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Практика 4. Миграция; Импорт JSON</title>
+<title>Практика 4. Перенос справочников и сверка данных</title>
 <script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -812,49 +812,36 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </style>
 </head>
 <body>
-<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 4. Миграция; Импорт JSON</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Внедрение информационных систем</a><span>/</span><span>Практика 4. Перенос справочников и сверка данных</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#9A7300" data-seed="0.299">
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#9A7300 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 13-14</span><span class="pill">Внедрение информационных систем</span></div>
-<div class="hero-panel"><h1>Практика 4. Миграция; Импорт JSON</h1><p class="dek">Справочник клиентов переезжает из старой базы в «Склад+», а сверка доказывает, что записи и суммы сохранились.</p></div>
+<div class="hero-panel"><h1>Практика 4. Перенос справочников и сверка данных</h1><p class="dek">Выгрузка из старой базы, очистка, загрузка JSON и сверка количества и сумм. Результат: скрипт импорта и протокол сверки.</p></div>
 <div class="glyph" aria-hidden="true">П4</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Готовить выгрузку данных и приводить её к формату приёмника</li><li>Загружать JSON в учебную базу и обрабатывать ошибки импорта</li><li>Сверять количество записей и контрольные суммы до и после переноса</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
-<p>«Северный склад» переходит на «Склад+», и первым делом нужно перенести справочник клиентов. В старой программе он ведётся с 2019 года: есть дубли, телефоны записаны в четырёх видах, у части контрагентов не заполнен ИНН, а даты встречаются в двух форматах. Терять клиентов нельзя, дублировать тоже.</p>
-<p>Цель работы: выгрузить справочник из старой базы, очистить его, собрать JSON по схеме приёмника, загрузить в MySQL через промежуточную таблицу и доказать сверкой, что количество записей и сумма кредитных лимитов не потерялись. Результат работы это скрипт импорта, журнал отказов и протокол сверки.</p>
+<p>«Северный склад» переносит справочник клиентов в «Склад+». В старой базе есть дубли, телефоны записаны в четырёх видах, у части контрагентов нет ИНН, даты в трёх форматах. Терять клиентов нельзя, дублировать тоже.</p>
+<p>Нужно очистить справочник, собрать JSON по схеме приёмника, загрузить его в MySQL через промежуточную таблицу и доказать сверкой, что записи и сумма кредитных лимитов не потерялись. Результат: скрипт импорта, журнал отказов и протокол сверки.</p>
 <h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
 <ul>
-<li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
-<li>Запущенные модули Apache и MySQL в XAMPP Control Panel.</li>
-<li>phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
-<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code>.</li>
-<li>Python 3 из комплекта VS Code, модули <code>csv</code>, <code>json</code>, <code>hashlib</code>, <code>re</code> из стандартной библиотеки.</li>
-<li>VS Code для скриптов, Excel для просмотра выгрузки.</li>
-<li>Рабочая папка <code>C:\sklad\migration</code>.</li>
+<li>Компьютер с Windows 10 и XAMPP 8.5.12, модули Apache и MySQL запущены.</li>
+<li>phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code> и клиент <code>mysql.exe</code> из папки <code>mysql/bin</code>.</li>
+<li>Python 3 и VS Code для скриптов, Excel для просмотра выгрузки; модули <code>csv</code>, <code>json</code>, <code>hashlib</code>, <code>re</code>.</li>
+<li>Рабочая папка <code>sklad\migration</code> внутри папки проекта.</li>
 </ul>
+<p><strong>Комплект «Склад+».</strong> <a href="reports/kit/sklad-plus-kit.zip">Скачать архив</a> и распаковать в папку работы. Внутри: <code>app/index.html</code> (учебный прототип, открывается в браузере), <code>database/schema.sql</code> и <code>database/seed.sql</code> (импорт в phpMyAdmin), <code>data/</code> (CSV и JSON для импорта), <code>templates/</code> (шаблоны отчётов). Демо-доступы прототипа: <code>admin / admin</code>, <code>manager / manager</code>, <code>storekeeper / storekeeper</code>.</p>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
-<p><strong>Миграция данных</strong> это перенос записей из источника в приёмник с сохранением смысла. Она включает инвентаризацию, очистку, преобразование, загрузку и сверку. Пропуск любого этапа даёт потери, которые обнаруживаются через неделю работы, когда менеджер не находит клиента.</p>
-<p><strong>Выгрузка</strong> фиксирует срез данных на дату. Для справочника клиентов это все записи, включая неактивные: удалённый клиент может понадобиться для истории заказов.</p>
-<p><strong>Очистка</strong> приводит значения к единому виду: убирает пробелы по краям, схлопывает двойные пробелы, нормализует телефон, приводит дату к ISO, заменяет десятичную запятую точкой. Очистка не выдумывает данные: если ИНН отсутствует, он остаётся пустым.</p>
-<p><strong>Сопоставление полей</strong> связывает поле файла со столбцом приёмника и задаёт правило преобразования. Естественный ключ <code>external_id</code> не меняется между выгрузками и служит опорой для повторного импорта.</p>
-<p><strong>Промежуточная таблица</strong> принимает данные без связей и ограничений основной таблицы. В ней записи проверяют, считают и только потом переносят слиянием.</p>
-<p><strong>Сверка</strong> сравнивает источник и приёмник по числу строк, числу уникальных ключей, сумме денежного столбца и контрольной сумме ключей. Совпадение только по количеству строк ничего не доказывает: одна запись могла пропасть, а другая появиться.</p>
-<p><strong>Контрольная сумма</strong> это короткий отпечаток набора данных. Ключи сортируют, склеивают через разделитель и считают SHA-256. Любая замена, пропуск или лишняя запись меняет отпечаток, даже если общее количество осталось прежним. Сумма денег и контрольная сумма ключей проверяют разные свойства, поэтому в протоколе нужны обе.</p>
-<p><strong>JSON выбран для обмена потому, что он различает <code>null</code>, число и строку.</strong> Приёмник получает не текст из CSV, а готовые значения нужного типа. Разбор и проверку берёт на себя скрипт, а база получает уже очищенные данные. Это снижает число ошибок, но не отменяет сверку: скрипт тоже может ошибиться.</p>
+<p><strong>Миграция данных</strong> это перенос записей с сохранением смысла: инвентаризация, очистка, преобразование, загрузка и сверка. Пропуск этапа даёт потери, которые видны через неделю.</p>
+<p><strong>Очистка</strong> приводит значения к единому виду: убирает пробелы по краям, нормализует телефон, приводит дату к ISO, заменяет запятую точкой. Она не выдумывает данные: пустой ИНН остаётся пустым.</p>
+<p><strong>Сопоставление полей</strong> связывает поле файла со столбцом приёмника. Ключ <code>external_id</code> не меняется между выгрузками и держит повторный импорт. <strong>Промежуточная таблица</strong> принимает данные без связей: в ней записи проверяют, считают и переносят слиянием.</p>
+<p><strong>Сверка</strong> сравнивает число строк, число уникальных ключей, сумму денежного столбца и контрольную сумму ключей. Совпадение по количеству строк ничего не доказывает: одна запись могла пропасть, другая появиться. <strong>Контрольная сумма</strong> это отпечаток набора: ключи сортируют, склеивают и считают SHA-256.</p>
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Создайте старую базу и зафиксируйте исходные показатели</h3>
-<p>Откройте phpMyAdmin, создайте базу <code>sklad_old</code> в кодировке <code>utf8mb4</code> и выполните скрипт. В нём намеренно оставлены типичные дефекты старой программы.</p>
+<p>Создайте в phpMyAdmin базу <code>sklad_old</code> в кодировке <code>utf8mb4</code> и выполните скрипт с дефектами старой программы.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">sklad_old</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
 <span class="n">USE</span><span class="w"> </span><span class="n">sklad_old</span><span class="p">;</span>
-<span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">customers_old</span><span class="p">;</span>
 
 <span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">customers_old</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">external_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span>
-<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">150</span><span class="p">),</span>
-<span class="w">  </span><span class="n">inn</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
-<span class="w">  </span><span class="n">phone</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
-<span class="w">  </span><span class="n">city</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
-<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
-<span class="w">  </span><span class="n">credit_limit</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
-<span class="w">  </span><span class="n">active</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
+<span class="w">  </span><span class="n">external_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">150</span><span class="p">),</span><span class="w"> </span><span class="n">inn</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">phone</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
+<span class="w">  </span><span class="n">city</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">credit_limit</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="p">);</span>
 
 <span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">customers_old</span><span class="w"> </span><span class="k">VALUES</span>
 <span class="p">(</span><span class="s1">&#39;C-1001&#39;</span><span class="p">,</span><span class="s1">&#39;ООО &quot;Стройбаза Тверь&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;5047001234&#39;</span><span class="p">,</span><span class="s1">&#39;+7 (4822) 33-15-40&#39;</span><span class="p">,</span><span class="s1">&#39;Тверь&#39;</span><span class="p">,</span><span class="s1">&#39;27.10.2026&#39;</span><span class="p">,</span><span class="s1">&#39;250000,00&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
@@ -864,13 +851,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="p">(</span><span class="s1">&#39;C-1004&#39;</span><span class="p">,</span><span class="s1">&#39;ООО &quot;Строймаркет&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;5047002222&#39;</span><span class="p">,</span><span class="s1">&#39;+7 4822 44-22-11&#39;</span><span class="p">,</span><span class="s1">&#39;Москва&#39;</span><span class="p">,</span><span class="s1">&#39;2026-10-27&#39;</span><span class="p">,</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;0&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="s1">&#39;C-1005&#39;</span><span class="p">,</span><span class="s1">&#39;ИП Сидоров&#39;</span><span class="p">,</span><span class="s1">&#39;504700333&#39;</span><span class="p">,</span><span class="s1">&#39;8-920-111-22-33&#39;</span><span class="p">,</span><span class="s1">&#39;Москва&#39;</span><span class="p">,</span><span class="s1">&#39;27.10.2026&#39;</span><span class="p">,</span><span class="s1">&#39;50000,00&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="s1">&#39;C-1006&#39;</span><span class="p">,</span><span class="s1">&#39;ООО &quot;Мастер&quot;&#39;</span><span class="p">,</span><span class="k">NULL</span><span class="p">,</span><span class="k">NULL</span><span class="p">,</span><span class="s1">&#39;Тверь&#39;</span><span class="p">,</span><span class="s1">&#39;27.10.2026&#39;</span><span class="p">,</span><span class="s1">&#39;75000,00&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
-<span class="p">(</span><span class="s1">&#39;C-1007&#39;</span><span class="p">,</span><span class="s1">&#39;ООО &quot;Вектор&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;5047004444&#39;</span><span class="p">,</span><span class="s1">&#39;+7 4822 55-66-77&#39;</span><span class="p">,</span><span class="s1">&#39;Тула&#39;</span><span class="p">,</span><span class="s1">&#39;2026-10-27&#39;</span><span class="p">,</span><span class="s1">&#39;90000,00&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
-<span class="p">(</span><span class="s1">&#39;C-1008&#39;</span><span class="p">,</span><span class="s1">&#39;ИП Петрова&#39;</span><span class="p">,</span><span class="s1">&#39;5047005555&#39;</span><span class="p">,</span><span class="s1">&#39;8 (930) 222-33-44&#39;</span><span class="p">,</span><span class="s1">&#39;Калуга&#39;</span><span class="p">,</span><span class="s1">&#39;2026-10-27&#39;</span><span class="p">,</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
-<span class="p">(</span><span class="s1">&#39;C-1009&#39;</span><span class="p">,</span><span class="s1">&#39;ООО &quot;Гранит&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;5047006666&#39;</span><span class="p">,</span><span class="s1">&#39;+7 4822 77-88-99&#39;</span><span class="p">,</span><span class="s1">&#39;Москва&#39;</span><span class="p">,</span><span class="s1">&#39;27.10.2026&#39;</span><span class="p">,</span><span class="s1">&#39;130000,00&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="s1">&#39;C-1010&#39;</span><span class="p">,</span><span class="s1">&#39;   &#39;</span><span class="p">,</span><span class="s1">&#39;5047007777&#39;</span><span class="p">,</span><span class="s1">&#39;+7 4822 00-00-00&#39;</span><span class="p">,</span><span class="s1">&#39;Тверь&#39;</span><span class="p">,</span><span class="s1">&#39;27.10.2026&#39;</span><span class="p">,</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
 </code></pre></div>
 
-<p>Снимите исходные показатели и запишите их в таблицу. Сумму считайте по значениям, заменив запятую на точку и убрав пробелы.</p>
+<p>Снимите показатели в таблицу. Сумму считайте, заменив запятую точкой и убрав пробелы.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">external_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">keys_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="k">REPLACE</span><span class="p">(</span><span class="k">REPLACE</span><span class="p">(</span><span class="n">credit_limit</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">credit_sum</span><span class="p">,</span>
@@ -906,7 +890,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tbody>
 </table>
 <h3>Шаг 2. Создайте базу приёмника</h3>
-<p>Создайте базу <code>sklad</code> и таблицы: основную, промежуточную, журнал партий и журнал отказов.</p>
+<p>Создайте базу <code>sklad</code> и три таблицы: основную, промежуточную, журнал партий.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">sklad</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
 <span class="n">USE</span><span class="w"> </span><span class="n">sklad</span><span class="p">;</span>
 
@@ -922,7 +906,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
 <span class="w">  </span><span class="n">row_hash</span><span class="w"> </span><span class="nb">CHAR</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
 <span class="w">  </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">uq_customers_external</span><span class="w"> </span><span class="p">(</span><span class="n">external_id</span><span class="p">)</span>
-<span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
+<span class="p">);</span>
 
 <span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">stg_customers</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="n">customers</span><span class="p">;</span>
 
@@ -939,59 +923,51 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="p">);</span>
 </code></pre></div>
 
-<p>Проверьте, что у <code>customers</code> есть уникальный индекс по <code>external_id</code>: без него повторный импорт создаст дубли.</p>
+<p>Без уникального индекса по <code>external_id</code> повторный импорт создаст дубли.</p>
 <h3>Шаг 3. Выгрузите старую таблицу в CSV</h3>
-<p>В phpMyAdmin откройте <code>sklad_old</code>, таблицу <code>customers_old</code>, вкладку «Экспорт». Выберите формат CSV, разделитель <code>;</code>, первую строку с именами полей, кодировку <code>utf-8</code>. Сохраните файл как <code>C:\sklad\migration\customers_old.csv</code>.</p>
-<p>Откройте файл в VS Code и убедитесь, что заголовки совпадают с именами столбцов, а русские буквы читаются. Если вместо них видны вопросительные знаки, выгрузка сделана в неверной кодировке, повторите её.</p>
-<p>Проверьте разделитель: он должен совпадать с тем, что указан в скрипте. Если выгрузить файл с запятой, а читать с точкой с запятой, все поля соберутся в один столбец, и скрипт не найдёт ни <code>external_id</code>, ни <code>name</code>. Число полей в первой строке должно совпадать с числом столбцов таблицы.</p>
+<p>В phpMyAdmin откройте <code>sklad_old</code>, таблицу <code>customers_old</code>, вкладку «Экспорт». Выберите CSV, разделитель <code>;</code>, первую строку с именами полей, кодировку <code>utf-8</code>. Сохраните файл как <code>customers_old.csv</code>.</p>
+<p>Проверьте в VS Code, что заголовки совпадают со столбцами и русские буквы читаются. Разделитель в файле и в скрипте должен совпадать.</p>
 <h3>Шаг 4. Очистите данные и соберите JSON</h3>
-<p>Создайте <code>clean.py</code>. Скрипт читает CSV, нормализует поля, отбрасывает дубли и записи с пустым названием, а результат сохраняет в <code>customers.json</code>.</p>
-<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">norm_date</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
-    <span class="n">raw</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d</span><span class="si">{2}</span><span class="s2">)[./](\d</span><span class="si">{2}</span><span class="s2">)[./](\d</span><span class="si">{4}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> 00:00:00&quot;</span> <span class="k">if</span> <span class="n">m</span> <span class="k">else</span> <span class="n">raw</span><span class="p">[:</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+<p>Пример: функция убирает всё, кроме цифр, проверяет длину и меняет первую цифру на <code>+7</code>.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">norm_phone</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;+7&quot;</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span> <span class="ow">and</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;78&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span> <span class="ow">and</span> <span class="n">digits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;78&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;+7&quot;</span> <span class="o">+</span> <span class="n">digits</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;8 (910) 000-11-22&quot;</span><span class="p">,</span> <span class="s2">&quot;+7 4822 44-22-11&quot;</span><span class="p">,</span> <span class="s2">&quot;33-15&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">norm_phone</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</code></pre></div>
+
+<p>Первые два значения дают <code>+79100001122</code> и <code>+74822442211</code>, третье даёт <code>None</code>.</p>
+<p>Создайте <code>clean.py</code> и допишите остальные поля по образцу. Ниже каркас.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span>
 
 <span class="n">rows</span><span class="p">,</span> <span class="n">rejected</span><span class="p">,</span> <span class="n">seen</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="nb">set</span><span class="p">()</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;customers_old.csv&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8-sig&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
-        <span class="n">inn</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;inn&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seen</span> <span class="ow">or</span> <span class="p">(</span><span class="n">inn</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">inn</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">)):</span>
-            <span class="n">rejected</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;name, key or inn&quot;</span><span class="p">})</span>
-            <span class="k">continue</span>
-        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;inn&quot;</span><span class="p">:</span> <span class="n">inn</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">norm_phone</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;phone&quot;</span><span class="p">]),</span> <span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;city&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="s2">&quot;credit_limit&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;credit_limit&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">),</span>
-               <span class="s2">&quot;is_active&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-               <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="n">norm_date</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;created_at&quot;</span><span class="p">])}</span>
-        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;row_hash&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="c1"># название: без пробелов по краям, двойные схлопнуть</span>
+        <span class="c1"># ИНН: только цифры, длина 10 или 12</span>
+        <span class="c1"># отклонить строку с пустым названием, повторным ключом или битым ИНН</span>
+        <span class="c1"># собрать словарь полей приёмника и посчитать row_hash</span>
+        <span class="k">pass</span>
 
 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;batch_id&quot;</span><span class="p">:</span> <span class="s2">&quot;2026-10-27-customers&quot;</span><span class="p">,</span> <span class="s2">&quot;customers&quot;</span><span class="p">:</span> <span class="n">rows</span><span class="p">},</span>
           <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;customers.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;к загрузке&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="s2">&quot;отклонено&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rejected</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rejected</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Запустите скрипт и запишите число записей и отказов. Ожидается восемь записей к загрузке и три отказа: дубль <code>C-1002</code>, ИНН из девяти цифр у <code>C-1005</code> и пустое название у <code>C-1010</code>.</p>
+<p>Дата встречается в трёх видах: <code>27.10.2026</code>, <code>2026-10-27</code> и <code>27/10/2026</code>. Сумма записана с запятой и пробелом между разрядами. Приведите дату к виду <code>ГГГГ-ММ-ДД ЧЧ:ММ:СС</code>, сумму к числу. Запустите скрипт, запишите число записей и отказов, объясните каждый отказ номером строки.</p>
 <h3>Шаг 5. Проверьте JSON до загрузки</h3>
-<p>Откройте <code>customers.json</code> и проверьте структуру по таблице. Каждая строка должна иметь все ключи, даже если значение <code>null</code>.</p>
+<p>Проверьте структуру JSON: все ключи на месте, даже при значении <code>null</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Поле</th>
 <th>Тип</th>
 <th>Проверка</th>
-<th>Пример</th>
 </tr>
 </thead>
 <tbody>
@@ -999,75 +975,60 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <td><code>external_id</code></td>
 <td>строка</td>
 <td>уникален, не пуст</td>
-<td><code>C-1003</code></td>
 </tr>
 <tr>
 <td><code>name</code></td>
 <td>строка</td>
 <td>без пробелов по краям</td>
-<td><code>ООО Ромашка</code></td>
 </tr>
 <tr>
 <td><code>inn</code></td>
 <td>строка или <code>null</code></td>
 <td>10 или 12 цифр</td>
-<td><code>5047001111</code></td>
 </tr>
 <tr>
 <td><code>phone</code></td>
 <td>строка или <code>null</code></td>
 <td>начинается с <code>+7</code>, 11 цифр</td>
-<td><code>+79100001122</code></td>
 </tr>
 <tr>
 <td><code>credit_limit</code></td>
 <td>число</td>
 <td>не отрицательное</td>
-<td><code>1200000.5</code></td>
 </tr>
 <tr>
 <td><code>created_at</code></td>
 <td>строка</td>
 <td>формат <code>ГГГГ-ММ-ДД ЧЧ:ММ:СС</code></td>
-<td><code>2026-10-27 00:00:00</code></td>
 </tr>
 <tr>
 <td><code>is_active</code></td>
 <td>число</td>
 <td>0 или 1</td>
-<td><code>1</code></td>
 </tr>
 </tbody>
 </table>
-<p>Дополнительно проверьте, что даты начинаются с <code>2026</code>, телефоны не содержат скобок и дефисов, а сумма всех лимитов равна сумме источника за вычетом отклонённых записей. Расхождение объясните, а не подгоните.</p>
+<p>Сумма лимитов должна равняться сумме источника без отклонённых записей. Расхождение объясните, не подгоняйте.</p>
 <h3>Шаг 6. Загрузите JSON в промежуточную таблицу</h3>
-<p>Добавьте в <code>clean.py</code> формирование SQL-файла и запуск клиента MySQL. Так JSON разбирает Python, а в базу попадает подготовленный скрипт.</p>
-<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<p>Строка в SQL берётся в кавычки, одиночная кавычка внутри удваивается.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">q</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;NULL&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">q</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;NULL&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span> <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
-
-<span class="n">cols</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;external_id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;inn&quot;</span><span class="p">,</span> <span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;city&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_limit&quot;</span><span class="p">,</span> <span class="s2">&quot;is_active&quot;</span><span class="p">,</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;row_hash&quot;</span><span class="p">)</span>
-<span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SET NAMES utf8mb4;&quot;</span><span class="p">,</span> <span class="s2">&quot;TRUNCATE TABLE stg_customers;&quot;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;INSERT INTO stg_customers (&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;) VALUES (&quot;</span>
-                 <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;);&quot;</span><span class="p">)</span>
-<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;import.sql&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
-<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="sa">r</span><span class="s2">&quot;C:\xampp\mysql\bin\mysql.exe&quot;</span><span class="p">,</span> <span class="s2">&quot;-u&quot;</span><span class="p">,</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;sklad&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;--default-character-set=utf8mb4&quot;</span><span class="p">,</span> <span class="s2">&quot;--execute&quot;</span><span class="p">,</span> <span class="s2">&quot;source import.sql&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">q</span><span class="p">(</span><span class="mf">1200000.5</span><span class="p">),</span> <span class="n">q</span><span class="p">(</span><span class="s2">&quot;ООО Ромашка&quot;</span><span class="p">))</span>
 </code></pre></div>
 
-<p>Если запускать клиент из скрипта неудобно, загрузите <code>import.sql</code> через phpMyAdmin, вкладку «Импорт». Проверьте результат.</p>
+<p>Вывод: <code>NULL 1200000.5 'ООО Ромашка'</code>.</p>
+<p>Добавьте в <code>clean.py</code> сборку <code>import.sql</code>: <code>SET NAMES utf8mb4</code>, <code>TRUNCATE TABLE stg_customers</code> и по одному <code>INSERT</code> на запись. Загрузите файл через вкладку «Импорт» в phpMyAdmin.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">staged</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">stg_customers</span><span class="p">;</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">external_id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">phone</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">stg_customers</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">external_id</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Число строк в <code>stg_customers</code> должно совпасть с числом записей в JSON. Если появились знаки вопроса вместо русских букв, проверьте кодировку соединения и файла.</p>
-<p>Промежуточную таблицу перед загрузкой очищают, иначе остатки прошлого запуска смешаются с новыми данными. Именно поэтому в скрипте стоит <code>TRUNCATE TABLE stg_customers</code>. Основную таблицу при этом не трогают: до слияния она остаётся рабочей и доступной менеджерам.</p>
+<p>Число строк в <code>stg_customers</code> должно совпасть с числом записей в JSON. Промежуточную таблицу очищают перед загрузкой.</p>
 <h3>Шаг 7. Перенесите записи в основную таблицу</h3>
-<p>Выполните слияние по уникальному ключу. Запишите число строк до и после.</p>
+<p>Выполните слияние по уникальному ключу и запишите число строк до и после.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">before_merge</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">customers</span><span class="p">;</span>
 
 <span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="p">(</span><span class="n">external_id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">inn</span><span class="p">,</span><span class="w"> </span><span class="n">phone</span><span class="p">,</span><span class="w"> </span><span class="n">city</span><span class="p">,</span><span class="w"> </span><span class="n">credit_limit</span><span class="p">,</span><span class="w"> </span><span class="n">is_active</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="p">,</span><span class="w"> </span><span class="n">row_hash</span><span class="p">)</span>
@@ -1082,24 +1043,24 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">after_merge</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">customers</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Убедитесь, что дублей нет: запрос должен вернуть пустой результат.</p>
+<p>Запрос на дубли вернёт пустой результат.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">external_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">copies</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">external_id</span><span class="w"> </span><span class="k">HAVING</span><span class="w"> </span><span class="n">copies</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Слияние опирается на уникальный индекс <code>uq_customers_external</code>. Новая запись вставляется, совпавшая по ключу обновляется. Число строк до и после слияния помогает заметить ошибку в ключе: если оно выросло сильнее, чем ожидалось, значит часть записей пришла с другим <code>external_id</code> и уникальный индекс их не связал.</p>
+<p>Если строк стало больше, часть записей пришла с другим <code>external_id</code>.</p>
 <h3>Шаг 8. Обработайте ошибки и повторите импорт</h3>
-<p>Запустите <code>clean.py</code> и загрузку ещё раз без изменений. Количество строк в <code>customers</code> должно остаться прежним: слияние обновляет записи, а не добавляет их.</p>
-<p>Теперь исправьте в источнике две отклонённые записи: впишите реальное название вместо пустого у <code>C-1010</code> и корректный ИНН у <code>C-1005</code> (десять цифр). Перевыгрузите CSV, очистите, загрузите снова. Количество выросло на две записи, а журнал отказов сократился до одной строки: дубль <code>C-1002</code> остаётся, его нужно удалить в источнике отдельно. Зафиксируйте оба результата в протоколе.</p>
-<p>Занесите партию в журнал импорта. Числа замените на свои, а хеш постройте по имени партии.</p>
+<p>Запустите очистку и загрузку ещё раз и объясните изменение числа строк.</p>
+<p>Исправьте в источнике две отклонённые записи: название у <code>C-1010</code> и ИНН у <code>C-1005</code>. Перевыгрузите CSV, очистите, загрузите снова. Запишите, как изменились число строк и журнал отказов.</p>
+<p>Занесите партию в журнал импорта: числа из запуска, хеш по имени партии.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">import_batch</span>
 <span class="w">  </span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="n">file_hash</span><span class="p">,</span><span class="w"> </span><span class="n">started_at</span><span class="p">,</span><span class="w"> </span><span class="n">finished_at</span><span class="p">,</span><span class="w"> </span><span class="n">rows_total</span><span class="p">,</span><span class="w"> </span><span class="n">rows_loaded</span><span class="p">,</span><span class="w"> </span><span class="n">rows_rejected</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
 <span class="k">VALUES</span>
-<span class="w">  </span><span class="p">(</span><span class="s1">&#39;customers.json&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">SHA2</span><span class="p">(</span><span class="s1">&#39;2026-10-27-customers&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">),</span><span class="w"> </span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;done&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">(</span><span class="s1">&#39;customers.json&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">SHA2</span><span class="p">(</span><span class="s1">&#39;2026-10-27-customers&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">),</span><span class="w"> </span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;done&#39;</span><span class="p">);</span>
 </code></pre></div>
 
 <h3>Шаг 9. Сверьте результат и заполните протокол</h3>
-<p>Снимите показатели приёмника теми же запросами, что и на шаге 1, и сравните с источником.</p>
+<p>Снимите показатели приёмника теми же запросами и сравните с источником.</p>
 <div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">external_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">keys_total</span><span class="p">,</span>
 <span class="w">       </span><span class="k">SUM</span><span class="p">(</span><span class="n">credit_limit</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">credit_sum</span><span class="p">,</span>
@@ -1108,12 +1069,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="k">FROM</span><span class="w"> </span><span class="n">customers</span><span class="p">;</span>
 </code></pre></div>
 
-<p>Отдельно сверьте контрольную сумму ключей: выгрузите ключи из источника и приёмника, отсортируйте и сравните хеш.</p>
-<div class="codehilite" data-lang="sql"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">external_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">external_id</span><span class="p">;</span>
-</code></pre></div>
-
-<p>Сравнивать два списка глазами на тысячах строк бессмысленно. Сохраните оба результата в текстовые файлы, отсортируйте и сравните командой <code>Compare-Object</code> в PowerShell или функцией <code>difflib</code> в Python. Пустой вывод означает, что набор ключей совпал.</p>
-<p>Если расхождение есть, сначала ищите записи, отклонённые при очистке, затем записи с изменённым ключом, и только потом ошибку слияния. Порядок поиска идёт от самой вероятной причины к самой редкой.</p>
+<p>Отдельно сверьте набор ключей: сохраните ключи источника и приёмника в файлы и сравните командой <code>Compare-Object</code> или <code>difflib</code>. Пустой вывод означает совпадение.</p>
 <table>
 <thead>
 <tr>
@@ -1127,21 +1083,21 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <tbody>
 <tr>
 <td>Строк всего</td>
-<td>11</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>Уникальных ключей</td>
-<td>10</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>Сумма <code>credit_limit</code></td>
-<td>1 795 000,50</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -1155,64 +1111,61 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </tr>
 <tr>
 <td>Отклонено записей</td>
-<td>нет</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p>Заполняйте таблицу по результату первого импорта, до исправления отклонённых записей. В последнем столбце объясните каждое расхождение: сколько записей отклонено и почему, какая сумма выбыла вместе с отклонённой записью. Фраза «данные перенесены» без чисел не принимается.</p>
+<p>Заполняйте таблицу по первому импорту: сколько записей отклонено, какая сумма выбыла. Фраза «данные перенесены» без чисел не принимается.</p>
 <h2 id="что-сдать"><span class="num">05</span>Что сдать</h2>
 <ul>
 <li>Скрипт <code>clean.py</code>, файл <code>customers.json</code> и сгенерированный <code>import.sql</code>.</li>
 <li>Выгрузку <code>customers_old.csv</code> и журнал отказов с причинами.</li>
 <li>Заполненный протокол сверки по пяти показателям с объяснением расхождений.</li>
-<li>Результат повторного импорта: число строк до и после, подтверждение отсутствия дублей.</li>
+<li>Результат повторного импорта: число строк до и после, отсутствие дублей.</li>
 <li>Краткий вывод: какие дефекты были в источнике и какие правила их устранили.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Выгрузка и очистка</td>
-<td>20</td>
-<td>Нормализованы даты, телефоны, пробелы и суммы, дубли найдены</td>
-</tr>
-<tr>
-<td>JSON и маппинг</td>
-<td>20</td>
-<td>Структура совпадает со схемой, типы и <code>null</code> корректны</td>
-</tr>
-<tr>
-<td>Загрузка</td>
-<td>20</td>
-<td>Данные попали в staging и основную таблицу без потерь</td>
-</tr>
-<tr>
-<td>Повторный импорт</td>
-<td>15</td>
-<td>Второй запуск не создаёт дублей</td>
-</tr>
-<tr>
-<td>Сверка и протокол</td>
-<td>20</td>
-<td>Показатели посчитаны, расхождения объяснены</td>
-</tr>
-<tr>
-<td>Оформление</td>
 <td>5</td>
-<td>Скрипты читаются, имена файлов и таблиц единообразны</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Работа не выполнена</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Выгрузка и очистка.</strong> Нормализованы даты, телефоны, пробелы и суммы, дубли найдены
+- <strong>JSON и маппинг.</strong> Структура совпадает со схемой, типы и <code>null</code> корректны
+- <strong>Загрузка.</strong> Данные попали в staging и основную таблицу без потерь
+- <strong>Повторный импорт.</strong> Второй запуск не создаёт дублей
+- <strong>Сверка и протокол.</strong> Показатели посчитаны, расхождения объяснены
+- <strong>Оформление.</strong> Скрипты читаются, имена файлов и таблиц единообразны</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>

@@ -909,7 +909,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Клиент запускают с разрешением локальной загрузки:</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>C:<span class="se">\x</span>ampp<span class="se">\m</span>ysql<span class="se">\b</span>in<span class="se">\m</span>ysql.exe<span class="w"> </span>--local-infile<span class="o">=</span><span class="m">1</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>dean
+<div class="codehilite" data-lang="text"><pre><span></span><code>mysql<span class="w"> </span>--local-infile<span class="o">=</span><span class="m">1</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>dean
 </code></pre></div>
 
 <h2 id="загрузка-csv-через-load-data"><span class="num">05</span>Загрузка CSV через LOAD DATA</h2>
@@ -923,7 +923,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 </code></pre></div>
 
 <p>Загрузка задаёт кодировку, разделитель, кавычки и конец строки. Для файла из Windows конец строки это <code>\r\n</code>, иначе последнее поле каждой строки получит лишний символ возврата каретки.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/xampp/htdocs/import/students.csv&#39;</span>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;.../xampp/htdocs/import/students.csv&#39;</span>
 <span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students_stage</span>
 <span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span>
 <span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">OPTIONALLY</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
@@ -951,7 +951,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="na">max_execution_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">300</span>
 </code></pre></div>
 
-<p>Правки вносят в <code>C:\xampp\php\php.ini</code>, после чего перезапускают Apache. Если файл больше предела, phpMyAdmin либо откажется его принимать, либо оборвёт импорт на середине. Второй случай опаснее: часть строк уже в таблице, и повторная загрузка создаст дубли.</p>
+<p>Правки вносят в <code>.../xampp/php/php.ini</code>, после чего перезапускают Apache. Если файл больше предела, phpMyAdmin либо откажется его принимать, либо оборвёт импорт на середине. Второй случай опаснее: часть строк уже в таблице, и повторная загрузка создаст дубли.</p>
 <div class="callout pitfall"><span class="label">Успешный импорт не означает полный</span><p>Сообщение «Импорт успешно завершён» говорит только о том, что команда не упала. Сколько строк принято, сколько отклонено и почему, phpMyAdmin показывает отдельным блоком, и его нужно читать, а не закрывать.</p></div></div>
 </div>
 
@@ -1005,7 +1005,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <span class="w">  </span><span class="n">doc</span><span class="w"> </span><span class="n">JSON</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
 <span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="p">;</span>
 
-<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;C:/xampp/htdocs/import/students.jsonl&#39;</span>
+<span class="k">LOAD</span><span class="w"> </span><span class="k">DATA</span><span class="w"> </span><span class="k">LOCAL</span><span class="w"> </span><span class="n">INFILE</span><span class="w"> </span><span class="s1">&#39;.../xampp/htdocs/import/students.jsonl&#39;</span>
 <span class="k">INTO</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students_json_stage</span>
 <span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span>
 <span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span>
@@ -1026,7 +1026,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <p>Экспорт это тот же обмен, только в обратную сторону, и здесь важны те же три вещи. Для CSV подходит <code>SELECT ... INTO OUTFILE</code>.</p>
 <div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">,</span><span class="w"> </span><span class="n">email</span>
 <span class="k">FROM</span><span class="w"> </span><span class="n">students</span>
-<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;C:/xampp/mysql/export/students.csv&#39;</span>
+<span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;.../xampp/mysql/export/students.csv&#39;</span>
 <span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span>
 <span class="n">FIELDS</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="n">OPTIONALLY</span><span class="w"> </span><span class="n">ENCLOSED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span>
 <span class="n">LINES</span><span class="w"> </span><span class="n">TERMINATED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
@@ -1034,7 +1034,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 
 <p>Команда требует привилегии <code>FILE</code> и каталога из <code>secure_file_priv</code>. Если каталог не разрешён, файл не появится, и ошибка будет не про права, а про доступ к пути.</p>
 <p>Для копии базы целиком используют <code>mysqldump</code>, который сохраняет схему, данные и кодировку.</p>
-<div class="codehilite" data-lang="text"><pre><span></span><code>C:<span class="se">\x</span>ampp<span class="se">\m</span>ysql<span class="se">\b</span>in<span class="se">\m</span>ysqldump.exe<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>--default-character-set<span class="o">=</span>utf8mb4<span class="w"> </span>--single-transaction<span class="w"> </span>--routines<span class="w"> </span>--triggers<span class="w"> </span>dean<span class="w"> </span>&gt;<span class="w"> </span>dean.sql
+<div class="codehilite" data-lang="text"><pre><span></span><code>mysqldump<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>--default-character-set<span class="o">=</span>utf8mb4<span class="w"> </span>--single-transaction<span class="w"> </span>--routines<span class="w"> </span>--triggers<span class="w"> </span>dean<span class="w"> </span>&gt;<span class="w"> </span>dean.sql
 </code></pre></div>
 
 <p>phpMyAdmin на вкладке «Экспорт» умеет CSV, JSON и SQL, но для больших таблиц упирается в лимиты PHP и в память браузера. Проверка выгрузки простая: загрузить файл обратно в промежуточную таблицу и сверить число строк.</p>

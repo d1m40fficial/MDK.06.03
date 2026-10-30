@@ -824,9 +824,9 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Персональный компьютер с Windows 10 и XAMPP 8.5.12.</li>
 <li>Запущенные в XAMPP Control Panel модули Apache и MySQL, база <code>dean</code> с учебными данными.</li>
 <li>Два окна командной строки для параллельных сессий <code>mysql</code>.</li>
-<li>Клиент <code>C:\xampp\mysql\bin\mysql.exe</code> и phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
+<li>Клиент <code>mysql</code> и phpMyAdmin по адресу <code>http://localhost/phpmyadmin</code>.</li>
 <li>Пользователь <code>root</code> без пароля для учебных опытов или <code>dean_app</code> с правом изменения таблиц.</li>
-<li>Каталог <code>C:\dean\transactions</code> для скриптов и скриншотов.</li>
+<li>Каталог <code>.../dean/transactions</code> для скриптов и скриншотов.</li>
 </ul>
 <h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
 <p><strong>Транзакция</strong> это последовательность операторов, которую сервер выполняет как единое целое. Четыре буквы ACID означают атомарность (всё или ничего), согласованность (ограничения выполняются после фиксации), изолированность (параллельные транзакции не мешают друг другу) и долговечность (зафиксированное переживает сбой).</p>
@@ -839,7 +839,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
 <h3>Шаг 1. Откройте две сессии и подпишите вывод</h3>
 <p>Откройте два окна командной строки и в каждом запустите клиент на базе <code>dean</code>.</p>
-<div class="codehilite" data-lang="bat"><pre><span></span><code>C<span class="p">:</span><span class="nl">\xampp\mysql\bin\mysql.exe</span><span class="c1"> -u root dean</span>
+<div class="codehilite" data-lang="bat"><pre><span></span><code>mysql -u root dean
 </code></pre></div>
 
 <p>В сессии A напечатайте подпись, номер соединения и уровень изоляции.</p>
@@ -1111,42 +1111,43 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Краткий вывод: на каком уровне изоляции какая аномалия исчезает и какой ценой.</li>
 </ul>
 <h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
 <tr>
-<th>Критерий</th>
-<th>Баллы</th>
-<th>Что проверяется</th>
+<th>Оценка</th>
+<th>Условие</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Сценарии</td>
-<td>30</td>
-<td>Все восемь сценариев выполнены и дали ожидаемый эффект</td>
+<td>5</td>
+<td>Работа выполнена полностью и самостоятельно, все пункты ниже выполнены</td>
 </tr>
 <tr>
-<td>Параллельность</td>
-<td>20</td>
-<td>Действия сессий чередуются так, что аномалия воспроизводится</td>
+<td>4</td>
+<td>Работа выполнена, есть 1 или 2 незначительных замечания</td>
 </tr>
 <tr>
-<td>Наблюдение</td>
-<td>20</td>
-<td><code>INNODB_TRX</code>, <code>data_locks</code> и <code>INNODB STATUS</code> использованы по назначению</td>
+<td>3</td>
+<td>Работа выполнена частично, есть существенные замечания</td>
 </tr>
 <tr>
-<td>Объяснение</td>
-<td>20</td>
-<td>В таблице названа причина, а не только результат</td>
+<td>2</td>
+<td>Работа не выполнена</td>
 </tr>
 <tr>
-<td>Оформление</td>
-<td>10</td>
-<td>Скрипты читаются, подписи есть, выводы кратки</td>
+<td>1</td>
+<td>Работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления</td>
 </tr>
 </tbody>
 </table>
+<p>Что проверяется:
+- <strong>Сценарии.</strong> Все восемь сценариев выполнены и дали ожидаемый эффект
+- <strong>Параллельность.</strong> Действия сессий чередуются так, что аномалия воспроизводится
+- <strong>Наблюдение.</strong> <code>INNODB_TRX</code>, <code>data_locks</code> и <code>INNODB STATUS</code> использованы по назначению
+- <strong>Объяснение.</strong> В таблице названа причина, а не только результат
+- <strong>Оформление.</strong> Скрипты читаются, подписи есть, выводы кратки</p>
 <h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
