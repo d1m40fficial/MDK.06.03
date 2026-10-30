@@ -286,6 +286,83 @@ REVEAL_SCRIPT = r"""
 })();
 """
 
+STEP_SCRIPT = r"""
+(function(){
+  var prose = document.querySelector('article.prose[data-practice]');
+  if(!prose) return;
+  var heads = [].slice.call(prose.querySelectorAll('h3')).filter(function(h){
+    return /^Шаг\s+\d+/i.test(h.textContent.trim());
+  });
+  if(!heads.length) return;
+  var base = 'mdk-step:' + location.pathname;
+  function load(i){
+    try { return JSON.parse(localStorage.getItem(base + ':' + i) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function save(i, state){
+    try { localStorage.setItem(base + ':' + i, JSON.stringify(state)); }
+    catch(e) {}
+  }
+  heads.forEach(function(h, index){
+    var section = document.createElement('section');
+    section.className = 'work-step';
+    section.dataset.step = String(index + 1);
+    var head = document.createElement('div');
+    head.className = 'step-head';
+    var check = document.createElement('input');
+    check.type = 'checkbox';
+    check.className = 'step-check';
+    check.setAttribute('aria-label', 'Отметить шаг выполненным');
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'step-toggle';
+    toggle.setAttribute('aria-label', 'Свернуть или развернуть шаг');
+    toggle.innerHTML = '<span class="step-chevron" aria-hidden="true"></span>';
+    h.parentNode.insertBefore(section, h);
+    head.appendChild(check);
+    head.appendChild(h);
+    head.appendChild(toggle);
+    section.appendChild(head);
+    var body = document.createElement('div');
+    body.className = 'step-body';
+    section.appendChild(body);
+    var node = section.nextSibling;
+    while(node){
+      if(node.nodeType === 1 && (node.tagName === 'H3' || node.tagName === 'H2')) break;
+      var next = node.nextSibling;
+      body.appendChild(node);
+      node = next;
+    }
+    var state = load(index);
+    var done = !!state.done;
+    var open = state.open !== false;
+    function apply(){
+      section.classList.toggle('is-done', done);
+      section.classList.toggle('is-collapsed', done && !open);
+      check.checked = done;
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    check.addEventListener('change', function(){
+      done = check.checked;
+      open = !done;
+      save(index, {done: done, open: open});
+      apply();
+    });
+    function flip(){
+      open = !open;
+      save(index, {done: done, open: open});
+      apply();
+    }
+    toggle.addEventListener('click', function(e){ e.stopPropagation(); flip(); });
+    h.addEventListener('click', function(e){
+      if(e.target.closest('a')) return;
+      flip();
+    });
+    apply();
+  });
+})();
+"""
+
 def lesson_tools(warn: bool, back: str = "") -> str:
     """Lesson controls: back to the plan, PDF export and (on lectures) warning."""
     return rail(back=back, pdf=True, warn=warn)
@@ -864,14 +941,15 @@ def main():
                 + "\n.codehilite,.codehilite pre{background:var(--code-bg)!important}")
 
     fig_script = FIG_SCRIPT.replace("__FIX__", json.dumps(IFRAME_FIX).replace("</", "<\\/"))
-    script = (SHADER_JS + (GATE_SCRIPT if has_gate else "") + READ_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
+    script = (SHADER_JS + (GATE_SCRIPT if has_gate else "") + READ_SCRIPT + STEP_SCRIPT + REVEAL_SCRIPT + PDF_SCRIPT
               + (fig_script if any(f["status"] == "built" for f in figures) else "")
               + (QUIZ_SCRIPT if has_quiz else ""))
     modals = QUIZ_MODALS_HTML if has_quiz else ""
     gate_noscript = GATE_NOSCRIPT if has_gate else ""
     quiz_noscript = QUIZ_NOSCRIPT if has_quiz else ""
+    practice_attr = ' data-practice="1"' if str(fm.get("chapter", "")).startswith("Практика") else ""
     body_html = (f'{READ_PROGRESS_HTML}<main class="page">{crumbs}{lesson_tools(has_quiz, back_href)}{hero}{outcomes}{toc_html}'
-                 f'<article class="prose">{html_body}</article>{pager}</main>{modals}{gate_noscript}{quiz_noscript}')
+                 f'<article class="prose"{practice_attr}>{html_body}</article>{pager}</main>{modals}{gate_noscript}{quiz_noscript}')
     out.write_text(page(fm.get("title", "Занятие"), body_html, accent_vars(course), code_css,
                         script), encoding="utf-8")
     if bad:
