@@ -262,6 +262,18 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   written practical without moving its text.
 - A lecture introduces a topic before the practical that uses it. Never place a practical
   before the lecture that first explains its concepts.
+- A practical title does not repeat a lecture title; use an adjacent application, a
+  different example or a deeper task. Never write "the student will ..." in descriptions:
+  use impersonal forms or direct address.
+- Practical criteria use a 1-5 scale: 1 for work done with AI or copied without a chance
+  to fix it, 2 for work not completed, 3-5 for the quality of the completed work.
+- Practical instructions use relative paths such as `.../folder/file` or a bare command
+  name, never drive-letter paths.
+- A practical must not hand over a filled table as the answer. Give raw data, an empty
+  template or one sample row. Explain a new command on an example before asking for a
+  variation.
+- If a practical needs a training system or dataset, ship a starter kit, an archive or a
+  report template with the lesson.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
 - Chapter prose does not state lesson duration or per-step minutes. Duration lives in
