@@ -42,6 +42,85 @@ def spec_line(c: dict, hours: int = None) -> str:
     return " · ".join(b for b in bits if b)
 
 
+def card_art(ch: dict) -> str:
+    """A small thematic SVG illustration for a lesson card."""
+    title = str(ch.get("title", "")).lower()
+    text = " ".join([
+        str(ch.get("title", "")),
+        str(ch.get("summary", "")),
+        " ".join(ch.get("topics", []) or []),
+    ]).lower()
+
+    def choose(source: str):
+        def has(*words):
+            return any(word in source for word in words)
+
+        if has("база данных", "субд", "mysql", "sql", "er-", "нормализ", "таблиц", "запрос",
+               "резервн", "копир", "backup"):
+            return "db"
+        if has("безопас", "защит", "парол", "доступ", "аудит"):
+            return "shield"
+        if has("сеть", "tcp", "ip", "dns", "маршрут", "коммутац", "vpn"):
+            return "network"
+        if has("тест", "дефект", "баг", "качеств"):
+            return "test"
+        if has("api", "интеграц", "postman", "обмен", "сервис"):
+            return "api"
+        if has("проект", "wbs", "риск", "бюджет", "agile", "scrum", "план", "внедрен",
+               "обследован", "требован", "изменен"):
+            return "project"
+        if has("интерфейс", "дизайн", "макет", "ux", "экран"):
+            return "design"
+        if has("ос", "linux", "windows", "процесс", "память", "файлов", "командн"):
+            return "os"
+        if has("документ", "инструкц", "отчёт", "регламент", "руководств"):
+            return "docs"
+        if has("алгоритм", "цикл", "массив", "строк", "функц", "рекурс", "сортиров"):
+            return "code"
+        if has("процессор", "плата", "шина", "накопител", "чипсет", "bios", "uefi"):
+            return "hardware"
+        if has("матем", "модель", "график", "вероятн", "регресс", "статистик"):
+            return "math"
+        if has("сертификац", "стандарт"):
+            return "cert"
+        if has("поддержк", "сопровожд", "инцидент", "sla", "мониторинг", "диагност",
+               "непрерывн", "сбой", "обращен"):
+            return "support"
+        if has("обучен", "занятие", "урок"):
+            return "learn"
+        if has("экзамен", "демо", "задание", "защита"):
+            return "exam"
+        return None
+
+    motif = choose(title) or choose(text) or "default"
+    inner = CARD_ART[motif].replace("var(--accent)", "var(--course-accent, var(--accent))")
+    return (f'<div class="card-art" aria-hidden="true"><svg viewBox="0 0 120 120" fill="none" '
+            f'stroke="var(--course-accent, var(--accent))" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'
+            f'{inner}</svg></div>')
+
+
+CARD_ART = {
+    "db": '<ellipse cx="60" cy="34" rx="28" ry="10"/><path d="M32 34v22c0 5.5 12.5 10 28 10s28-4.5 28-10V34"/><path d="M32 56v22c0 5.5 12.5 10 28 10s28-4.5 28-10V56"/><path d="M32 45c0 5.5 12.5 10 28 10s28-4.5 28-10" opacity=".45"/>',
+    "code": '<rect x="22" y="28" width="76" height="64" rx="10"/><path d="M22 44h76"/><path d="M40 64l-8 8 8 8"/><path d="M80 64l8 8-8 8"/><path d="M66 60l-12 24"/>',
+    "network": '<circle cx="60" cy="30" r="10"/><circle cx="30" cy="84" r="10"/><circle cx="90" cy="84" r="10"/><path d="M60 40v14M52 52l-14 22M68 52l14 22"/><circle cx="60" cy="56" r="4" fill="var(--accent)" stroke="none"/>',
+    "shield": '<path d="M60 20l30 12v22c0 20-13 34-30 42-17-8-30-22-30-42V32z"/><path d="M46 60l10 10 20-22"/>',
+    "project": '<rect x="20" y="24" width="24" height="72" rx="5"/><rect x="48" y="24" width="24" height="48" rx="5"/><rect x="76" y="24" width="24" height="60" rx="5"/><path d="M28 40h8M28 52h8M56 40h8M84 40h8M84 52h8"/>',
+    "test": '<circle cx="54" cy="52" r="24"/><path d="M72 70l18 18"/><path d="M44 52l7 7 13-15"/>',
+    "design": '<rect x="20" y="24" width="80" height="72" rx="10"/><path d="M20 42h80"/><rect x="32" y="54" width="26" height="30" rx="4"/><path d="M68 58h20M68 68h20M68 78h14"/>',
+    "api": '<circle cx="30" cy="60" r="10"/><circle cx="90" cy="60" r="10"/><path d="M40 60h14M66 60h14"/><path d="M54 48v24M66 48v24"/><path d="M54 60h12"/>',
+    "os": '<rect x="18" y="26" width="84" height="68" rx="10"/><path d="M18 42h84"/><path d="M32 58l10 10-10 10M50 78h20"/><circle cx="30" cy="34" r="2" fill="var(--accent)" stroke="none"/><circle cx="38" cy="34" r="2" fill="var(--accent)" stroke="none"/>',
+    "docs": '<path d="M34 20h40l16 16v64H34z"/><path d="M74 20v16h16"/><path d="M46 52h32M46 64h32M46 76h20"/>',
+    "algorithm": '<rect x="20" y="22" width="36" height="24" rx="6"/><path d="M56 34h16v22H56"/><rect x="44" y="74" width="36" height="24" rx="6"/><path d="M62 56v18"/><path d="M78 34h16v40H78"/>',
+    "hardware": '<rect x="30" y="30" width="60" height="60" rx="10"/><rect x="46" y="46" width="28" height="28" rx="5"/><path d="M40 18v12M60 18v12M80 18v12M40 90v12M60 90v12M80 90v12M18 40h12M18 60h12M18 80h12M90 40h12M90 60h12M90 80h12"/>',
+    "math": '<path d="M24 90V30M24 90h72"/><path d="M34 78c12-4 18-28 30-28s18 16 30 8"/><path d="M34 70h8M34 50h8M34 30h8M44 82v8M64 82v8M84 82v8"/>',
+    "cert": '<rect x="24" y="20" width="72" height="56" rx="8"/><path d="M40 40h40M40 52h28"/><circle cx="60" cy="76" r="12"/><path d="M54 86l-4 14 10-6 10 6-4-14"/>',
+    "support": '<path d="M34 64v-8a26 26 0 0152 0v8"/><rect x="26" y="60" width="14" height="22" rx="7"/><rect x="80" y="60" width="14" height="22" rx="7"/><path d="M86 82c0 8-8 14-18 14h-8"/><circle cx="56" cy="96" r="4" fill="var(--accent)" stroke="none"/>',
+    "learn": '<rect x="20" y="26" width="80" height="54" rx="8"/><path d="M32 42h36M32 54h28M32 66h20"/><circle cx="88" cy="74" r="12"/><path d="M82 74l4 4 8-9"/>',
+    "exam": '<rect x="28" y="20" width="64" height="80" rx="8"/><path d="M44 42l6 6 12-12M44 64l6 6 12-12M44 86l6 6 12-12"/><path d="M70 48h10M70 70h10M70 92h10" opacity=".45"/>',
+    "default": '<circle cx="42" cy="48" r="18"/><circle cx="78" cy="72" r="22" opacity=".45"/><path d="M24 96h72" opacity=".4"/>',
+}
+
+
 def build_course(root: Path) -> Path:
     c = load_course(root / "course.json")
     dist = root / "dist"
@@ -73,7 +152,6 @@ def build_course(root: Path) -> Path:
             stale = dist / f"{dirname}.html"
             if stale.exists():
                 stale.unlink()
-        tags = [f"<span>{esc(t)}</span>" for t in ch.get("topics", [])[:6]]
         ST = {"planned": "план", "drafted": "черновик", "figures-pending": "фигуры готовятся", "published": "готово"}
         if locked:
             status = " · закрыто"
@@ -91,7 +169,7 @@ def build_course(root: Path) -> Path:
             mins = f'{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}'
         inner = (f'<div class="n">{lesson}</div><h3>{title}</h3>'
                  f'<div class="mins">{mins}</div>'
-                 f'<p>{esc(ch.get("summary", ""))}</p><div class="tags">{"".join(tags)}</div>')
+                 f'<p>{esc(ch.get("summary", ""))}</p>{card_art(ch)}')
         card = (f'<a class="lesson-card" href="{link}">{inner}</a>' if link
                 else f'<div class="lesson-card lesson-card-static">{inner}</div>')
         items.append(f'<li{cls}>{card}</li>')

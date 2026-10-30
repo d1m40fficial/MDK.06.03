@@ -333,18 +333,23 @@ html.quiz-pending .pager { display: none; }
 .syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
 .syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
 .syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
-.syllabus .lesson-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px minmax(0, 1fr) 132px; grid-template-rows: auto auto 1fr; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
 .syllabus .lesson-card-static { cursor: default; }
 .syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: span 3; padding-top: 2px; }
-.syllabus h3 { margin: 0; font: 700 18px var(--font-display); }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: 1 / span 3; padding-top: 2px; }
+.syllabus h3 { grid-column: 2; grid-row: 1; min-width: 0; margin: 0; font: 700 18px var(--font-display); overflow-wrap: anywhere; }
 .syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
-.syllabus .mins { font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
-.syllabus p { grid-column: 2 / span 2; margin: 0; color: var(--ink-2); font-size: 14.5px; }
-.syllabus .tags { grid-column: 2 / span 2; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-.syllabus .tags span { font: 11px var(--font-mono); padding: 3px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule-2); color: var(--ink-2); }
-.syllabus .tags span.fig { border-color: var(--accent); color: var(--accent); }
-@media (max-width: 560px) { .syllabus .lesson-card { grid-template-columns: 36px 1fr; } .syllabus .mins { grid-column: 2; } .syllabus p, .syllabus .tags { grid-column: 2; } }
+.syllabus .mins { grid-column: 2; grid-row: 2; font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2; grid-row: 3; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .card-art { grid-column: 3; grid-row: 1 / span 3; align-self: start; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 10px; background: var(--tint); background: linear-gradient(145deg, color-mix(in srgb, var(--course-accent, var(--accent)) 13%, transparent), transparent 72%); }
+.syllabus .card-art svg { width: 100%; height: auto; max-height: 112px; display: block; }
+@media (max-width: 700px) {
+  .syllabus .lesson-card { grid-template-columns: 36px minmax(0, 1fr) 88px; gap: 4px 10px; padding: 14px; }
+}
+@media (max-width: 520px) {
+  .syllabus .lesson-card { grid-template-columns: 32px minmax(0, 1fr) 64px; }
+  .syllabus .card-art svg { max-height: 72px; }
+}
 
 /* ---------- lecture reveal gates (::gate) ---------- */
 .gate-step { margin: 34px 0 0; }
