@@ -269,6 +269,8 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   to fix it, 2 for work not completed, 3-5 for the quality of the completed work.
 - Practical instructions use relative paths such as `.../folder/file` or a bare command
   name, never drive-letter paths.
+- Put a work checklist before the assessment criteria: a table with item, done and
+  remaining columns. Do not add per-step collapsing checkboxes.
 - A practical must not hand over a filled table as the answer. Give raw data, an empty
   template or one sample row. Explain a new command on an example before asking for a
   variation.

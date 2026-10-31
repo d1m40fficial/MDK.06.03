@@ -519,19 +519,12 @@ html.modal-open { overflow: hidden; }
 :root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
 :root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
 
-/* ---------- practical work steps ---------- */
-.work-step { border: 1px solid var(--rule); border-radius: 12px; background: var(--card); margin: 14px 0; overflow: hidden; }
-.step-head { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; }
-.step-head h3 { flex: 1; min-width: 0; margin: 0; font: 700 18px/1.35 var(--font-display); overflow-wrap: anywhere; cursor: pointer; }
-.step-check { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
-.step-toggle { flex: none; border: 0; background: transparent; color: var(--ink-3); cursor: pointer; padding: 2px 4px; }
-.step-chevron { display: block; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .2s; margin: 4px 0 0 2px; }
-.work-step.is-collapsed .step-chevron { transform: rotate(-45deg); }
-.step-body { padding: 0 14px 14px; }
-.work-step.is-collapsed .step-body { display: none; }
-.work-step.is-done .step-head h3, .work-step.is-done .step-body { opacity: .55; transition: opacity .2s; }
-.work-step.is-done .step-head h3 { cursor: pointer; }
-@media (prefers-reduced-motion: reduce) { .step-chevron, .work-step.is-done .step-head h3, .work-step.is-done .step-body { transition: none; } }
+/* ---------- practical work checklist ---------- */
+.work-checklist { width: 100%; border-collapse: collapse; margin: 14px 0 4px; }
+.work-checklist th, .work-checklist td { border: 1px solid var(--rule); padding: 9px 10px; vertical-align: top; }
+.work-checklist th { background: var(--paper); font: 600 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 104px; text-align: center; }
+.work-checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
 
 /* ---------- scroll reveal in lessons ---------- */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
@@ -571,10 +564,6 @@ html.modal-open { overflow: hidden; }
   .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
   .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
   .gate-action, .quiz-actions { display: none !important; }
-  .work-step { break-inside: avoid; border-color: #999; }
-  .step-check, .step-toggle { display: none !important; }
-  .step-body { display: block !important; }
-  .work-step.is-done .step-head h3, .work-step.is-done .step-body { opacity: 1; }
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .recap { background: #fff; color: #000; }
   .recap li, .recap p { color: #000; }
@@ -839,7 +828,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#2F6F5E 58%,#08090D)"></canvas>
 <div class="badges"><span class="pill dark">Занятия 37-38</span><span class="pill">Проектирование и дизайн информационных систем</span></div>
 <div class="hero-panel"><h1>Практика 12. Тесты требований; Оценка рисков</h1><p class="dek">Проверяем требования «Библиотеки» на проверяемость, строим тест-кейсы по критериям приёмки и сводим риски проекта в реестр с планом реагирования.</p></div>
-<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Проверять требование на однозначность и проверяемость</li><li>Составлять тест-кейсы по критериям приёмки</li><li>Оценивать риск по вероятности и влиянию</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose" data-practice="1"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<div class="glyph" aria-hidden="true">П12</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Проверять требование на однозначность и проверяемость</li><li>Составлять тест-кейсы по критериям приёмки</li><li>Оценивать риск по вероятности и влиянию</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#чек-лист-выполнения-работы">Чек-лист выполнения работы</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
 <p>Требование, которое нельзя проверить, нельзя и принять. Формулировка «система должна работать быстро» звучит понятно, но не даёт ответа на вопрос, когда работа считается выполненной. Тест-кейс переводит критерий приёмки в шаги и ожидаемый результат, а реестр рисков показывает, что может помешать проекту и что с этим делать.</p>
 <p>Цель работы: проверить реестр требований ИС «Библиотека колледжа», составить тест-кейсы по критериям приёмки, построить матрицу трассировки и оценить риски проекта по вероятности и влиянию.</p>
 <p>Результат работы: матрица проверки требований с тест-кейсами и пробелами, матрица трассировки и реестр из восьми рисков с планом реагирования.</p>
@@ -1517,7 +1506,10 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 <li>Матрицу рисков и план реагирования для трёх главных рисков.</li>
 <li>Файл отчёта в Word или Excel.</li>
 </ul>
-<h2 id="критерии-оценки"><span class="num">06</span>Критерии оценки</h2>
+<h2 id="чек-лист-выполнения-работы"><span class="num">06</span>Чек-лист выполнения работы</h2>
+<p>Отметьте, что уже сделано, а что осталось. Незакрытые пункты показывают, что ещё нужно выполнить.</p>
+<table class="work-checklist"><thead><tr><th>Пункт</th><th>Сделано</th><th>Осталось</th></tr></thead><tbody><tr><td>Таблицу проверки одиннадцати требований по шести признакам с комментариями.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 1 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 1 остался"></td></tr><tr><td>Переписанные формулировки слабых требований в формате «было, стало, что добавлено».</td><td><input type="checkbox" class="check-done" aria-label="Пункт 2 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 2 остался"></td></tr><tr><td>Одиннадцать тест-кейсов с типами, предусловиями и ожидаемыми результатами.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 3 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 3 остался"></td></tr><tr><td>Матрицу трассировки с явно отмеченными пробелами.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 4 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 4 остался"></td></tr><tr><td>Реестр из восьми рисков с вероятностью, влиянием, рангом, владельцем и триггером.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 5 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 5 остался"></td></tr><tr><td>Матрицу рисков и план реагирования для трёх главных рисков.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 6 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 6 остался"></td></tr><tr><td>Файл отчёта в Word или Excel.</td><td><input type="checkbox" class="check-done" aria-label="Пункт 7 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 7 остался"></td></tr></tbody></table>
+<h2 id="критерии-оценки"><span class="num">07</span>Критерии оценки</h2>
 <p>Оценка выставляется по шкале от 1 до 5.</p>
 <table>
 <thead>
@@ -1556,7 +1548,7 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 - <strong>Трассировка.</strong> Пробелы найдены, а не скрыты
 - <strong>Реестр рисков.</strong> Оценки обоснованы, у риска есть владелец, триггер и план
 - <strong>Оформление.</strong> Таблицы читаются, термины едины</p>
-<h2 id="контрольные-вопросы"><span class="num">07</span>Контрольные вопросы</h2>
+<h2 id="контрольные-вопросы"><span class="num">08</span>Контрольные вопросы</h2>
 <div class="selfcheck no-copy">
 <ol>
 <li>Чем критерий приёмки отличается от формулировки требования?</li>
@@ -1760,81 +1752,6 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 })();
 
 (function(){
-  var prose = document.querySelector('article.prose[data-practice]');
-  if(!prose) return;
-  var heads = [].slice.call(prose.querySelectorAll('h3')).filter(function(h){
-    return /^Шаг\s+\d+/i.test(h.textContent.trim());
-  });
-  if(!heads.length) return;
-  var base = 'mdk-step:' + location.pathname;
-  function load(i){
-    try { return JSON.parse(localStorage.getItem(base + ':' + i) || '{}'); }
-    catch(e) { return {}; }
-  }
-  function save(i, state){
-    try { localStorage.setItem(base + ':' + i, JSON.stringify(state)); }
-    catch(e) {}
-  }
-  heads.forEach(function(h, index){
-    var section = document.createElement('section');
-    section.className = 'work-step';
-    section.dataset.step = String(index + 1);
-    var head = document.createElement('div');
-    head.className = 'step-head';
-    var check = document.createElement('input');
-    check.type = 'checkbox';
-    check.className = 'step-check';
-    check.setAttribute('aria-label', 'Отметить шаг выполненным');
-    var toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'step-toggle';
-    toggle.setAttribute('aria-label', 'Свернуть или развернуть шаг');
-    toggle.innerHTML = '<span class="step-chevron" aria-hidden="true"></span>';
-    h.parentNode.insertBefore(section, h);
-    head.appendChild(check);
-    head.appendChild(h);
-    head.appendChild(toggle);
-    section.appendChild(head);
-    var body = document.createElement('div');
-    body.className = 'step-body';
-    section.appendChild(body);
-    var node = section.nextSibling;
-    while(node){
-      if(node.nodeType === 1 && (node.tagName === 'H3' || node.tagName === 'H2')) break;
-      var next = node.nextSibling;
-      body.appendChild(node);
-      node = next;
-    }
-    var state = load(index);
-    var done = !!state.done;
-    var open = state.open !== false;
-    function apply(){
-      section.classList.toggle('is-done', done);
-      section.classList.toggle('is-collapsed', done && !open);
-      check.checked = done;
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-    check.addEventListener('change', function(){
-      done = check.checked;
-      open = !done;
-      save(index, {done: done, open: open});
-      apply();
-    });
-    function flip(){
-      open = !open;
-      save(index, {done: done, open: open});
-      apply();
-    }
-    toggle.addEventListener('click', function(e){ e.stopPropagation(); flip(); });
-    h.addEventListener('click', function(e){
-      if(e.target.closest('a')) return;
-      flip();
-    });
-    apply();
-  });
-})();
-
-(function(){
   if(!('IntersectionObserver' in window)) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var prose = document.querySelector('article.prose');
@@ -1865,6 +1782,18 @@ span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 
 (function(){
   document.querySelectorAll('[data-pdf]').forEach(function(button){
     button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  document.querySelectorAll('.work-checklist input[type="checkbox"]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      if(!cb.checked) return;
+      var row = cb.closest('tr');
+      row.querySelectorAll('input[type="checkbox"]').forEach(function(other){
+        if(other !== cb) other.checked = false;
+      });
+    });
   });
 })();
 </script>
