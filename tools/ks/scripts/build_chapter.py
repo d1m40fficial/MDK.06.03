@@ -696,18 +696,31 @@ def insert_work_checklist(html_body: str) -> str:
     if match:
         items = re.findall(r"<li>(.*?)</li>", match.group(1), re.S)
     if not items:
+        # Some practices describe the deliverable in a paragraph instead of a list.
+        section = re.search(r"<h2[^>]*>\s*Что сдать\s*</h2>(.*?)(?=<h2)", html_body, re.S)
+        if section:
+            for para in re.findall(r"<p>(.*?)</p>", section.group(1), re.S):
+                text = re.sub(r"<[^>]+>", "", para).strip()
+                for sentence in re.split(r"(?<=[.!?])\s+(?=[А-ЯЁA-Z])", text):
+                    sentence = sentence.strip()
+                    if len(sentence.split()) >= 3:
+                        items.append(sentence)
+    if not items:
         items = ["Комплект файлов подготовлен", "Проверки выполнены", "Отчёт оформлен"]
     rows = []
     for i, item in enumerate(items, 1):
+        label = re.sub(r"[;.,]\s*$", "", item.strip())
+        if label and not label.startswith("<") and label[0].islower():
+            label = label[0].upper() + label[1:]
         rows.append(
-            f'<tr><td>{item}</td>'
+            f'<tr><td>{label}</td>'
             f'<td><input type="checkbox" class="check-done" aria-label="Пункт {i} сделан"></td>'
             f'<td><input type="checkbox" class="check-left" aria-label="Пункт {i} остался"></td></tr>'
         )
     block = (
         "<h2>Чек-лист выполнения работы</h2>\n"
         "<p>Отметьте, что уже сделано, а что осталось. Незакрытые пункты показывают, что ещё нужно выполнить.</p>\n"
-        '<table class="work-checklist"><thead><tr><th>Пункт</th><th>Сделано</th><th>Осталось</th></tr></thead>'
+        '<table class="work-checklist"><thead><tr><th>Что сдать</th><th>Сделано</th><th>Осталось</th></tr></thead>'
         f'<tbody>{"".join(rows)}</tbody></table>\n'
     )
     return html_body.replace(marker, block + marker, 1)
