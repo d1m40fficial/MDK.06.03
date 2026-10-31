@@ -166,9 +166,10 @@ def build_course(root: Path) -> Path:
                 else "Методичка")
             mins = esc(label) + status
         else:
-            mins = f'{esc(ch.get("minutes", ""))}{" мин" if ch.get("minutes") else ""}{status}'
+            mins = status.strip(" · ")
+        mins_html = f'<div class="mins">{mins}</div>' if mins else ""
         inner = (f'<div class="n">{lesson}</div><h3>{title}</h3>'
-                 f'<div class="mins">{mins}</div>'
+                 f'{mins_html}'
                  f'<p>{esc(ch.get("summary", ""))}</p>{card_art(ch)}')
         card = (f'<a class="lesson-card" href="{link}">{inner}</a>' if link
                 else f'<div class="lesson-card lesson-card-static">{inner}</div>')

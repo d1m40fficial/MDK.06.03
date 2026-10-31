@@ -274,6 +274,9 @@ plan) -> chapter/lesson pages. The 09.02.07 row opens years 2, 3 and 4; 09.02.12
   variation.
 - If a practical needs a training system or dataset, ship a starter kit, an archive or a
   report template with the lesson.
+- DOCX report templates follow one format: A4, 3 cm left, 1.5 cm right, 2 cm top and
+  bottom, Times New Roman 14 pt, 1.5 line spacing, 1.25 cm first-line indent, Heading 1
+  and Heading 2, Table Grid with a centred header row and the table name under the table.
 - A chapter teaches one insight so well that the self-checks are easy after reading and
   hard before.
 - Chapter prose does not state lesson duration or per-step minutes. Duration lives in
