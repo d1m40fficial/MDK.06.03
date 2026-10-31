@@ -1,0 +1,1691 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#D04A28;--course-tint:#F4E1D8;--course-accent-dark:#F06A45;--course-tint-dark:#3A2219;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Юзабилити</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+
+/* ---------- left-edge navigation rail ---------- */
+.edge-rail {
+  position: fixed; left: 6px; top: 50%;
+  transform: translateY(-50%); z-index: 90;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.rail-btn {
+  position: relative; display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0; border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+  border: 1px solid var(--rule); background: color-mix(in srgb, var(--card) 84%, transparent);
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, border-color .15s, color .15s, background .15s;
+}
+.rail-btn svg { display: block; }
+.rail-btn:hover, .rail-btn:focus-visible { border-color: var(--accent); color: var(--accent); transform: scale(1.06); }
+.rail-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rail-warn { color: var(--bad); }
+.rail-warn:hover, .rail-warn:focus-visible { border-color: var(--bad); color: var(--bad); }
+.rail-grow { flex: 1 1 auto; }
+
+/* hover tooltips on the rail icons */
+[data-tip]::before {
+  content: ""; position: absolute; left: calc(100% + 6px); top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: var(--ink); opacity: 0;
+  pointer-events: none; transition: opacity .15s; z-index: 121;
+}
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: calc(100% + 16px); top: 50%;
+  transform: translateY(-50%); white-space: nowrap;
+  background: var(--ink); color: var(--paper); padding: 6px 10px; border-radius: 8px;
+  font: 600 12px/1.35 var(--font-body); letter-spacing: .01em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18); opacity: 0; pointer-events: none;
+  transition: opacity .15s; z-index: 122;
+}
+[data-tip]:hover::before, [data-tip]:focus-visible::before,
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; }
+@media (hover: none) { [data-tip]::before, [data-tip]::after { display: none; } }
+
+/* icon theme button in the rail: moon in light, sun in dark */
+.theme-ico { display: grid; place-items: center; transform-origin: center; }
+.theme-ico.is-spinning { animation: theme-spin .5s cubic-bezier(.16, 1, .3, 1); }
+@keyframes theme-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .theme-ico.is-spinning { animation: none; } }
+.theme-ico .ico-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .theme-ico .ico-sun { display: block; }
+  :root:not([data-theme=light]) .theme-ico .ico-moon { display: none; }
+}
+:root[data-theme=dark] .theme-ico .ico-sun { display: block; }
+:root[data-theme=dark] .theme-ico .ico-moon { display: none; }
+@media (max-width: 920px) {
+  .page { padding-left: 56px; }
+}
+@media (max-width: 640px) {
+  .edge-rail { left: 4px; gap: 6px; }
+  .rail-btn { width: 34px; height: 34px; }
+  .page { padding-left: 48px; }
+}
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+/* the rail sits at the viewport edge, so keep catalog content clear of it */
+@media (max-width: 1320px) { main.catalog { padding-left: 56px; } }
+@media (max-width: 640px) { main.catalog { padding-left: 48px; } }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px minmax(0, 1fr) 66px; grid-template-rows: auto auto 1fr; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: 1 / span 3; padding-top: 2px; }
+.syllabus h3 { grid-column: 2; grid-row: 1; min-width: 0; margin: 0; font: 700 18px var(--font-display); overflow-wrap: anywhere; }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { grid-column: 2; grid-row: 2; font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2; grid-row: 3; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .card-art { grid-column: 3; grid-row: 1 / span 3; align-self: start; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 10px; background: var(--tint); background: linear-gradient(145deg, color-mix(in srgb, var(--course-accent, var(--accent)) 13%, transparent), transparent 72%); }
+.syllabus .card-art svg { width: 100%; height: auto; max-height: 56px; display: block; }
+@media (max-width: 700px) {
+  .syllabus .lesson-card { grid-template-columns: 36px minmax(0, 1fr) 44px; gap: 4px 10px; padding: 14px; }
+}
+@media (max-width: 520px) {
+  .syllabus .lesson-card { grid-template-columns: 32px minmax(0, 1fr) 32px; }
+  .syllabus .card-art svg { max-height: 28px; }
+}
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; overflow-wrap: anywhere; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt span { overflow-wrap: anywhere; min-width: 0; }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- practical work checklist ---------- */
+.work-checklist { width: 100%; border-collapse: collapse; margin: 14px 0 4px; }
+.work-checklist th, .work-checklist td { border: 1px solid var(--rule); padding: 9px 10px; vertical-align: top; }
+.work-checklist th { background: var(--paper); font: 600 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 104px; text-align: center; }
+.work-checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+@media (max-width: 560px) {
+  .work-checklist th, .work-checklist td { padding: 7px 6px; }
+  .work-checklist th { font-size: 10px; letter-spacing: 0; }
+  .work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 62px; }
+  .work-checklist input[type="checkbox"] { width: 16px; height: 16px; }
+}
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- variant cards on the practice page ---------- */
+.variant { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 0 0 12px; overflow: hidden; }
+.variant > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 14px 18px; font: 700 17px/1.35 var(--font-display); }
+.variant > summary::-webkit-details-marker { display: none; }
+.variant > summary::after { content: '+'; margin-left: auto; font: 600 20px/1 var(--font-mono); color: var(--accent); }
+.variant[open] > summary::after { content: '−'; }
+.variant > summary .variant-no { font: 700 13px/1 var(--font-mono); color: var(--accent); background: var(--paper); border: 1px solid var(--rule-2); border-radius: 6px; padding: 4px 7px; }
+.variant-body { padding: 0 18px 18px; }
+.variant-body h4 { margin: 18px 0 8px; font: 700 15px/1.3 var(--font-display); }
+.variant-body table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.variant-body th, .variant-body td { border: 1px solid var(--rule-2); padding: 6px 8px; text-align: left; vertical-align: top; }
+.variant-body th { background: var(--paper); font-weight: 600; }
+.variant-body .files { margin-top: 14px; }
+.variant-body .task-list { margin: 8px 0 0; padding-left: 20px; }
+.variant-body .task-list li { margin: 0 0 8px; }
+@media (max-width: 620px) { .variant-body { overflow-x: auto; } .variant-body table { min-width: 520px; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .edge-rail, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Тестирование информационных систем</a><span>/</span><span>Юзабилити</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn rail-warn" data-warn data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#D04A28" data-seed="0.629">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#D04A28 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 34</span><span class="pill">Тестирование информационных систем</span></div>
+<div class="hero-panel"><h1>Юзабилити</h1><p class="dek">Удобство измеряют стоимостью решения задачи: сколько времени, ошибок и попыток нужно человеку, чтобы закрыть приёмку.</p></div>
+<div class="glyph" aria-hidden="true">Л18</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Оценивать интерфейс по эвристикам Нильсена</li><li>Составлять сценарий проверки удобства</li><li>Формулировать проблему интерфейса без вкусовщины</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#приёмка-на-шесть-минут">Приёмка на шесть минут</a></li><li><a href="#удобство-измеряют-задачей">Удобство измеряют задачей</a></li><li><a href="#сценарий-проверки-удобства">Сценарий проверки удобства</a></li><li><a href="#метрики-успех-время-ошибки">Метрики: успех, время, ошибки</a></li><li><a href="#эвристики-нильсена">Эвристики Нильсена</a></li><li><a href="#как-формулировать-проблему">Как формулировать проблему</a></li><li><a href="#доступность">Доступность</a></li><li><a href="#разбор-экрана-приёмки">Разбор экрана приёмки</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#итоги">Итоги</a></li></ol></nav><article class="prose"><h2 id="приёмка-на-шесть-минут"><span class="num">01</span>Приёмка на шесть минут</h2>
+<p>Кладовщик в Твери проводит приёмку двенадцати позиций. Он открывает поставку, находит товар, вводит количество и ячейку, сохраняет строку и повторяет двенадцать раз. Система отвечает быстро: каждый запрос занимает меньше секунды. Но вся приёмка длится 6 минут 12 секунд, а в двух строках количество попадает не в тот товар.</p>
+<p>Рядом лежит бумажный журнал, где та же операция занимала около двух минут. Программа работает, данные сохраняются, ошибок сервера нет. Не работает другое: человек тратит в три раза больше времени и ошибается там, где раньше не ошибался.</p>
+<p><strong>Удобство это не внешний вид, а стоимость решения задачи: сколько времени, ошибок и попыток нужно человеку, чтобы получить результат.</strong> Красивый экран с удобным шрифтом может быть неудобным, если в нём двенадцать раз повторяется одно и то же действие.</p>
+<h2 id="удобство-измеряют-задачей"><span class="num">02</span>Удобство измеряют задачей</h2>
+<p>Проверка удобства начинается с задачи, а не с экрана. Задача формулируется от результата: провести приёмку двенадцати позиций, найти товар по артикулу, отгрузить пять позиций, сформировать отчёт за месяц. Экран это средство, а не цель проверки.</p>
+<p>У задачи есть пользователь и контекст. Кладовщик работает в перчатках, со сканером штрихкодов, в шуме, на мониторе 1366 на 768 точек. Менеджер работает в офисе с двумя мониторами и почтой. Администратор сидит в отдельной комнате и разбирается с учётными записями. Один и тот же интерфейс в этих условиях ведёт себя по-разному.</p>
+<table>
+<thead>
+<tr>
+<th>Свойство</th>
+<th>Вопрос</th>
+<th>Пример для «Склад+»</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Результативность</td>
+<td>задача выполнена?</td>
+<td>приёмка сохранена, остаток вырос</td>
+</tr>
+<tr>
+<td>Эффективность</td>
+<td>сколько ресурсов ушло?</td>
+<td>6 минут 12 секунд и 34 клика</td>
+</tr>
+<tr>
+<td>Ошибки</td>
+<td>сколько раз человек сбился?</td>
+<td>две строки с неверным товаром</td>
+</tr>
+<tr>
+<td>Удовлетворённость</td>
+<td>насколько легко было?</td>
+<td>оценка 2 из 7 после задачи</td>
+</tr>
+<tr>
+<td>Доступность</td>
+<td>может ли работать с клавиатуры?</td>
+<td>все поля достижимы Tab</td>
+</tr>
+</tbody>
+</table>
+<p>Эти свойства не заменяют друг друга. Быстрый интерфейс с частыми ошибками опасен. Безошибочный интерфейс, где операция занимает десять минут, снижает производительность склада. Удобство появляется там, где все свойства в норме для конкретной задачи.</p>
+<p>Такой взгляд совпадает с определением удобства в стандарте ISO 9241-11: система удобна, если заданный пользователь в заданном контексте достигает цели с нужной результативностью, эффективностью и удовлетворённостью. Стандарт не требует красивых кнопок. Он требует, чтобы задача решалась.</p>
+<p>От функционального теста проверка удобства отличается вопросом. Функциональный тест спрашивает, сохранилась ли приёмка. Проверка удобства спрашивает, сколько времени и ошибок стоило её сохранить. Оба ответа нужны, и один не заменяет другого.</p>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Что должно быть в сценарии, чтобы проверку удобства можно было повторить?</span></button></p>
+<div class="gate-content" hidden><h2 id="сценарий-проверки-удобства"><span class="num">03</span>Сценарий проверки удобства</h2>
+<p>Сценарий описывает задачу, участника, данные, шаги и то, что считается успехом. Без сценария проверка превращается в прогулку по экранам, а замечания становятся вкусовыми.</p>
+<table>
+<thead>
+<tr>
+<th>Часть сценария</th>
+<th>Что записать</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Цель</td>
+<td>какой результат нужен</td>
+<td>провести приёмку 12 позиций</td>
+</tr>
+<tr>
+<td>Участник</td>
+<td>кто и с каким опытом</td>
+<td>кладовщик, 2 года в системе</td>
+</tr>
+<tr>
+<td>Контекст</td>
+<td>где и как работает</td>
+<td>перчатки, сканер, монитор 1366</td>
+</tr>
+<tr>
+<td>Данные</td>
+<td>что подготовлено</td>
+<td>поставка 505, 12 товаров, 3 ячейки</td>
+</tr>
+<tr>
+<td>Стартовое состояние</td>
+<td>с чего начинается</td>
+<td>вход выполнен, список поставок открыт</td>
+</tr>
+<tr>
+<td>Шаги</td>
+<td>что делает участник</td>
+<td>открыть, ввести, сохранить</td>
+</tr>
+<tr>
+<td>Критерий успеха</td>
+<td>что считается результатом</td>
+<td>документ сохранён, остаток верный</td>
+</tr>
+<tr>
+<td>Метрики</td>
+<td>что измеряют</td>
+<td>время, ошибки, оценка лёгкости</td>
+</tr>
+</tbody>
+</table>
+<p>Участнику дают задачу, а не инструкцию. Формулировка «нажмите кнопку Принять, затем выберите поставку» проверяет память на инструкцию, а не удобство. Формулировка «проведите приёмку поставки 505» проверяет, сможет ли человек сам найти путь.</p>
+<p>Во время проверки полезно просить участника думать вслух. Он говорит, что ищет и чего не понимает. Модератор не подсказывает и не защищает интерфейс. Если участник застрял, ему дают нейтральную подсказку «что вы ожидали увидеть?», а не «нажмите вон ту кнопку».</p>
+<p>Проверку записывают. На записи видно, где курсор замер, сколько раз человек вернулся назад и в какой момент появилась ошибка. Без записи остаётся только мнение, а мнение плохо доказывает дефект.</p>
+<p>Для одной итерации достаточно трёх-пяти участников и трёх-пяти задач. Больше участников нужно, когда сравнивают два варианта интерфейса или проверяют редкую роль. Задачи берут из работы, а не из фантазии: приёмка, отгрузка, поиск товара, отчёт, возврат документа. Каждая задача проверяет один путь и заканчивается проверяемым результатом.</p>
+<p>Участников подбирают по роли, а не по удобству общения. Если проверяют кладовщика, приглашают кладовщика, а не коллегу из отдела тестирования. Опытный пользователь обходит проблему автоматически и не замечает, где новичок потеряется.</p>
+<p>Сценарий проверяют до встречи с участником. Если модератор сам не может пройти путь без подсказок, проблема в сценарии или в интерфейсе, а не в участнике. Пробный прогон с коллегой экономит время и выявляет опечатки в данных.</p>
+<h2 id="метрики-успех-время-ошибки"><span class="num">04</span>Метрики: успех, время, ошибки</h2>
+<p>Метрики превращают наблюдение в числа. Для учебной проверки достаточно четырёх.</p>
+<p>Доля успешных задач показывает, сколько участников дошли до результата без посторонней помощи. Если задачу выполнили двое из трёх, результат 67 процентов. Это мало для складской операции, где ошибка стоит денег.</p>
+<p>Время на задачу измеряют от начала до подтверждённого результата. Смотрят медиану, а не среднее, потому что один участник, который бросил задачу через двадцать минут, исказит среднее. Медиана показывает типичное время.</p>
+<p>Частота ошибок считает неверные действия: не тот товар, не та ячейка, повторное сохранение, потерянные данные. Ошибку фиксируют даже тогда, когда участник её заметил и исправил. Исправление тоже стоит времени.</p>
+<p>Ошибки делят на два вида. Промах это правильное намерение с неверным действием: человек знает, что вводить, но попадает в соседнее поле. Заблуждение это неверное понимание: человек уверен, что ячейка хранится в карточке товара, и ищет её не там. Промахи лечатся подсказками и расположением элементов, заблуждения требуют изменить формулировки и структуру экрана.</p>
+<p>Удовлетворённость измеряют коротким вопросом после задачи. Шкала от 1 до 7, где 1 означает «очень сложно», а 7 означает «очень легко». Средняя оценка по задачам показывает, насколько уверенно чувствуют себя пользователи.</p>
+<p>Такой вопрос называют SEQ, Single Ease Question. Он занимает несколько секунд и хорошо ловит разницу между задачами. Если приёмка получила 2, а поиск 6, проблема не в общем впечатлении от системы, а в конкретном пути.</p>
+<table>
+<thead>
+<tr>
+<th>Метрика</th>
+<th>Формула</th>
+<th>Результат в учебном прогоне</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Успех приёмки</td>
+<td>успешные задачи / все задачи</td>
+<td>67 процентов</td>
+</tr>
+<tr>
+<td>Время приёмки</td>
+<td>медиана времени</td>
+<td>372 секунды</td>
+</tr>
+<tr>
+<td>Успех поиска товара</td>
+<td>успешные задачи / все задачи</td>
+<td>50 процентов</td>
+</tr>
+<tr>
+<td>Время поиска</td>
+<td>медиана времени</td>
+<td>68 секунд</td>
+</tr>
+<tr>
+<td>Оценка лёгкости</td>
+<td>среднее по шкале 1-7</td>
+<td>3,4</td>
+</tr>
+</tbody>
+</table>
+<p>Отдельно считают SUS, шкалу удобства из десяти утверждений. Участник отвечает по шкале от 1 до 5, где 1 означает «полностью не согласен», а 5 означает «полностью согласен». Утверждения чередуются: нечётные сформулированы положительно, чётные отрицательно. Поэтому при подсчёте нечётные берут как значение минус один, а чётные как пять минус значение.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="n">responses</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sus</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="n">score</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">5</span> <span class="o">-</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">score</span> <span class="o">*</span> <span class="mf">2.5</span>
+
+
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">sus</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;оценки:&quot;</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;средняя SUS: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Пять участников дают такой результат.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>оценки: [82.5, 60.0, 95.0, 35.0, 75.0]
+средняя SUS: 69.5
+</code></pre></div>
+
+<p>Средняя оценка 69,5 близка к типичному значению около 68, которое встречается в отраслевых наборах. Но среднее скрывает разброс: один участник поставил 35, другой 95. Интерфейс, который одним понятен, а другим нет, требует отдельного разбора. Возможно, дело в опыте, а возможно, в сценарии, который одним участникам подсказал путь.</p>
+<p>Задачные метрики считают по строкам наблюдений. В таблице ниже три задачи, семь попыток, время в секундах.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;приёмка 12 позиций&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">372</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;приёмка 12 позиций&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">295</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;приёмка 12 позиций&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">480</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;отгрузка 5 позиций&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">168</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;отгрузка 5 позиций&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">142</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;поиск товара&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">41</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;поиск товара&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">results</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[(</span><span class="n">ok</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ok</span><span class="p">,</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">task</span><span class="p">]</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ok</span> <span class="k">for</span> <span class="n">ok</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="n">median</span> <span class="o">=</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">sec</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">: успех </span><span class="si">{</span><span class="n">success</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">, медиана </span><span class="si">{</span><span class="n">median</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> с&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Скрипт печатает:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>приёмка 12 позиций: успех 67%, медиана 372 с
+отгрузка 5 позиций: успех 100%, медиана 155 с
+поиск товара: успех 50%, медиана 68 с
+</code></pre></div>
+
+<p>Цифры показывают, где проблема. Отгрузка проходит без ошибок и быстро. Приёмка занимает шесть минут и в трети случаев заканчивается ошибкой. Поиск товара успешен только в половине попыток, хотя время небольшое: люди быстро сдаются и идут искать другой путь.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как отличить дефект интерфейса от личного вкуса?</span></button></p>
+<div class="gate-content" hidden><h2 id="эвристики-нильсена"><span class="num">05</span>Эвристики Нильсена</h2>
+<p>Эвристики это десять общих правил, по которым оценивают интерфейс без участия пользователей. Они не заменяют проверку с людьми, но помогают быстро найти места, где человек ошибётся.</p>
+<table>
+<thead>
+<tr>
+<th>Эвристика</th>
+<th>Что проверять</th>
+<th>Пример в «Склад+»</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Видимость состояния</td>
+<td>понятно ли, что происходит</td>
+<td>после сохранения нет сообщения, кнопка активна</td>
+</tr>
+<tr>
+<td>Связь с реальным миром</td>
+<td>знакомые слова и порядок</td>
+<td>«ячейка» и «зона», дата в формате ISO</td>
+</tr>
+<tr>
+<td>Свобода действий</td>
+<td>можно ли отменить и вернуться</td>
+<td>ошибочную приёмку отменяет только администратор</td>
+</tr>
+<tr>
+<td>Согласованность</td>
+<td>одинаковые действия одинаковы</td>
+<td>«Сохранить» и «Провести» на соседних экранах</td>
+</tr>
+<tr>
+<td>Предотвращение ошибок</td>
+<td>можно ли ошибиться случайно</td>
+<td>количество принимает ноль без предупреждения</td>
+</tr>
+<tr>
+<td>Узнавание вместо запоминания</td>
+<td>видны ли нужные сведения</td>
+<td>код товара нужно помнить наизусть</td>
+</tr>
+<tr>
+<td>Гибкость и эффективность</td>
+<td>есть ли быстрый путь</td>
+<td>нет шаблона для частой приёмки</td>
+</tr>
+<tr>
+<td>Минимализм</td>
+<td>нет ли лишнего</td>
+<td>четырнадцать столбцов на узком экране</td>
+</tr>
+<tr>
+<td>Помощь при ошибке</td>
+<td>понятно ли, что исправить</td>
+<td>«Ошибка 500» без указания поля</td>
+</tr>
+<tr>
+<td>Справка</td>
+<td>есть ли помощь по месту</td>
+<td>нет подсказки по выбору ячейки</td>
+</tr>
+</tbody>
+</table>
+<p>Эвристическая оценка выполняется без пользователей. Два-три проверяющих проходят сценарий по интерфейсу и независимо выписывают нарушения. Затем списки сводят, убирают повторы и оценивают серьёзность. Независимость важна: если проверяющие обсуждают экран вместе, они повторяют замечания друг друга и пропускают то, что заметил бы каждый по отдельности.</p>
+<p>Один проход даёт поверхностный список. Второй проход по тем же экранам с таблицей эвристик находит то, что пропустили в первый раз. Полезно менять порядок экранов: сначала пройти путь целиком, затем вернуться к каждому шагу и проверить его отдельно.</p>
+<p>Эвристики не расставляют приоритеты. Они дают список кандидатов, каждый из которых нужно подтвердить наблюдением или запросом. «Мне не нравится цвет» это не эвристика. «После сохранения нет подтверждения, и я не знаю, прошла ли операция» это нарушение первой эвристики с конкретным последствием.</p>
+<h2 id="как-формулировать-проблему"><span class="num">06</span>Как формулировать проблему</h2>
+<p>Проблема интерфейса описывается по шаблону: экран, шаг, ожидание, факт, последствие, эвристика, серьёзность. Шаблон убирает вкусовщину и делает замечание проверяемым.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Экран</td>
+<td>приёмка, список строк</td>
+</tr>
+<tr>
+<td>Шаг</td>
+<td>после выбора товара ввод количества</td>
+</tr>
+<tr>
+<td>Ожидание</td>
+<td>фокус переходит в поле количества</td>
+</tr>
+<tr>
+<td>Факт</td>
+<td>фокус остаётся в поиске, цифры попадают в поиск</td>
+</tr>
+<tr>
+<td>Последствие</td>
+<td>строка не сохраняется, кладовщик начинает заново</td>
+</tr>
+<tr>
+<td>Эвристика</td>
+<td>предотвращение ошибок, видимость состояния</td>
+</tr>
+<tr>
+<td>Серьёзность</td>
+<td>высокая, задача замедляется на каждой строке</td>
+</tr>
+</tbody>
+</table>
+<p>Серьёзность оценивают по последствию, а не по эмоции. Блокирует задачу, приводит к неверным данным или потере работы значит высокая. Замедляет, но результат достижим значит средняя. Раздражает, но не мешает значит низкая.</p>
+<p>Формулировка «неудобно» не принимается. Формулировка «на экране приёмки после выбора товара фокус остаётся в поиске, поэтому количество попадает не в ту строку, и в двух случаях из двенадцати товар перепутан» принимается, потому что её можно воспроизвести и исправить.</p>
+<div class="callout key"><span class="label">Ключевая идея</span><p>Хорошее замечание отвечает на три вопроса: что человек делал, что получил и чем это ему помешало. Всё остальное это мнение.</p></div>
+
+<h2 id="доступность"><span class="num">07</span>Доступность</h2>
+<p>Доступность это часть удобства. Интерфейс, который работает только мышью, отсекает часть пользователей и мешает в работе, где руки заняты.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Как проверить</th>
+<th>Признак дефекта</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Клавиатура</td>
+<td>пройти задачу только Tab, Enter и стрелками</td>
+<td>фокус теряется или уходит в никуда</td>
+</tr>
+<tr>
+<td>Видимый фокус</td>
+<td>смотреть на выделение элемента</td>
+<td>фокус не виден на кнопке</td>
+</tr>
+<tr>
+<td>Подписи полей</td>
+<td>прочитать форму без placeholder</td>
+<td>поле понятно только по подсказке внутри</td>
+</tr>
+<tr>
+<td>Контраст</td>
+<td>проверить текст и фон</td>
+<td>серый текст на светлом фоне не читается</td>
+</tr>
+<tr>
+<td>Масштаб</td>
+<td>увеличить страницу до 200 процентов</td>
+<td>элементы наезжают друг на друга</td>
+</tr>
+<tr>
+<td>Ошибки</td>
+<td>отправить пустую форму</td>
+<td>сообщение не привязано к полю</td>
+</tr>
+<tr>
+<td>Цвет</td>
+<td>посмотреть статусы без цвета</td>
+<td>«красный» и «зелёный» неразличимы</td>
+</tr>
+<tr>
+<td>Время</td>
+<td>проверить таймаут сессии</td>
+<td>работа пропадает без предупреждения</td>
+</tr>
+</tbody>
+</table>
+<p>Клавиатурную проверку удобно начинать с формы приёмки. Если поле количества нельзя достичь Tab, кладовщик со сканером и без мыши не сможет работать. Если фокус не виден, человек не понимает, куда попадёт следующая цифра.</p>
+<p>Контраст проверяют на реальном мониторе склада, а не на ярком экране разработчика. При ярком свете и пыли низкий контраст превращается в нечитаемый текст. Для основного текста ориентир 4,5 к 1, для крупного 3 к 1.</p>
+<p>Подписи полей проверяют без placeholder. Подсказка внутри поля исчезает, как только человек начинает вводить, и он забывает, что именно требовалось. Постоянная подпись остаётся на экране и связывается с полем программно, чтобы её прочитала программа экранного доступа.</p>
+<p>Программа экранного доступа читает не картинку, а структуру. Кнопка без текста, поле без подписи и таблица без заголовков для неё безымянные. Проверка простая: включить чтение с экрана и пройти приёмку. Если программа произносит «поле ввода» без названия, подпись потеряна.</p>
+<h2 id="разбор-экрана-приёмки"><span class="num">08</span>Разбор экрана приёмки</h2>
+<p>Вернёмся к приёмке на шесть минут. Наблюдение дало четыре проблемы.</p>
+<p>Первая: после выбора товара фокус остаётся в поиске. Кладовщик вводит количество, а оно дописывается к строке поиска. Строка не сохраняется, человек повторяет ввод. Это нарушение предотвращения ошибок и видимости состояния.</p>
+<p>Вторая: сообщение о сохранении появляется вверху экрана и исчезает через две секунды. Кладовщик смотрит на строку, а не наверх, и не понимает, прошла ли операция. Он нажимает «Сохранить» ещё раз и получает дубль.</p>
+<p>Третья: ячейка хранения выбирается из списка из 4800 значений без поиска. Человек помнит код ячейки и вводит его вручную. Ошибка в одной цифре отправляет товар в чужую зону. Это нарушение узнавания и предотвращения ошибок.</p>
+<p>Четвёртая: кнопка отмены приёмки есть только у администратора. Кладовщик, который ошибся, звонит в поддержку и ждёт. Это ограничение свободы действий и одновременно нагрузка на службу поддержки.</p>
+<p>Пятая: в таблице приёмки четырнадцать столбцов, а монитор кладовщика 1366 точек. При прокрутке вправо название товара уходит из вида, а кнопка сохранения остаётся за краем. Человек теряет строку и сохраняет её не в тот документ. Это нарушение минимализма и видимости состояния.</p>
+<p>Каждая проблема имеет последствие в минутах и ошибках. Первая добавляет около 40 секунд на строку. Вторая даёт дубли и лишние движения. Третья приводит к пересортице. Четвёртая увеличивает число обращений. Пятая заставляет прокручивать таблицу и терять строку. В отчёт идут не «плохой экран», а эти пять пунктов с числами.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Какие ошибки чаще всего делают при оценке удобства?</span></button></p>
+<div class="gate-content" hidden><h2 id="типичные-ошибки"><span class="num">09</span>Типичные ошибки</h2>
+<table>
+<thead>
+<tr>
+<th>Ошибка</th>
+<th>Что происходит</th>
+<th>Как исправить</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Оценка по вкусу</td>
+<td>замечание нельзя проверить</td>
+<td>привязать к шагу и последствию</td>
+</tr>
+<tr>
+<td>Один участник</td>
+<td>вывод сделан по одному человеку</td>
+<td>проверить на трёх-пяти</td>
+</tr>
+<tr>
+<td>Наводящие вопросы</td>
+<td>участник угадывает ожидание</td>
+<td>спрашивать о задаче, а не о кнопке</td>
+</tr>
+<tr>
+<td>Подсказки модератора</td>
+<td>путь становится искусственно лёгким</td>
+<td>вмешиваться только при блокировке</td>
+</tr>
+<tr>
+<td>Метрики без сценария</td>
+<td>числа несравнимы между прогонами</td>
+<td>фиксировать задачу и данные</td>
+</tr>
+<tr>
+<td>Проверка на разработчике</td>
+<td>опытный человек обходит проблему</td>
+<td>брать пользователя из роли</td>
+</tr>
+<tr>
+<td>Игнорирование контекста</td>
+<td>перчатки, шум и сканер не учтены</td>
+<td>проводить проверку в условиях склада</td>
+</tr>
+<tr>
+<td>Смешение дефекта и ошибки</td>
+<td>виноват пользователь</td>
+<td>разбирать, что подсказал интерфейс</td>
+</tr>
+</tbody>
+</table>
+<p>Отдельно стоит помнить про эффект новизны. Первый участник может хвалить новый экран, потому что он ярче старого. Через неделю он привыкнет и найдёт те же проблемы. Поэтому наблюдение важнее первого впечатления, а метрики важнее оценки «нравится».</p>
+<p>Ещё одна ошибка это отчёт только о плохом. Если в отчёте перечислены одни недостатки, команда не понимает, что сохранить при переделке. Полезно отметить два-три удачных решения: поиск по артикулу, подтверждение удаления, понятную подпись ячейки. Их не хвалят ради вежливости, а фиксируют как работающий образец.</p>
+<p>Серьёзность ставят по последствию, а не по числу участников, которые споткнулись. Если один кладовщик из пяти отправил товар в чужую зону, это высокая серьёзность, потому что ошибка портит остатки. Если все пятеро заметили неудобный шрифт, это низкая серьёзность, потому что результат достигнут.</p>
+<h2 id="итоги"><span class="num">10</span>Итоги</h2>
+<ul>
+<li>Удобство измеряют задачей: результат, время, ошибки и удовлетворённость.</li>
+<li>Сценарий фиксирует участника, контекст, данные, шаги и критерий успеха.</li>
+<li>Медиана времени и доля успешных задач точнее среднего и общего впечатления.</li>
+<li>SUS даёт сравнимую оценку от 0 до 100, но не объясняет причину проблем.</li>
+<li>Эвристики Нильсена помогают найти кандидатов в дефекты, а наблюдение их подтверждает.</li>
+<li>Проблему формулируют через шаг, ожидание, факт и последствие.</li>
+<li>Доступность проверяют с клавиатуры, при увеличении масштаба и на реальном мониторе.</li>
+</ul>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Зачем в сценарии указывают контекст работы?</p><div class="opts"><label class="opt"><input type="radio" name="q133_0" value="1"><span>Чтобы увеличить число шагов</span></label><label class="opt"><input type="radio" name="q133_0" value="3"><span>Чтобы не считать метрики</span></label><label class="opt"><input type="radio" name="q133_0" value="2"><span>Чтобы участник быстрее угадал ответ</span></label><label class="opt"><input type="radio" name="q133_0" value="0" data-ok><span>Условия склада влияют на скорость и ошибки</span></label></div><p class="quiz-why" hidden>Перчатки, шум и размер экрана меняют результат.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Что проверяют клавиатурой?</p><div class="opts"><label class="opt"><input type="radio" name="q133_1" value="2"><span>Число сотрудников на складе</span></label><label class="opt"><input type="radio" name="q133_1" value="0" data-ok><span>Можно ли пройти задачу без мыши и виден ли фокус</span></label><label class="opt"><input type="radio" name="q133_1" value="1"><span>Склонность пользователя к ошибкам</span></label><label class="opt"><input type="radio" name="q133_1" value="3"><span>Правильность расчёта остатка</span></label></div><p class="quiz-why" hidden>Доступность с клавиатуры важна для работы со сканером и без мыши.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="2" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Какие эвристики нарушает отсутствие подтверждения после сохранения?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_2" value="3"><span>Справка и документация</span></label><label class="opt"><input type="checkbox" name="q133_2" value="0" data-ok><span>Видимость состояния системы</span></label><label class="opt"><input type="checkbox" name="q133_2" value="2"><span>Связь с реальным миром</span></label><label class="opt"><input type="checkbox" name="q133_2" value="1" data-ok><span>Предотвращение ошибок</span></label></div><p class="quiz-why" hidden>Человек не знает результат операции и повторяет действие.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Как называется проверка интерфейса по десяти общим правилам Нильсена?</p><input type="text" class="short-answer" data-answers="[&quot;эвристическая оценка&quot;, &quot;эвристики&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется проверка интерфейса по десяти общим правилам Нильсена?"><p class="quiz-why" hidden>Эвристическая оценка опирается на правила и опыт эксперта.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Что показывает SUS?</p><div class="opts"><label class="opt"><input type="radio" name="q133_4" value="1"><span>Точное время выполнения задачи</span></label><label class="opt"><input type="radio" name="q133_4" value="3"><span>Скорость загрузки страницы</span></label><label class="opt"><input type="radio" name="q133_4" value="0" data-ok><span>Сравнимую оценку удобства по десяти утверждениям</span></label><label class="opt"><input type="radio" name="q133_4" value="2"><span>Число ошибок в базе данных</span></label></div><p class="quiz-why" hidden>SUS даёт оценку от 0 до 100, но не объясняет причину.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что измеряет проверка удобства?</p><div class="opts"><label class="opt"><input type="radio" name="q133_5" value="2"><span>Число строк в базе данных</span></label><label class="opt"><input type="radio" name="q133_5" value="0" data-ok><span>Стоимость решения задачи для пользователя</span></label><label class="opt"><input type="radio" name="q133_5" value="1"><span>Скорость ответа сервера на запрос</span></label><label class="opt"><input type="radio" name="q133_5" value="3"><span>Правильность кода приложения</span></label></div><p class="quiz-why" hidden>Удобство оценивают по тому, как человек решает свою задачу.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Что входит в сценарий проверки удобства?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_6" value="0" data-ok><span>Цель задачи и критерий успеха</span></label><label class="opt"><input type="checkbox" name="q133_6" value="3"><span>Цвет кнопки сохранения</span></label><label class="opt"><input type="checkbox" name="q133_6" value="4"><span>Исходный код приложения</span></label><label class="opt"><input type="checkbox" name="q133_6" value="1" data-ok><span>Участник и контекст работы</span></label><label class="opt"><input type="checkbox" name="q133_6" value="2" data-ok><span>Данные и стартовое состояние</span></label></div><p class="quiz-why" hidden>Сценарий должен позволить повторить проверку.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Как формулируют проблему интерфейса?</p><div class="opts"><label class="opt"><input type="radio" name="q133_7" value="3"><span>Через количество строк кода</span></label><label class="opt"><input type="radio" name="q133_7" value="0" data-ok><span>Через шаг, ожидание, факт и последствие</span></label><label class="opt"><input type="radio" name="q133_7" value="1"><span>Через общее впечатление «неудобно»</span></label><label class="opt"><input type="radio" name="q133_7" value="2"><span>Через сравнение с любимым сайтом</span></label></div><p class="quiz-why" hidden>Замечание должно быть проверяемым и воспроизводимым.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какой результат приёмки в учебном прогоне?</p><div class="opts"><label class="opt"><input type="radio" name="q133_8" value="2"><span>35 процентов успешных задач</span></label><label class="opt"><input type="radio" name="q133_8" value="3"><span>95 процентов успешных задач</span></label><label class="opt"><input type="radio" name="q133_8" value="1"><span>100 процентов успешных задач</span></label><label class="opt"><input type="radio" name="q133_8" value="0" data-ok><span>67 процентов успешных задач</span></label></div><p class="quiz-why" hidden>Двое из трёх участников выполнили задачу без помощи.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Как называется шкала удобства из десяти утверждений?</p><input type="text" class="short-answer" data-answers="[&quot;sus&quot;, &quot;System Usability Scale&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется шкала удобства из десяти утверждений?"><p class="quiz-why" hidden>SUS расшифровывается как System Usability Scale.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Какая проблема описана верно?</p><div class="opts"><label class="opt"><input type="radio" name="q133_10" value="1"><span>Экран выглядит устаревшим</span></label><label class="opt"><input type="radio" name="q133_10" value="3"><span>Шрифт кажется слишком крупным</span></label><label class="opt"><input type="radio" name="q133_10" value="2"><span>Кнопка могла бы быть синей</span></label><label class="opt"><input type="radio" name="q133_10" value="0" data-ok><span>После выбора товара фокус остаётся в поиске, количество попадает не туда</span></label></div><p class="quiz-why" hidden>Замечание привязано к шагу и последствию.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Что означает оценка SUS 69,5?</p><div class="opts"><label class="opt"><input type="radio" name="q133_11" value="2"><span>Полностью непригодный интерфейс</span></label><label class="opt"><input type="radio" name="q133_11" value="1"><span>Идеально удобный интерфейс</span></label><label class="opt"><input type="radio" name="q133_11" value="3"><span>Ошибка в расчёте, такого значения не бывает</span></label><label class="opt"><input type="radio" name="q133_11" value="0" data-ok><span>Удобство около типичного среднего уровня</span></label></div><p class="quiz-why" hidden>Средние значения в отраслевых наборах близки к 68.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Какие метрики используют в проверке удобства?</p><div class="opts"><label class="opt"><input type="checkbox" name="q133_12" value="1" data-ok><span>Время на задачу</span></label><label class="opt"><input type="checkbox" name="q133_12" value="4"><span>Скорость ответа сервера</span></label><label class="opt"><input type="checkbox" name="q133_12" value="2" data-ok><span>Частоту ошибок</span></label><label class="opt"><input type="checkbox" name="q133_12" value="3"><span>Число строк в таблице базы</span></label><label class="opt"><input type="checkbox" name="q133_12" value="0" data-ok><span>Долю успешных задач</span></label></div><p class="quiz-why" hidden>Метрики описывают работу пользователя, а не производительность сервера.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Что делать, если участник застрял?</p><div class="opts"><label class="opt"><input type="radio" name="q133_13" value="3"><span>Прекратить проверку и удалить запись</span></label><label class="opt"><input type="radio" name="q133_13" value="2"><span>Сказать, что он ошибается</span></label><label class="opt"><input type="radio" name="q133_13" value="0" data-ok><span>Дать нейтральную подсказку и продолжить наблюдение</span></label><label class="opt"><input type="radio" name="q133_13" value="1"><span>Нажать кнопку за него</span></label></div><p class="quiz-why" hidden>Вмешательство модератора искажает результат.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Почему время на задачу считают медианой?</p><div class="opts"><label class="opt"><input type="radio" name="q133_14" value="1"><span>Медиана всегда больше среднего</span></label><label class="opt"><input type="radio" name="q133_14" value="2"><span>Медиана учитывает только ошибки</span></label><label class="opt"><input type="radio" name="q133_14" value="3"><span>Медиана не зависит от числа участников</span></label><label class="opt"><input type="radio" name="q133_14" value="0" data-ok><span>Один очень медленный участник искажает среднее</span></label></div><p class="quiz-why" hidden>Медиана показывает типичное время и устойчива к выбросам.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="27-prakt-10.html"><span>← Предыдущее занятие</span>Практика 10. Проверка нагрузки и доступа</a><a class="next" style="text-align:right;margin-left:auto" href="29-prakt-11.html"><span>Следующее занятие →</span>Практика 11. Оценка удобства интерфейса склада</a></nav></main>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    var ico = btn.querySelector('.theme-ico');
+    if(ico){
+      btn.setAttribute('aria-label', t === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+    } else {
+      btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    }
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){
+      apply(current() === 'dark' ? 'light' : 'dark');
+      var ico = btn.querySelector('.theme-ico');
+      if(!ico) return;
+      ico.classList.remove('is-spinning');
+      void ico.offsetWidth;
+      ico.classList.add('is-spinning');
+      var stop = function(){ ico.classList.remove('is-spinning'); };
+      ico.addEventListener('animationend', stop, {once: true});
+      setTimeout(stop, 700);
+    });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  document.querySelectorAll('.work-checklist input[type="checkbox"]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      if(!cb.checked) return;
+      var row = cb.closest('tr');
+      row.querySelectorAll('input[type="checkbox"]').forEach(function(other){
+        if(other !== cb) other.checked = false;
+      });
+    });
+  });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintPicked(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+    });
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
+    });
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function showQuestion(i){
+      current = i;
+      qs[i].hidden = false;
+      if(window.__readProgress) window.__readProgress();
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { showQuestion(idx + 1); }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintPicked(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
+    });
+    showQuestion(0);
+  });
+})();
+</script>
+</body>
+</html>

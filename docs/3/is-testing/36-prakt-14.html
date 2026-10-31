@@ -1,0 +1,1733 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#D04A28;--course-tint:#F4E1D8;--course-accent-dark:#F06A45;--course-tint-dark:#3A2219;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Практика 14. Проверка данных и интерфейса</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+
+/* ---------- left-edge navigation rail ---------- */
+.edge-rail {
+  position: fixed; left: 6px; top: 50%;
+  transform: translateY(-50%); z-index: 90;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.rail-btn {
+  position: relative; display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0; border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+  border: 1px solid var(--rule); background: color-mix(in srgb, var(--card) 84%, transparent);
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, border-color .15s, color .15s, background .15s;
+}
+.rail-btn svg { display: block; }
+.rail-btn:hover, .rail-btn:focus-visible { border-color: var(--accent); color: var(--accent); transform: scale(1.06); }
+.rail-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rail-warn { color: var(--bad); }
+.rail-warn:hover, .rail-warn:focus-visible { border-color: var(--bad); color: var(--bad); }
+.rail-grow { flex: 1 1 auto; }
+
+/* hover tooltips on the rail icons */
+[data-tip]::before {
+  content: ""; position: absolute; left: calc(100% + 6px); top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: var(--ink); opacity: 0;
+  pointer-events: none; transition: opacity .15s; z-index: 121;
+}
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: calc(100% + 16px); top: 50%;
+  transform: translateY(-50%); white-space: nowrap;
+  background: var(--ink); color: var(--paper); padding: 6px 10px; border-radius: 8px;
+  font: 600 12px/1.35 var(--font-body); letter-spacing: .01em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18); opacity: 0; pointer-events: none;
+  transition: opacity .15s; z-index: 122;
+}
+[data-tip]:hover::before, [data-tip]:focus-visible::before,
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; }
+@media (hover: none) { [data-tip]::before, [data-tip]::after { display: none; } }
+
+/* icon theme button in the rail: moon in light, sun in dark */
+.theme-ico { display: grid; place-items: center; transform-origin: center; }
+.theme-ico.is-spinning { animation: theme-spin .5s cubic-bezier(.16, 1, .3, 1); }
+@keyframes theme-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .theme-ico.is-spinning { animation: none; } }
+.theme-ico .ico-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .theme-ico .ico-sun { display: block; }
+  :root:not([data-theme=light]) .theme-ico .ico-moon { display: none; }
+}
+:root[data-theme=dark] .theme-ico .ico-sun { display: block; }
+:root[data-theme=dark] .theme-ico .ico-moon { display: none; }
+@media (max-width: 920px) {
+  .page { padding-left: 56px; }
+}
+@media (max-width: 640px) {
+  .edge-rail { left: 4px; gap: 6px; }
+  .rail-btn { width: 34px; height: 34px; }
+  .page { padding-left: 48px; }
+}
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+/* the rail sits at the viewport edge, so keep catalog content clear of it */
+@media (max-width: 1320px) { main.catalog { padding-left: 56px; } }
+@media (max-width: 640px) { main.catalog { padding-left: 48px; } }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px minmax(0, 1fr) 66px; grid-template-rows: auto auto 1fr; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: 1 / span 3; padding-top: 2px; }
+.syllabus h3 { grid-column: 2; grid-row: 1; min-width: 0; margin: 0; font: 700 18px var(--font-display); overflow-wrap: anywhere; }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { grid-column: 2; grid-row: 2; font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2; grid-row: 3; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .card-art { grid-column: 3; grid-row: 1 / span 3; align-self: start; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 10px; background: var(--tint); background: linear-gradient(145deg, color-mix(in srgb, var(--course-accent, var(--accent)) 13%, transparent), transparent 72%); }
+.syllabus .card-art svg { width: 100%; height: auto; max-height: 56px; display: block; }
+@media (max-width: 700px) {
+  .syllabus .lesson-card { grid-template-columns: 36px minmax(0, 1fr) 44px; gap: 4px 10px; padding: 14px; }
+}
+@media (max-width: 520px) {
+  .syllabus .lesson-card { grid-template-columns: 32px minmax(0, 1fr) 32px; }
+  .syllabus .card-art svg { max-height: 28px; }
+}
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; overflow-wrap: anywhere; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt span { overflow-wrap: anywhere; min-width: 0; }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- practical work checklist ---------- */
+.work-checklist { width: 100%; border-collapse: collapse; margin: 14px 0 4px; }
+.work-checklist th, .work-checklist td { border: 1px solid var(--rule); padding: 9px 10px; vertical-align: top; }
+.work-checklist th { background: var(--paper); font: 600 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 104px; text-align: center; }
+.work-checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+@media (max-width: 560px) {
+  .work-checklist th, .work-checklist td { padding: 7px 6px; }
+  .work-checklist th { font-size: 10px; letter-spacing: 0; }
+  .work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 62px; }
+  .work-checklist input[type="checkbox"] { width: 16px; height: 16px; }
+}
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- variant cards on the practice page ---------- */
+.variant { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 0 0 12px; overflow: hidden; }
+.variant > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 14px 18px; font: 700 17px/1.35 var(--font-display); }
+.variant > summary::-webkit-details-marker { display: none; }
+.variant > summary::after { content: '+'; margin-left: auto; font: 600 20px/1 var(--font-mono); color: var(--accent); }
+.variant[open] > summary::after { content: '−'; }
+.variant > summary .variant-no { font: 700 13px/1 var(--font-mono); color: var(--accent); background: var(--paper); border: 1px solid var(--rule-2); border-radius: 6px; padding: 4px 7px; }
+.variant-body { padding: 0 18px 18px; }
+.variant-body h4 { margin: 18px 0 8px; font: 700 15px/1.3 var(--font-display); }
+.variant-body table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.variant-body th, .variant-body td { border: 1px solid var(--rule-2); padding: 6px 8px; text-align: left; vertical-align: top; }
+.variant-body th { background: var(--paper); font-weight: 600; }
+.variant-body .files { margin-top: 14px; }
+.variant-body .task-list { margin: 8px 0 0; padding-left: 20px; }
+.variant-body .task-list li { margin: 0 0 8px; }
+@media (max-width: 620px) { .variant-body { overflow-x: auto; } .variant-body table { min-width: 520px; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .edge-rail, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Тестирование информационных систем</a><span>/</span><span>Практика 14. Проверка данных и интерфейса</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#D04A28" data-seed="0.629">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#D04A28 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятия 42-43</span><span class="pill">Тестирование информационных систем</span></div>
+<div class="hero-panel"><h1>Практика 14. Проверка данных и интерфейса</h1><p class="dek">Один и тот же остаток проверяют на экране, в ответе API и в базе, и расхождение показывает, где именно родился дефект.</p></div>
+<div class="glyph" aria-hidden="true">П14</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Проверять запись и чтение данных SQL-запросом</li><li>Находить расхождение между экраном и БД</li><li>Проверять валидацию полей интерфейса</li><li>Оформлять результаты проверки данных</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#цель-работы">Цель работы</a></li><li><a href="#оборудование-и-программное-обеспечение">Оборудование и программное обеспечение</a></li><li><a href="#краткие-теоретические-сведения">Краткие теоретические сведения</a></li><li><a href="#ход-работы">Ход работы</a></li><li><a href="#требования-к-отчёту">Требования к отчёту</a></li><li><a href="#что-сдать">Что сдать</a></li><li><a href="#чек-лист-выполнения-работы">Чек-лист выполнения работы</a></li><li><a href="#критерии-оценки">Критерии оценки</a></li><li><a href="#контрольные-вопросы">Контрольные вопросы</a></li></ol></nav><article class="prose"><h2 id="цель-работы"><span class="num">01</span>Цель работы</h2>
+<p>Проверить данные и интерфейс учебной ИС «Склад+» на согласованность. Вы создадите тестовую базу склада, найдёте в ней нарушения целостности, сверите остатки с экраном и ответом API, проверите валидацию полей приёмки и работу формы с клавиатуры.</p>
+<p>Результат работы это набор SQL-запросов, таблица расхождений между экраном, API и базой, протокол проверки полей и отчёт с выводом о том, где родился каждый дефект.</p>
+<div class="files"><b class="label">Материалы к работе · скачать и приступить</b>
+<a href="reports/ISTEST_practice-14_report-template.docx" download>Шаблон отчёта · DOCX</a>
+<a href="reports/kit/sklad-test-kit.zip" download>Данные и шаблоны · ZIP</a>
+<p>Шаблон отчёта заполняется по ходу работы. В архиве требования, примеры ответов API, учебная база и пустые шаблоны документов.</p>
+</div>
+
+<h2 id="оборудование-и-программное-обеспечение"><span class="num">02</span>Оборудование и программное обеспечение</h2>
+<ul>
+<li>Персональный компьютер с браузером.</li>
+<li>Python 3.11 или новее со встроенным модулем <code>sqlite3</code>.</li>
+<li>Visual Studio Code или другой текстовый редактор.</li>
+<li>sqliteonline.com или Python для выполнения запросов.</li>
+<li>MS Word или LibreOffice Writer для отчёта.</li>
+<li>MS Excel или LibreOffice Calc для таблиц проверок.</li>
+<li>Рабочая папка <code>.../data-ui-testing/prakt-14/</code>.</li>
+</ul>
+<h2 id="краткие-теоретические-сведения"><span class="num">03</span>Краткие теоретические сведения</h2>
+<p>Проверка данных отвечает на вопрос, сохранилось ли то, что обещала система. Экран и API показывают результат операции, база хранит его. Если экран показывает 42, API отдаёт 42, а в базе лежит 40, значит экран и API читают не тот источник или кешируют старое значение.</p>
+<p>Целостность данных держится на ограничениях и правилах. Ограничения <code>NOT NULL</code>, <code>UNIQUE</code>, <code>CHECK</code> и <code>FOREIGN KEY</code> запрещают часть неверных строк. Правила, которые нельзя записать в схему, проверяют запросами: остаток не отрицательный, сумма движений сходится с остатком, у каждого движения есть площадка и товар.</p>
+<p>Тип значения проверяют отдельно от значения. В SQLite тип колонки это рекомендация: текст, который нельзя привести к числу, сохраняется как текст. Функция <code>typeof</code> показывает фактический тип. Запрос <code>WHERE qty &lt; 0</code> такую строку не найдёт, потому что сравнение числа со строкой даёт неожиданный результат.</p>
+<p>Дубликат ищут по бизнес-ключу, а не по первичному ключу. Две приёмки по поставке 505 имеют разные <code>id</code> и одинаковый номер документа. Потерянную связь ищут левым соединением со справочником: строки, у которых родитель не найден, остаются с <code>NULL</code>.</p>
+<p>Транзакция объединяет изменения в одно целое. Проверка откатом показывает, остаётся ли половина операции после ошибки. Сначала читают количество строк, затем начинают транзакцию, выполняют вставку, откатывают и читают снова. Совпадение чисел означает, что откат работает.</p>
+<p>Порядок проверки идёт от общего к частному. Сначала смотрят, что база доступна и схема соответствует версии. Потом проверяют ограничения и типы, затем связи и согласованность, и только после этого переходят к экрану. Если начать с экрана, легко принять дефект отображения за потерю данных и потратить время на восстановление исправной базы.</p>
+<p>Данные для проверки готовят заранее и убирают после неё. В учебной базе это отдельный файл, который создаётся скриптом. На стенде тестовые строки помечают известным признаком, например номером документа из диапазона, который не используется в работе. Без такого признака уборка превращается в поиск иголки в стоге и рискует удалить рабочие записи.</p>
+<p>Серьёзность нарушения данных зависит от последствий, а не от типа ошибки. Потерянная приёмка на 60 единиц влияет на остаток и на деньги, поэтому она критическая. Неверный регистр логина мешает входу, но не меняет остатки, поэтому она серьёзная, но не критическая. Оценку записывают рядом с нарушением, иначе отчёт превращается в список без приоритетов.</p>
+<p>Валидация интерфейса проверяет те же правила, что и сервер, но показывает результат пользователю. Поле обязательное, значение в диапазоне, формат совпадает с шаблоном, сообщение стоит рядом с полем и называет действие. Тест проверяет форму на всех значениях из требования и смотрит, что сообщение появилось у нужного поля, а введённые данные сохранились.</p>
+<h2 id="ход-работы"><span class="num">04</span>Ход работы</h2>
+<h3>Шаг 1. Соберите стенд и создайте базу</h3>
+<p>Создайте в рабочей папке файл <code>make_db.py</code> с кодом ниже. Скрипт создаёт базу <code>sklad_test.db</code> со справочниками, остатками, движениями и пользователями.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">isolation_level</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">DROP TABLE IF EXISTS movements;</span>
+<span class="s2">DROP TABLE IF EXISTS stock;</span>
+<span class="s2">DROP TABLE IF EXISTS users;</span>
+<span class="s2">DROP TABLE IF EXISTS products;</span>
+<span class="s2">DROP TABLE IF EXISTS sites;</span>
+
+<span class="s2">CREATE TABLE sites (</span>
+<span class="s2">  code  TEXT PRIMARY KEY,</span>
+<span class="s2">  title TEXT NOT NULL</span>
+<span class="s2">);</span>
+<span class="s2">CREATE TABLE products (</span>
+<span class="s2">  id        INTEGER PRIMARY KEY,</span>
+<span class="s2">  sku       TEXT NOT NULL UNIQUE,</span>
+<span class="s2">  title     TEXT NOT NULL,</span>
+<span class="s2">  unit      TEXT NOT NULL CHECK (unit IN (&#39;шт&#39;, &#39;кг&#39;, &#39;л&#39;)),</span>
+<span class="s2">  min_stock INTEGER NOT NULL DEFAULT 0 CHECK (min_stock &gt;= 0)</span>
+<span class="s2">);</span>
+<span class="s2">CREATE TABLE stock (</span>
+<span class="s2">  site_code  TEXT NOT NULL REFERENCES sites(code),</span>
+<span class="s2">  product_id INTEGER NOT NULL REFERENCES products(id),</span>
+<span class="s2">  qty        INTEGER NOT NULL CHECK (qty &gt;= 0),</span>
+<span class="s2">  PRIMARY KEY (site_code, product_id)</span>
+<span class="s2">);</span>
+<span class="s2">CREATE TABLE movements (</span>
+<span class="s2">  id         INTEGER PRIMARY KEY,</span>
+<span class="s2">  doc        TEXT NOT NULL,</span>
+<span class="s2">  kind       TEXT NOT NULL CHECK (kind IN (&#39;приёмка&#39;, &#39;отгрузка&#39;, &#39;списание&#39;, &#39;инвентаризация&#39;)),</span>
+<span class="s2">  site_code  TEXT NOT NULL REFERENCES sites(code),</span>
+<span class="s2">  product_id INTEGER NOT NULL REFERENCES products(id),</span>
+<span class="s2">  qty        INTEGER NOT NULL CHECK (qty &gt; 0),</span>
+<span class="s2">  created_at TEXT NOT NULL</span>
+<span class="s2">);</span>
+<span class="s2">CREATE TABLE users (</span>
+<span class="s2">  id         INTEGER PRIMARY KEY,</span>
+<span class="s2">  login      TEXT NOT NULL UNIQUE,</span>
+<span class="s2">  role       TEXT NOT NULL CHECK (role IN (&#39;кладовщик&#39;, &#39;менеджер&#39;, &#39;администратор&#39;)),</span>
+<span class="s2">  site_code  TEXT REFERENCES sites(code),</span>
+<span class="s2">  is_blocked INTEGER NOT NULL DEFAULT 0</span>
+<span class="s2">);</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO sites VALUES (?, ?)&quot;</span><span class="p">,</span>
+                 <span class="p">[(</span><span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="s2">&quot;Москва&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="s2">&quot;Тверь&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="s2">&quot;Тула&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;KLG&quot;</span><span class="p">,</span> <span class="s2">&quot;Калуга&quot;</span><span class="p">)])</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO products VALUES (?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
+                 <span class="p">[(</span><span class="mi">1001</span><span class="p">,</span> <span class="s2">&quot;SKU-1001&quot;</span><span class="p">,</span> <span class="s2">&quot;Кабель UTP&quot;</span><span class="p">,</span> <span class="s2">&quot;шт&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">1002</span><span class="p">,</span> <span class="s2">&quot;SKU-1002&quot;</span><span class="p">,</span> <span class="s2">&quot;Коробка 400x300&quot;</span><span class="p">,</span> <span class="s2">&quot;шт&quot;</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">1003</span><span class="p">,</span> <span class="s2">&quot;SKU-1003&quot;</span><span class="p">,</span> <span class="s2">&quot;Стяжка нейлоновая&quot;</span><span class="p">,</span> <span class="s2">&quot;шт&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">1004</span><span class="p">,</span> <span class="s2">&quot;SKU-1004&quot;</span><span class="p">,</span> <span class="s2">&quot;Сахар-песок&quot;</span><span class="p">,</span> <span class="s2">&quot;кг&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">1005</span><span class="p">,</span> <span class="s2">&quot;SKU-1005&quot;</span><span class="p">,</span> <span class="s2">&quot;Плёнка стрейч&quot;</span><span class="p">,</span> <span class="s2">&quot;шт&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">1006</span><span class="p">,</span> <span class="s2">&quot;SKU-1006&quot;</span><span class="p">,</span> <span class="s2">&quot;Болт М8&quot;</span><span class="p">,</span> <span class="s2">&quot;шт&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)])</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO stock VALUES (?, ?, ?)&quot;</span><span class="p">,</span>
+                 <span class="p">[(</span><span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1002</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">780</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">1240</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="mi">1004</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="mi">1005</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s2">&quot;KLG&quot;</span><span class="p">,</span> <span class="mi">1006</span><span class="p">,</span> <span class="s2">&quot;1200 шт&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;KLG&quot;</span><span class="p">,</span> <span class="mi">1004</span><span class="p">,</span> <span class="mi">90</span><span class="p">)])</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO movements VALUES (?, ?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
+                 <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;ПР-501&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;2026-09-28 09:10:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;ОТ-310&quot;</span><span class="p">,</span> <span class="s2">&quot;отгрузка&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;2026-09-29 14:40:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;ПР-502&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">1240</span><span class="p">,</span> <span class="s2">&quot;2026-09-30 10:05:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;ПР-503&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="s2">&quot;2026-10-01 11:30:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;ПР-504&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="mi">1004</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="s2">&quot;2026-10-02 08:50:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;ОТ-311&quot;</span><span class="p">,</span> <span class="s2">&quot;отгрузка&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;2026-10-03 16:20:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;ПР-505&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;KLG&quot;</span><span class="p">,</span> <span class="mi">1006</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="s2">&quot;2026-10-04 09:45:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;ПР-501&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;2026-10-05 08:15:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;ПР-506&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;SAR&quot;</span><span class="p">,</span> <span class="mi">1001</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;2026-10-06 12:00:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;ПР-507&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;KLG&quot;</span><span class="p">,</span> <span class="mi">1004</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;2026-10-07 10:30:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="s2">&quot;ОТ-312&quot;</span><span class="p">,</span> <span class="s2">&quot;отгрузка&quot;</span><span class="p">,</span> <span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="mi">1005</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;2026-10-08 15:10:00&quot;</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;ПР-508&quot;</span><span class="p">,</span> <span class="s2">&quot;приёмка&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">1003</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="s2">&quot;2026-10-09 09:00:00&quot;</span><span class="p">)])</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO users VALUES (?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
+                 <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;ivanov&quot;</span><span class="p">,</span> <span class="s2">&quot;кладовщик&quot;</span><span class="p">,</span> <span class="s2">&quot;MSK&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;petrov&quot;</span><span class="p">,</span> <span class="s2">&quot;менеджер&quot;</span><span class="p">,</span> <span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Petrov&quot;</span><span class="p">,</span> <span class="s2">&quot;менеджер&quot;</span><span class="p">,</span> <span class="s2">&quot;TVR&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="s2">&quot;администратор&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;sidorov&quot;</span><span class="p">,</span> <span class="s2">&quot;кладовщик&quot;</span><span class="p">,</span> <span class="s2">&quot;TUL&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;база создана, строк в movements:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM movements&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+
+<p>Запустите скрипт командой <code>python make_db.py</code>. Появится сообщение о числе строк в движениях. Файл <code>sklad_test.db</code> создаётся рядом со скриптом. Если база уже существует, скрипт удалит старые таблицы и создаст их заново, поэтому не запускайте его на данных, которые нужно сохранить.</p>
+<p>В схеме остаток хранится отдельно от движений. Так быстрее читать текущее количество, но появляется второй источник правды. Движения отвечают на вопрос, откуда взялось число, остаток на вопрос, сколько есть сейчас. Пока оба источника обновляются одной транзакцией, они сходятся. Как только один из них обновляется отдельно, появляется расхождение, которое и предстоит найти.</p>
+<p>Справочники отделены от операционных таблиц намеренно. Площадка и товар описываются один раз, а движения ссылаются на них по коду и номеру. Такая схема не даёт хранить название площадки в каждой строке и получать разные написания одного склада.</p>
+<p>Рядом с базой положите файл <code>priemka.html</code>. Это учебная форма приёмки, на ней проверяют валидацию полей и работу с клавиатуры.</p>
+<div class="codehilite" data-lang="html"><pre><span></span><code><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;ru&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Приёмка товара<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Приёмка товара<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;form&quot;</span> <span class="na">novalidate</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;supply&quot;</span><span class="p">&gt;</span>Поставка<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;supply&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;supply&quot;</span> <span class="na">inputmode</span><span class="o">=</span><span class="s">&quot;numeric&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;error&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;supply-error&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;qty&quot;</span><span class="p">&gt;</span>Количество<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;qty&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;qty&quot;</span> <span class="na">inputmode</span><span class="o">=</span><span class="s">&quot;numeric&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;error&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;qty-error&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;cell&quot;</span><span class="p">&gt;</span>Ячейка<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;cell&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;cell&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;error&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;cell-error&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;comment&quot;</span><span class="p">&gt;</span>Комментарий<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;comment&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;comment&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;error&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;comment-error&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Провести приёмку<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;result&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;form&quot;</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">rules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">supply</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="o">/^</span><span class="err">\</span><span class="nx">d</span><span class="o">+</span><span class="nx">$</span><span class="o">/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">+</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">+</span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">999999</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">qty</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="o">/^</span><span class="err">\</span><span class="nx">d</span><span class="o">+</span><span class="nx">$</span><span class="o">/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">+</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">+</span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">10000</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">cell</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="o">/^</span><span class="p">[</span><span class="nx">A</span><span class="o">-</span><span class="nx">Z</span><span class="p">]</span><span class="o">-</span><span class="err">\</span><span class="nx">d</span><span class="p">{</span><span class="mf">2</span><span class="p">}</span><span class="nx">$</span><span class="o">/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+<span class="p">};</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">supply</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Поставка: целое число от 1 до 999999&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">qty</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Количество: целое число от 1 до 10 000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">cell</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Ячейка: заглавная буква, дефис, две цифры&quot;</span>
+<span class="p">};</span>
+<span class="nx">form</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;submit&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">rules</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;-error&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">trim</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">error</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">rules</span><span class="p">[</span><span class="nx">name</span><span class="p">](</span><span class="nx">value</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">error</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">messages</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+<span class="w">      </span><span class="nx">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">).</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;Приёмка создана&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Откройте файл в браузере двойным щелчком. Форма работает без сервера: при отправке она проверяет поля и показывает сообщение о результате. Это учебный стенд, а не копия рабочей системы, поэтому часть поведения в нём упрощена.</p>
+<h3>Шаг 2. Проверьте схему и ограничения</h3>
+<p>Схема задаёт контракт базы. Проверьте состав колонок и ограничения запросами, а не по коду создания.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;колонки stock:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA table_info(stock)&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">7</span><span class="si">}</span><span class="s2"> notnull=</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> pk=</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;внешние ключи stock:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_key_list(stock)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;индексы stock:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA index_list(stock)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;режим внешних ключей:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+
+<p>Заполните таблицу: что заявлено в схеме, что подтвердилось запросом, какой вывод. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Объект</th>
+<th>Заявлено</th>
+<th>Подтверждено</th>
+<th>Вывод</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Первичный ключ stock</td>
+<td>площадка и товар</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Внешний ключ stock на sites</td>
+<td>есть</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ограничение qty &gt;= 0</td>
+<td>есть</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Режим внешних ключей</td>
+<td>включён</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Отдельно проверьте, что ограничение действительно срабатывает: попробуйте вставить остаток <code>-1</code> и записать результат. Если вставка прошла, ограничение объявлено, но не работает, и это отдельный дефект.</p>
+<p>Строка «режим внешних ключей» в выводе чаще всего равна нулю. Это значит, что объявленные связи не проверяются, и строка с чужой площадкой может попасть в таблицу. Включите режим командой <code>PRAGMA foreign_keys = ON</code> в том же соединении и повторите <code>PRAGMA foreign_key_check</code>. Если нарушения появились, они были в базе и раньше, просто база их не замечала.</p>
+<p>Список индексов показывает, какие уникальные и обычные индексы построены. Отсутствие индекса по бизнес-ключу объясняет, почему дубликат прошёл: база не знала, что эти строки считаются одним объектом. Проверка схемы и проверка данных дополняют друг друга, первая объясняет, почему вторая нашла нарушение.</p>
+<h3>Шаг 3. Проверьте типы и пустые значения</h3>
+<p>Значение может быть заполнено, но иметь неверный тип. Найдите такие строки запросом с <code>typeof</code>.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;остатки нецелого типа:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT site_code, product_id, qty, typeof(qty) FROM stock &quot;</span>
+                        <span class="s2">&quot;WHERE typeof(qty) &lt;&gt; &#39;integer&#39;&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;пустые площадки у пользователей:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, login, role, site_code FROM users WHERE site_code IS NULL&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;логины с лишними пробелами или разным регистром:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, login, length(login), lower(login) FROM users &quot;</span>
+                        <span class="s2">&quot;ORDER BY lower(login)&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Заполните таблицу: где найдено, какой тип или значение ожидалось, что фактически, чем это опасно. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Объект</th>
+<th>Ожидание</th>
+<th>Факт</th>
+<th>Риск</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Остаток KLG, товар 1006</td>
+<td>целое число</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте, как ведёт себя сравнение с нецелым значением. Запрос <code>SELECT qty &lt; 0 FROM stock WHERE product_id = 1006</code> вернёт результат, который нужно объяснить в отчёте.</p>
+<p>Причина в порядке сравнения. В SQLite любое число меньше любой строки, поэтому <code>'1200 шт' &lt; 0</code> даёт ложь, а <code>'1200 шт' &gt;= 0</code> даёт истину. Ограничение <code>CHECK (qty &gt;= 0)</code> такую строку пропускает. Арифметика при этом берёт из строки числовое начало, и <code>qty + 10</code> даёт 1210. Ошибка не падает, а тихо живёт в данных.</p>
+<p>Исправление начинают с поиска всех строк с неверным типом, затем выясняют, какой путь записи их создал. Просто заменить значение на число недостаточно: следующий импорт вернёт текст. Проверяют обработчик, который пишет остаток, и добавляют проверку типа на входе.</p>
+<h3>Шаг 4. Найдите дубликаты и потерянные связи</h3>
+<p>Дубликат ищут группировкой по бизнес-ключу, потерянную связь левым соединением. Ниже пример для движений и пользователей.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;дубли по номеру документа:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT doc, COUNT(*) FROM movements GROUP BY doc HAVING COUNT(*) &gt; 1&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;движения без площадки:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;SELECT m.id, m.doc, m.site_code</span>
+<span class="s2">                           FROM movements m</span>
+<span class="s2">                           LEFT JOIN sites s ON s.code = m.site_code</span>
+<span class="s2">                           WHERE s.code IS NULL&quot;&quot;&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;нарушения внешних ключей:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_key_check&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;похожие логины:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;SELECT a.id, a.login, b.id, b.login</span>
+<span class="s2">                           FROM users a JOIN users b</span>
+<span class="s2">                             ON lower(trim(a.login)) = lower(trim(b.login)) AND a.id &lt; b.id&quot;&quot;&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Заполните таблицу нарушений: объект, бизнес-ключ, найденные строки, возможная причина. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Нарушение</th>
+<th>Ключ</th>
+<th>Строки</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Дубль приёмки</td>
+<td>номер документа</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Объясните, почему уникальный индекс по <code>login</code> не поймал логины, которые различаются регистром или пробелом. Предложите, что изменить в схеме или в проверке.</p>
+<p>Уникальный индекс сравнивает значения так, как они записаны. Для текста в SQLite сравнение по умолчанию учитывает регистр, а пробел в конце делает строку другой. Поэтому <code>petrov</code> и <code>Petrov</code> проходят как два разных логина, хотя для пользователя это один человек. Исправление возможно на уровне схемы, через индекс с <code>COLLATE NOCASE</code> и правило нормализации, или на уровне проверки, которая ищет совпадения по <code>lower(trim(login))</code>. Выбор зависит от того, какие правила приняты в системе.</p>
+<h3>Шаг 5. Сверьте остаток с движениями</h3>
+<p>Остаток и история движений это два представления одного факта. Сверка показывает, где они расходятся.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT s.site_code, p.sku, s.qty,</span>
+<span class="s2">       COALESCE(SUM(CASE WHEN m.kind = &#39;приёмка&#39; THEN m.qty ELSE -m.qty END), 0) AS calc</span>
+<span class="s2">FROM stock s</span>
+<span class="s2">JOIN products p ON p.id = s.product_id</span>
+<span class="s2">LEFT JOIN movements m ON m.site_code = s.site_code AND m.product_id = s.product_id</span>
+<span class="s2">GROUP BY s.site_code, p.sku, s.qty</span>
+<span class="s2">ORDER BY s.site_code, p.sku</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="k">for</span> <span class="n">site</span><span class="p">,</span> <span class="n">sku</span><span class="p">,</span> <span class="n">qty</span><span class="p">,</span> <span class="n">calc</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="n">mark</span> <span class="o">=</span> <span class="s2">&quot;ок&quot;</span> <span class="k">if</span> <span class="n">qty</span> <span class="o">==</span> <span class="n">calc</span> <span class="k">else</span> <span class="s2">&quot;расхождение&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">site</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">sku</span><span class="si">}</span><span class="s2">: в остатках </span><span class="si">{</span><span class="n">qty</span><span class="si">}</span><span class="s2">, по движениям </span><span class="si">{</span><span class="n">calc</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mark</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Для каждого расхождения укажите возможную причину: потерянная приёмка, дубль, начальный остаток без документа, отгрузка больше остатка, неверный тип. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Позиция</th>
+<th>В остатках</th>
+<th>По движениям</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSK SKU-1001</td>
+<td>40</td>
+<td>102</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте, что запрос не скрывает строки без движений. Для этого сравните число строк в результате с числом строк в <code>stock</code>. Если они различаются, объясните почему.</p>
+<p>Причина расхождения не всегда ошибка. Остаток мог быть введён при открытии склада, и тогда документ начального остатка должен существовать отдельно. Если такого документа нет, правило не выполнено: остаток появился из ниоткуда, и при следующей инвентаризации его придётся объяснять. Проверка требует не только найти расхождение, но и назвать источник, который его объясняет или не объясняет.</p>
+<h3>Шаг 6. Проверьте транзакцию приёмки</h3>
+<p>Приёмка состоит из записи документа и пересчёта остатка. Проверьте, что неудачная операция не оставляет половину данных. Ниже пример для одного документа.</p>
+<div class="codehilite" data-lang="python"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sklad_test.db&quot;</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">isolation_level</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">before</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM movements&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;BEGIN&quot;</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO movements VALUES (13, &#39;ПР-509&#39;, &#39;приёмка&#39;, &#39;MSK&#39;, 1002, 25, &#39;2026-10-12 09:00:00&#39;)&quot;</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;ROLLBACK&quot;</span><span class="p">)</span>
+<span class="n">after</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM movements&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;до:&quot;</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="s2">&quot;после отката:&quot;</span><span class="p">,</span> <span class="n">after</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;строк по ПР-509:&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM movements WHERE doc = &#39;ПР-509&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+
+<p>Повторите опыт для документа ПР-510: внутри транзакции вставьте правильную строку, затем строку с количеством <code>0</code>, перехватите ошибку и выполните <code>ROLLBACK</code>. Заполните таблицу.</p>
+<table>
+<thead>
+<tr>
+<th>Опыт</th>
+<th>До</th>
+<th>После</th>
+<th>Строк по документу</th>
+<th>Вывод</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Откат ПР-509</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ошибка в ПР-510</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте, что после отката не изменился и остаток. Для этого сравните <code>qty</code> до и после опыта. Если остаток изменился, значит пересчёт шёл вне транзакции, и это дефект.</p>
+<h3>Шаг 7. Сверьте экран, API и базу</h3>
+<p>Ниже выдержка из протокола проверки остатков на стенде. Экран и API показывают одно, база хранит другое. Значения собраны в одну таблицу.</p>
+<table>
+<thead>
+<tr>
+<th>Позиция</th>
+<th>Экран</th>
+<th>API</th>
+<th>База</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSK SKU-1001</td>
+<td>42</td>
+<td>42</td>
+<td>40</td>
+</tr>
+<tr>
+<td>MSK SKU-1002</td>
+<td>300</td>
+<td>300</td>
+<td>300</td>
+</tr>
+<tr>
+<td>MSK SKU-1003</td>
+<td>780</td>
+<td>780</td>
+<td>780</td>
+</tr>
+<tr>
+<td>TVR SKU-1001</td>
+<td>1240</td>
+<td>1240</td>
+<td>1240</td>
+</tr>
+<tr>
+<td>TUL SKU-1005</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>KLG SKU-1006</td>
+<td>1200</td>
+<td>1200</td>
+<td>1200 шт</td>
+</tr>
+</tbody>
+</table>
+<p>Совпадение трёх источников не доказывает правильность. Остаток может быть одинаково неверным на экране, в API и в базе, если все они читают одну и ту же ошибочную таблицу. Поэтому сверка остатка с движениями на шаге 5 остаётся отдельной проверкой, а не заменяется сравнением трёх источников.</p>
+<p>Для каждой строки определите, где родился дефект: в интерфейсе, в API, в базе или расхождения нет. Заполните таблицу. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Позиция</th>
+<th>Расхождение</th>
+<th>Где родился</th>
+<th>Что проверить</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSK SKU-1001</td>
+<td>экран и API 42, база 40</td>
+<td>кеш интерфейса или запрос</td>
+<td>обновление кеша после приёмки</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте каждую версию запросом или повторным чтением. Если экран и API совпадают, а база нет, сначала исключите кеш: обновите страницу и повторите запрос. Если значение не изменилось, смотрите запрос, которым API читает остаток. Если после обновления страницы значение стало верным, дефект в кеше.</p>
+<p>Три источника сравнивают не наугад, а по порядку. Сначала фиксируют, что показал экран до и после обновления. Затем снимают ответ API с тем же параметром площадки. Затем читают строку в базе по ключу площадки и товара. Совпадение двух источников ещё не доказывает правильность: экран и API могут читать один и тот же кеш, а база хранить верное число.</p>
+<p>Если расходятся все три источника, начинают с базы. Проверяют, есть ли строка, какой у неё тип и когда она менялась. Если база верна, переходят к API: смотрят, какой запрос уходит и что возвращается. Если API верен, остаётся интерфейс: кеш, форматирование, фильтр или устаревшее состояние экрана.</p>
+<p>Обратите внимание на строку KLG SKU-1006. На экране и в API значение выглядит правильным, а в базе лежит текст. Такой дефект не виден пользователю, но ломает сравнение и арифметику. Объясните в отчёте, почему проверка только экрана его пропускает.</p>
+<h3>Шаг 8. Проверьте валидацию полей</h3>
+<p>Правила формы приёмки заданы в требовании.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>Поставка: обязательна, целое число от 1 до 999999
+Количество: обязательно, целое число от 1 до 10 000
+Ячейка: обязательна, шаблон: заглавная буква, дефис, две цифры (например, A-14)
+Комментарий: необязателен, до 200 символов
+</code></pre></div>
+
+<p>Проверьте значения через форму. Заполните таблицу. Первая строка дана как образец.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Значение</th>
+<th>Ожидание</th>
+<th>Факт</th>
+<th>Результат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Количество</td>
+<td>0</td>
+<td>отказ</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Количество</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Поставка</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ячейка</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Используйте значения: пустое поле, <code>-1</code>, <code>1</code>, <code>10 000</code>, <code>10 001</code>, <code>12,5</code>, <code>12</code>, <code>999999</code>, <code>A-14</code>, <code>a-14</code>, <code>A14</code>, строка из 201 символа. Для каждого случая запишите ожидаемый результат по требованию и фактический.</p>
+<p>Значения подобраны не случайно. Ноль и минус проверяют нижнюю границу, единица и максимум допустимую область, максимум плюс один выход за границу. Дробное число проверяет тип, пробел в конце проверяет нормализацию, а строка из 201 символа проверяет длину комментария. Для ячейки важны три варианта: правильный <code>A-14</code>, строчная буква <code>a-14</code> и отсутствие дефиса <code>A14</code>. Требование разрешает только один из них, и форма должна объяснить отказ.</p>
+<p>Сравнение с требованием обязательно. Форма проверяет поле в браузере, и для учебного стенда этого достаточно. Если значение, запрещённое требованием, проходит, дефект в валидации формы. Если форма отклоняет допустимое значение, дефект в правиле или в сообщении.</p>
+<p>Проверьте, что сообщение об ошибке стоит рядом с полем, называет правило и не исчезает само. Если форма пропускает значение, которое запрещено требованием, зафиксируйте это как дефект валидации.</p>
+<h3>Шаг 9. Проверьте клавиатуру и сообщения</h3>
+<p>Пройдите форму приёмки без мыши и заполните протокол.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Ожидание</th>
+<th>Факт</th>
+<th>Результат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tab</td>
+<td>фокус идёт по полям сверху вниз</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Shift+Tab</td>
+<td>фокус возвращается назад</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Enter</td>
+<td>отправляет форму</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>не отправляет форму и не очищает поля</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ошибка</td>
+<td>фокус у первого ошибочного поля</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Сообщение</td>
+<td>остаётся на экране и читается</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте, что после ошибки введённые значения сохранились, а сообщение связано с полем. Если форма очищается, зафиксируйте это как отдельный дефект: пользователь теряет работу и вводит данные заново.</p>
+<p>Начинайте обход с первого поля и двигайтесь только клавишей Tab. Запишите последовательность полей и сравните её с порядком на экране. Затем пройдите назад по Shift+Tab: фокус должен вернуться тем же путём. Если фокус застревает в одном элементе или перескакивает через поле, путь с клавиатуры сломан.</p>
+<p>После отправки с ошибкой фокус должен оказаться у первого неверного поля, а страница прокрутиться к нему. Проверьте это на форме с несколькими ошибками: фокус не должен оставаться на кнопке отправки. Сообщение при этом читается программой экрана, а не только видно глазами.</p>
+<p>Сделайте снимок экрана с ошибкой. На снимке должны быть видны поле, сообщение рядом с ним и введённые значения. Снимок без шагов воспроизведения не заменяет описание.</p>
+<h3>Шаг 10. Оформите результаты</h3>
+<p>Сведите найденные нарушения в таблицу: идентификатор, объект, ожидание, факт, уровень (интерфейс, API, база), серьёзность, ссылка на проверку. Отдельно запишите, какие проверки прошли без замечаний: это показывает объём выполненной работы.</p>
+<p>Идентификаторы делают отчёт проверяемым. Нарушения нумеруют <code>D-01</code>, <code>D-02</code>, проверки <code>CH-01</code>, <code>CH-02</code>. Одна проверка может найти несколько нарушений, и тогда ссылка ведёт на проверку, а не наоборот. Если нарушение найдено на стыке, в уровне указывают два значения, например «интерфейс и API», и объясняют, где именно теряется правильное значение.</p>
+<p>Серьёзность ставят по последствиям. Потеря или искажение остатка это критическая серьёзность, потому что страдают деньги и отгрузка. Неверное сообщение об ошибке это средняя серьёзность: работа идёт, но пользователь тратит время. Отсутствие подписи у поля это низкая серьёзность для зрячего пользователя и высокая для того, кто работает с программой экрана, поэтому в описании указывают условие.</p>
+<p>Сделайте вывод по каждому уровню. Для базы: какие нарушения целостности найдены и что нужно исправить. Для интерфейса: какие поля и сообщения не соответствуют требованию. Для стыка: где экран и API расходятся с базой и что проверить в первую очередь.</p>
+<h2 id="требования-к-отчёту"><span class="num">05</span>Требования к отчёту</h2>
+<p>Отчёт в DOCX объёмом пять-семь страниц. Формат: A4, поля 3 см слева, 1,5 см справа, 2 см сверху и снизу, Times New Roman 14 пт, интервал 1,5, отступ первой строки 1,25 см. Заголовки Heading 1 и Heading 2, таблицы Table Grid с шапкой по центру, название таблицы под таблицей.</p>
+<p>В отчёте есть цель, стенд, схема базы, список SQL-проверок, таблица расхождений, протокол валидации, протокол клавиатуры и вывод. Каждый вывод подкреплён запросом или шагами воспроизведения. Полный код запросов остаётся в файле, в отчёт входят ключевые фрагменты.</p>
+<h2 id="что-сдать"><span class="num">06</span>Что сдать</h2>
+<ul>
+<li>скрипт <code>make_db.py</code> и файл <code>sklad_test.db</code>;</li>
+<li>SQL-скрипт из не менее чем десяти проверок с комментариями;</li>
+<li>таблицу расхождений между экраном, API и базой;</li>
+<li>таблицу проверки валидации полей с ожиданием и фактом;</li>
+<li>протокол проверки клавиатуры и сообщений об ошибках;</li>
+<li>отчёт в DOCX с выводом по каждому уровню.</li>
+</ul>
+<h2 id="чек-лист-выполнения-работы"><span class="num">07</span>Чек-лист выполнения работы</h2>
+<p>Отметьте, что уже сделано, а что осталось. Незакрытые пункты показывают, что ещё нужно выполнить.</p>
+<table class="work-checklist"><thead><tr><th>Что сдать</th><th>Сделано</th><th>Осталось</th></tr></thead><tbody><tr><td>Скрипт <code>make_db.py</code> и файл <code>sklad_test.db</code></td><td><input type="checkbox" class="check-done" aria-label="Пункт 1 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 1 остался"></td></tr><tr><td>SQL-скрипт из не менее чем десяти проверок с комментариями</td><td><input type="checkbox" class="check-done" aria-label="Пункт 2 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 2 остался"></td></tr><tr><td>Таблицу расхождений между экраном, API и базой</td><td><input type="checkbox" class="check-done" aria-label="Пункт 3 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 3 остался"></td></tr><tr><td>Таблицу проверки валидации полей с ожиданием и фактом</td><td><input type="checkbox" class="check-done" aria-label="Пункт 4 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 4 остался"></td></tr><tr><td>Протокол проверки клавиатуры и сообщений об ошибках</td><td><input type="checkbox" class="check-done" aria-label="Пункт 5 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 5 остался"></td></tr><tr><td>Отчёт в DOCX с выводом по каждому уровню</td><td><input type="checkbox" class="check-done" aria-label="Пункт 6 сделан"></td><td><input type="checkbox" class="check-left" aria-label="Пункт 6 остался"></td></tr></tbody></table>
+<h2 id="критерии-оценки"><span class="num">08</span>Критерии оценки</h2>
+<p>Оценка выставляется по шкале от 1 до 5.</p>
+<ul>
+<li><strong>5</strong>: найдены все нарушения целостности, для каждого указана причина, таблица расхождений заполнена по трём источникам, валидация проверена по всем значениям, клавиатурный протокол заполнен, выводы подкреплены запросами и шагами.</li>
+<li><strong>4</strong>: работа выполнена полностью, но одно нарушение описано без причины или в таблице расхождений не проверен один источник.</li>
+<li><strong>3</strong>: проверки выполнены частично, найдены очевидные нарушения, но типы, транзакция или клавиатура не проверены, выводы общие.</li>
+<li><strong>2</strong>: работа не выполнена.</li>
+<li><strong>1</strong>: работа выполнена с использованием ИИ или скопирована полностью или частично, 1 балл без возможности исправления.</li>
+</ul>
+<h2 id="контрольные-вопросы"><span class="num">09</span>Контрольные вопросы</h2>
+<div class="selfcheck no-copy">
+<ol>
+<li>Почему проверка значения без проверки <code>typeof</code> пропускает часть дефектов?</li>
+<li>Как отличить дефект кеша интерфейса от дефекта запроса API?</li>
+<li>Почему дубликат ищут по бизнес-ключу, а не по первичному ключу?</li>
+<li>Что доказывает проверка транзакции откатом и что она не доказывает?</li>
+<li>Зачем проверять валидацию поля в обход формы, если форма уже проверена?</li>
+<li>Какие нарушения данных не видны на экране и почему?</li>
+</ol>
+</div></article><nav class="pager"><a class="" href="35-lek-22.html"><span>← Предыдущее занятие</span>Лекция 22. Тестирование интерфейса</a><a class="next" style="text-align:right;margin-left:auto" href="37-lek-23.html"><span>Следующее занятие →</span>Лекция 23. Организация тестирования</a></nav></main>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    var ico = btn.querySelector('.theme-ico');
+    if(ico){
+      btn.setAttribute('aria-label', t === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+    } else {
+      btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    }
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){
+      apply(current() === 'dark' ? 'light' : 'dark');
+      var ico = btn.querySelector('.theme-ico');
+      if(!ico) return;
+      ico.classList.remove('is-spinning');
+      void ico.offsetWidth;
+      ico.classList.add('is-spinning');
+      var stop = function(){ ico.classList.remove('is-spinning'); };
+      ico.addEventListener('animationend', stop, {once: true});
+      setTimeout(stop, 700);
+    });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  document.querySelectorAll('.work-checklist input[type="checkbox"]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      if(!cb.checked) return;
+      var row = cb.closest('tr');
+      row.querySelectorAll('input[type="checkbox"]').forEach(function(other){
+        if(other !== cb) other.checked = false;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

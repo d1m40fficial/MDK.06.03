@@ -1,0 +1,1773 @@
+<!doctype html>
+<html lang="ru" style="--course-accent:#D04A28;--course-tint:#F4E1D8;--course-accent-dark:#F06A45;--course-tint-dark:#3A2219;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест-кейсы</title>
+<script>(function(){try{var t=localStorage.getItem("mdk-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* course-studio: chapter, notes and course pages.
+   Course-catalog look: warm paper, heavy grotesk display type,
+   mono metadata, one accent per course. Anatomy figures sit in their own
+   frames and keep their own monochrome craft styling. */
+
+:root {
+  --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B;
+  --rule: #DDD6CA; --rule-2: #E8E2D8; --code-bg: #F3EFE7;
+  --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00;
+  --accent: var(--course-accent, #D04A28); --tint: var(--course-tint, #F4E1D8);
+  --quiz-card: #FFFFFF; --quiz-line: #EAEAEA; --quiz-ink: #1E1E1E;
+  --quiz-num-bg: #F0F0F0; --quiz-num-ink: #666666; --quiz-hover: #F7F7F7;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #F4FBF7; --quiz-bad: #EF4444; --quiz-bad-bg: #FEF5F5;
+  --quiz-accent: #FF6B00;
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+    --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+    --accent: #FF6B00; --tint: #2A2A2A;
+    --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+    --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+    --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1E1E1E; --card: #2A2A2A; --ink: #E0E0E0; --ink-2: #A0A0A0; --ink-3: #7A7A7A;
+  --rule: #3A3A3A; --rule-2: #333333; --code-bg: #252525; --ok: #4CC38A; --bad: #F2685A; --warn: #E0A93A;
+  --accent: #FF6B00; --tint: #2A2A2A;
+  --quiz-card: #2A2A2A; --quiz-line: #3A3A3A; --quiz-ink: #E0E0E0;
+  --quiz-num-bg: #363636; --quiz-num-ink: #A0A0A0; --quiz-hover: #333333;
+  --quiz-ok: #22C55E; --quiz-ok-bg: #1F3528; --quiz-bad: #EF4444; --quiz-bad-bg: #3A2323;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16.5px/1.7 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-underline-offset: 3px; }
+
+/* ---------- scrollbars ---------- */
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  transition: background-color .2s ease;
+}
+/* the thumb appears as soon as the pointer is anywhere on the page */
+:root:hover::-webkit-scrollbar-thumb,
+:root:hover ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.34); }
+:root:hover::-webkit-scrollbar-thumb:hover,
+:root:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.58); }
+/* Firefox: same behaviour through scrollbar-color */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:root:hover,
+:root:hover * { scrollbar-color: rgba(0, 0, 0, 0.34) transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+  :root:not([data-theme="light"]):hover::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme="light"]):hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+  :root:not([data-theme="light"]):hover,
+  :root:not([data-theme="light"]):hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+}
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.38); }
+:root[data-theme="dark"]:hover::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"]:hover ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.62); }
+:root[data-theme="dark"]:hover,
+:root[data-theme="dark"]:hover * { scrollbar-color: rgba(255, 255, 255, 0.38) transparent; }
+
+/* ---------- chapter page ---------- */
+.page { max-width: 820px; margin: 0 auto; padding: 28px 16px 96px; }
+.crumbs { font: 12px var(--font-mono); color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.crumbs a { color: var(--ink-3); text-decoration: none; } .crumbs a:hover { color: var(--accent); }
+
+/* ---------- lesson reading aids ---------- */
+.read-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; background: var(--rule-2); }
+.read-progress > span { display: block; height: 100%; width: 0; background: var(--accent); will-change: width; }
+.lesson-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.lesson-tools-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.nav-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); text-decoration: none; }
+.nav-btn::before { content: "←"; margin-right: 6px; color: var(--accent); }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pdf-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pdf-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn { font: 600 12px var(--font-mono); letter-spacing: .04em; padding: 8px 13px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .lesson-tools-right { width: 100%; justify-content: flex-end; } }
+
+/* ---------- left-edge navigation rail ---------- */
+.edge-rail {
+  position: fixed; left: 6px; top: 50%;
+  transform: translateY(-50%); z-index: 90;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.rail-btn {
+  position: relative; display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0; border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+  border: 1px solid var(--rule); background: color-mix(in srgb, var(--card) 84%, transparent);
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, border-color .15s, color .15s, background .15s;
+}
+.rail-btn svg { display: block; }
+.rail-btn:hover, .rail-btn:focus-visible { border-color: var(--accent); color: var(--accent); transform: scale(1.06); }
+.rail-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rail-warn { color: var(--bad); }
+.rail-warn:hover, .rail-warn:focus-visible { border-color: var(--bad); color: var(--bad); }
+.rail-grow { flex: 1 1 auto; }
+
+/* hover tooltips on the rail icons */
+[data-tip]::before {
+  content: ""; position: absolute; left: calc(100% + 6px); top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: var(--ink); opacity: 0;
+  pointer-events: none; transition: opacity .15s; z-index: 121;
+}
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: calc(100% + 16px); top: 50%;
+  transform: translateY(-50%); white-space: nowrap;
+  background: var(--ink); color: var(--paper); padding: 6px 10px; border-radius: 8px;
+  font: 600 12px/1.35 var(--font-body); letter-spacing: .01em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18); opacity: 0; pointer-events: none;
+  transition: opacity .15s; z-index: 122;
+}
+[data-tip]:hover::before, [data-tip]:focus-visible::before,
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; }
+@media (hover: none) { [data-tip]::before, [data-tip]::after { display: none; } }
+
+/* icon theme button in the rail: moon in light, sun in dark */
+.theme-ico { display: grid; place-items: center; transform-origin: center; }
+.theme-ico.is-spinning { animation: theme-spin .5s cubic-bezier(.16, 1, .3, 1); }
+@keyframes theme-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .theme-ico.is-spinning { animation: none; } }
+.theme-ico .ico-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .theme-ico .ico-sun { display: block; }
+  :root:not([data-theme=light]) .theme-ico .ico-moon { display: none; }
+}
+:root[data-theme=dark] .theme-ico .ico-sun { display: block; }
+:root[data-theme=dark] .theme-ico .ico-moon { display: none; }
+@media (max-width: 920px) {
+  .page { padding-left: 56px; }
+}
+@media (max-width: 640px) {
+  .edge-rail { left: 4px; gap: 6px; }
+  .rail-btn { width: 34px; height: 34px; }
+  .page { padding-left: 48px; }
+}
+.syllabus > li.locked { opacity: .6; }
+.syllabus > li.locked h3 { color: var(--ink-3); }
+.syllabus > li.locked .mins { color: var(--bad); }
+
+
+.hero {
+  position: relative; overflow: hidden; border-radius: var(--radius); background: var(--tint);
+  border: 1px solid var(--rule); padding: 22px 24px 0; min-height: 230px; margin-bottom: 36px;
+}
+.hero .badges { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.pill { font: 600 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--card); color: var(--ink); }
+.pill.dark { background: var(--ink); color: var(--paper); }
+.hero .meta { position: absolute; top: 24px; right: 24px; font: 12px var(--font-mono); color: var(--ink-2); z-index: 1; }
+.hero h1 { font: 800 clamp(30px, 5vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; margin: 26px 0 8px; max-width: 64%; position: relative; z-index: 1; }
+.hero .dek { color: var(--ink-2); max-width: 54%; margin: 0 0 28px; position: relative; z-index: 1; }
+.hero .glyph { position: absolute; right: -8px; bottom: -.2em; font: 900 clamp(110px, 17vw, 180px)/.8 var(--font-display); letter-spacing: -.06em; color: var(--accent); pointer-events: none; user-select: none; }
+.hero .glyph.code-md { font-size: clamp(80px, 12vw, 130px); }
+.hero .glyph.code-lg { font-size: clamp(48px, 7.5vw, 88px); right: 4px; bottom: 0; letter-spacing: -.04em; }
+.hero .glyph.code-xl { font-size: clamp(36px, 5.5vw, 64px); right: 6px; bottom: 2px; letter-spacing: -.03em; }
+@media (max-width: 640px) { .hero h1, .hero .dek { max-width: 100%; } .hero .glyph { opacity: .2; } .hero .meta { position: relative; top: auto; right: auto; margin-top: 10px; z-index: 1; } }
+
+/* shader hero on course and lesson pages */
+.hero[data-shader] { background: #08090D; color: #fff; border-color: rgba(255,255,255,.16); isolation: isolate; padding: 22px 24px 26px; }
+.hero[data-shader] .shader-bg { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(135deg,#08090D,var(--accent) 58%,#08090D); }
+.hero[data-shader] .badges { position: relative; z-index: 2; }
+.hero[data-shader] .hero-panel { position: relative; z-index: 2; display: block; width: 100%; max-width: none; margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(8,9,13,.46); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 20px 50px -30px rgba(0,0,0,.85); }
+.hero[data-shader] .hero-panel h1 { margin: 0 0 8px; }
+.hero[data-shader] h1 { color: #fff; max-width: 100%; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero[data-shader] .dek { color: rgba(255,255,255,.8); max-width: 100%; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.hero[data-shader] .pill { background: rgba(8,9,13,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(10px); }
+.hero[data-shader] .pill.dark { background: color-mix(in srgb,var(--accent) 72%,#08090D); border-color: color-mix(in srgb,var(--accent) 55%,#fff); color: #fff; }
+.hero[data-shader] .glyph { z-index: 0; color: var(--accent); opacity: .34; text-shadow: 0 2px 20px rgba(0,0,0,.7); }
+.hero.hero-course h1 { margin: 26px 0 8px; }
+.hero.hero-course .dek { margin: 0; max-width: 76%; }
+.hero.hero-course .meta { position: absolute; top: 24px; right: 24px; color: rgba(255,255,255,.86); background: none; border: 0; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hero.hero-lesson .glyph { top: 6px; right: 16px; bottom: auto; font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.4); opacity: 1; }
+@media (max-width: 760px) {
+  .hero.hero-course .meta { position: relative; top: auto; right: auto; display: block; margin-top: 10px; color: rgba(255,255,255,.8); }
+  .hero.hero-course .dek { max-width: 100%; }
+  .hero.hero-lesson .glyph { top: 8px; right: 12px; font-size: 40px; color: rgba(255,255,255,.34); }
+}
+
+/* apple liquid glass hero on the landing */
+.hero.hero-glass { min-height: 236px; display: grid; place-items: center; text-align: center; background: linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.2)); backdrop-filter: blur(40px) saturate(160%); -webkit-backdrop-filter: blur(40px) saturate(160%); border: 1px solid rgba(255,255,255,.7); border-radius: 28px; box-shadow: 0 26px 70px -42px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.85); }
+.hero.hero-glass::before { content: ""; position: absolute; inset: -2px; border-radius: 30px; padding: 2px; background: conic-gradient(from 210deg,#ff6b6b,#ffd93d,#4ecdc4,#6c5ce7,#ff6b6b); -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .55; pointer-events: none; }
+.hero.hero-glass h1 { max-width: 100%; margin: 0; font-size: clamp(46px,8vw,86px); letter-spacing: -.045em; background: linear-gradient(110deg,var(--ink),var(--accent) 52%,var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+  :root:not([data-theme=light]) .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+}
+:root[data-theme=dark] .hero.hero-glass { background: linear-gradient(135deg,rgba(42,42,42,.66),rgba(42,42,42,.3)); border-color: rgba(255,255,255,.14); box-shadow: 0 26px 70px -42px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.12); }
+:root[data-theme=dark] .hero.hero-glass h1 { background: linear-gradient(110deg,#E0E0E0,var(--accent) 52%,#E0E0E0); -webkit-background-clip: text; background-clip: text; }
+@media (max-width: 640px) { .hero.hero-glass { min-height: 170px; } }
+
+.outcomes { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; }
+.outcomes b, .toc b { font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outcomes ul { margin: 6px 0 0; padding-left: 20px; }
+.toc { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2; column-gap: 32px; font-size: 14px; }
+.toc li { break-inside: avoid; }
+@media (max-width: 640px) { .toc ol { columns: 1; } }
+
+.prose h2 { font: 800 28px/1.15 var(--font-display); letter-spacing: -.015em; margin: 56px 0 14px; scroll-margin-top: 16px; }
+.prose h2 .num { font: 600 13px var(--font-mono); color: var(--accent); margin-right: 12px; vertical-align: 4px; }
+.prose h3 { font: 700 19px/1.3 var(--font-display); margin: 32px 0 8px; }
+.prose p.lede, .prose .lede { font-size: 18.5px; color: var(--ink-2); }
+.prose p, .prose li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.prose strong { font-weight: 650; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.prose img { max-width: 100%; border-radius: 12px; }
+.prose li { margin: 3px 0; }
+.prose :not(pre) > code { font: .87em var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule-2); padding: .1em .35em; border-radius: 6px; overflow-wrap: anywhere; }
+.prose pre { font: 13.5px/1.6 var(--font-mono); background: var(--code-bg); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+.prose .codehilite { background: transparent; }
+.prose .codehilite[data-lang] { position: relative; }
+.prose .codehilite[data-lang]::before {
+  content: attr(data-lang); position: absolute; top: 8px; right: 10px;
+  font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--card); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 3px 6px; pointer-events: none;
+}
+.prose .codehilite[data-lang] pre { padding-top: 34px; }
+
+/* self-check questions without answers: visible, but not copyable by selection */
+.selfcheck { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 18px 0; }
+.selfcheck ol { margin: 0; padding-left: 22px; }
+.selfcheck li { margin: 8px 0; }
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 18px 0; display: block; overflow-x: auto; }
+.prose th { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); text-align: left; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* callouts: > [!INTUITION] etc. */
+.callout { border: 1px solid var(--rule); background: var(--card); border-radius: 14px; padding: 14px 18px; margin: 22px 0; border-left: 4px solid var(--accent); }
+.callout > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.callout > :nth-child(2) { margin-top: 0; } .callout > :last-child { margin-bottom: 0; }
+.callout.pitfall { border-left-color: var(--bad); } .callout.pitfall > .label { color: var(--bad); }
+.callout.interview { border-left-color: var(--ink); } .callout.interview > .label { color: var(--ink); }
+.callout.intuition { border-left-color: var(--ok); } .callout.intuition > .label { color: var(--ok); }
+.callout.tradeoff { border-left-color: var(--warn); } .callout.tradeoff > .label { color: var(--warn); }
+
+/* self-checks: > [!CHECK] question */
+.check { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 10px 0; }
+.check summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+.check summary::-webkit-details-marker { display: none; }
+.check summary::before { content: "Q"; font: 700 12px var(--font-mono); color: var(--accent); padding-top: 4px; }
+.check[open] summary { border-bottom: 1px solid var(--rule-2); }
+.check > div { padding: 12px 16px 14px; color: var(--ink-2); }
+.check > div > :first-child { margin-top: 0; } .check > div > :last-child { margin-bottom: 0; }
+
+/* recap: > [!RECAP] */
+.recap { background: var(--ink); color: var(--paper); border-radius: var(--radius); padding: 22px 24px; margin-top: 48px; }
+.recap > .label { font: 800 24px var(--font-display); display: block; margin-bottom: 6px; }
+.recap li, .recap p { color: var(--paper); } .recap code { background: transparent !important; border-color: var(--ink-2) !important; color: var(--paper); }
+
+/* anatomy figure slot */
+.figure { margin: 30px -8px; }
+.figure iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: normal; min-height: 200px; }
+.figure figcaption { font-size: 14px; color: var(--ink-2); padding: 8px 12px 0; }
+.figure figcaption .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+.figure.pending { border: 1.5px dashed var(--rule); border-radius: var(--radius); padding: 18px 20px; background: var(--card); margin: 30px 0; }
+.figure.pending .fig-no { font: 600 11px var(--font-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.figure.pending p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; }
+.pager a { text-decoration: none; color: var(--ink); max-width: 48%; }
+.pager span { display: block; font: 11px var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+/* while a lecture is split by gates, the visible page ends at the next-part button:
+   the lesson pager would be read as another part, so it waits until every gate is open */
+html.gated .pager { display: none; }
+/* on a lecture with a test, the pager also waits until the result card appears */
+html.quiz-pending .pager { display: none; }
+
+/* ---------- course catalog + syllabus ---------- */
+.catalog { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+/* the rail sits at the viewport edge, so keep catalog content clear of it */
+@media (max-width: 1320px) { main.catalog { padding-left: 56px; } }
+@media (max-width: 640px) { main.catalog { padding-left: 48px; } }
+.catalog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font: 500 13px var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { font: 12px var(--font-mono); color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.course-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s cubic-bezier(.16,1,.3,1), opacity .22s; }
+.course-card:hover { transform: translateY(-5px) scale(1.018); box-shadow: 0 26px 58px -32px rgba(0,0,0,.55); }
+.course-card .art { position: relative; height: 205px; background: var(--c-tint); overflow: hidden; }
+.course-card .art .glyph { position: absolute; right: -6px; bottom: -22px; font: 900 128px/1 var(--font-display); letter-spacing: -.06em; color: var(--c-accent); }
+.course-card .art .pill { position: absolute; top: 16px; left: 16px; }
+.course-card .art .ch { position: absolute; top: 18px; right: 16px; font: 12px var(--font-mono); color: var(--ink-2); }
+.course-card .body { padding: 18px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.course-card h3 { font: 700 22px/1.2 var(--font-display); margin: 0 0 8px; }
+.course-card p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+.course-card .spec { font: 12px/1.6 var(--font-mono); color: var(--ink-2); }
+.course-card .foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+.course-card .price { font: 700 19px var(--font-display); }
+.btn { font: 600 13px var(--font-body); padding: 9px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.btn.primary { background: var(--c-accent, var(--accent)); color: #fff; border-color: transparent; }
+
+.syllabus { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+.syllabus > li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 12px; padding: 0; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1); }
+.syllabus > li:hover { transform: scale(1.012); box-shadow: 0 16px 34px -26px rgba(0,0,0,.45); z-index: 1; position: relative; }
+.syllabus .lesson-card { display: grid; grid-template-columns: 48px minmax(0, 1fr) 66px; grid-template-rows: auto auto 1fr; gap: 4px 14px; padding: 16px 20px; color: inherit; text-decoration: none; border-radius: inherit; }
+.syllabus .lesson-card-static { cursor: default; }
+.syllabus .lesson-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.syllabus .n { font: 800 26px/1 var(--font-display); color: var(--accent); grid-row: 1 / span 3; padding-top: 2px; }
+.syllabus h3 { grid-column: 2; grid-row: 1; min-width: 0; margin: 0; font: 700 18px var(--font-display); overflow-wrap: anywhere; }
+.syllabus h3 a { color: var(--ink); text-decoration: none; } .syllabus h3 a:hover { color: var(--accent); }
+.syllabus .mins { grid-column: 2; grid-row: 2; font: 12px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.syllabus p { grid-column: 2; grid-row: 3; margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.syllabus .card-art { grid-column: 3; grid-row: 1 / span 3; align-self: start; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 10px; background: var(--tint); background: linear-gradient(145deg, color-mix(in srgb, var(--course-accent, var(--accent)) 13%, transparent), transparent 72%); }
+.syllabus .card-art svg { width: 100%; height: auto; max-height: 56px; display: block; }
+@media (max-width: 700px) {
+  .syllabus .lesson-card { grid-template-columns: 36px minmax(0, 1fr) 44px; gap: 4px 10px; padding: 14px; }
+}
+@media (max-width: 520px) {
+  .syllabus .lesson-card { grid-template-columns: 32px minmax(0, 1fr) 32px; }
+  .syllabus .card-art svg { max-height: 28px; }
+}
+
+/* ---------- lecture reveal gates (::gate) ---------- */
+.gate-step { margin: 34px 0 0; }
+.gate-step[hidden] { display: none; }
+.gate-action { display: flex; justify-content: center; margin: 30px 0 0; }
+.gate-btn { display: inline-flex; align-items: center; gap: 11px; max-width: min(680px, 100%); padding: 14px 21px; border: 1px solid var(--accent); border-radius: 14px; background: var(--card); color: var(--ink); font: 600 16px/1.45 var(--font-body); text-align: left; cursor: pointer; box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--accent) 70%, transparent); }
+.gate-btn[hidden] { display: none; }
+.gate-btn:hover { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.gate-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gate-q { display: grid; place-items: center; flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--accent); color: #fff; font: 800 15px/1 var(--font-mono); }
+.gate-content { margin-top: 28px; animation: gate-in .28s ease both; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gate-content { animation: none; } }
+@media (max-width: 560px) { .gate-btn { width: 100%; } }
+
+/* ---------- interactive test (::quiz) ---------- */
+.quiz { margin: 24px 0; }
+.quiz-q {
+  background-color: var(--quiz-card);
+  border-radius: 12px;
+  padding: 24px 32px;
+  border: 1px solid var(--quiz-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .02);
+  margin: 0 0 24px;
+  color: var(--quiz-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.quiz-q[hidden] { display: none; }
+.quiz-p { font-size: 18px; font-weight: 600; color: var(--quiz-ink); margin: 0 0 20px; display: flex; align-items: flex-start; gap: 12px; overflow-wrap: anywhere; }
+.quiz-no { flex: none; background-color: var(--quiz-num-bg); color: var(--quiz-num-ink); font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 2px; font-family: var(--font-mono); }
+.quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz .opt {
+  display: flex; align-items: center; padding: 12px 16px; border-radius: 8px;
+  background-color: transparent; border: 1px solid transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; font-size: 16px; color: var(--quiz-ink);
+}
+.quiz .opt:hover { background-color: var(--quiz-hover); }
+.quiz .opt span { overflow-wrap: anywhere; min-width: 0; }
+.quiz .opt input[type="radio"], .quiz .opt input[type="checkbox"] {
+  margin-right: 12px; width: 20px; height: 20px; accent-color: var(--quiz-accent); cursor: pointer; flex: none;
+}
+.quiz .opt.correct { border-left: 4px solid var(--quiz-ok); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-q.ok .opt.correct, .quiz-q.bad .opt.picked.correct { background-color: var(--quiz-ok-bg); }
+.quiz-q.bad .opt.correct:not(.picked) { background-color: transparent; }
+.quiz-q.bad .opt.picked:not(.correct) { background-color: var(--quiz-bad-bg); border-left: 4px solid var(--quiz-bad); border-radius: 4px 8px 8px 4px; padding-left: 12px; }
+.quiz-why { margin: 12px 0 2px; padding: 9px 13px; border-left: 3px solid var(--quiz-bad); border-radius: 0 9px 9px 0; background: var(--quiz-bad-bg); color: var(--ink-2); font-size: 13.5px; line-height: 1.5; text-align: left; }
+.quiz-why[hidden] { display: none; }
+.quiz-why::before { content: "Почему неверно: "; font-weight: 700; color: var(--quiz-bad); }
+.quiz-q.ok .quiz-why { border-left-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.ok .quiz-why::before { content: "Почему верно: "; color: var(--quiz-ok); }
+.quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.quiz-actions button { -webkit-appearance: none; appearance: none; font: 600 13px var(--font-body); padding: 9px 15px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); background-color: var(--paper); color: var(--ink); cursor: pointer; }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: transparent; }
+.quiz-actions button:hover { filter: brightness(.96); }
+.quiz-actions button:focus-visible { outline: 2px solid var(--quiz-accent); outline-offset: 2px; }
+.quiz-note { font-size: 13px; color: var(--bad); }
+.quiz .short-answer { width: 100%; font: 16px var(--font-body); padding: 12px 16px; border: 1px solid var(--quiz-line); border-radius: 8px; background: transparent; color: var(--quiz-ink); }
+.quiz .short-answer:focus { outline: 2px solid var(--quiz-accent); outline-offset: 1px; border-color: transparent; }
+.quiz-q.ok .short-answer { border-color: var(--quiz-ok); background: var(--quiz-ok-bg); }
+.quiz-q.bad .short-answer { border-color: var(--quiz-bad); background: var(--quiz-bad-bg); }
+.quiz-result { margin-top: 22px; padding: 20px 22px; border: 1px solid var(--quiz-line); border-radius: 12px; background: var(--quiz-card); box-shadow: 0 2px 8px rgba(0,0,0,.02); color: var(--quiz-ink); }
+.quiz-result[hidden] { display: none; }
+.quiz-result > .label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.quiz-result h3 { margin: 0 0 14px; font: 800 24px/1.2 var(--font-display); }
+.quiz-result .modal-result { margin: 0 0 14px; }
+.quiz-result .modal-times { margin-bottom: 0; }
+@media (max-width: 560px) {
+  .quiz-q { padding: 18px 16px; }
+  .quiz-p { font-size: 16px; gap: 10px; }
+  .quiz .opt { padding: 10px 12px; font-size: 15px; }
+  .quiz .opt.correct, .quiz-q.bad .opt.picked:not(.correct) { padding-left: 9px; }
+  .quiz-no { font-size: 11px; padding: 2px 7px; }
+  .quiz-result { padding: 16px 16px; }
+  .quiz-result h3 { font-size: 20px; }
+}
+
+/* ---------- test submission and warnings ---------- */
+.warn-btn { width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--bad); color: #fff; font: 900 19px/1 var(--font-body); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.warn-btn:hover { filter: brightness(.92); }
+.warn-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+html.modal-open { overflow: hidden; }
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(12, 11, 9, .58); }
+.modal-card { position: relative; width: min(460px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 20px; box-shadow: 0 24px 80px -24px rgba(0, 0, 0, .5); }
+.modal-card h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 12px; padding-right: 30px; }
+.modal-card p { margin: 0 0 14px; color: var(--ink-2); }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 700 20px/1 var(--font-body); cursor: pointer; }
+.modal-name { display: block; margin: 0 0 14px; }
+.modal-name[hidden] { display: none; }
+.modal-name span { display: block; font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.modal-name input { width: 100%; font: 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); }
+.modal-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.modal-student { font-weight: 600; }
+.modal-result { font: 700 18px/1.3 var(--font-display); color: var(--accent); }
+.modal-times { display: grid; gap: 8px; margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.modal-times div { display: flex; justify-content: space-between; gap: 12px; }
+.modal-times dt { font-size: 13px; color: var(--ink-2); }
+.modal-times dd { margin: 0; font: 600 13px var(--font-mono); color: var(--ink); }
+.modal-ok { width: 100%; font: 600 14px var(--font-body); padding: 11px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+@media print { .modal { display: none !important; } }
+
+/* ---------- practicals: figures, screenshot slots, steps ---------- */
+.diagram { margin: 24px 0; padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-align: center; overflow-x: auto; }
+.diagram svg { max-width: 100%; height: auto; }
+.diagram img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto; }
+.diagram { --paper: #F0EBE3; --card: #F9F7F2; --ink: #1A1916; --ink-2: #4A4740; --ink-3: #8A857B; --rule: #DDD6CA; --rule-2: #E8E2D8; --ok: #2E8B57; --bad: #C0392B; --warn: #B07A00; --accent: var(--course-accent, #3A5BBF); --tint: var(--course-tint, #DDE3F4); color-scheme: light; }
+.diagram figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; text-align: left; }
+.shot { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 16px 18px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); margin: 14px 0; color: var(--ink-2); font-size: 14.5px; }
+.shot b { color: var(--accent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.k-v { font: 12px var(--font-mono); color: var(--ink-2); }
+.prose h3 .lead { color: var(--accent); font: 600 12px var(--font-mono); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------- downloadable materials attached to a work ---------- */
+.files { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); padding: 16px 18px 12px; margin: 20px 0; }
+.files b.label { display: block; font: 600 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.files a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; margin: 0 8px 8px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+.files a:hover { border-color: var(--accent); color: var(--accent); }
+.files a::before { content: "\2193"; font-family: var(--font-mono); color: var(--accent); }
+.files p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+
+/* ---------- paper-craft buttons ---------- */
+.nav-btn, .pager a { background: #121212; color: #fff; border: 2px solid #121212; border-radius: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.18); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.nav-btn { padding: 9px 15px; }
+.pager a { display: block; padding: 10px 14px; }
+.nav-btn:hover, .pager a:hover { color: #fff; background: #1d1d1d; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.35deg); box-shadow: 6px 6px 0 rgba(0,0,0,.22); }
+.nav-btn:active, .pager a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.nav-btn::before { color: #fff; opacity: .7; }
+.pager span { color: rgba(255,255,255,.6); }
+.pager .pager-off { display: block; max-width: 48%; padding: 10px 14px; border: 2px dashed var(--rule); border-radius: 12px; color: var(--ink-3); opacity: .58; cursor: not-allowed; font: 14px var(--font-body); text-transform: none; letter-spacing: normal; }
+.pager .pager-off > span { color: var(--ink-3); font: 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gate-btn { background: #121212; color: #fff; border: 2px solid #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.2); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), background .18s; }
+.gate-btn:hover { background: #1d1d1d; color: #fff; border-color: #1d1d1d; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 6px 6px 0 rgba(0,0,0,.24); }
+.gate-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+.gate-q { background: #fff; color: #121212; }
+.pdf-btn, .theme-btn, .quiz-actions button, .modal-ok, .modal-close, .filters button, .files a { background: #fdf6ee; color: #2d2d2d; border: 2px solid #e0d8cc; border-radius: 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.1); transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1), border-color .18s, background .18s; }
+.pdf-btn:hover, .theme-btn:hover, .quiz-actions button:hover, .modal-ok:hover, .modal-close:hover, .filters button:hover, .files a:hover { color: #2d2d2d; border-color: #d3c7b6; background: #fffaf2; transform: translate(-1px,-1px) rotate(-.3deg); box-shadow: 5px 5px 0 rgba(0,0,0,.14); }
+.pdf-btn:active, .theme-btn:active, .quiz-actions button:active, .modal-ok:active, .modal-close:active, .filters button:active, .files a:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.08); }
+.quiz-actions button[data-answer], .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: 4px 4px 0 rgba(0,0,0,.18); }
+.quiz-actions button[data-answer]:hover, .quiz-actions button.quiz-answer:hover { background: #1D1D1D; background-color: #1D1D1D; color: #fff; border-color: #1D1D1D; }
+.filters button[aria-pressed="true"] { background: #121212; color: #fff; border-color: #121212; }
+.warn-btn { box-shadow: 3px 3px 0 rgba(0,0,0,.18); transition: transform .18s, box-shadow .18s; }
+.warn-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(0,0,0,.22); filter: none; }
+
+/* dark theme: neutral panels instead of bright cream */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .pdf-btn, :root:not([data-theme=light]) .theme-btn,
+  :root:not([data-theme=light]) .quiz-actions button, :root:not([data-theme=light]) .modal-ok,
+  :root:not([data-theme=light]) .modal-close, :root:not([data-theme=light]) .filters button,
+  :root:not([data-theme=light]) .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+  :root:not([data-theme=light]) .pdf-btn:hover, :root:not([data-theme=light]) .theme-btn:hover,
+  :root:not([data-theme=light]) .quiz-actions button:hover, :root:not([data-theme=light]) .modal-ok:hover,
+  :root:not([data-theme=light]) .modal-close:hover, :root:not([data-theme=light]) .filters button:hover,
+  :root:not([data-theme=light]) .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer], :root:not([data-theme=light]) .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+  :root:not([data-theme=light]) .quiz-actions button[data-answer]:hover, :root:not([data-theme=light]) .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+  :root:not([data-theme=light]) .gate-q { background: #1E1E1E; color: #FF6B00; }
+}
+:root[data-theme=dark] .pdf-btn, :root[data-theme=dark] .theme-btn,
+:root[data-theme=dark] .quiz-actions button, :root[data-theme=dark] .modal-ok,
+:root[data-theme=dark] .modal-close, :root[data-theme=dark] .filters button,
+:root[data-theme=dark] .files a { background: #2A2A2A; color: #E0E0E0; border-color: #3A3A3A; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+:root[data-theme=dark] .pdf-btn:hover, :root[data-theme=dark] .theme-btn:hover,
+:root[data-theme=dark] .quiz-actions button:hover, :root[data-theme=dark] .modal-ok:hover,
+:root[data-theme=dark] .modal-close:hover, :root[data-theme=dark] .filters button:hover,
+:root[data-theme=dark] .files a:hover { background: #333333; color: #FFFFFF; border-color: #4A4A4A; }
+:root[data-theme=dark] .quiz-actions button[data-answer], :root[data-theme=dark] .quiz-actions button.quiz-answer { background: #121212; background-color: #121212; color: #fff; border-color: #121212; box-shadow: none; }
+:root[data-theme=dark] .quiz-actions button[data-answer]:hover, :root[data-theme=dark] .quiz-actions button.quiz-answer:hover { background: #262626; background-color: #262626; color: #fff; border-color: #262626; }
+:root[data-theme=dark] .gate-q { background: #1E1E1E; color: #FF6B00; }
+
+/* ---------- practical work checklist ---------- */
+.work-checklist { width: 100%; border-collapse: collapse; margin: 14px 0 4px; }
+.work-checklist th, .work-checklist td { border: 1px solid var(--rule); padding: 9px 10px; vertical-align: top; }
+.work-checklist th { background: var(--paper); font: 600 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 104px; text-align: center; }
+.work-checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+@media (max-width: 560px) {
+  .work-checklist th, .work-checklist td { padding: 7px 6px; }
+  .work-checklist th { font-size: 10px; letter-spacing: 0; }
+  .work-checklist td:nth-child(2), .work-checklist td:nth-child(3) { width: 62px; }
+  .work-checklist input[type="checkbox"] { width: 16px; height: 16px; }
+}
+
+/* ---------- scroll reveal in lessons ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; transition: none !important; } }
+.quiz-q { animation: quiz-in .32s cubic-bezier(.16,1,.3,1) both; }
+@keyframes quiz-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .quiz-q { animation: none; } }
+
+/* ---------- variant cards on the practice page ---------- */
+.variant { border: 1px solid var(--rule); border-radius: 14px; background: var(--card); margin: 0 0 12px; overflow: hidden; }
+.variant > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 14px 18px; font: 700 17px/1.35 var(--font-display); }
+.variant > summary::-webkit-details-marker { display: none; }
+.variant > summary::after { content: '+'; margin-left: auto; font: 600 20px/1 var(--font-mono); color: var(--accent); }
+.variant[open] > summary::after { content: '−'; }
+.variant > summary .variant-no { font: 700 13px/1 var(--font-mono); color: var(--accent); background: var(--paper); border: 1px solid var(--rule-2); border-radius: 6px; padding: 4px 7px; }
+.variant-body { padding: 0 18px 18px; }
+.variant-body h4 { margin: 18px 0 8px; font: 700 15px/1.3 var(--font-display); }
+.variant-body table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.variant-body th, .variant-body td { border: 1px solid var(--rule-2); padding: 6px 8px; text-align: left; vertical-align: top; }
+.variant-body th { background: var(--paper); font-weight: 600; }
+.variant-body .files { margin-top: 14px; }
+.variant-body .task-list { margin: 8px 0 0; padding-left: 20px; }
+.variant-body .task-list li { margin: 0 0 8px; }
+@media (max-width: 620px) { .variant-body { overflow-x: auto; } .variant-body table { min-width: 520px; } }
+
+/* ---------- print / PDF export ---------- */
+@page { margin: 16mm; }
+@media print {
+  body { background: #fff; color: #000; font-size: 11.5pt; }
+  .read-progress, .lesson-tools, .edge-rail, .crumbs, .toc, .pager, .hero .glyph, .hero .meta { display: none !important; }
+  .page { max-width: none; padding: 0; }
+  .hero { padding: 0; border: 0; background: none; }
+  .hero h1, .hero .dek { max-width: 100%; }
+  .prose p, .prose li { text-align: left; hyphens: none; }
+  a { color: #000; text-decoration: none; }
+  .callout, .check, .recap, .quiz-q, .quiz-result, .figure, .outcomes { border-color: #999; }
+  .gate-step[hidden], .gate-content[hidden], .quiz-q[hidden] { display: block !important; }
+  .gate-action, .quiz-actions { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .recap { background: #fff; color: #000; }
+  .recap li, .recap p { color: #000; }
+  .figure { break-inside: avoid; }
+  .figure iframe { min-height: 0; }
+}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
+.codehilite .c { color: #3D7B7B; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #F00 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666 } /* Operator */
+.codehilite .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #9C6500 } /* Comment.Preproc */
+.codehilite .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.codehilite .gr { color: #E40000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #008400 } /* Generic.Inserted */
+.codehilite .go { color: #717171 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #04D } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #687822 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #00F; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #800 } /* Name.Constant */
+.codehilite .nd { color: #A2F } /* Name.Decorator */
+.codehilite .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #00F } /* Name.Function */
+.codehilite .nl { color: #767600 } /* Name.Label */
+.codehilite .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #BBB } /* Text.Whitespace */
+.codehilite .mb { color: #666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #A45A77 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #00F } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root[data-theme=dark] .codehilite .hll { background-color: #6e7681 }
+:root[data-theme=dark] .codehilite { background: #0d1117; color: #E6EDF3 }
+:root[data-theme=dark] .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root[data-theme=dark] .codehilite .err { color: #F85149 } /* Error */
+:root[data-theme=dark] .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root[data-theme=dark] .codehilite .g { color: #E6EDF3 } /* Generic */
+:root[data-theme=dark] .codehilite .k { color: #FF7B72 } /* Keyword */
+:root[data-theme=dark] .codehilite .l { color: #A5D6FF } /* Literal */
+:root[data-theme=dark] .codehilite .n { color: #E6EDF3 } /* Name */
+:root[data-theme=dark] .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root[data-theme=dark] .codehilite .x { color: #E6EDF3 } /* Other */
+:root[data-theme=dark] .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root[data-theme=dark] .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root[data-theme=dark] .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root[data-theme=dark] .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root[data-theme=dark] .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root[data-theme=dark] .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root[data-theme=dark] .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root[data-theme=dark] .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root[data-theme=dark] .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root[data-theme=dark] .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme=dark] .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root[data-theme=dark] .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root[data-theme=dark] .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root[data-theme=dark] .codehilite .go { color: #8B949E } /* Generic.Output */
+:root[data-theme=dark] .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root[data-theme=dark] .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root[data-theme=dark] .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root[data-theme=dark] .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root[data-theme=dark] .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root[data-theme=dark] .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root[data-theme=dark] .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root[data-theme=dark] .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root[data-theme=dark] .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root[data-theme=dark] .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root[data-theme=dark] .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root[data-theme=dark] .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root[data-theme=dark] .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root[data-theme=dark] .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root[data-theme=dark] .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root[data-theme=dark] .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root[data-theme=dark] .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root[data-theme=dark] .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root[data-theme=dark] .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root[data-theme=dark] .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root[data-theme=dark] .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root[data-theme=dark] .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root[data-theme=dark] .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root[data-theme=dark] .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root[data-theme=dark] .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root[data-theme=dark] .codehilite .py { color: #79C0FF } /* Name.Property */
+:root[data-theme=dark] .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root[data-theme=dark] .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root[data-theme=dark] .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root[data-theme=dark] .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root[data-theme=dark] .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root[data-theme=dark] .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root[data-theme=dark] .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root[data-theme=dark] .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root[data-theme=dark] .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root[data-theme=dark] .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root[data-theme=dark] .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root[data-theme=dark] .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root[data-theme=dark] .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root[data-theme=dark] .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root[data-theme=dark] .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root[data-theme=dark] .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root[data-theme=dark] .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root[data-theme=dark] .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root[data-theme=dark] .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root[data-theme=dark] .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root[data-theme=dark] .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root[data-theme=dark] .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root[data-theme=dark] .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root[data-theme=dark] .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root[data-theme=dark] .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root[data-theme=dark] .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root[data-theme=dark] .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root[data-theme=dark] .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root[data-theme=dark] .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root[data-theme=dark] .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark){
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme=light]) .codehilite .hll { background-color: #6e7681 }
+:root:not([data-theme=light]) .codehilite { background: #0d1117; color: #E6EDF3 }
+:root:not([data-theme=light]) .codehilite .c { color: #8B949E; font-style: italic } /* Comment */
+:root:not([data-theme=light]) .codehilite .err { color: #F85149 } /* Error */
+:root:not([data-theme=light]) .codehilite .esc { color: #E6EDF3 } /* Escape */
+:root:not([data-theme=light]) .codehilite .g { color: #E6EDF3 } /* Generic */
+:root:not([data-theme=light]) .codehilite .k { color: #FF7B72 } /* Keyword */
+:root:not([data-theme=light]) .codehilite .l { color: #A5D6FF } /* Literal */
+:root:not([data-theme=light]) .codehilite .n { color: #E6EDF3 } /* Name */
+:root:not([data-theme=light]) .codehilite .o { color: #FF7B72; font-weight: bold } /* Operator */
+:root:not([data-theme=light]) .codehilite .x { color: #E6EDF3 } /* Other */
+:root:not([data-theme=light]) .codehilite .p { color: #E6EDF3 } /* Punctuation */
+:root:not([data-theme=light]) .codehilite .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+:root:not([data-theme=light]) .codehilite .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+:root:not([data-theme=light]) .codehilite .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+:root:not([data-theme=light]) .codehilite .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+:root:not([data-theme=light]) .codehilite .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+:root:not([data-theme=light]) .codehilite .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+:root:not([data-theme=light]) .codehilite .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+:root:not([data-theme=light]) .codehilite .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+:root:not([data-theme=light]) .codehilite .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme=light]) .codehilite .gr { color: #FFA198 } /* Generic.Error */
+:root:not([data-theme=light]) .codehilite .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+:root:not([data-theme=light]) .codehilite .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+:root:not([data-theme=light]) .codehilite .go { color: #8B949E } /* Generic.Output */
+:root:not([data-theme=light]) .codehilite .gp { color: #8B949E } /* Generic.Prompt */
+:root:not([data-theme=light]) .codehilite .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme=light]) .codehilite .gu { color: #79C0FF } /* Generic.Subheading */
+:root:not([data-theme=light]) .codehilite .gt { color: #FF7B72 } /* Generic.Traceback */
+:root:not([data-theme=light]) .codehilite .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+:root:not([data-theme=light]) .codehilite .kc { color: #79C0FF } /* Keyword.Constant */
+:root:not([data-theme=light]) .codehilite .kd { color: #FF7B72 } /* Keyword.Declaration */
+:root:not([data-theme=light]) .codehilite .kn { color: #FF7B72 } /* Keyword.Namespace */
+:root:not([data-theme=light]) .codehilite .kp { color: #79C0FF } /* Keyword.Pseudo */
+:root:not([data-theme=light]) .codehilite .kr { color: #FF7B72 } /* Keyword.Reserved */
+:root:not([data-theme=light]) .codehilite .kt { color: #FF7B72 } /* Keyword.Type */
+:root:not([data-theme=light]) .codehilite .ld { color: #79C0FF } /* Literal.Date */
+:root:not([data-theme=light]) .codehilite .m { color: #A5D6FF } /* Literal.Number */
+:root:not([data-theme=light]) .codehilite .s { color: #A5D6FF } /* Literal.String */
+:root:not([data-theme=light]) .codehilite .na { color: #E6EDF3 } /* Name.Attribute */
+:root:not([data-theme=light]) .codehilite .nb { color: #E6EDF3 } /* Name.Builtin */
+:root:not([data-theme=light]) .codehilite .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+:root:not([data-theme=light]) .codehilite .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+:root:not([data-theme=light]) .codehilite .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+:root:not([data-theme=light]) .codehilite .ni { color: #FFA657 } /* Name.Entity */
+:root:not([data-theme=light]) .codehilite .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+:root:not([data-theme=light]) .codehilite .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+:root:not([data-theme=light]) .codehilite .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+:root:not([data-theme=light]) .codehilite .nn { color: #FF7B72 } /* Name.Namespace */
+:root:not([data-theme=light]) .codehilite .nx { color: #E6EDF3 } /* Name.Other */
+:root:not([data-theme=light]) .codehilite .py { color: #79C0FF } /* Name.Property */
+:root:not([data-theme=light]) .codehilite .nt { color: #7EE787 } /* Name.Tag */
+:root:not([data-theme=light]) .codehilite .nv { color: #79C0FF } /* Name.Variable */
+:root:not([data-theme=light]) .codehilite .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+:root:not([data-theme=light]) .codehilite .pm { color: #E6EDF3 } /* Punctuation.Marker */
+:root:not([data-theme=light]) .codehilite .w { color: #6E7681 } /* Text.Whitespace */
+:root:not([data-theme=light]) .codehilite .mb { color: #A5D6FF } /* Literal.Number.Bin */
+:root:not([data-theme=light]) .codehilite .mf { color: #A5D6FF } /* Literal.Number.Float */
+:root:not([data-theme=light]) .codehilite .mh { color: #A5D6FF } /* Literal.Number.Hex */
+:root:not([data-theme=light]) .codehilite .mi { color: #A5D6FF } /* Literal.Number.Integer */
+:root:not([data-theme=light]) .codehilite .mo { color: #A5D6FF } /* Literal.Number.Oct */
+:root:not([data-theme=light]) .codehilite .sa { color: #79C0FF } /* Literal.String.Affix */
+:root:not([data-theme=light]) .codehilite .sb { color: #A5D6FF } /* Literal.String.Backtick */
+:root:not([data-theme=light]) .codehilite .sc { color: #A5D6FF } /* Literal.String.Char */
+:root:not([data-theme=light]) .codehilite .dl { color: #79C0FF } /* Literal.String.Delimiter */
+:root:not([data-theme=light]) .codehilite .sd { color: #A5D6FF } /* Literal.String.Doc */
+:root:not([data-theme=light]) .codehilite .s2 { color: #A5D6FF } /* Literal.String.Double */
+:root:not([data-theme=light]) .codehilite .se { color: #79C0FF } /* Literal.String.Escape */
+:root:not([data-theme=light]) .codehilite .sh { color: #79C0FF } /* Literal.String.Heredoc */
+:root:not([data-theme=light]) .codehilite .si { color: #A5D6FF } /* Literal.String.Interpol */
+:root:not([data-theme=light]) .codehilite .sx { color: #A5D6FF } /* Literal.String.Other */
+:root:not([data-theme=light]) .codehilite .sr { color: #79C0FF } /* Literal.String.Regex */
+:root:not([data-theme=light]) .codehilite .s1 { color: #A5D6FF } /* Literal.String.Single */
+:root:not([data-theme=light]) .codehilite .ss { color: #A5D6FF } /* Literal.String.Symbol */
+:root:not([data-theme=light]) .codehilite .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+:root:not([data-theme=light]) .codehilite .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+:root:not([data-theme=light]) .codehilite .vc { color: #79C0FF } /* Name.Variable.Class */
+:root:not([data-theme=light]) .codehilite .vg { color: #79C0FF } /* Name.Variable.Global */
+:root:not([data-theme=light]) .codehilite .vi { color: #79C0FF } /* Name.Variable.Instance */
+:root:not([data-theme=light]) .codehilite .vm { color: #79C0FF } /* Name.Variable.Magic */
+:root:not([data-theme=light]) .codehilite .il { color: #A5D6FF } /* Literal.Number.Integer.Long */
+}
+.codehilite,.codehilite pre{background:var(--code-bg)!important}
+</style>
+</head>
+<body>
+<div class="read-progress" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><main class="page"><nav class="crumbs"><a href="index.html">Тестирование информационных систем</a><span>/</span><span>Тест-кейсы</span></nav><nav class="edge-rail" aria-label="Навигация по странице"><a class="rail-btn" href="index.html" data-tip="Вернуться обратно" aria-label="Вернуться обратно"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a><span class="rail-grow" aria-hidden="true"></span><button type="button" class="rail-btn" data-pdf data-tip="Экспорт в PDF" aria-label="Экспорт в PDF, откроется окно печати"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg></button><button type="button" class="rail-btn rail-warn" data-warn data-tip="Предупреждение о прогрессе" aria-label="Предупреждение о прогрессе"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v9"/><path d="M12 18.5h.01"/></svg></button><button type="button" class="rail-btn" data-theme-toggle aria-pressed="false" data-tip="Смена темы" aria-label="Смена темы"><span class="theme-ico" aria-hidden="true"><svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></button></nav><header class="hero hero-lesson" data-shader data-accent="#D04A28" data-seed="0.629">
+<canvas class="shader-bg" width="820" height="300" aria-hidden="true" style="background:linear-gradient(135deg,#08090D,#D04A28 58%,#08090D)"></canvas>
+<div class="badges"><span class="pill dark">Занятие 8</span><span class="pill">Тестирование информационных систем</span></div>
+<div class="hero-panel"><h1>Тест-кейсы</h1><p class="dek">Тест-кейс записывает проверку так, чтобы другой человек повторил её с теми же данными и получил тот же результат.</p></div>
+<div class="glyph" aria-hidden="true">Л6</div></header><section class="outcomes"><b>После этого занятия вы сможете</b><ul><li>Составлять тест-кейс по шаблону</li><li>Отличать предусловие от шага проверки</li><li>Выбирать уровень детализации под читателя</li><li>Проверять тест-кейс на однозначность</li></ul></section><nav class="toc"><b>Содержание занятия</b><ol><li><a href="#дефект-который-не-повторился">Дефект, который не повторился</a></li><li><a href="#из-чего-состоит-тест-кейс">Из чего состоит тест-кейс</a></li><li><a href="#предусловие-шаг-и-постусловие">Предусловие, шаг и постусловие</a></li><li><a href="#ожидаемый-результат-который-можно-проверить">Ожидаемый результат, который можно проверить</a></li><li><a href="#уровень-детализации-под-читателя">Уровень детализации под читателя</a></li><li><a href="#шаблон-и-поля-которые-спасают">Шаблон и поля, которые спасают</a></li><li><a href="#приоритет-и-трассировка">Приоритет и трассировка</a></li><li><a href="#прогон-и-протокол">Прогон и протокол</a></li><li><a href="#сколько-тест-кейсов-нужно">Сколько тест-кейсов нужно</a></li><li><a href="#проверка-на-однозначность">Проверка на однозначность</a></li><li><a href="#как-тест-кейс-связан-с-дефектом">Как тест-кейс связан с дефектом</a></li><li><a href="#типичные-ошибки">Типичные ошибки</a></li><li><a href="#итоги">Итоги</a></li></ol></nav><article class="prose"><h2 id="дефект-который-не-повторился"><span class="num">01</span>Дефект, который не повторился</h2>
+<p>В понедельник кладовщик площадки в Туле написал в поддержку: приёмка не сохраняется. Тестировщик открыл форму, заполнил поля первыми пришедшими значениями, нажал «Сохранить» и получил зелёное сообщение. Дефект закрыли с пометкой «не воспроизводится».</p>
+<p>Через неделю жалоба повторилась, и на этот раз к ней приложили снимок экрана. В нём были видны количество 999, цена 0,01 и ячейка A-99-99. Тестировщик повторил ровно эти значения и увидел ошибку: сумма округлялась до целых и не совпадала с проверкой, запись не сохранялась. Дефект был настоящим, но в первой записи не хватало трёх чисел.</p>
+<p>Проверка существовала, а тест-кейса не было. Запись «открыть приёмку, ввести данные, сохранить» описывает действие, но не описывает условия, при которых действие даёт результат. <strong>Тест-кейс это контракт воспроизводимости: по нему другой человек получает тот же результат, не спрашивая автора.</strong></p>
+<p>В учебной системе «Склад+» 18 требований, четыре площадки и три роли. Один и тот же экран приёмки выглядит по-разному для кладовщика, менеджера и администратора. Если в тест-кейсе не указана роль, читатель выберет первую попавшуюся и проверит не то, что задумано.</p>
+<h2 id="из-чего-состоит-тест-кейс"><span class="num">02</span>Из чего состоит тест-кейс</h2>
+<p>Тест-кейс отвечает на пять вопросов: где начинается проверка, с какими данными, что делать, что должно получиться и что останется после. Каждый ответ занимает своё поле.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Что содержит</th>
+<th>Пример для артикула</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID</td>
+<td>уникальный номер</td>
+<td>TC-ART-04</td>
+</tr>
+<tr>
+<td>Название</td>
+<td>одна проверяемая мысль</td>
+<td>Артикул со строчными буквами отклоняется</td>
+</tr>
+<tr>
+<td>Требование</td>
+<td>ссылка на источник</td>
+<td>R-17</td>
+</tr>
+<tr>
+<td>Приоритет</td>
+<td>важность проверки</td>
+<td>высокий</td>
+</tr>
+<tr>
+<td>Предусловия</td>
+<td>состояние системы до шага</td>
+<td>товар AB-123 отсутствует в справочнике</td>
+</tr>
+<tr>
+<td>Данные</td>
+<td>точные значения полей</td>
+<td>артикул ab-123, наименование Коробка, единица шт</td>
+</tr>
+<tr>
+<td>Шаги</td>
+<td>действия по одному</td>
+<td>открыть справочник, нажать «Добавить», ввести артикул, сохранить</td>
+</tr>
+<tr>
+<td>Ожидаемый результат</td>
+<td>наблюдаемое следствие</td>
+<td>сообщение «Артикул в формате AB-123», запись не создана</td>
+</tr>
+<tr>
+<td>Постусловие</td>
+<td>возврат системы в исходное состояние</td>
+<td>справочник без новых записей</td>
+</tr>
+<tr>
+<td>Статус</td>
+<td>итог прогона</td>
+<td>пройден</td>
+</tr>
+</tbody>
+</table>
+<p>ID нужен не для красоты. На него ссылаются баг-репорт, протокол прогона и матрица покрытия. Если ID нет, через месяц никто не скажет, какой проверкой нашли дефект и что ещё покрыто этим тестом. Без ID набор превращается в список файлов с непонятными именами.</p>
+<p>Название формулируют как утверждение о поведении, а не как тему. «Проверка артикула» ничего не обещает. «Артикул со строчными буквами отклоняется» сразу задаёт ожидание и позволяет понять, пройден тест или нет.</p>
+<p>Ссылка на требование связывает проверку с источником. В учебном наборе у каждого требования есть номер от R-01 до R-18, и тест-кейс без такого номера сложно защитить: непонятно, что именно он проверяет и зачем нужен.</p>
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Чем предусловие отличается от первого шага и почему путаница между ними ломает прогон?</span></button></p>
+<div class="gate-content" hidden><h2 id="предусловие-шаг-и-постусловие"><span class="num">03</span>Предусловие, шаг и постусловие</h2>
+<p>Предусловие описывает состояние до первого действия. Шаг описывает действие, которое меняет состояние. Постусловие возвращает систему в состояние, пригодное для следующего теста. Три разные вещи, и путать их нельзя.</p>
+<table>
+<thead>
+<tr>
+<th>Запись</th>
+<th>Что это на самом деле</th>
+<th>Как исправить</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Войти в систему кладовщиком</td>
+<td>предусловие</td>
+<td>вынести в блок предусловий</td>
+</tr>
+<tr>
+<td>Создать товар AB-123</td>
+<td>шаг или предусловие</td>
+<td>зависит от того, что проверяет тест</td>
+</tr>
+<tr>
+<td>Открыть справочник товаров</td>
+<td>шаг</td>
+<td>оставить в шагах</td>
+</tr>
+<tr>
+<td>Удалить созданную приёмку</td>
+<td>постусловие</td>
+<td>вынести в постусловия</td>
+</tr>
+<tr>
+<td>Проверить, что всё работает</td>
+<td>ожидаемый результат</td>
+<td>заменить наблюдаемым признаком</td>
+</tr>
+</tbody>
+</table>
+<p>Граница между предусловием и шагом проходит по вопросу «что именно проверяется». Если тест проверяет создание товара, то создание это шаг. Если тест проверяет приёмку, а товар нужен лишь для неё, создание товара уходит в предусловие.</p>
+<p>Предусловие должно быть проверяемым. «В системе есть товар» звучит понятно человеку, но не говорит, какой товар, с каким артикулом и на какой площадке. Правильнее: «в справочнике есть товар с артикулом AB-123, единица измерения шт, остаток 0, площадка Москва». Тогда результат не зависит от того, какие данные уже лежали в базе.</p>
+<p>Постусловие часто пропускают, и зря. Приёмка, созданная в одном тесте, меняет остаток и попадает в отчёт. Следующий тест начнётся не с чистого состояния и даст другой результат. Постусловие «удалить приёмку PO-1234, проверить, что остаток вернулся к 0» защищает весь набор от порядка выполнения.</p>
+<h2 id="ожидаемый-результат-который-можно-проверить"><span class="num">04</span>Ожидаемый результат, который можно проверить</h2>
+<p>Ожидаемый результат это не описание работы системы, а наблюдаемый признак. «Приёмка сохраняется» проверить нельзя: непонятно, где смотреть и что считать сохранением. «Приёмка появляется в списке приёмок со статусом черновик, количество 999, остаток товара увеличился на 999» проверяется сразу.</p>
+<table>
+<thead>
+<tr>
+<th>Плохой результат</th>
+<th>Почему плох</th>
+<th>Проверяемый вариант</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Система работает корректно</td>
+<td>нет признака</td>
+<td>запись видна в списке, поля совпадают с введёнными</td>
+</tr>
+<tr>
+<td>Появляется ошибка</td>
+<td>не сказано какая</td>
+<td>сообщение «Количество от 1 до 999» рядом с полем</td>
+</tr>
+<tr>
+<td>Данные сохраняются</td>
+<td>не сказано где</td>
+<td>строка с номером PO-1234 есть в таблице приёмок</td>
+</tr>
+<tr>
+<td>Операция выполняется быстро</td>
+<td>нет числа</td>
+<td>ответ за 2 секунды при 40 пользователях</td>
+</tr>
+<tr>
+<td>Ничего не происходит</td>
+<td>не наблюдаемо</td>
+<td>запись не создана, остаток не изменился</td>
+</tr>
+</tbody>
+</table>
+<p>У одного шага может быть несколько ожидаемых результатов. Сохранение приёмки проверяют по трём признакам: сообщение об успехе, строка в списке и изменение остатка. Если записать только сообщение, дефект в остатке пройдёт незамеченным.</p>
+<p>Сообщение об ошибке это тоже ожидаемый результат, но проверять его нужно осторожно. Текст берут из спецификации, а если текста там нет, проверяют факт отказа и код ответа API, например 400. Точную формулировку, которой нет в требовании, не делают единственным признаком: она может измениться без дефекта.</p>
+<p>Ожидаемый результат берут из требования, а не из поведения системы. Иначе тест закрепляет текущую ошибку: если система сохраняет 1000 вместо 999, тест «сохраняется 1000» пройдёт и ничего не найдёт. Это называется проблемой оракула: тестировщику нужен независимый источник правильного ответа.</p>
+<h2 id="уровень-детализации-под-читателя"><span class="num">05</span>Уровень детализации под читателя</h2>
+<p>Одна и та же проверка описывается по-разному в зависимости от того, кто будет её выполнять. Новичку нужны точные шаги и данные. Опытному тестировщику достаточно сценария. Автоматизатору нужны селекторы и предусловия в коде.</p>
+<table>
+<thead>
+<tr>
+<th>Уровень</th>
+<th>Что содержит</th>
+<th>Кому подходит</th>
+<th>Когда используют</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Сценарий</td>
+<td>цель и общий ход</td>
+<td>опытный тестировщик</td>
+<td>исследовательская проверка</td>
+</tr>
+<tr>
+<td>Тест-кейс</td>
+<td>шаги, данные, ожидание</td>
+<td>новичок, подрядчик, аудит</td>
+<td>повторяемая проверка</td>
+</tr>
+<tr>
+<td>Чек-лист</td>
+<td>список пунктов без шагов</td>
+<td>команда, знающая систему</td>
+<td>регресс и быстрый обход</td>
+</tr>
+</tbody>
+</table>
+<p>Уровень детализации выбирают по риску и по читателю. Проверка, которую будет выполнять новый сотрудник или внешняя лаборатория, требует подробной записи. Ежедневный регресс по знакомому экрану дешевле держать чек-листом.</p>
+<p>Разница видна на одной и той же приёмке. Сценарий звучит так: «проверить сохранение приёмки на верхней границе количества». Тест-кейс перечисляет роль, площадку, товар, дату, количество 999, цену, ячейку, четыре шага и три ожидаемых результата. Чек-лист содержит один пункт: «приёмка на 999 сохраняется, остаток растёт на 999».</p>
+<p>Чем выше риск ошибки и чем меньше читатель знает систему, тем подробнее запись. Для автоматизации подробность другая: вместо слов «нажать кнопку» нужен селектор или имя метода, а вместо снимка экрана утверждение в коде.</p>
+<p>Лишняя детализация тоже вредна. Если расписать «навести курсор на кнопку, подождать, нажать левой кнопкой», тест-кейс станет длинным и хрупким: любое изменение интерфейса потребует правки. Шаг описывает действие на уровне смысла, а не на уровне движений мыши.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как хранить тест-кейсы так, чтобы их можно было связать с требованиями и прогнать одним набором?</span></button></p>
+<div class="gate-content" hidden><h2 id="шаблон-и-поля-которые-спасают"><span class="num">06</span>Шаблон и поля, которые спасают</h2>
+<p>Тест-кейсы удобно хранить таблицей. Минимальный набор столбцов повторяет структуру из предыдущего раздела. В учебном наборе используется такой заголовок:</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code>id,requirement_id,title,preconditions,steps,expected,actual,status
+</code></pre></div>
+
+<p>Столбцы actual и status заполняют во время прогона. До прогона они пустые, и это нормально: тест-кейс описывает ожидание, а не результат.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Требование</th>
+<th>Название</th>
+<th>Предусловия</th>
+<th>Данные</th>
+<th>Шаги</th>
+<th>Ожидаемый результат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC-ART-01</td>
+<td>R-17</td>
+<td>Артикул AB-123 принимается</td>
+<td>справочник пуст, роль кладовщик</td>
+<td>AB-123, Коробка, шт</td>
+<td>открыть справочник, добавить товар, сохранить</td>
+<td>товар есть в списке, артикул AB-123</td>
+</tr>
+<tr>
+<td>TC-ART-02</td>
+<td>R-17</td>
+<td>Артикул AB-12 отклоняется</td>
+<td>справочник пуст, роль кладовщик</td>
+<td>AB-12, Коробка, шт</td>
+<td>открыть справочник, добавить товар, сохранить</td>
+<td>сообщение о формате, товар не создан</td>
+</tr>
+</tbody>
+</table>
+<p>Шаги нумеруют и пишут в одном действии на строку. «Открыть справочник, добавить товар и сохранить» это три действия в одной строке; если тест упадёт, непонятно, на каком из них. Один шаг, одно действие, один наблюдаемый результат.</p>
+<p>Данные выносят в отдельный столбец, а не прячут в текст шага. Тогда один и тот же тест-кейс можно прогнать с другим набором данных, а при разборе дефекта сразу видно, что вводили.</p>
+<p>Набор версионируют вместе с требованиями. У тест-кейса есть версия или дата изменения. При смене правила старый тест обновляют и указывают, какое требование он теперь проверяет. Иначе через полгода никто не скажет, почему в наборе стоит количество 1000, если форма давно принимает до 9999.</p>
+<p>Шаблон можно вести в Excel или CSV. Формат CSV удобен тем, что набор читается скриптом и прогоняется автоматически. Ниже пример такого прогона: проверка артикула и пять тест-кейсов в виде списка.</p>
+<div class="codehilite" data-lang="text"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_article</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span> <span class="ow">or</span> <span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">letters</span><span class="p">,</span> <span class="n">digits</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">letters</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="n">digits</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+
+
+<span class="n">cases</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;TC-01&quot;</span><span class="p">,</span> <span class="s2">&quot;AB-123&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;TC-02&quot;</span><span class="p">,</span> <span class="s2">&quot;AB-12&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;TC-03&quot;</span><span class="p">,</span> <span class="s2">&quot;A-123&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;TC-04&quot;</span><span class="p">,</span> <span class="s2">&quot;ab-123&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;TC-05&quot;</span><span class="p">,</span> <span class="s2">&quot;AB-12З&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">check_article</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;PASS&quot;</span> <span class="k">if</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span> <span class="k">else</span> <span class="s2">&quot;FAIL&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">case_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="si">:</span><span class="s2">&lt;7</span><span class="si">}</span><span class="s2"> ожидали </span><span class="si">{</span><span class="s1">&#39;принять&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;отклонить&#39;</span><span class="si">}</span><span class="s2">, получили </span><span class="si">{</span><span class="s1">&#39;принят&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;отклонён&#39;</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="codehilite" data-lang="text"><pre><span></span><code>TC-01 AB-123  ожидали принять, получили принят: PASS
+TC-02 AB-12   ожидали отклонить, получили отклонён: PASS
+TC-03 A-123   ожидали отклонить, получили отклонён: PASS
+TC-04 ab-123  ожидали отклонить, получили принят: FAIL
+TC-05 AB-12З  ожидали отклонить, получили отклонён: PASS
+</code></pre></div>
+
+<p>Один тест-кейс упал. Строка TC-04 показывает, что проверка пропускает строчные буквы, хотя требование говорит о заглавных. Так выглядит работающий тест-кейс: у него есть точные данные, ожидание и наблюдаемый итог.</p>
+<h2 id="приоритет-и-трассировка"><span class="num">07</span>Приоритет и трассировка</h2>
+<p>Приоритет тест-кейса зависит от риска, а не от удобства. Высокий приоритет получают проверки денег, остатков, прав доступа и сохранности данных. Низкий приоритет у косметики и редких сочетаний.</p>
+<table>
+<thead>
+<tr>
+<th>Приоритет</th>
+<th>Что проверяет</th>
+<th>Когда выполняют</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Высокий</td>
+<td>приёмка, отгрузка, остаток, доступ по ролям</td>
+<td>каждый прогон</td>
+</tr>
+<tr>
+<td>Средний</td>
+<td>отчёты, фильтры, сообщения об ошибках</td>
+<td>перед выпуском</td>
+</tr>
+<tr>
+<td>Низкий</td>
+<td>подписи, порядок колонок, редкие форматы</td>
+<td>по времени</td>
+</tr>
+</tbody>
+</table>
+<p>Трассировка связывает требования и тест-кейсы в таблицу. По строкам идут требования, по столбцам тест-кейсы, в клетках отметка. Пустая строка показывает требование без проверки, пустой столбец показывает тест без требования.</p>
+<table>
+<thead>
+<tr>
+<th>Требование</th>
+<th>TC-ART-01</th>
+<th>TC-ART-02</th>
+<th>TC-ART-03</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-17 уникальность артикула</td>
+<td>да</td>
+<td>да</td>
+<td>да</td>
+</tr>
+<tr>
+<td>R-18 пересчёт остатка</td>
+<td>нет</td>
+<td>нет</td>
+<td>да</td>
+</tr>
+</tbody>
+</table>
+<p>Такая таблица отвечает на вопрос заказчика «что вы проверили» без пересказа всех шагов. Она же показывает, где набор вырос избыточно: если три тест-кейса проверяют одно и то же требование одинаковыми данными, один из них лишний.</p>
+<p>В учебном наборе 18 требований. Если тест-кейсы покрывают 14 из них, покрытие равно 78 процентам, но сам процент без веса требования обманчив. Одно непокрытое требование по пересчёту остатка опаснее пяти непокрытых требований по подписям и цветам. Поэтому в отчёте рядом с процентом называют, какие именно требования остались без проверки.</p>
+<h2 id="прогон-и-протокол"><span class="num">08</span>Прогон и протокол</h2>
+<p>До прогона тест-кейс описывает ожидание. Во время прогона появляются фактические данные, и их фиксируют в том же наборе. Столбец actual содержит наблюдаемое поведение, столбец status содержит итог: пройден, не пройден, заблокирован или не выполнен.</p>
+<table>
+<thead>
+<tr>
+<th>Статус</th>
+<th>Когда ставят</th>
+<th>Что писать рядом</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Пройден</td>
+<td>факт совпал с ожиданием</td>
+<td>версия сборки и окружение</td>
+</tr>
+<tr>
+<td>Не пройден</td>
+<td>факт расходится с ожиданием</td>
+<td>что именно увидели</td>
+</tr>
+<tr>
+<td>Заблокирован</td>
+<td>предусловие невыполнимо</td>
+<td>чего не хватает</td>
+</tr>
+<tr>
+<td>Не выполнен</td>
+<td>проверку не начинали</td>
+<td>причина переноса</td>
+</tr>
+</tbody>
+</table>
+<p>Заблокированный тест это не проваленный тест. Если для проверки приёмки нужен товар с остатком 0, а справочник пуст и создание товара сломано, тест не выполняется по независящей причине. Запись «заблокирован: нет товара AB-123, создание падает по TC-ART-01» объясняет ситуацию и не портит статистику.</p>
+<p>Протокол прогона фиксирует условия, без которых результат не повторить: версию сборки, браузер, площадку, роль пользователя, дату и исполнителя. Один и тот же тест-кейс в Chrome и в другом браузере может дать разный результат из-за формата даты или сообщения валидации.</p>
+<p>Снимок экрана прикладывают к упавшему тесту и называют по ID: TC-ART-04-fail.png. По имени сразу видно, к какой проверке относится свидетельство, и не нужно открывать десять файлов подряд.</p>
+<h2 id="сколько-тест-кейсов-нужно"><span class="num">09</span>Сколько тест-кейсов нужно</h2>
+<p>Количество тест-кейсов не является показателем качества. Двадцать тестов, покрывающих десять требований, полезнее сорока тестов на один экран. Считают не тесты, а покрытие: у каждого требования есть хотя бы одна проверка, у каждого класса данных есть представитель, у каждой границы есть три точки.</p>
+<table>
+<thead>
+<tr>
+<th>Требование</th>
+<th>Что проверяем</th>
+<th>Сколько тест-кейсов</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-17 уникальность артикула</td>
+<td>корректный, повтор, регистр, формат</td>
+<td>4</td>
+</tr>
+<tr>
+<td>R-18 пересчёт остатка</td>
+<td>приёмка, отгрузка, отмена</td>
+<td>3</td>
+</tr>
+<tr>
+<td>R-03 количество</td>
+<td>нижняя граница, верхняя, дробное</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>Избыточность видна по данным. Если два тест-кейса вводят одинаковые значения и проверяют одинаковый результат, второй не добавляет информации. Если тест-кейс проверяет сразу четыре требования, при падении непонятно, какое из них нарушено, и его лучше разделить.</p>
+<p>Экономия достигается за счёт классов и границ, а не за счёт удаления неудобных проверок. Нельзя выбросить тест на отрицательное количество только потому, что он редко падает: именно редкие проверки ловят дорогие дефекты.</p></div>
+</div>
+
+<div class="gate-step" data-gate>
+<p class="gate-action"><button type="button" class="gate-btn" aria-expanded="false"><span class="gate-q" aria-hidden="true">?</span><span>Как проверить тест-кейс на однозначность ещё до того, как его выполнит другой человек?</span></button></p>
+<div class="gate-content" hidden><h2 id="проверка-на-однозначность"><span class="num">10</span>Проверка на однозначность</h2>
+<p>Однозначность проверяют чтением, а не запуском. Автор отдаёт тест-кейс коллеге, и тот отвечает на вопросы: понятно ли, с чего начать, какие данные ввести, что считать успехом и что делать после.</p>
+<table>
+<thead>
+<tr>
+<th>Проверка</th>
+<th>Признак проблемы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Один шаг содержит одно действие</td>
+<td>в строке есть «и», «затем», «после этого»</td>
+</tr>
+<tr>
+<td>Данные названы точно</td>
+<td>в шаге написано «ввести корректные данные»</td>
+</tr>
+<tr>
+<td>Ожидание наблюдаемо</td>
+<td>результат описан словами «работает», «успешно»</td>
+</tr>
+<tr>
+<td>Предусловие отделено от шага</td>
+<td>в шагах есть вход в систему или создание товара</td>
+</tr>
+<tr>
+<td>Нет зависимости от порядка</td>
+<td>тест требует, чтобы предыдущий уже был выполнен</td>
+</tr>
+<tr>
+<td>Есть постусловие</td>
+<td>после теста остаются записи, влияющие на других</td>
+</tr>
+<tr>
+<td>Указана роль и площадка</td>
+<td>неясно, от чьего имени выполняется проверка</td>
+</tr>
+<tr>
+<td>Есть ссылка на требование</td>
+<td>непонятно, что именно проверяется</td>
+</tr>
+</tbody>
+</table>
+<p>Полезен приём «тест на бумаге». Коллега читает шаги и вслух говорит, что увидит на экране, не открывая систему. Если его ожидание расходится с записанным, формулировку исправляют до прогона. Это дешевле, чем искать причину расхождения после.</p>
+<table>
+<thead>
+<tr>
+<th>Как написано</th>
+<th>Почему неоднозначно</th>
+<th>Как переписать</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ввести корректное количество</td>
+<td>нет числа</td>
+<td>Ввести количество 999</td>
+</tr>
+<tr>
+<td>Проверить сообщение</td>
+<td>не сказано какое</td>
+<td>Увидеть текст «Количество от 1 до 999»</td>
+</tr>
+<tr>
+<td>Сохранить и проверить</td>
+<td>два действия в строке</td>
+<td>Сохранить. Проверить строку в списке приёмок</td>
+</tr>
+<tr>
+<td>Подготовить товар</td>
+<td>не сказано какой</td>
+<td>Создать товар AB-123, единица шт, остаток 0</td>
+</tr>
+<tr>
+<td>Повторить прошлый тест</td>
+<td>нет данных</td>
+<td>Указать номер предыдущего тест-кейса и данные</td>
+</tr>
+</tbody>
+</table>
+<p>Такая таблица полезна и при обучении: новичок видит, что именно считается плохой формулировкой, и быстрее переносит правило в свои тест-кейсы. После правок тест-кейс читают повторно, пока два человека не назовут одинаковое ожидание.</p>
+<p>Отдельно проверяют, что тест-кейс не описывает два дефекта сразу. Если шаг проверяет и сообщение об ошибке, и отсутствие записи, при падении придётся выяснять, что именно сломалось. Лучше разделить на два тест-кейса с разными ожиданиями.</p>
+<h2 id="как-тест-кейс-связан-с-дефектом"><span class="num">11</span>Как тест-кейс связан с дефектом</h2>
+<p>Упавший тест-кейс ещё не дефект. Возможно, ошибка в самом тесте, устарело требование или стенд настроен иначе. Поэтому сначала проверяют тест-кейс, потом оформляют дефект.</p>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>В тест-кейсе</th>
+<th>В баг-репорте</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Название</td>
+<td>что должно происходить</td>
+<td>что происходит на самом деле</td>
+</tr>
+<tr>
+<td>Данные</td>
+<td>полный набор для ввода</td>
+<td>минимальный набор для повтора</td>
+</tr>
+<tr>
+<td>Шаги</td>
+<td>проверка по плану</td>
+<td>кратчайший путь к ошибке</td>
+</tr>
+<tr>
+<td>Ожидание</td>
+<td>из требования</td>
+<td>из требования и тест-кейса</td>
+</tr>
+<tr>
+<td>Ссылка</td>
+<td>на требование</td>
+<td>на тест-кейс и требование</td>
+</tr>
+</tbody>
+</table>
+<p>Баг-репорт короче тест-кейса. В нём не нужны все шаги подготовки, если дефект воспроизводится с тремя действиями. Но ссылка на TC-ART-04 обязательна: по ней разработчик видит полный набор данных и понимает, что проверка была запланирована, а не придумана на ходу.</p>
+<p>Обратная связь тоже работает. Если дефект найден без тест-кейса, после исправления его стоит превратить в тест-кейс или чек-лист. Иначе при следующем изменении та же ошибка вернётся, и её снова будут искать с нуля.</p>
+<h2 id="типичные-ошибки"><span class="num">12</span>Типичные ошибки</h2>
+<p><strong>Шаг «проверить, что всё работает».</strong> Ожидание не наблюдаемо, тест нельзя считать ни пройденным, ни проваленным. Симптом: в протоколе стоит «успешно», а дефект живёт дальше.</p>
+<p><strong>Предусловие записано как шаг.</strong> Вход в систему и создание товара занимают половину шагов, а сама проверка теряется. Симптом: тест долго выполнять, при падении непонятно, где причина.</p>
+<p><strong>Несколько проверок в одном тест-кейсе.</strong> Один тест проверяет сохранение, остаток и сообщение. Симптом: при падении неизвестно, какая из трёх проверок сломалась.</p>
+<p><strong>Данные спрятаны в тексте шага.</strong> «Ввести количество 999» есть, а цена и ячейка не указаны. Симптом: у другого человека результат другой.</p>
+<p><strong>Зависимость от предыдущего теста.</strong> Тест-кейс требует, чтобы приёмка уже была создана другим тестом. Симптом: при запуске в другом порядке набор падает.</p>
+<p><strong>Абсолютные даты.</strong> В данных стоит 31.10.2026, а через месяц тест проверяет уже прошлое. Симптом: набор краснеет без изменения кода.</p>
+<p><strong>Ожидание взято из поведения системы.</strong> Тест фиксирует текущий результат, даже если он ошибочный. Симптом: дефект подтверждён тестом и не исправляется.</p>
+<p><strong>Нет постусловия.</strong> После прогона остаются приёмки и изменённые остатки. Симптом: следующий прогон даёт другие числа.</p>
+<p><strong>Тест-кейс без требования.</strong> Непонятно, какую функцию он защищает и что будет при её изменении. Симптом: при регрессе такой тест удаляют первым.</p>
+<p><strong>Слишком мелкие шаги.</strong> «Навести курсор», «подождать секунду», «нажать левой кнопкой» делают тест хрупким. Симптом: каждая правка интерфейса требует переписать набор.</p>
+<h2 id="итоги"><span class="num">13</span>Итоги</h2>
+<ul>
+<li>Тест-кейс это контракт воспроизводимости: данные, шаги и ожидание позволяют повторить проверку без автора.</li>
+<li>Предусловие описывает состояние до действия, шаг меняет состояние, постусловие возвращает систему в исходное.</li>
+<li>Ожидаемый результат должен быть наблюдаемым и взятым из требования, а не из поведения системы.</li>
+<li>Уровень детализации выбирают по читателю и риску: сценарий, тест-кейс или чек-лист.</li>
+<li>ID, ссылка на требование и приоритет связывают набор с требованиями и протоколом.</li>
+<li>Однозначность проверяют чтением и «тестом на бумаге» до первого прогона.</li>
+<li>Тест-кейс без точных данных и роли проверяет догадку исполнителя, а не систему.</li>
+</ul>
+<div class="quiz" data-quiz><div class="quiz-q" data-type="single" data-correct="1" data-q="1"><p class="quiz-p"><span class="quiz-no" aria-hidden="true">01</span>Для кого нужен подробный тест-кейс с шагами и данными?</p><div class="opts"><label class="opt"><input type="radio" name="q179_0" value="2"><span>Для ежедневного регресса опытной команды</span></label><label class="opt"><input type="radio" name="q179_0" value="3"><span>Для заказчика без доступа к системе</span></label><label class="opt"><input type="radio" name="q179_0" value="0" data-ok><span>Для нового сотрудника или внешней проверки</span></label><label class="opt"><input type="radio" name="q179_0" value="1"><span>Для автора системы</span></label></div><p class="quiz-why" hidden>Подробная запись нужна тому, кто не знает систему.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="2" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">02</span>Какие данные нужно указать в тест-кейсе приёмки?</p><div class="opts"><label class="opt"><input type="checkbox" name="q179_1" value="1" data-ok><span>Роль и площадка</span></label><label class="opt"><input type="checkbox" name="q179_1" value="3"><span>Цвет кнопки сохранения</span></label><label class="opt"><input type="checkbox" name="q179_1" value="2" data-ok><span>Дата операции</span></label><label class="opt"><input type="checkbox" name="q179_1" value="0" data-ok><span>Количество и цена</span></label></div><p class="quiz-why" hidden>Данные должны позволять повторить ввод полностью.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="3" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">03</span>Что делает тест-кейс воспроизводимым?</p><div class="opts"><label class="opt"><input type="radio" name="q179_2" value="2"><span>Имя автора и дата создания</span></label><label class="opt"><input type="radio" name="q179_2" value="3"><span>Ссылка на документацию системы</span></label><label class="opt"><input type="radio" name="q179_2" value="0" data-ok><span>Точные данные, шаги и наблюдаемый ожидаемый результат</span></label><label class="opt"><input type="radio" name="q179_2" value="1"><span>Название проверяемой функции</span></label></div><p class="quiz-why" hidden>Повторить проверку можно только при точных данных и ожидании.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="4" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">04</span>Как называется возврат системы в исходное состояние после теста?</p><input type="text" class="short-answer" data-answers="[&quot;постусловие&quot;, &quot;пост-условие&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называется возврат системы в исходное состояние после теста?"><p class="quiz-why" hidden>Постусловие описано в тест-кейсе отдельным полем.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="5" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">05</span>Почему ожидаемый результат нельзя брать из поведения системы?</p><div class="opts"><label class="opt"><input type="radio" name="q179_4" value="1"><span>Поведение системы всегда верно</span></label><label class="opt"><input type="radio" name="q179_4" value="0" data-ok><span>Тест закрепит текущую ошибку</span></label><label class="opt"><input type="radio" name="q179_4" value="3"><span>Тогда не нужен ID</span></label><label class="opt"><input type="radio" name="q179_4" value="2"><span>Ожидание станет слишком точным</span></label></div><p class="quiz-why" hidden>Оракул должен быть независимым от проверяемой системы.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="6" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">06</span>Что должно быть в тест-кейсе кроме шагов?</p><div class="opts"><label class="opt"><input type="checkbox" name="q179_5" value="2" data-ok><span>Ожидаемый результат</span></label><label class="opt"><input type="checkbox" name="q179_5" value="3"><span>Личные заметки автора</span></label><label class="opt"><input type="checkbox" name="q179_5" value="0" data-ok><span>Предусловия</span></label><label class="opt"><input type="checkbox" name="q179_5" value="1" data-ok><span>Тестовые данные</span></label></div><p class="quiz-why" hidden>Без этих полей проверка не воспроизводится.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="7" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">07</span>Что проверяют при чтении тест-кейса до прогона?</p><div class="opts"><label class="opt"><input type="radio" name="q179_6" value="1"><span>Скорость выполнения теста</span></label><label class="opt"><input type="radio" name="q179_6" value="2"><span>Количество строк в отчёте</span></label><label class="opt"><input type="radio" name="q179_6" value="0" data-ok><span>Однозначность шагов, данных и ожидания</span></label><label class="opt"><input type="radio" name="q179_6" value="3"><span>Настроение исполнителя</span></label></div><p class="quiz-why" hidden>Однозначность дешевле проверить до запуска.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="8" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">08</span>Чем предусловие отличается от шага?</p><div class="opts"><label class="opt"><input type="radio" name="q179_7" value="3"><span>Предусловие не связано с данными</span></label><label class="opt"><input type="radio" name="q179_7" value="0" data-ok><span>Предусловие описывает состояние до первого действия</span></label><label class="opt"><input type="radio" name="q179_7" value="2"><span>Предусловие это первое действие теста</span></label><label class="opt"><input type="radio" name="q179_7" value="1"><span>Предусловие всегда выполняется после теста</span></label></div><p class="quiz-why" hidden>Предусловие задаёт исходное состояние, шаг меняет его.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="9" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">09</span>Какие признаки указывают на плохой тест-кейс?</p><div class="opts"><label class="opt"><input type="checkbox" name="q179_8" value="1" data-ok><span>Несколько проверок в одном тест-кейсе</span></label><label class="opt"><input type="checkbox" name="q179_8" value="2" data-ok><span>Отсутствие данных и роли</span></label><label class="opt"><input type="checkbox" name="q179_8" value="3"><span>Ссылка на требование</span></label><label class="opt"><input type="checkbox" name="q179_8" value="0" data-ok><span>Шаг «проверить, что всё работает»</span></label></div><p class="quiz-why" hidden>Плохой тест-кейс нельзя повторить и проверить.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="10" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">10</span>Что относят к постусловию?</p><div class="opts"><label class="opt"><input type="radio" name="q179_9" value="3"><span>Выбор роли кладовщика</span></label><label class="opt"><input type="radio" name="q179_9" value="2"><span>Открытие формы приёмки</span></label><label class="opt"><input type="radio" name="q179_9" value="1"><span>Ввод количества 999</span></label><label class="opt"><input type="radio" name="q179_9" value="0" data-ok><span>Удаление созданной приёмки и возврат остатка</span></label></div><p class="quiz-why" hidden>Постусловие возвращает систему в исходное состояние.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="11" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">11</span>Зачем тест-кейсу ID?</p><div class="opts"><label class="opt"><input type="radio" name="q179_10" value="1"><span>Чтобы название было длиннее</span></label><label class="opt"><input type="radio" name="q179_10" value="2"><span>Чтобы тест выполнялся быстрее</span></label><label class="opt"><input type="radio" name="q179_10" value="0" data-ok><span>На него ссылаются баг-репорт, протокол и матрица покрытия</span></label><label class="opt"><input type="radio" name="q179_10" value="3"><span>Чтобы не указывать требование</span></label></div><p class="quiz-why" hidden>ID связывает проверку с результатами и дефектами.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="short" data-q="12" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">12</span>Как называют проверку, по которой другой человек получает тот же результат?</p><input type="text" class="short-answer" data-answers="[&quot;тест-кейс&quot;, &quot;тестовый сценарий&quot;]" placeholder="Введите ответ" autocomplete="off" spellcheck="false" aria-label="Как называют проверку, по которой другой человек получает тот же результат?"><p class="quiz-why" hidden>Тест-кейс фиксирует условия, шаги и ожидание.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="13" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">13</span>Каким должен быть ожидаемый результат?</p><div class="opts"><label class="opt"><input type="radio" name="q179_12" value="3"><span>Скрытым от читателя тест-кейса</span></label><label class="opt"><input type="radio" name="q179_12" value="2"><span>Взятым из текущего поведения системы</span></label><label class="opt"><input type="radio" name="q179_12" value="1"><span>Описанным словами «работает корректно»</span></label><label class="opt"><input type="radio" name="q179_12" value="0" data-ok><span>Наблюдаемым и взятым из требования</span></label></div><p class="quiz-why" hidden>Иначе тест нельзя проверить и он закрепляет ошибку.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="multi" data-correct="3" data-q="14" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">14</span>Какие уровни описания проверок существуют?</p><div class="opts"><label class="opt"><input type="checkbox" name="q179_13" value="1" data-ok><span>Тест-кейс</span></label><label class="opt"><input type="checkbox" name="q179_13" value="0" data-ok><span>Сценарий</span></label><label class="opt"><input type="checkbox" name="q179_13" value="3"><span>Баг-репорт</span></label><label class="opt"><input type="checkbox" name="q179_13" value="2" data-ok><span>Чек-лист</span></label></div><p class="quiz-why" hidden>Баг-репорт фиксирует дефект, а не проверку.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-q" data-type="single" data-correct="1" data-q="15" hidden><p class="quiz-p"><span class="quiz-no" aria-hidden="true">15</span>Что показывает пустая строка в матрице трассируемости?</p><div class="opts"><label class="opt"><input type="radio" name="q179_14" value="1"><span>Тест без данных</span></label><label class="opt"><input type="radio" name="q179_14" value="0" data-ok><span>Требование без проверки</span></label><label class="opt"><input type="radio" name="q179_14" value="3"><span>Лишний столбец</span></label><label class="opt"><input type="radio" name="q179_14" value="2"><span>Ошибку в шагах</span></label></div><p class="quiz-why" hidden>Пустая строка означает, что требование не покрыто тестами.</p><div class="quiz-actions"><button type="button" class="quiz-answer" data-answer>Ответить</button><span class="quiz-note" data-note hidden></span></div></div><div class="quiz-result" data-quiz-result hidden aria-live="polite"><span class="label">Результат теста</span><h3>Тест завершён</h3><label class="modal-name" data-student-label><span>ФИО студента</span><input type="text" data-student-name maxlength="80" autocomplete="name" placeholder="Иванов Иван Иванович"></label><p class="modal-result" data-modal-result></p><dl class="modal-times"><div><dt>Время выполнения теста</dt><dd data-test-time>00:00</dd></div><div><dt>Время просмотра лекции</dt><dd data-view-time>00:00</dd></div></dl></div></div></div>
+</div></article><nav class="pager"><a class="" href="06-lek-05.html"><span>← Предыдущее занятие</span>Лекция 5. Граничные значения</a><a class="next" style="text-align:right;margin-left:auto" href="08-prakt-02.html"><span>Следующее занятие →</span>Практика 2. Набор проверок для формы приёмки</a></nav></main>
+<div class="modal" data-modal="warn" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="warn-title">Внимание</h2>
+    <p>Если обновить страницу, прогресс прохождения обнулится: отвеченные вопросы сбросятся, таймеры начнутся заново.</p>
+    <button type="button" class="modal-ok" data-modal-close>Понятно</button>
+  </div>
+</div>
+<noscript><style>.gate-step[hidden],.gate-content[hidden]{display:block!important}.gate-btn{display:none!important}</style></noscript><noscript><style>.quiz-q[hidden]{display:block!important}.quiz-actions{display:none!important}</style></noscript>
+<script>
+(function(){
+  var root = document.documentElement;
+  var media = matchMedia('(prefers-color-scheme: dark)');
+  function current(){
+    var t = root.dataset.theme;
+    if(t === 'dark' || t === 'light') return t;
+    return media.matches ? 'dark' : 'light';
+  }
+  function label(btn){
+    var t = current();
+    var ico = btn.querySelector('.theme-ico');
+    if(ico){
+      btn.setAttribute('aria-label', t === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+    } else {
+      btn.textContent = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    }
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  function refresh(){
+    document.querySelectorAll('[data-theme-toggle]').forEach(label);
+    window.dispatchEvent(new Event('themechange'));
+  }
+  function apply(t){
+    if(t === 'dark' || t === 'light'){
+      root.dataset.theme = t;
+      try{ localStorage.setItem('mdk-theme', t); }catch(e){}
+    } else {
+      delete root.dataset.theme;
+      try{ localStorage.removeItem('mdk-theme'); }catch(e){}
+    }
+    refresh();
+  }
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+    label(btn);
+    btn.addEventListener('click', function(){
+      apply(current() === 'dark' ? 'light' : 'dark');
+      var ico = btn.querySelector('.theme-ico');
+      if(!ico) return;
+      ico.classList.remove('is-spinning');
+      void ico.offsetWidth;
+      ico.classList.add('is-spinning');
+      var stop = function(){ ico.classList.remove('is-spinning'); };
+      ico.addEventListener('animationend', stop, {once: true});
+      setTimeout(stop, 700);
+    });
+  });
+  media.addEventListener('change', function(){ if(!root.dataset.theme) refresh(); });
+})();
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('[data-shader]'));
+  if(!cards.length) return;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vsrc = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fsrc = `precision highp float;uniform vec2 u_res;uniform float u_time;
+  uniform vec3 u_c1;uniform vec3 u_c2;uniform vec3 u_c3;uniform float u_seed;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv=(gl_FragCoord.xy*2.-u_res)/min(u_res.x,u_res.y);
+    uv += vec2(u_seed*1.7,u_seed*1.1);
+    float t=u_time*.05+u_seed*3.0;
+    vec2 q=vec2(fbm(uv*1.15+t*.7),fbm(uv*1.15-t*.5));
+    float r=fbm(uv*1.4+q*1.9+vec2(t*.6,0.));
+    vec3 col=vec3(.031,.035,.051);
+    col=mix(col,u_c1,smoothstep(.30,.82,r)*.95);
+    col=mix(col,u_c2,smoothstep(.50,.90,fbm(uv*2.1-q*1.6+t*.4))*.45);
+    col=mix(col,u_c3,smoothstep(.60,.95,r+q.x*.3)*.5);
+    col*=.82+.50*q.y;
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function hexRgb(hex){
+    hex = String(hex||'#7C5CFF').replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var n = parseInt(hex,16);
+    if(isNaN(n)) return [.486,.361,1];
+    return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];
+  }
+  function rgbHsl(c){
+    var r=c[0],g=c[1],b=c[2],max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2,d=max-min;
+    if(d){ s=l>.5?d/(2-max-min):d/(max+min);
+      if(max===r) h=(g-b)/d+(g<b?6:0);
+      else if(max===g) h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6; }
+    return [h,s,l];
+  }
+  function hue(h,s,l){
+    function f(n){var k=(n+h*12)%12;return l-s*Math.min(l,1-l)*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));}
+    return [f(0),f(8),f(4)];
+  }
+  function palette(hex, seed){
+    var hsl=rgbHsl(hexRgb(hex));
+    var h=(hsl[0]+(seed-.5)*.75+1)%1, s=Math.max(.62,hsl[1]);
+    return [hue(h,s,.55),hue((h+.34)%1,.82,.53),hue((h+.67)%1,.78,.58)];
+  }
+  function shader(gl,type,src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  function init(card,index){
+    var cv=card.querySelector('canvas.shader-bg'); if(!cv) return;
+    var gl=null;
+    try { gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}) || cv.getContext('experimental-webgl'); } catch(e) {}
+    if(!gl){ return; }
+    var pr=gl.createProgram();
+    gl.attachShader(pr,shader(gl,gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(pr,shader(gl,gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uRes=gl.getUniformLocation(pr,'u_res'),uT=gl.getUniformLocation(pr,'u_time');
+    var uC1=gl.getUniformLocation(pr,'u_c1'),uC2=gl.getUniformLocation(pr,'u_c2'),uC3=gl.getUniformLocation(pr,'u_c3');
+    var uSeed=gl.getUniformLocation(pr,'u_seed');
+    var seed=parseFloat(card.getAttribute('data-seed'))||0;
+    var colors=palette(card.getAttribute('data-accent'),seed);
+    gl.uniform3f(uC1,colors[0][0],colors[0][1],colors[0][2]);
+    gl.uniform3f(uC2,colors[1][0],colors[1][1],colors[1][2]);
+    gl.uniform3f(uC3,colors[2][0],colors[2][1],colors[2][2]);
+    gl.uniform1f(uSeed,seed);
+    function size(){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=cv.clientWidth||card.clientWidth||640, h=cv.clientHeight||card.clientHeight||360;
+      cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr));
+      gl.viewport(0,0,cv.width,cv.height);
+    }
+    function draw(now){
+      gl.uniform2f(uRes,cv.width,cv.height);
+      gl.uniform1f(uT,(now/1000)+seed*4.0);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+    }
+    size();
+    if(reduced){ draw(42000); return; }
+    if(!('IntersectionObserver' in window)){ draw(42000); return; }
+    var running=false, raf=0;
+    function frame(now){ draw(now); raf=requestAnimationFrame(frame); }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting && !running){ running=true; raf=requestAnimationFrame(frame); }
+        else if(!en.isIntersecting && running){ running=false; cancelAnimationFrame(raf); }
+      });
+    },{threshold:.02});
+    io.observe(cv);
+    window.addEventListener('resize',function(){ size(); if(!running) draw(performance.now()); });
+  }
+  cards.forEach(init);
+})();
+
+(function(){
+  var steps = [].slice.call(document.querySelectorAll('.gate-step'));
+  if(!steps.length) return;
+  function syncPager(){
+    var done = steps.every(function(step){ return !step.hidden; });
+    document.documentElement.classList.toggle('gated', !done);
+  }
+  function open(step){
+    var button = step.querySelector('.gate-btn');
+    var body = step.querySelector('.gate-content');
+    if(button){ button.hidden = true; button.setAttribute('aria-expanded', 'true'); }
+    if(body) body.hidden = false;
+    step.classList.add('open');
+    var next = steps[steps.indexOf(step) + 1];
+    if(next) next.hidden = false;
+    syncPager();
+    if(window.__readProgress) window.__readProgress();
+    window.dispatchEvent(new Event('resize'));
+    return next;
+  }
+  function openAll(){
+    steps.forEach(function(step){ step.hidden = false; open(step); });
+  }
+  steps.forEach(function(step, i){
+    step.hidden = i > 0;
+    var button = step.querySelector('.gate-btn');
+    if(button) button.addEventListener('click', function(){ open(step); });
+  });
+  syncPager();
+  window.dispatchEvent(new Event('resize'));
+  document.querySelectorAll('.toc a[href^="#"], .prose a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', openAll);
+  });
+  if(location.hash) openAll();
+})();
+
+(function(){
+  var bar=document.querySelector('.read-progress'); if(!bar) return;
+  var fill=bar.querySelector('span'), ticking=false;
+  function scrollPct(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    return max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):100;
+  }
+  function gatePct(){
+    var steps=[].slice.call(document.querySelectorAll('.gate-step'));
+    if(!steps.length) return null;
+    var n=steps.length;
+    var open=steps.filter(function(step){ return step.classList.contains('open'); });
+    var article=document.querySelector('article.prose')||document.querySelector('.prose');
+    var view=window.scrollY+window.innerHeight;
+    if(!open.length){
+      if(!article) return 0;
+      var articleTop=article.getBoundingClientRect().top+window.scrollY;
+      var firstTop=steps[0].getBoundingClientRect().top+window.scrollY;
+      var span=Math.max(1, firstTop-articleTop);
+      var done=Math.min(1,Math.max(0,(view-articleTop)/span));
+      return done/(n+1)*100;
+    }
+    var last=open[open.length-1];
+    var box=last.getBoundingClientRect();
+    var top=box.top+window.scrollY;
+    var height=last.offsetHeight||box.height||1;
+    var seen=Math.min(1,Math.max(0,(view-top)/height));
+    return Math.min(100,Math.max(0,(1+(open.length-1)+seen)/(n+1)*100));
+  }
+  function update(){
+    var pct=gatePct();
+    if(pct===null) pct=scrollPct();
+    fill.style.width=pct.toFixed(2)+'%';
+    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+  }
+  function onScroll(){ if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){update();ticking=false;}); }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  window.__readProgress = update;
+  update();
+})();
+
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var prose = document.querySelector('article.prose');
+  if(!prose) return;
+  var vh = window.innerHeight || 800;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold: .06, rootMargin: '0px 0px -4% 0px'});
+  function add(el){
+    if(!el || el.nodeType !== 1) return;
+    if(el.classList.contains('gate-step') || el.classList.contains('gate-action')) return;
+    if(el.classList.contains('quiz')) return;
+    var hidden = el.closest('[hidden]');
+    if(!hidden && el.getBoundingClientRect().top < vh * .82) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  }
+  [].slice.call(prose.children).forEach(add);
+  prose.querySelectorAll('.gate-content > *').forEach(function(el){
+    var step = el.closest('.gate-step');
+    if(step && !step.hidden) return;
+    add(el);
+  });
+})();
+
+(function(){
+  document.querySelectorAll('[data-pdf]').forEach(function(button){
+    button.addEventListener('click',function(){ window.print(); });
+  });
+})();
+
+(function(){
+  document.querySelectorAll('.work-checklist input[type="checkbox"]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      if(!cb.checked) return;
+      var row = cb.closest('tr');
+      row.querySelectorAll('input[type="checkbox"]').forEach(function(other){
+        if(other !== cb) other.checked = false;
+      });
+    });
+  });
+})();
+
+(function(){
+  var activeMs = 0, lastTick = performance.now(), visible = !document.hidden;
+  function tick(){ var now = performance.now(); if(visible) activeMs += now - lastTick; lastTick = now; }
+  document.addEventListener('visibilitychange', function(){ tick(); visible = !document.hidden; lastTick = performance.now(); });
+  function viewingMs(){ tick(); return activeMs; }
+  function fmt(ms){ var s = Math.max(0, Math.round(ms/1000)); var h = Math.floor(s/3600), m = Math.floor(s%3600/60), r = s%60;
+    return (h ? h + ':' : '') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\u0451/g,'\u0435').replace(/\s+/g,' '); }
+  var warnModal = document.querySelector('[data-modal="warn"]');
+
+  function openModal(modal){ if(!modal) return; modal.hidden = false; document.documentElement.classList.add('modal-open');
+    var field = modal.querySelector('input'); if(field) setTimeout(function(){ field.focus(); }, 30); }
+  function closeModal(modal){ if(!modal) return; modal.hidden = true;
+    if(!document.querySelector('.modal:not([hidden])')) document.documentElement.classList.remove('modal-open'); }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){ b.addEventListener('click', function(){ closeModal(b.closest('.modal')); }); });
+  document.querySelectorAll('.modal').forEach(function(m){ m.addEventListener('mousedown', function(e){ if(e.target === m) closeModal(m); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.querySelectorAll('.modal:not([hidden])').forEach(closeModal); } });
+  document.querySelectorAll('[data-warn]').forEach(function(b){ b.addEventListener('click', function(){ openModal(warnModal); }); });
+
+  function questionCorrect(q){
+    if(q.dataset.type === 'short'){
+      var input = q.querySelector('.short-answer'); if(!input) return false;
+      var answers = []; try { answers = JSON.parse(input.getAttribute('data-answers') || '[]'); } catch(e) {}
+      var value = norm(input.value); if(!value) return false;
+      return answers.some(function(a){ return norm(a) === value; });
+    }
+    if(q.dataset.type === 'multi'){
+      var chosen = q.querySelectorAll('input[type=checkbox]:checked');
+      var need = Number(q.dataset.correct || 0);
+      if(!need || chosen.length !== need) return false;
+      return Array.prototype.every.call(chosen, function(i){ return i.hasAttribute('data-ok'); });
+    }
+    var chosen = q.querySelector('input[type=radio]:checked');
+    return !!(chosen && chosen.hasAttribute('data-ok'));
+  }
+
+  function hasAnswer(q){
+    if(q.dataset.type === 'short'){ var input = q.querySelector('.short-answer'); return !!(input && input.value.trim()); }
+    return q.querySelectorAll('input[type=radio]:checked,input[type=checkbox]:checked').length > 0;
+  }
+  function paintPicked(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+    });
+  }
+  function paintChoices(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      var i = o.querySelector('input');
+      o.classList.toggle('picked', !!(i && i.checked));
+      o.classList.toggle('correct', !!(i && i.hasAttribute('data-ok')));
+    });
+  }
+  function lock(q){
+    q.querySelectorAll('input').forEach(function(i){ i.disabled = true; });
+  }
+
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var qs = [].slice.call(quiz.querySelectorAll('.quiz-q'));
+    if(!qs.length) return;
+    document.documentElement.classList.add('quiz-pending');
+    var current = 0, right = 0, firstAt = null, lastAt = null;
+    function mark(){ var now = performance.now(); if(firstAt === null) firstAt = now; lastAt = now; }
+    function showQuestion(i){
+      current = i;
+      qs[i].hidden = false;
+      if(window.__readProgress) window.__readProgress();
+    }
+    function finish(){
+      var card = quiz.querySelector('[data-quiz-result]');
+      if(!card) return;
+      var total = qs.length, pct = total ? Math.round(right / total * 100) : 0;
+      var testMs = (firstAt !== null && lastAt !== null) ? Math.max(0, lastAt - firstAt) : 0;
+      card.querySelector('[data-modal-result]').textContent = 'Правильных ответов: ' + right + ' из ' + total + ' (' + pct + '%)';
+      card.querySelector('[data-test-time]').textContent = fmt(testMs);
+      card.querySelector('[data-view-time]').textContent = fmt(viewingMs());
+      card.hidden = false;
+      document.documentElement.classList.remove('quiz-pending');
+      if(window.__readProgress) window.__readProgress();
+      window.dispatchEvent(new Event('resize'));
+    }
+    function answer(q, idx){
+      if(q.dataset.answered === '1') return;
+      var note = q.querySelector('[data-note]');
+      if(!hasAnswer(q)){
+        if(note){ note.hidden = false; note.textContent = q.dataset.type === 'short' ? 'Введите ответ.' : 'Выберите вариант.'; }
+        return;
+      }
+      if(note) note.hidden = true;
+      mark();
+      var ok = questionCorrect(q);
+      q.dataset.answered = '1';
+      q.classList.add(ok ? 'ok' : 'bad');
+      paintChoices(q);
+      var why = q.querySelector('.quiz-why'); if(why) why.hidden = false;
+      lock(q);
+      var answerBtn = q.querySelector('[data-answer]'); if(answerBtn) answerBtn.hidden = true;
+      if(ok) right++;
+      if(idx === qs.length - 1){ finish(); }
+      else { showQuestion(idx + 1); }
+    }
+    qs.forEach(function(q, idx){
+      q.addEventListener('input', function(e){ if(e.target.matches('input')) mark(); });
+      q.addEventListener('change', function(e){ if(e.target.matches('input')){ mark(); paintPicked(q); } });
+      var answerBtn = q.querySelector('[data-answer]');
+      if(answerBtn) answerBtn.addEventListener('click', function(){ answer(q, idx); });
+      var short = q.querySelector('.short-answer');
+      if(short) short.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); answer(q, idx); } });
+    });
+    showQuestion(0);
+  });
+})();
+</script>
+</body>
+</html>
